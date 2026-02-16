@@ -116,12 +116,12 @@
               <div class="flex flex-wrap items-center gap-6">
                 <label v-for="opt in [{label: 'Add a flight', model: 'bundleFlight'}, {label: 'Add a car', model: 'bundleCar'}]" :key="opt.label" class="flex items-center text-xs font-bold text-brand-blue cursor-pointer group">
                   <div class="relative flex items-center mr-3">
-                    <input type="checkbox" v-model="this[opt.model]" class="sr-only" />
+                    <input type="checkbox" v-model="bundles[opt.model]" class="sr-only" />
                     <div 
                       class="w-5 h-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center"
-                      :class="this[opt.model] ? 'bg-brand-green border-brand-green' : 'border-gray-200 group-hover:border-brand-green/50'"
+                      :class="bundles[opt.model] ? 'bg-brand-green border-brand-green' : 'border-gray-200 group-hover:border-brand-green/50'"
                     >
-                      <svg v-if="this[opt.model]" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <svg v-if="bundles[opt.model]" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                       </svg>
                     </div>
@@ -276,12 +276,12 @@
           <div class="flex flex-wrap items-center gap-10">
              <label v-for="addon in [{label: 'Add a place to stay', model: 'bundleFlightAddStay'}, {label: 'Add a car', model: 'bundleFlightAddCar'}]" :key="addon.label" class="flex items-center text-xs font-black uppercase tracking-widest text-brand-blue cursor-pointer group">
                <div class="relative flex items-center mr-4">
-                 <input type="checkbox" v-model="this[addon.model]" class="sr-only" />
+                 <input type="checkbox" v-model="bundles[addon.model]" class="sr-only" />
                  <div 
                    class="w-6 h-6 rounded-lg border-2 transition-all duration-300 flex items-center justify-center"
-                   :class="this[addon.model] ? 'bg-brand-green border-brand-green shadow-lg shadow-brand-green/20' : 'border-gray-200 group-hover:border-brand-green/50'"
+                   :class="bundles[addon.model] ? 'bg-brand-green border-brand-green shadow-lg shadow-brand-green/20' : 'border-gray-200 group-hover:border-brand-green/50'"
                  >
-                   <svg v-if="this[addon.model]" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                   <svg v-if="bundles[addon.model]" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                    </svg>
                  </div>
@@ -344,12 +344,12 @@
                    <span class="text-[10px] font-black text-brand-green uppercase tracking-widest mr-6 opacity-60">Bundle</span>
                    <label v-for="addon in [{label: 'Hotel', model: 'bundleCarHotel'}, {label: 'Flight', model: 'bundleCarFlight'}]" :key="addon.label" class="flex items-center text-xs font-bold text-brand-blue cursor-pointer group mr-6 last:mr-0">
                      <div class="relative flex items-center mr-3">
-                       <input type="checkbox" v-model="this[addon.model]" class="sr-only" />
+                       <input type="checkbox" v-model="bundles[addon.model]" class="sr-only" />
                        <div 
                          class="w-5 h-5 rounded-lg border-2 transition-all duration-300 flex items-center justify-center"
-                         :class="this[addon.model] ? 'bg-brand-green border-brand-green' : 'border-gray-200 group-hover:border-brand-green/50'"
+                         :class="bundles[addon.model] ? 'bg-brand-green border-brand-green' : 'border-gray-200 group-hover:border-brand-green/50'"
                        >
-                         <svg v-if="this[addon.model]" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                         <svg v-if="bundles[addon.model]" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                          </svg>
                        </div>
@@ -582,14 +582,14 @@ const multiHotels = ref([
   { location: '', dates: { start: null, end: null } }
 ])
 
-const bundleFlight = ref(false)
-const bundleCar = ref(false)
-
-// For radio button logic in this scope
-const bundleFlightAddStay = ref(false)
-const bundleFlightAddCar = ref(false)
-const bundleCarHotel = ref(false)
-const bundleCarFlight = ref(false)
+const bundles = reactive({
+  bundleFlight: false,
+  bundleCar: false,
+  bundleFlightAddStay: false,
+  bundleFlightAddCar: false,
+  bundleCarHotel: false,
+  bundleCarFlight: false
+})
 
 const occupancySummary = computed(() => {
   return `${occupancy.rooms} Room${occupancy.rooms > 1 ? 's' : ''}, ${occupancy.adults + occupancy.children} Traveler${(occupancy.adults + occupancy.children) > 1 ? 's' : ''}`
