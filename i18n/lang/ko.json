@@ -1,0 +1,341 @@
+{
+    "hero": {
+        "title1": "500개 이상의 항공사에서 저렴한 항공편 예약!",
+        "title2": "500개 이상의 항공사!",
+        "award": "Global Travel 수상",
+        "since": "2024년부터"
+    },
+    "nav": {
+        "stays": "숙소",
+        "flights": "항공편",
+        "cars": "렌터카",
+        "packages": "패키지",
+        "cruises": "크루즈",
+        "signIn": "로그인",
+        "explorer": "탐험가",
+        "logout": {
+            "title": "벌써 가시나요?",
+            "message": "Flybeth 계정에서 로그아웃합니다. 저장되지 않은 변경사항이 손실됩니다. ✈️",
+            "confirm": "로그아웃",
+            "cancel": "머물기"
+        },
+        "exit": {
+            "title": "잠깐, 가지 마세요!",
+            "message": "활성 세션이 있습니다. Flybeth를 떠나시겠습니까?",
+            "confirm": "떠나기",
+            "cancel": "여기 있기"
+        }
+    },
+    "search": {
+        "tabs": {
+            "flights": "항공편",
+            "holidays": "휴가",
+            "hotels": "호텔",
+            "cruises": "크루즈",
+            "cars": "렌터카"
+        },
+        "labels": {
+            "from": "출발지",
+            "to": "도착지",
+            "where": "어디로 가시나요?",
+            "departure": "출발일",
+            "return": "귀국일",
+            "departure_return": "출발 — 귀국",
+            "departure_date": "출발일",
+            "passengers": "승객",
+            "cabin": "좌석 등급",
+            "letsgo": "출발!",
+            "singleHotel": "단일 호텔",
+            "multiHotel": "다중 호텔",
+            "checkInCheckOut": "체크인 - 체크아웃",
+            "travelersRooms": "여행자 & 객실",
+            "bundleSave": "결합 할인",
+            "addFlight": "항공편 추가",
+            "addCar": "렌터카 추가",
+            "addHotel": "호텔 추가",
+            "directFlightsOnly": "직항편만",
+            "rentalCars": "렌터카",
+            "airportRides": "공항 이동",
+            "pickUp": "픽업",
+            "whereFrom": "어디서?",
+            "whereTo": "어디로?",
+            "cityOrAirport": "도시 또는 공항",
+            "addressOrHotel": "주소 또는 호텔",
+            "dropOffLocation": "반납 장소",
+            "rentalDates": "대여 기간",
+            "pickUpDate": "픽업 날짜",
+            "pickUpTime": "픽업 시간",
+            "differentDropOff": "다른 반납 장소",
+            "bundle": "패키지",
+            "hotel": "호텔",
+            "flight": "항공편",
+            "whereFromQuestion": "어디서?",
+            "whereToQuestion": "어디로?",
+            "stayDates": "숙박 날짜",
+            "travelDates": "여행 날짜",
+            "partialHotelStay": "부분 호텔 숙박",
+            "differentCarDropOff": "다른 차량 반납",
+            "saveBundleMsg": "결합 예약으로 최대 $625 절약!",
+            "rooms": "객실",
+            "adults": "성인",
+            "children": "어린이",
+            "apply": "적용",
+            "multiRoomNote": "다중 객실 패키지는 총 8명으로 제한됩니다.",
+            "search": "검색",
+            "updateSearch": "검색 업데이트"
+        },
+        "placeholders": {
+            "origin": "도시 또는 공항",
+            "destination": "목적지, 도시 또는 호텔"
+        },
+        "packages": {
+            "hotel_flight": "호텔 + 항공편",
+            "hotel_flight_car": "호텔 + 항공편 + 렌터카",
+            "flight_car": "항공편 + 렌터카",
+            "hotel_car": "호텔 + 렌터카"
+        },
+        "cruises": {
+            "title": "럭셔리 항해.",
+            "expertAdvice": "전문가 상담: 1-866-403-9848",
+            "goingTo": "목적지",
+            "destinationAny": "목적지 (전체)",
+            "departingBetween": "출항 기간",
+            "selectMonth": "월 선택",
+            "cruiseLine": "크루즈 라인",
+            "anyCruiseLine": "모든 라인",
+            "viewLuxurySuites": "럭셔리 스위트 보기",
+            "familyDeals": "가족 특가"
+        },
+        "flightModes": {
+            "roundtrip": "왕복",
+            "oneway": "편도",
+            "multicity": "다구간"
+        }
+    },
+    "marketing": {
+        "helpTitle": "특가 찾는데 도움이 필요하신가요?",
+        "helpSub": "지금 예약 - 24시간 전화 상담",
+        "benefits": {
+            "deals": "전화 전용 특가",
+            "assist": "맞춤형 여행 지원",
+            "cancel": "24시간 취소 가능",
+            "rewards": "ClubMiles 포인트 2배"
+        },
+        "speakExperts": "여행 전문가와 상담하세요"
+    },
+    "offers": {
+        "trending": "인기 휴가 특가",
+        "smarter": "더 스마트한 요금.",
+        "smarterSub": "시간을 소중히 하는 여행.",
+        "majestic": "모든 마일이 장엄하게!",
+        "majesticSub": "에미레이트 항공.",
+        "learn": "자세히 보기",
+        "book": "지금 예약"
+    },
+    "promo": {
+        "matchday": "경기일을 여행으로 — 여름 할인.",
+        "findDeals": "특가 찾기"
+    },
+    "destinations": {
+        "globalExploration": "글로벌 탐험",
+        "mostLoved": "가장 사랑받는",
+        "destinations": "목적지",
+        "description": "큐레이터가 엄선한 항공편, 호텔, 체험을 예약하세요.",
+        "startingFrom": "{price}부터",
+        "parisDesc": "상징적인 랜드마크와 세계적인 요리의 빛의 도시.",
+        "dubaiDesc": "럭셔리 쇼핑과 초현대식 건축을 경험하세요.",
+        "maldivesDesc": "열대 낙원의 수정같은 바다와 해변."
+    },
+    "inspiration": {
+        "lifestyleTravel": "라이프스타일 여행",
+        "title": "당신만의 여행",
+        "experiences": "{count}개 체험"
+    },
+    "categories": {
+        "adventure": "모험",
+        "relaxation": "힐링",
+        "cityLife": "도시 생활",
+        "nature": "자연"
+    },
+    "newsletter": {
+        "title": "특가를 놓치지 마세요",
+        "subtitle": "독점 항공권 특가, 호텔 할인을 받아보세요.",
+        "placeholder": "이메일 입력",
+        "subscribeButton": "구독",
+        "tagline": "50,000명 이상의 여행자와 함께"
+    },
+    "stats": {
+        "globalDestinations": "글로벌 목적지",
+        "flightsFilteredDaily": "매일 필터링 항공편",
+        "secureBookings": "안전한 예약"
+    },
+    "footer": {
+        "about": "소개",
+        "blog": "블로그",
+        "jobs": "채용",
+        "press": "언론",
+        "accessibility": "접근성",
+        "partners": "파트너",
+        "rights": "© 2024 Flybeth, Inc. All rights reserved."
+    },
+    "settings": {
+        "language": "언어",
+        "currency": "통화",
+        "applyChanges": "변경사항 적용"
+    },
+    "flightCard": {
+        "perTraveler": "1인당",
+        "selectFlight": "항공편 선택",
+        "nonstop": "직항",
+        "stops": "{n}회 경유",
+        "flight": "항공편"
+    },
+    "stayCard": {
+        "nightlyAvg": "1박 평균",
+        "viewDeal": "상세보기",
+        "unnamedProperty": "이름없는 숙소",
+        "includesTaxes": "총 ${total} 세금 포함",
+        "off": "{percent}% 할인"
+    },
+    "carCard": {
+        "orSimilar": "또는 유사 {category}",
+        "reviews": "{n}개 리뷰",
+        "passengers": "승객",
+        "bags": "짐",
+        "freeCancellation": "무료 취소",
+        "totalPrice": "총 가격",
+        "viewDeal": "상세보기"
+    },
+    "emptyState": {
+        "defaultTitle": "아직 아무것도 없습니다",
+        "defaultMessage": "검색 필터를 조정하거나 인기 추천을 살펴보세요."
+    },
+    "flightsPage": {
+        "fromWhere": "어디서?",
+        "toWhere": "어디로?",
+        "dates": "날짜",
+        "travelers": "여행자",
+        "travelerPlaceholder": "1명",
+        "flightsFound": "{n}개 항공편",
+        "filterBy": "필터",
+        "stops": "경유",
+        "nonstop": "직항",
+        "oneStop": "1회 경유",
+        "twoPlusStops": "2회+ 경유",
+        "airlines": "항공사",
+        "noFlightsTitle": "항공편 없음",
+        "noFlightsMessage": "일치하는 항공편이 없습니다. 다른 공항이나 날짜를 시도해보세요.",
+        "explorePopular": "인기 노선 탐색"
+    },
+    "staysPage": {
+        "whereTo": "어디로?",
+        "checkIn": "체크인",
+        "guests": "게스트",
+        "guestsPlaceholder": "2명",
+        "propertiesFound": "{n}개 숙소",
+        "filterBy": "필터",
+        "pricePerNight": "1박 가격",
+        "lessThan100": "$100 미만",
+        "range100to200": "$100 - $200",
+        "range200to300": "$200 - $300",
+        "propertyType": "숙소 유형",
+        "hotelType": "호텔",
+        "resortType": "리조트",
+        "apartmentType": "아파트",
+        "noPropertiesTitle": "숙소 없음",
+        "noPropertiesMessage": "일치하는 숙소가 없습니다.",
+        "searchDubai": "두바이 검색"
+    },
+    "carsPage": {
+        "pickUpLocation": "픽업 장소",
+        "pickUpDate": "픽업 날짜",
+        "carsFound": "{n}대 차량",
+        "filterBy": "필터",
+        "carType": "차량 유형",
+        "economy": "이코노미",
+        "suv": "SUV",
+        "luxury": "럭셔리",
+        "transmission": "변속기",
+        "automatic": "자동",
+        "manual": "수동",
+        "noCarsTitle": "이용 가능한 차량 없음",
+        "noCarsMessage": "이 위치에서 렌터카를 찾지 못했습니다.",
+        "searchDubaiAirport": "두바이 공항 검색"
+    },
+    "checkout": {
+        "secureCheckout": "안전한 결제",
+        "travelerDetails": "여행자 정보",
+        "firstName": "이름",
+        "lastName": "성",
+        "emailAddress": "이메일",
+        "phoneNumber": "전화번호",
+        "paymentInfo": "결제 정보",
+        "cardholderName": "카드 소유자",
+        "cardNumber": "카드 번호",
+        "expirationDate": "만료일",
+        "cvv": "CVV",
+        "completeBooking": "예약 완료",
+        "processing": "처리 중...",
+        "termsAgreement": "결제 시 이용약관에 동의합니다.",
+        "orderSummary": "주문 요약",
+        "basePrice": "기본 가격",
+        "taxesFees": "세금 및 수수료",
+        "total": "합계",
+        "freeCancellation": "24시간 이내 무료 취소!"
+    },
+    "confirmation": {
+        "bookingConfirmed": "예약 확인!",
+        "referenceText": "예약 참조 번호:",
+        "emailSent": "확인 이메일을 보냈습니다.",
+        "backToHome": "홈으로"
+    },
+    "auth": {
+        "authentication": "인증",
+        "welcomeBack": "다시 오셨군요",
+        "noAccount": "계정이 없으신가요?",
+        "registerHere": "여기서 가입",
+        "emailAddress": "이메일",
+        "password": "비밀번호",
+        "forgotPassword": "비밀번호를 잊으셨나요?",
+        "signingIn": "로그인 중...",
+        "signIn": "로그인",
+        "orContinueWith": "또는",
+        "signInGoogle": "Google로 로그인",
+        "getStarted": "시작하기",
+        "createAccount": "계정 만들기",
+        "alreadyHaveAccount": "이미 계정이 있으신가요?",
+        "loginHere": "여기서 로그인",
+        "firstNameLabel": "이름",
+        "lastNameLabel": "성",
+        "phoneNumberLabel": "전화번호",
+        "creatingAccount": "계정 생성 중...",
+        "orJoinWith": "또는",
+        "signUpGoogle": "Google로 가입",
+        "accountRecovery": "계정 복구",
+        "forgotPasswordTitle": "비밀번호 찾기",
+        "rememberedPassword": "비밀번호가 기억나셨나요?",
+        "sending": "전송 중...",
+        "sendResetLink": "재설정 링크 보내기"
+    },
+    "authLayout": {
+        "journeyStarts": "여행이 시작됩니다",
+        "discover": "세상에서 가장",
+        "worldsMost": "숨 막히는",
+        "breathtaking": "여행지를",
+        "layoutDestinations": "발견하세요.",
+        "socialProof": "50,000명 이상의 여행자와 함께하세요.",
+        "trustedWorldwide": "전 세계 신뢰",
+        "averageRating": "4.9 ★ 평균 평점",
+        "travelIntelligence": "여행 인텔리전스"
+    },
+    "bookingConfirmed": "예약 확인!",
+    "common": {
+        "search": "검색",
+        "cancel": "취소",
+        "confirm": "확인",
+        "close": "닫기",
+        "loading": "로딩 중...",
+        "error": "오류",
+        "success": "성공"
+    }
+}

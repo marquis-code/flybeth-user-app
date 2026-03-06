@@ -1,0 +1,341 @@
+{
+    "hero": {
+        "title1": "احجز رحلات طيران رخيصة على أكثر من",
+        "title2": "500 شركة طيران!",
+        "award": "حاصل على جائزة Global Travel",
+        "since": "منذ 2024"
+    },
+    "nav": {
+        "stays": "الإقامة",
+        "flights": "الرحلات",
+        "cars": "السيارات",
+        "packages": "الباقات",
+        "cruises": "الرحلات البحرية",
+        "signIn": "تسجيل الدخول",
+        "explorer": "المستكشف",
+        "logout": {
+            "title": "هل ستغادر قريباً؟",
+            "message": "أنت على وشك تسجيل الخروج من حسابك في Flybeth. ستفقد أي تغييرات غير محفوظة. سنكون هنا عند عودتك! ✈️",
+            "confirm": "تسجيل الخروج",
+            "cancel": "البقاء"
+        },
+        "exit": {
+            "title": "انتظر، لا تذهب!",
+            "message": "لديك جلسة نشطة. هل أنت متأكد أنك تريد مغادرة Flybeth؟",
+            "confirm": "مغادرة",
+            "cancel": "البقاء هنا"
+        }
+    },
+    "search": {
+        "tabs": {
+            "flights": "الرحلات",
+            "holidays": "العطلات",
+            "hotels": "الفنادق",
+            "cruises": "رحلات بحرية",
+            "cars": "السيارات"
+        },
+        "labels": {
+            "from": "المغادرة من",
+            "to": "السفر إلى",
+            "where": "إلى أين تذهب؟",
+            "departure": "تاريخ المغادرة",
+            "return": "تاريخ العودة",
+            "departure_return": "المغادرة — العودة",
+            "departure_date": "تاريخ المغادرة",
+            "passengers": "المسافرون",
+            "cabin": "درجة المقصورة",
+            "letsgo": "هيا بنا!",
+            "singleHotel": "فندق واحد",
+            "multiHotel": "فنادق متعددة",
+            "checkInCheckOut": "تسجيل الوصول - المغادرة",
+            "travelersRooms": "المسافرون والغرف",
+            "bundleSave": "اجمع ووفر",
+            "addFlight": "أضف رحلة",
+            "addCar": "أضف سيارة",
+            "addHotel": "أضف فندق",
+            "directFlightsOnly": "رحلات مباشرة فقط",
+            "rentalCars": "سيارات للإيجار",
+            "airportRides": "نقل المطار",
+            "pickUp": "الاستلام",
+            "whereFrom": "من أين؟",
+            "whereTo": "إلى أين؟",
+            "cityOrAirport": "مدينة أو مطار",
+            "addressOrHotel": "عنوان أو فندق",
+            "dropOffLocation": "موقع التسليم",
+            "rentalDates": "تواريخ الإيجار",
+            "pickUpDate": "تاريخ الاستلام",
+            "pickUpTime": "وقت الاستلام",
+            "differentDropOff": "موقع تسليم مختلف",
+            "bundle": "باقة",
+            "hotel": "فندق",
+            "flight": "رحلة",
+            "whereFromQuestion": "من أين؟",
+            "whereToQuestion": "إلى أين؟",
+            "stayDates": "تواريخ الإقامة",
+            "travelDates": "تواريخ السفر",
+            "partialHotelStay": "إقامة فندقية جزئية",
+            "differentCarDropOff": "تسليم سيارة مختلف",
+            "saveBundleMsg": "وفر حتى 625$ عند تجميع رحلتك!",
+            "rooms": "غرف",
+            "adults": "بالغون",
+            "children": "أطفال",
+            "apply": "تطبيق",
+            "multiRoomNote": "الباقات متعددة الغرف محدودة بـ 8 مسافرين.",
+            "search": "بحث",
+            "updateSearch": "تحديث البحث"
+        },
+        "placeholders": {
+            "origin": "مدينة أو مطار",
+            "destination": "الوجهة، المدينة أو الفندق"
+        },
+        "packages": {
+            "hotel_flight": "فندق + رحلة",
+            "hotel_flight_car": "فندق + رحلة + سيارة",
+            "flight_car": "رحلة + سيارة",
+            "hotel_car": "فندق + سيارة"
+        },
+        "cruises": {
+            "title": "أبحر في الفخامة.",
+            "expertAdvice": "استشارة خبير: 1-866-403-9848",
+            "goingTo": "الوجهة",
+            "destinationAny": "الوجهة (الكل)",
+            "departingBetween": "المغادرة بين",
+            "selectMonth": "اختر الشهر",
+            "cruiseLine": "خط الرحلات البحرية",
+            "anyCruiseLine": "أي خط",
+            "viewLuxurySuites": "عرض الأجنحة الفاخرة",
+            "familyDeals": "عروض عائلية"
+        },
+        "flightModes": {
+            "roundtrip": "ذهاب وعودة",
+            "oneway": "ذهاب فقط",
+            "multicity": "مدن متعددة"
+        }
+    },
+    "marketing": {
+        "helpTitle": "هل تحتاج مساعدة في إيجاد العروض؟",
+        "helpSub": "احجز الآن - اتصل بنا على مدار الساعة",
+        "benefits": {
+            "deals": "عروض حصرية عبر الهاتف",
+            "assist": "مساعدة سفر شخصية",
+            "cancel": "إلغاء خلال 24 ساعة",
+            "rewards": "نقاط ClubMiles مضاعفة"
+        },
+        "speakExperts": "تحدث مع مستشاري السفر الخبراء"
+    },
+    "offers": {
+        "trending": "عروض العطلات الرائجة",
+        "smarter": "أسعار أذكى. هبوط أنعم.",
+        "smarterSub": "سفر يقدّر وقتك أكثر.",
+        "majestic": "كل ميل يبدو مهيباً!",
+        "majesticSub": "طر مع طيران الإمارات. أناقة في حركة.",
+        "learn": "اعرف المزيد",
+        "book": "احجز الآن"
+    },
+    "promo": {
+        "matchday": "حوّل يوم المباراة إلى رحلة — استمتع بخصومات الصيف.",
+        "findDeals": "اعثر على العروض"
+    },
+    "destinations": {
+        "globalExploration": "استكشاف عالمي",
+        "mostLoved": "الأكثر إعجاباً",
+        "destinations": "الوجهات",
+        "description": "احجز رحلات وفنادق وتجارب مختارة بعناية لأكثر الرحلات التي لا تُنسى حول العالم.",
+        "startingFrom": "ابتداءً من {price}",
+        "parisDesc": "مدينة الأنوار تنتظرك بمعالمها الأيقونية ومطبخها العالمي.",
+        "dubaiDesc": "اختبر التسوق الفاخر والعمارة الحديثة والحياة الليلية النابضة.",
+        "maldivesDesc": "مياه صافية كالكريستال وشواطئ بكر في جنة استوائية."
+    },
+    "inspiration": {
+        "lifestyleTravel": "سفر بأسلوب حياة",
+        "title": "سافر على طريقتك",
+        "experiences": "{count} تجربة"
+    },
+    "categories": {
+        "adventure": "مغامرة",
+        "relaxation": "استرخاء",
+        "cityLife": "حياة المدينة",
+        "nature": "طبيعة"
+    },
+    "newsletter": {
+        "title": "لا تفوّت أي عرض",
+        "subtitle": "اشترك للحصول على عروض حصرية للرحلات والفنادق وإلهام السفر.",
+        "placeholder": "أدخل بريدك الإلكتروني",
+        "subscribeButton": "اشترك",
+        "tagline": "انضم إلى أكثر من 50,000 مسافر ذكي"
+    },
+    "stats": {
+        "globalDestinations": "وجهات عالمية",
+        "flightsFilteredDaily": "رحلات مُصفاة يومياً",
+        "secureBookings": "حجوزات آمنة"
+    },
+    "footer": {
+        "about": "عن الشركة",
+        "blog": "المدونة",
+        "jobs": "الوظائف",
+        "press": "الصحافة",
+        "accessibility": "إمكانية الوصول",
+        "partners": "الشركاء",
+        "rights": "© 2024 Flybeth, Inc. جميع الحقوق محفوظة."
+    },
+    "settings": {
+        "language": "اللغة",
+        "currency": "العملة",
+        "applyChanges": "تطبيق التغييرات"
+    },
+    "flightCard": {
+        "perTraveler": "لكل مسافر",
+        "selectFlight": "اختر الرحلة",
+        "nonstop": "مباشر",
+        "stops": "{n} توقف(ات)",
+        "flight": "رحلة"
+    },
+    "stayCard": {
+        "nightlyAvg": "متوسط الليلة",
+        "viewDeal": "عرض الصفقة",
+        "unnamedProperty": "عقار بدون اسم",
+        "includesTaxes": "المجموع {total}$ شامل الضرائب والرسوم",
+        "off": "خصم {percent}%"
+    },
+    "carCard": {
+        "orSimilar": "أو مشابه {category}",
+        "reviews": "{n} تقييمات",
+        "passengers": "ركاب",
+        "bags": "حقائب",
+        "freeCancellation": "إلغاء مجاني",
+        "totalPrice": "السعر الإجمالي",
+        "viewDeal": "عرض الصفقة"
+    },
+    "emptyState": {
+        "defaultTitle": "لا شيء هنا بعد",
+        "defaultMessage": "حاول تعديل فلاتر البحث أو استكشف توصياتنا الشائعة."
+    },
+    "flightsPage": {
+        "fromWhere": "من أين؟",
+        "toWhere": "إلى أين؟",
+        "dates": "التواريخ",
+        "travelers": "المسافرون",
+        "travelerPlaceholder": "مسافر واحد",
+        "flightsFound": "تم العثور على {n} رحلة",
+        "filterBy": "تصفية حسب",
+        "stops": "التوقفات",
+        "nonstop": "مباشر",
+        "oneStop": "توقف واحد",
+        "twoPlusStops": "2+ توقفات",
+        "airlines": "شركات الطيران",
+        "noFlightsTitle": "لم يتم العثور على رحلات",
+        "noFlightsMessage": "لم نتمكن من إيجاد رحلات مطابقة. جرب مطارات أو تواريخ مختلفة.",
+        "explorePopular": "استكشف المسارات الشائعة"
+    },
+    "staysPage": {
+        "whereTo": "إلى أين؟",
+        "checkIn": "تسجيل الوصول",
+        "guests": "الضيوف",
+        "guestsPlaceholder": "مسافران",
+        "propertiesFound": "تم العثور على {n} عقار",
+        "filterBy": "تصفية حسب",
+        "pricePerNight": "السعر لكل ليلة",
+        "lessThan100": "أقل من 100$",
+        "range100to200": "100$ - 200$",
+        "range200to300": "200$ - 300$",
+        "propertyType": "نوع العقار",
+        "hotelType": "فندق",
+        "resortType": "منتجع",
+        "apartmentType": "شقة",
+        "noPropertiesTitle": "لم يتم العثور على عقارات",
+        "noPropertiesMessage": "لم نتمكن من إيجاد إقامات مطابقة. جرب موقعاً مختلفاً أو عدل تواريخك.",
+        "searchDubai": "بحث في دبي"
+    },
+    "carsPage": {
+        "pickUpLocation": "موقع الاستلام",
+        "pickUpDate": "تاريخ الاستلام",
+        "carsFound": "تم العثور على {n} سيارة",
+        "filterBy": "تصفية حسب",
+        "carType": "نوع السيارة",
+        "economy": "اقتصادية",
+        "suv": "SUV",
+        "luxury": "فاخرة",
+        "transmission": "ناقل الحركة",
+        "automatic": "أوتوماتيك",
+        "manual": "يدوي",
+        "noCarsTitle": "لا توجد سيارات متاحة",
+        "noCarsMessage": "لم نتمكن من إيجاد سيارات إيجار في هذا الموقع. جرب نقطة استلام مختلفة.",
+        "searchDubaiAirport": "بحث مطار دبي"
+    },
+    "checkout": {
+        "secureCheckout": "الدفع الآمن",
+        "travelerDetails": "بيانات المسافر",
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "emailAddress": "البريد الإلكتروني",
+        "phoneNumber": "رقم الهاتف",
+        "paymentInfo": "معلومات الدفع",
+        "cardholderName": "اسم حامل البطاقة",
+        "cardNumber": "رقم البطاقة",
+        "expirationDate": "تاريخ الانتهاء",
+        "cvv": "CVV",
+        "completeBooking": "إتمام الحجز",
+        "processing": "جارٍ المعالجة...",
+        "termsAgreement": "بالدفع، أنت توافق على الشروط والأحكام.",
+        "orderSummary": "ملخص الطلب",
+        "basePrice": "السعر الأساسي",
+        "taxesFees": "الضرائب والرسوم",
+        "total": "المجموع",
+        "freeCancellation": "إلغاء مجاني خلال 24 ساعة!"
+    },
+    "confirmation": {
+        "bookingConfirmed": "تم تأكيد الحجز!",
+        "referenceText": "مرجع حجزك هو",
+        "emailSent": "لقد أرسلنا بريد تأكيد إلى صندوق الوارد.",
+        "backToHome": "العودة للرئيسية"
+    },
+    "auth": {
+        "authentication": "المصادقة",
+        "welcomeBack": "أهلاً بعودتك",
+        "noAccount": "ليس لديك حساب؟",
+        "registerHere": "سجل هنا",
+        "emailAddress": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "signingIn": "جارٍ تسجيل الدخول...",
+        "signIn": "تسجيل الدخول",
+        "orContinueWith": "أو تابع باستخدام",
+        "signInGoogle": "تسجيل الدخول بـ Google",
+        "getStarted": "ابدأ الآن",
+        "createAccount": "إنشاء حساب",
+        "alreadyHaveAccount": "لديك حساب بالفعل؟",
+        "loginHere": "سجل الدخول هنا",
+        "firstNameLabel": "الاسم الأول",
+        "lastNameLabel": "اسم العائلة",
+        "phoneNumberLabel": "رقم الهاتف",
+        "creatingAccount": "جارٍ إنشاء الحساب...",
+        "orJoinWith": "أو انضم باستخدام",
+        "signUpGoogle": "التسجيل بـ Google",
+        "accountRecovery": "استرداد الحساب",
+        "forgotPasswordTitle": "نسيت كلمة المرور",
+        "rememberedPassword": "تذكرت كلمة المرور؟",
+        "sending": "جارٍ الإرسال...",
+        "sendResetLink": "إرسال رابط إعادة التعيين"
+    },
+    "authLayout": {
+        "journeyStarts": "رحلتك تبدأ هنا",
+        "discover": "اكتشف أجمل",
+        "worldsMost": "الوجهات الأكثر",
+        "breathtaking": "روعة",
+        "layoutDestinations": "في العالم.",
+        "socialProof": "انضم إلى أكثر من 50,000 مسافر يجدون عروضاً حصرية مع Flybeth.",
+        "trustedWorldwide": "موثوق عالمياً",
+        "averageRating": "4.9 ★ متوسط التقييم",
+        "travelIntelligence": "ذكاء السفر"
+    },
+    "bookingConfirmed": "تم تأكيد الحجز!",
+    "common": {
+        "search": "بحث",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد",
+        "close": "إغلاق",
+        "loading": "جارٍ التحميل...",
+        "error": "خطأ",
+        "success": "نجاح"
+    }
+}

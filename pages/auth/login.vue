@@ -1,24 +1,24 @@
 <template>
   <div class="space-y-8">
     <div>
-      <h2 class="text-[10px] font-black text-brand-green uppercase tracking-[0.3em] mb-4">Authentication</h2>
-      <h3 class="text-4xl font-black text-brand-blue font-header tracking-tighter">Welcome Back</h3>
+      <h2 class="text-[10px] font-black text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.authentication') }}</h2>
+      <h3 class="text-4xl font-black text-brand-blue font-header tracking-tighter">{{ $t('auth.welcomeBack') }}</h3>
       <p class="mt-3 text-sm text-brand-gray/60 font-bold">
-        Don't have an account?
-        <NuxtLink to="/auth/register" class="text-brand-green hover:underline font-black">Register here</NuxtLink>
+        {{ $t('auth.noAccount') }}
+        <NuxtLink to="/auth/register" class="text-brand-green hover:underline font-black">{{ $t('auth.registerHere') }}</NuxtLink>
       </p>
     </div>
 
     <form class="space-y-6" @submit.prevent="handleLogin">
       <UiBaseInput
-        label="Email Address"
+        :label="$t('auth.emailAddress')"
         type="email"
         placeholder="john@example.com"
         v-model="loginData.email"
         required
       />
       <UiBaseInput
-        label="Password"
+        :label="$t('auth.password')"
         type="password"
         placeholder="••••••••"
         v-model="loginData.password"
@@ -28,7 +28,7 @@
       <div class="flex items-center justify-between">
         <div class="text-sm">
           <NuxtLink to="/auth/forgot-password" class="font-bold text-brand-blue/60 hover:text-brand-blue transition-colors">
-            Forgot your password?
+            {{ $t('auth.forgotPassword') }}
           </NuxtLink>
         </div>
       </div>
@@ -38,8 +38,8 @@
         :disabled="loading"
         class="w-full py-4 bg-brand-blue text-white rounded-2xl text-sm font-black uppercase tracking-[0.15em] shadow-[0_10px_30px_-5px_rgba(13,29,173,0.3)] hover:shadow-brand-blue/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-blue/20 disabled:opacity-50"
       >
-        <span v-if="loading">Signing in...</span>
-        <span v-else>Sign In</span>
+        <span v-if="loading">{{ $t('auth.signingIn') }}</span>
+        <span v-else>{{ $t('auth.signIn') }}</span>
       </button>
 
       <div class="relative py-2">
@@ -47,7 +47,7 @@
           <div class="w-full border-t border-gray-100"></div>
         </div>
         <div class="relative flex justify-center text-xs uppercase">
-          <span class="bg-white px-4 text-brand-gray/40 font-black tracking-widest">Or continue with</span>
+          <span class="bg-white px-4 text-brand-gray/40 font-black tracking-widest">{{ $t('auth.orContinueWith') }}</span>
         </div>
       </div>
 
@@ -62,7 +62,7 @@
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
         </svg>
-        Sign in with Google
+        {{ $t('auth.signInGoogle') }}
       </button>
     </form>
   </div>

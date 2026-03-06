@@ -9,8 +9,9 @@ export const useFetchPopularFlights = () => {
         loading.value = true;
         try {
             const { data } = await flightsApi.getPopular({ limit });
-            popularFlights.value = data;
-            return data;
+            const results = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
+            popularFlights.value = results;
+            return results;
         } catch (error) {
             console.error('Error fetching popular flights:', error);
         } finally {

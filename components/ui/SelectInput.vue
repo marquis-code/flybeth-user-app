@@ -47,7 +47,7 @@
         <!-- Dropdown -->
         <div
           v-if="showDropdown"
-          class="absolute z-20 mt-1 w-full bg-white shadow-xl rounded-md overflow-hidden"
+          class="absolute z-[99999] mt-1 w-full bg-white shadow-xl rounded-2xl overflow-hidden"
         >
           <!-- Search Input -->
           <div class="p-2 border-b-[0.5px] border-gray-50 sticky top-0 bg-white">
@@ -243,7 +243,7 @@
         return 'rounded-b-xl rounded-t-sm'
       case 'standalone':
       default:
-        return 'rounded-xl'
+        return 'rounded-2xl'
     }
   })
   

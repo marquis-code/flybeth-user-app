@@ -1,0 +1,341 @@
+{
+    "hero": {
+        "title1": "500'den fazla havayolunda ucuz uçuş rezervasyonu!",
+        "title2": "500+ havayolu!",
+        "award": "Global Travel ödüllü",
+        "since": "2024'ten beri"
+    },
+    "nav": {
+        "stays": "Konaklama",
+        "flights": "Uçuşlar",
+        "cars": "Araçlar",
+        "packages": "Paketler",
+        "cruises": "Kruvaziyer",
+        "signIn": "Giriş Yap",
+        "explorer": "Kaşif",
+        "logout": {
+            "title": "Şimdiden mi gidiyorsunuz?",
+            "message": "Flybeth hesabınızdan çıkış yapacaksınız. Kaydedilmemiş değişiklikler kaybolacak. ✈️",
+            "confirm": "Çıkış Yap",
+            "cancel": "Kal"
+        },
+        "exit": {
+            "title": "Bekle, gitme!",
+            "message": "Aktif bir oturumunuz var. Flybeth'ten ayrılmak istediğinize emin misiniz?",
+            "confirm": "Ayrıl",
+            "cancel": "Burada Kal"
+        }
+    },
+    "search": {
+        "tabs": {
+            "flights": "Uçuşlar",
+            "holidays": "Tatiller",
+            "hotels": "Oteller",
+            "cruises": "Kruvaziyer",
+            "cars": "Araçlar"
+        },
+        "labels": {
+            "from": "Kalkış",
+            "to": "Varış",
+            "where": "Nereye gidiyorsunuz?",
+            "departure": "Kalkış Tarihi",
+            "return": "Dönüş Tarihi",
+            "departure_return": "Gidiş — Dönüş",
+            "departure_date": "Kalkış Tarihi",
+            "passengers": "Yolcular",
+            "cabin": "Kabin Sınıfı",
+            "letsgo": "HAYDI!",
+            "singleHotel": "Tek Otel",
+            "multiHotel": "Çoklu Otel",
+            "checkInCheckOut": "Giriş - Çıkış",
+            "travelersRooms": "Yolcular ve Odalar",
+            "bundleSave": "Birleştir ve Tasarruf Et",
+            "addFlight": "Uçuş ekle",
+            "addCar": "Araç ekle",
+            "addHotel": "Otel Ekle",
+            "directFlightsOnly": "Sadece Direkt Uçuşlar",
+            "rentalCars": "Kiralık araçlar",
+            "airportRides": "Havaalanı transferi",
+            "pickUp": "Alış",
+            "whereFrom": "Nereden?",
+            "whereTo": "Nereye?",
+            "cityOrAirport": "Şehir veya havaalanı",
+            "addressOrHotel": "Adres veya otel",
+            "dropOffLocation": "Bırakma noktası",
+            "rentalDates": "Kiralama Tarihleri",
+            "pickUpDate": "Alış tarihi",
+            "pickUpTime": "Alış saati",
+            "differentDropOff": "Farklı bırakma noktası",
+            "bundle": "Paket",
+            "hotel": "Otel",
+            "flight": "Uçuş",
+            "whereFromQuestion": "Nereden?",
+            "whereToQuestion": "Nereye?",
+            "stayDates": "Konaklama Tarihleri",
+            "travelDates": "Seyahat Tarihleri",
+            "partialHotelStay": "Kısmi otel konaklaması",
+            "differentCarDropOff": "Farklı araç bırakma",
+            "saveBundleMsg": "Seyahatinizi birleştirerek $625'a kadar tasarruf edin!",
+            "rooms": "Odalar",
+            "adults": "Yetişkinler",
+            "children": "Çocuklar",
+            "apply": "Uygula",
+            "multiRoomNote": "Çoklu oda paketleri toplam 8 yolcuyla sınırlıdır.",
+            "search": "Ara",
+            "updateSearch": "Aramayı Güncelle"
+        },
+        "placeholders": {
+            "origin": "Şehir veya Havaalanı",
+            "destination": "Hedef, Şehir veya Otel"
+        },
+        "packages": {
+            "hotel_flight": "Otel + Uçuş",
+            "hotel_flight_car": "Otel + Uçuş + Araç",
+            "flight_car": "Uçuş + Araç",
+            "hotel_car": "Otel + Araç"
+        },
+        "cruises": {
+            "title": "Lüks Denizcilik.",
+            "expertAdvice": "Uzman Danışmanlık: 1-866-403-9848",
+            "goingTo": "Hedef",
+            "destinationAny": "Hedef (Tümü)",
+            "departingBetween": "Kalkış aralığı",
+            "selectMonth": "Ay Seçin",
+            "cruiseLine": "Kruvaziyer Hattı",
+            "anyCruiseLine": "Tüm Hatlar",
+            "viewLuxurySuites": "Lüks Süitleri Gör",
+            "familyDeals": "Aile Fırsatları"
+        },
+        "flightModes": {
+            "roundtrip": "Gidiş-Dönüş",
+            "oneway": "Tek Yön",
+            "multicity": "Çok Şehirli"
+        }
+    },
+    "marketing": {
+        "helpTitle": "Fırsat bulmakta yardım mı lazım?",
+        "helpSub": "Şimdi rezervasyon yapın - 7/24 arayın",
+        "benefits": {
+            "deals": "Telefona özel fırsatlar",
+            "assist": "Kişisel seyahat desteği",
+            "cancel": "24 saat iptal",
+            "rewards": "2X ClubMiles puan"
+        },
+        "speakExperts": "Uzman seyahat danışmanlarımızla konuşun"
+    },
+    "offers": {
+        "trending": "Popüler Tatil Fırsatları",
+        "smarter": "Daha akıllı fiyatlar.",
+        "smarterSub": "Zamanınıza değer veren seyahat.",
+        "majestic": "Her mil görkemli!",
+        "majesticSub": "Emirates ile uçun.",
+        "learn": "Daha Fazla",
+        "book": "Şimdi Rezerve Et"
+    },
+    "promo": {
+        "matchday": "Maç gününü tatile çevirin — yaz fırsatları.",
+        "findDeals": "Fırsatları bul"
+    },
+    "destinations": {
+        "globalExploration": "Küresel Keşif",
+        "mostLoved": "En Sevilen",
+        "destinations": "Destinasyonlar",
+        "description": "Küratörlerimizin seçtiği uçuşlar, oteller ve deneyimler.",
+        "startingFrom": "{price}'den başlayan",
+        "parisDesc": "Işıklar şehri ikonik simgeleri ve dünya mutfağıyla sizi bekliyor.",
+        "dubaiDesc": "Lüks alışveriş ve ultra modern mimariyi deneyimleyin.",
+        "maldivesDesc": "Tropik cennetin berrak suları ve bozulmamış plajları."
+    },
+    "inspiration": {
+        "lifestyleTravel": "Yaşam Tarzı Seyahati",
+        "title": "Kendi Yolunuzda Seyahat Edin",
+        "experiences": "{count} Deneyim"
+    },
+    "categories": {
+        "adventure": "Macera",
+        "relaxation": "Dinlenme",
+        "cityLife": "Şehir Hayatı",
+        "nature": "Doğa"
+    },
+    "newsletter": {
+        "title": "Hiçbir Fırsatı Kaçırmayın",
+        "subtitle": "Özel uçuş fırsatları ve otel indirimleri alın.",
+        "placeholder": "E-posta adresinizi girin",
+        "subscribeButton": "Abone Ol",
+        "tagline": "50.000+ akıllı gezgine katılın"
+    },
+    "stats": {
+        "globalDestinations": "Küresel Destinasyonlar",
+        "flightsFilteredDaily": "Günlük Filtrelenen Uçuşlar",
+        "secureBookings": "Güvenli Rezervasyonlar"
+    },
+    "footer": {
+        "about": "Hakkında",
+        "blog": "Blog",
+        "jobs": "Kariyer",
+        "press": "Basın",
+        "accessibility": "Erişilebilirlik",
+        "partners": "Ortaklar",
+        "rights": "© 2024 Flybeth, Inc. Tüm hakları saklıdır."
+    },
+    "settings": {
+        "language": "Dil",
+        "currency": "Para Birimi",
+        "applyChanges": "Değişiklikleri Uygula"
+    },
+    "flightCard": {
+        "perTraveler": "kişi başı",
+        "selectFlight": "Uçuş Seç",
+        "nonstop": "Aktarmasız",
+        "stops": "{n} aktarma",
+        "flight": "Uçuş"
+    },
+    "stayCard": {
+        "nightlyAvg": "Gece ort.",
+        "viewDeal": "Fırsatı Gör",
+        "unnamedProperty": "İsimsiz Tesis",
+        "includesTaxes": "Toplam ${total} vergiler dahil",
+        "off": "%{percent} İNDİRİM"
+    },
+    "carCard": {
+        "orSimilar": "veya benzer {category}",
+        "reviews": "{n} değerlendirme",
+        "passengers": "Yolcular",
+        "bags": "Bavul",
+        "freeCancellation": "Ücretsiz İptal",
+        "totalPrice": "Toplam Fiyat",
+        "viewDeal": "Fırsatı Gör"
+    },
+    "emptyState": {
+        "defaultTitle": "Henüz bir şey yok",
+        "defaultMessage": "Arama filtrelerinizi ayarlayın veya popüler önerilerimize göz atın."
+    },
+    "flightsPage": {
+        "fromWhere": "Nereden?",
+        "toWhere": "Nereye?",
+        "dates": "Tarihler",
+        "travelers": "Yolcular",
+        "travelerPlaceholder": "1 yolcu",
+        "flightsFound": "{n} uçuş bulundu",
+        "filterBy": "Filtrele",
+        "stops": "Aktarmalar",
+        "nonstop": "Aktarmasız",
+        "oneStop": "1 Aktarma",
+        "twoPlusStops": "2+ Aktarma",
+        "airlines": "Havayolları",
+        "noFlightsTitle": "Uçuş bulunamadı",
+        "noFlightsMessage": "Eşleşen uçuş bulunamadı. Farklı havaalanları veya tarihler deneyin.",
+        "explorePopular": "Popüler Rotaları Keşfet"
+    },
+    "staysPage": {
+        "whereTo": "Nereye?",
+        "checkIn": "Giriş",
+        "guests": "Misafirler",
+        "guestsPlaceholder": "2 yolcu",
+        "propertiesFound": "{n} tesis bulundu",
+        "filterBy": "Filtrele",
+        "pricePerNight": "Gece başı fiyat",
+        "lessThan100": "$100'den az",
+        "range100to200": "$100 - $200",
+        "range200to300": "$200 - $300",
+        "propertyType": "Tesis Türü",
+        "hotelType": "Otel",
+        "resortType": "Tatil Köyü",
+        "apartmentType": "Apart",
+        "noPropertiesTitle": "Tesis bulunamadı",
+        "noPropertiesMessage": "Eşleşen konaklama bulunamadı.",
+        "searchDubai": "Dubai Ara"
+    },
+    "carsPage": {
+        "pickUpLocation": "Alış noktası",
+        "pickUpDate": "Alış Tarihi",
+        "carsFound": "{n} araç bulundu",
+        "filterBy": "Filtrele",
+        "carType": "Araç Tipi",
+        "economy": "Ekonomi",
+        "suv": "SUV",
+        "luxury": "Lüks",
+        "transmission": "Vites",
+        "automatic": "Otomatik",
+        "manual": "Manuel",
+        "noCarsTitle": "Araç yok",
+        "noCarsMessage": "Bu konumda kiralık araç bulunamadı.",
+        "searchDubaiAirport": "Dubai Havaalanı Ara"
+    },
+    "checkout": {
+        "secureCheckout": "Güvenli Ödeme",
+        "travelerDetails": "Yolcu Bilgileri",
+        "firstName": "Ad",
+        "lastName": "Soyad",
+        "emailAddress": "E-posta",
+        "phoneNumber": "Telefon",
+        "paymentInfo": "Ödeme Bilgileri",
+        "cardholderName": "Kart Sahibi",
+        "cardNumber": "Kart Numarası",
+        "expirationDate": "Son Kullanma",
+        "cvv": "CVV",
+        "completeBooking": "Rezervasyonu Tamamla",
+        "processing": "İşleniyor...",
+        "termsAgreement": "Ödeme yaparak Şartları kabul edersiniz.",
+        "orderSummary": "Sipariş Özeti",
+        "basePrice": "Temel Fiyat",
+        "taxesFees": "Vergiler",
+        "total": "Toplam",
+        "freeCancellation": "24 saat içinde ücretsiz iptal!"
+    },
+    "confirmation": {
+        "bookingConfirmed": "Rezervasyon Onaylandı!",
+        "referenceText": "Rezervasyon referansınız:",
+        "emailSent": "Onay e-postası gönderdik.",
+        "backToHome": "Ana Sayfaya Dön"
+    },
+    "auth": {
+        "authentication": "Kimlik Doğrulama",
+        "welcomeBack": "Tekrar Hoş Geldiniz",
+        "noAccount": "Hesabınız yok mu?",
+        "registerHere": "Buradan kaydolun",
+        "emailAddress": "E-posta",
+        "password": "Şifre",
+        "forgotPassword": "Şifrenizi mi unuttunuz?",
+        "signingIn": "Giriş yapılıyor...",
+        "signIn": "Giriş Yap",
+        "orContinueWith": "Veya ile devam et",
+        "signInGoogle": "Google ile giriş yap",
+        "getStarted": "Başla",
+        "createAccount": "Hesap Oluştur",
+        "alreadyHaveAccount": "Zaten hesabınız var mı?",
+        "loginHere": "Buradan giriş yapın",
+        "firstNameLabel": "Ad",
+        "lastNameLabel": "Soyad",
+        "phoneNumberLabel": "Telefon",
+        "creatingAccount": "Hesap oluşturuluyor...",
+        "orJoinWith": "Veya ile katıl",
+        "signUpGoogle": "Google ile kaydol",
+        "accountRecovery": "Hesap Kurtarma",
+        "forgotPasswordTitle": "Şifremi Unuttum",
+        "rememberedPassword": "Şifrenizi hatırladınız mı?",
+        "sending": "Gönderiliyor...",
+        "sendResetLink": "Sıfırlama Bağlantısı Gönder"
+    },
+    "authLayout": {
+        "journeyStarts": "Yolculuğunuz Burada Başlıyor",
+        "discover": "Dünyanın en",
+        "worldsMost": "nefes kesici",
+        "breathtaking": "destinasyonlarını",
+        "layoutDestinations": "keşfedin.",
+        "socialProof": "50.000+ gezginle birlikte Flybeth'te özel fırsatlar bulun.",
+        "trustedWorldwide": "Dünya çapında güvenilir",
+        "averageRating": "4.9 ★ Ortalama Puan",
+        "travelIntelligence": "Seyahat Zekası"
+    },
+    "bookingConfirmed": "Rezervasyon Onaylandı!",
+    "common": {
+        "search": "Ara",
+        "cancel": "İptal",
+        "confirm": "Onayla",
+        "close": "Kapat",
+        "loading": "Yükleniyor...",
+        "error": "Hata",
+        "success": "Başarılı"
+    }
+}

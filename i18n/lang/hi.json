@@ -1,0 +1,341 @@
+{
+    "hero": {
+        "title1": "500 से अधिक एयरलाइनों पर सस्ती उड़ानें बुक करें!",
+        "title2": "500+ एयरलाइंस!",
+        "award": "Global Travel पुरस्कार विजेता",
+        "since": "2024 से"
+    },
+    "nav": {
+        "stays": "ठहरना",
+        "flights": "उड़ानें",
+        "cars": "कारें",
+        "packages": "पैकेज",
+        "cruises": "क्रूज़",
+        "signIn": "साइन इन",
+        "explorer": "एक्सप्लोरर",
+        "logout": {
+            "title": "इतनी जल्दी जा रहे हैं?",
+            "message": "आप अपने Flybeth खाते से लॉग आउट होने वाले हैं। बिना सहेजे परिवर्तन खो जाएंगे। ✈️",
+            "confirm": "लॉग आउट",
+            "cancel": "रुकें"
+        },
+        "exit": {
+            "title": "रुकिए, मत जाइए!",
+            "message": "आपका एक सक्रिय सत्र है। क्या आप Flybeth छोड़ना चाहते हैं?",
+            "confirm": "छोड़ें",
+            "cancel": "यहीं रहें"
+        }
+    },
+    "search": {
+        "tabs": {
+            "flights": "उड़ानें",
+            "holidays": "छुट्टियाँ",
+            "hotels": "होटल",
+            "cruises": "क्रूज़",
+            "cars": "कारें"
+        },
+        "labels": {
+            "from": "कहाँ से",
+            "to": "कहाँ तक",
+            "where": "आप कहाँ जा रहे हैं?",
+            "departure": "प्रस्थान तिथि",
+            "return": "वापसी तिथि",
+            "departure_return": "प्रस्थान — वापसी",
+            "departure_date": "प्रस्थान तिथि",
+            "passengers": "यात्री",
+            "cabin": "केबिन क्लास",
+            "letsgo": "चलें!",
+            "singleHotel": "एकल होटल",
+            "multiHotel": "मल्टी होटल",
+            "checkInCheckOut": "चेक-इन - चेक-आउट",
+            "travelersRooms": "यात्री और कमरे",
+            "bundleSave": "बंडल और बचत",
+            "addFlight": "उड़ान जोड़ें",
+            "addCar": "कार जोड़ें",
+            "addHotel": "होटल जोड़ें",
+            "directFlightsOnly": "केवल सीधी उड़ानें",
+            "rentalCars": "किराये की कारें",
+            "airportRides": "एयरपोर्ट राइड",
+            "pickUp": "पिक-अप",
+            "whereFrom": "कहाँ से?",
+            "whereTo": "कहाँ तक?",
+            "cityOrAirport": "शहर या हवाई अड्डा",
+            "addressOrHotel": "पता या होटल",
+            "dropOffLocation": "वापसी स्थान",
+            "rentalDates": "किराये की तिथियाँ",
+            "pickUpDate": "पिक-अप तिथि",
+            "pickUpTime": "पिक-अप समय",
+            "differentDropOff": "अलग वापसी स्थान",
+            "bundle": "बंडल",
+            "hotel": "होटल",
+            "flight": "उड़ान",
+            "whereFromQuestion": "कहाँ से?",
+            "whereToQuestion": "कहाँ तक?",
+            "stayDates": "ठहरने की तिथियाँ",
+            "travelDates": "यात्रा तिथियाँ",
+            "partialHotelStay": "आंशिक होटल ठहराव",
+            "differentCarDropOff": "अलग कार वापसी",
+            "saveBundleMsg": "बंडल करके $625 तक बचत करें!",
+            "rooms": "कमरे",
+            "adults": "वयस्क",
+            "children": "बच्चे",
+            "apply": "लागू करें",
+            "multiRoomNote": "मल्टी-रूम पैकेज कुल 8 यात्रियों तक सीमित हैं।",
+            "search": "खोजें",
+            "updateSearch": "खोज अपडेट करें"
+        },
+        "placeholders": {
+            "origin": "शहर या हवाई अड्डा",
+            "destination": "गंतव्य, शहर या होटल"
+        },
+        "packages": {
+            "hotel_flight": "होटल + उड़ान",
+            "hotel_flight_car": "होटल + उड़ान + कार",
+            "flight_car": "उड़ान + कार",
+            "hotel_car": "होटल + कार"
+        },
+        "cruises": {
+            "title": "शानदार समुद्री यात्रा",
+            "expertAdvice": "विशेषज्ञ सलाह: 1-866-403-9848",
+            "goingTo": "गंतव्य",
+            "destinationAny": "गंतव्य (सभी)",
+            "departingBetween": "प्रस्थान अवधि",
+            "selectMonth": "महीना चुनें",
+            "cruiseLine": "क्रूज़ लाइन",
+            "anyCruiseLine": "कोई भी लाइन",
+            "viewLuxurySuites": "लक्ज़री सुइट देखें",
+            "familyDeals": "पारिवारिक ऑफर"
+        },
+        "flightModes": {
+            "roundtrip": "आना-जाना",
+            "oneway": "एक तरफ",
+            "multicity": "मल्टी-सिटी"
+        }
+    },
+    "marketing": {
+        "helpTitle": "ऑफर खोजने में मदद चाहिए?",
+        "helpSub": "अभी बुक करें - 24/7 कॉल करें",
+        "benefits": {
+            "deals": "फोन-केवल ऑफर",
+            "assist": "व्यक्तिगत यात्रा सहायता",
+            "cancel": "24 घंटे रद्दीकरण",
+            "rewards": "2X ClubMiles पॉइंट"
+        },
+        "speakExperts": "हमारे विशेषज्ञ यात्रा सलाहकारों से बात करें"
+    },
+    "offers": {
+        "trending": "ट्रेंडिंग हॉलिडे ऑफर",
+        "smarter": "स्मार्ट किराये।",
+        "smarterSub": "आपके समय को महत्व देने वाली यात्रा।",
+        "majestic": "हर मील शानदार!",
+        "majesticSub": "एमिरेट्स के साथ उड़ें।",
+        "learn": "और जानें",
+        "book": "अभी बुक करें"
+    },
+    "promo": {
+        "matchday": "मैच डे को छुट्टी में बदलें — गर्मी की बचत पाएं।",
+        "findDeals": "ऑफर खोजें"
+    },
+    "destinations": {
+        "globalExploration": "वैश्विक अन्वेषण",
+        "mostLoved": "सबसे लोकप्रिय",
+        "destinations": "गंतव्य",
+        "description": "हमारे क्यूरेटर्स द्वारा चुनी गई उड़ानें, होटल और अनुभव बुक करें।",
+        "startingFrom": "{price} से शुरू",
+        "parisDesc": "रोशनी का शहर अपने प्रतिष्ठित स्थलों और विश्व स्तरीय व्यंजनों के साथ।",
+        "dubaiDesc": "लक्ज़री शॉपिंग और अत्याधुनिक वास्तुकला का अनुभव करें।",
+        "maldivesDesc": "उष्णकटिबंधीय स्वर्ग में स्वच्छ पानी और प्राचीन समुद्र तट।"
+    },
+    "inspiration": {
+        "lifestyleTravel": "लाइफस्टाइल ट्रैवल",
+        "title": "अपने तरीके से यात्रा करें",
+        "experiences": "{count} अनुभव"
+    },
+    "categories": {
+        "adventure": "साहसिक",
+        "relaxation": "विश्राम",
+        "cityLife": "शहरी जीवन",
+        "nature": "प्रकृति"
+    },
+    "newsletter": {
+        "title": "कोई ऑफर न चूकें",
+        "subtitle": "विशेष उड़ान ऑफर और होटल छूट प्राप्त करें।",
+        "placeholder": "अपना ईमेल दर्ज करें",
+        "subscribeButton": "सदस्यता लें",
+        "tagline": "50,000+ स्मार्ट यात्रियों से जुड़ें"
+    },
+    "stats": {
+        "globalDestinations": "वैश्विक गंतव्य",
+        "flightsFilteredDaily": "दैनिक फ़िल्टर उड़ानें",
+        "secureBookings": "सुरक्षित बुकिंग"
+    },
+    "footer": {
+        "about": "हमारे बारे में",
+        "blog": "ब्लॉग",
+        "jobs": "नौकरियाँ",
+        "press": "प्रेस",
+        "accessibility": "अभिगम्यता",
+        "partners": "साझेदार",
+        "rights": "© 2024 Flybeth, Inc. सर्वाधिकार सुरक्षित।"
+    },
+    "settings": {
+        "language": "भाषा",
+        "currency": "मुद्रा",
+        "applyChanges": "परिवर्तन लागू करें"
+    },
+    "flightCard": {
+        "perTraveler": "प्रति यात्री",
+        "selectFlight": "उड़ान चुनें",
+        "nonstop": "नॉनस्टॉप",
+        "stops": "{n} स्टॉप",
+        "flight": "उड़ान"
+    },
+    "stayCard": {
+        "nightlyAvg": "प्रति रात औसत",
+        "viewDeal": "ऑफर देखें",
+        "unnamedProperty": "अनाम संपत्ति",
+        "includesTaxes": "कुल ${total} कर सहित",
+        "off": "{percent}% छूट"
+    },
+    "carCard": {
+        "orSimilar": "या समान {category}",
+        "reviews": "{n} समीक्षाएँ",
+        "passengers": "यात्री",
+        "bags": "बैग",
+        "freeCancellation": "मुफ्त रद्दीकरण",
+        "totalPrice": "कुल कीमत",
+        "viewDeal": "ऑफर देखें"
+    },
+    "emptyState": {
+        "defaultTitle": "अभी कुछ नहीं है",
+        "defaultMessage": "अपने खोज फ़िल्टर समायोजित करें या हमारी लोकप्रिय सिफारिशें देखें।"
+    },
+    "flightsPage": {
+        "fromWhere": "कहाँ से?",
+        "toWhere": "कहाँ तक?",
+        "dates": "तिथियाँ",
+        "travelers": "यात्री",
+        "travelerPlaceholder": "1 यात्री",
+        "flightsFound": "{n} उड़ानें मिलीं",
+        "filterBy": "फ़िल्टर",
+        "stops": "स्टॉप",
+        "nonstop": "नॉनस्टॉप",
+        "oneStop": "1 स्टॉप",
+        "twoPlusStops": "2+ स्टॉप",
+        "airlines": "एयरलाइंस",
+        "noFlightsTitle": "कोई उड़ान नहीं मिली",
+        "noFlightsMessage": "मेल खाने वाली उड़ानें नहीं मिलीं। अलग हवाई अड्डे या तिथियाँ आज़माएं।",
+        "explorePopular": "लोकप्रिय रूट देखें"
+    },
+    "staysPage": {
+        "whereTo": "कहाँ?",
+        "checkIn": "चेक-इन",
+        "guests": "मेहमान",
+        "guestsPlaceholder": "2 यात्री",
+        "propertiesFound": "{n} प्रॉपर्टी मिलीं",
+        "filterBy": "फ़िल्टर",
+        "pricePerNight": "प्रति रात मूल्य",
+        "lessThan100": "$100 से कम",
+        "range100to200": "$100 - $200",
+        "range200to300": "$200 - $300",
+        "propertyType": "प्रॉपर्टी प्रकार",
+        "hotelType": "होटल",
+        "resortType": "रिसॉर्ट",
+        "apartmentType": "अपार्टमेंट",
+        "noPropertiesTitle": "कोई प्रॉपर्टी नहीं मिली",
+        "noPropertiesMessage": "मेल खाने वाली प्रॉपर्टी नहीं मिली।",
+        "searchDubai": "दुबई खोजें"
+    },
+    "carsPage": {
+        "pickUpLocation": "पिक-अप स्थान",
+        "pickUpDate": "पिक-अप तिथि",
+        "carsFound": "{n} कारें मिलीं",
+        "filterBy": "फ़िल्टर",
+        "carType": "कार प्रकार",
+        "economy": "इकोनॉमी",
+        "suv": "SUV",
+        "luxury": "लक्ज़री",
+        "transmission": "ट्रांसमिशन",
+        "automatic": "ऑटोमैटिक",
+        "manual": "मैनुअल",
+        "noCarsTitle": "कोई कार उपलब्ध नहीं",
+        "noCarsMessage": "इस स्थान पर किराये की कार नहीं मिली।",
+        "searchDubaiAirport": "दुबई हवाई अड्डा खोजें"
+    },
+    "checkout": {
+        "secureCheckout": "सुरक्षित चेकआउट",
+        "travelerDetails": "यात्री विवरण",
+        "firstName": "पहला नाम",
+        "lastName": "उपनाम",
+        "emailAddress": "ईमेल",
+        "phoneNumber": "फोन नंबर",
+        "paymentInfo": "भुगतान जानकारी",
+        "cardholderName": "कार्डधारक का नाम",
+        "cardNumber": "कार्ड नंबर",
+        "expirationDate": "समाप्ति तिथि",
+        "cvv": "CVV",
+        "completeBooking": "बुकिंग पूरी करें",
+        "processing": "प्रक्रिया हो रही है...",
+        "termsAgreement": "भुगतान करके आप हमारे नियम और शर्तें स्वीकार करते हैं।",
+        "orderSummary": "ऑर्डर सारांश",
+        "basePrice": "बेस मूल्य",
+        "taxesFees": "कर और शुल्क",
+        "total": "कुल",
+        "freeCancellation": "24 घंटे के भीतर मुफ्त रद्दीकरण!"
+    },
+    "confirmation": {
+        "bookingConfirmed": "बुकिंग पुष्टि!",
+        "referenceText": "आपका बुकिंग संदर्भ है",
+        "emailSent": "हमने पुष्टि ईमेल भेजा है।",
+        "backToHome": "होम पर वापस"
+    },
+    "auth": {
+        "authentication": "प्रमाणीकरण",
+        "welcomeBack": "वापस स्वागत है",
+        "noAccount": "खाता नहीं है?",
+        "registerHere": "यहाँ रजिस्टर करें",
+        "emailAddress": "ईमेल",
+        "password": "पासवर्ड",
+        "forgotPassword": "पासवर्ड भूल गए?",
+        "signingIn": "साइन इन हो रहा है...",
+        "signIn": "साइन इन",
+        "orContinueWith": "या इसके साथ जारी रखें",
+        "signInGoogle": "Google से साइन इन",
+        "getStarted": "शुरू करें",
+        "createAccount": "खाता बनाएं",
+        "alreadyHaveAccount": "पहले से खाता है?",
+        "loginHere": "यहाँ लॉगिन करें",
+        "firstNameLabel": "पहला नाम",
+        "lastNameLabel": "उपनाम",
+        "phoneNumberLabel": "फोन नंबर",
+        "creatingAccount": "खाता बन रहा है...",
+        "orJoinWith": "या इसके साथ जुड़ें",
+        "signUpGoogle": "Google से साइन अप",
+        "accountRecovery": "खाता पुनर्प्राप्ति",
+        "forgotPasswordTitle": "पासवर्ड भूल गए",
+        "rememberedPassword": "पासवर्ड याद आ गया?",
+        "sending": "भेजा जा रहा है...",
+        "sendResetLink": "रीसेट लिंक भेजें"
+    },
+    "authLayout": {
+        "journeyStarts": "आपकी यात्रा यहाँ शुरू होती है",
+        "discover": "दुनिया के सबसे",
+        "worldsMost": "अद्भुत",
+        "breathtaking": "गंतव्यों",
+        "layoutDestinations": "की खोज करें।",
+        "socialProof": "50,000+ यात्रियों से जुड़ें जो Flybeth पर विशेष ऑफर पाते हैं।",
+        "trustedWorldwide": "विश्वव्यापी विश्वसनीय",
+        "averageRating": "4.9 ★ औसत रेटिंग",
+        "travelIntelligence": "ट्रैवल इंटेलिजेंस"
+    },
+    "bookingConfirmed": "बुकिंग पुष्टि!",
+    "common": {
+        "search": "खोजें",
+        "cancel": "रद्द करें",
+        "confirm": "पुष्टि करें",
+        "close": "बंद करें",
+        "loading": "लोड हो रहा है...",
+        "error": "त्रुटि",
+        "success": "सफलता"
+    }
+}

@@ -4,10 +4,18 @@
     <main class="flex-grow pt-20">
       <slot />
     </main>
+    <SettingsSwitcher 
+      v-model:show="showSettings" 
+      @close="showSettings = false"
+    />
     <VoiceAssistant />
+    <AuthModal />
   </div>
 </template>
 
 <script setup lang="ts">
-// Components will be auto-imported
+const showSettings = ref(false)
+
+// Provide showSettings to children so NavBar can toggle it
+provide('showSettings', showSettings)
 </script>

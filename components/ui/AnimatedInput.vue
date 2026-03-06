@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-2 relative">
+  <div class="mb-2 relative" v-bind="$attrs">
     <div class="relative input-container">
       <label 
         :for="inputId"
@@ -236,7 +236,7 @@
                   type="text" 
                   v-model="selectedHour" 
                   @blur="valHour" 
-                  @focus="$event.target.select()" 
+                  @focus="handleFocusSelect" 
                   @click.stop 
                   maxlength="2"
                   class="w-20 text-center text-4xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-2xl py-4 focus:outline-none focus:ring-4 focus:ring-[#033958]/20 transition-all bg-gray-50"
@@ -260,7 +260,7 @@
                   type="text" 
                   v-model="selectedMinute" 
                   @blur="valMin" 
-                  @focus="$event.target.select()" 
+                  @focus="handleFocusSelect" 
                   @click.stop 
                   maxlength="2"
                   class="w-20 text-center text-4xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-2xl py-4 focus:outline-none focus:ring-4 focus:ring-[#033958]/20 transition-all bg-gray-50"
@@ -419,7 +419,7 @@
                     type="text" 
                     v-model="selectedHour" 
                     @blur="valHour" 
-                    @focus="$event.target.select()" 
+                    @focus="handleFocusSelect" 
                     @click.stop 
                     maxlength="2"
                     class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-gray-50"
@@ -441,7 +441,7 @@
                     type="text" 
                     v-model="selectedMinute" 
                     @blur="valMin" 
-                    @focus="$event.target.select()" 
+                    @focus="handleFocusSelect" 
                     @click.stop 
                     maxlength="2"
                     class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-gray-50"
@@ -507,6 +507,11 @@
 <script setup lang="ts">
 import { ref, computed, useId, watch } from 'vue'
 
+defineOptions({
+  inheritAttrs: false
+})
+
+
 interface Props {
   modelValue?: string | number
   label: string
@@ -537,7 +542,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
+  'update:modelValue': [value: string | number]
+  'input': [event: Event]
   'focus': [event: FocusEvent]
   'blur': [event: FocusEvent]
 }>()
@@ -549,6 +555,9 @@ const showTimePicker = ref(false)
 const showDateTimePicker = ref(false)
 const inputId = useId()
 const inputRef = ref<HTMLInputElement | null>(null)
+const handleFocusSelect = (e: FocusEvent) => {
+  (e.target as HTMLInputElement)?.select()
+}
 
 const currentMonth = ref(new Date().getMonth())
 const currentYear = ref(new Date().getFullYear())
@@ -580,10 +589,10 @@ const displayValue = computed(() => {
 
 const roundedClasses = computed(() => {
   switch (props.position) {
-    case 'top': return 'rounded-t-xl rounded-b-sm'
+    case 'top': return 'rounded-t-2xl rounded-b-sm'
     case 'middle': return 'rounded-sm'
-    case 'bottom': return 'rounded-b-xl rounded-t-sm'
-    default: return 'rounded-xl'
+    case 'bottom': return 'rounded-b-2xl rounded-t-sm'
+    default: return 'rounded-2xl'
   }
 })
 
@@ -677,11 +686,14 @@ function getDTDayClass(day: CalendarDay) {
 }
 
 const handleInput = (e: Event) => {
-  emit('update:modelValue', (e.target as HTMLInputElement).value)
+  const value = (e.target as HTMLInputElement).value
+  emit('update:modelValue', value)
+  emit('input', e)
 }
 
 const handleFocus = (e: FocusEvent) => {
   isFocused.value = true
+  handleFocusSelect(e)
   emit('focus', e)
 }
 
@@ -863,9 +875,9 @@ const parseDTString = (dtStr: string) => {
     if (match && !isNaN(date.getTime())) {
       return {
         date,
-        hour: match[1].padStart(2, '0'),
-        minute: match[2],
-        period: match[3].toUpperCase() as 'AM' | 'PM'
+        hour: match[1]!.padStart(2, '0'),
+        minute: match[2]!,
+        period: match[3]!.toUpperCase() as 'AM' | 'PM'
       }
     }
   }
@@ -878,9 +890,9 @@ watch(() => props.modelValue, (val) => {
   } else if (props.type === 'time' && val) {
     const match = (val as string).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i)
     if (match) {
-      selectedHour.value = match[1].padStart(2, '0')
-      selectedMinute.value = match[2]
-      selectedPeriod.value = match[3].toUpperCase() as 'AM' | 'PM'
+      selectedHour.value = match[1]!.padStart(2, '0')
+      selectedMinute.value = match[2]!
+      selectedPeriod.value = match[3]!.toUpperCase() as 'AM' | 'PM'
     }
   } else if (props.type === 'datetime-local' && val) {
     const parsed = parseDTString(val as string)

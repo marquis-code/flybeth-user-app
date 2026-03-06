@@ -26,12 +26,22 @@
               'px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300'
             ]"
           >
-            {{ link.name }}
+            {{ $t(link.name) }}
           </NuxtLink>
         </div>
 
         <!-- User Actions -->
         <div class="flex items-center space-x-6">
+          <!-- Language & Currency Switcher (Wakanow Style) -->
+          <button 
+            @click="showSettings = true"
+            class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-100 hover:border-brand-blue/30 hover:bg-brand-blue/5 transition-all group"
+          >
+            <img :src="getFlag(locale)" class="h-3 w-5 object-cover rounded shadow-sm" />
+            <span class="text-[10px] font-black uppercase tracking-widest text-brand-blue">{{ locale }} | {{ currentCurrency.code }}</span>
+            <ChevronDownIcon class="h-3 w-3 text-brand-gray group-hover:text-brand-blue transition-colors" />
+          </button>
+
           <button 
             type="button" 
             :class="[isScrolled ? 'text-brand-blue' : 'text-brand-blue/70', 'p-2 rounded-full hover:bg-brand-blue/5 transition-colors relative']"
@@ -53,13 +63,13 @@
              </div>
           </template>
           <template v-else>
-            <NuxtLink 
-              to="/auth/login" 
+            <button 
+              @click="openAuthModal" 
               class="relative bg-brand-green px-8 py-3 rounded-full text-brand-blue text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-brand-green/20 overflow-hidden group"
             >
                <span class="relative z-10 transition-colors group-hover:text-white">Sign In</span>
                <div class="absolute inset-0 bg-brand-blue translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            </NuxtLink>
+            </button>
           </template>
         </div>
       </div>
@@ -91,23 +101,48 @@
 </template>
 
 <script setup lang="ts">
-import { useUser } from '@/composables/modules/auth/user';
-import { BellIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline'
+import { ref, inject, type Ref } from 'vue'
+import { useAuth } from '@/composables/modules/auth/useAuth';
+import { BellIcon, ArrowRightOnRectangleIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { useSettings } from '@/composables/useSettings'
+import { useI18n } from 'vue-i18n'
 
-const { token, user, logOut } = useUser();
+const { token, user, logout, openAuthModal } = useAuth();
+const { locale } = useI18n();
+const { currentCurrency } = useSettings();
+const showSettings = inject('showSettings') as Ref<boolean>;
+
 const route = useRoute();
 const router = useRouter();
 const isScrolled = ref(false);
 const showLogoutModal = ref(false);
 const showExitModal = ref(false);
+
+const getFlag = (code: string) => {
+  const flags: Record<string, string> = {
+    'en': 'https://flagcdn.com/us.svg',
+    'es': 'https://flagcdn.com/es.svg',
+    'fr': 'https://flagcdn.com/fr.svg',
+    'de': 'https://flagcdn.com/de.svg',
+    'ar': 'https://flagcdn.com/sa.svg',
+    'zh': 'https://flagcdn.com/cn.svg',
+    'ja': 'https://flagcdn.com/jp.svg',
+    'pt': 'https://flagcdn.com/br.svg',
+    'it': 'https://flagcdn.com/it.svg',
+    'ko': 'https://flagcdn.com/kr.svg',
+    'tr': 'https://flagcdn.com/tr.svg',
+    'hi': 'https://flagcdn.com/in.svg'
+  }
+  return flags[code] || flags['en']
+}
 let pendingExitEvent: BeforeUnloadEvent | null = null;
 
 const navLinks = [
-  { name: 'Stays', path: '/stays' },
-  { name: 'Flights', path: '/flights' },
-  { name: 'Cars', path: '/cars' },
-  { name: 'Packages', path: '/packages' },
-  { name: 'Cruises', path: '/cruises' },
+  { name: 'nav.stays', path: '/stays' },
+  { name: 'nav.flights', path: '/flights' },
+  { name: 'nav.cars', path: '/cars' },
+  { name: 'nav.packages', path: '/packages' },
+  { name: 'nav.cruises', path: '/cruises' },
 ]
 
 const handleScroll = () => {
@@ -115,7 +150,7 @@ const handleScroll = () => {
 }
 
 const handleLogout = () => {
-  logOut();
+  logout();
   showLogoutModal.value = false;
   router.push('/');
 }

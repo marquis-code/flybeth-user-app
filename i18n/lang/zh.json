@@ -1,0 +1,341 @@
+{
+    "hero": {
+        "title1": "预订超过",
+        "title2": "500家航空公司的廉价机票！",
+        "award": "荣获Global Travel大奖",
+        "since": "始于2024"
+    },
+    "nav": {
+        "stays": "住宿",
+        "flights": "航班",
+        "cars": "租车",
+        "packages": "套餐",
+        "cruises": "邮轮",
+        "signIn": "登录",
+        "explorer": "探索者",
+        "logout": {
+            "title": "这么快就走？",
+            "message": "您即将退出Flybeth账户。未保存的更改将丢失。我们会在您回来时等着您！✈️",
+            "confirm": "退出登录",
+            "cancel": "留下"
+        },
+        "exit": {
+            "title": "等等，别走！",
+            "message": "您有一个活跃的会话。确定要离开Flybeth吗？",
+            "confirm": "离开",
+            "cancel": "留在这里"
+        }
+    },
+    "search": {
+        "tabs": {
+            "flights": "航班",
+            "holidays": "度假",
+            "hotels": "酒店",
+            "cruises": "邮轮",
+            "cars": "租车"
+        },
+        "labels": {
+            "from": "出发地",
+            "to": "目的地",
+            "where": "您要去哪里？",
+            "departure": "出发日期",
+            "return": "返回日期",
+            "departure_return": "出发 — 返回",
+            "departure_date": "出发日期",
+            "passengers": "乘客",
+            "cabin": "舱位等级",
+            "letsgo": "出发！",
+            "singleHotel": "单一酒店",
+            "multiHotel": "多家酒店",
+            "checkInCheckOut": "入住 - 退房",
+            "travelersRooms": "旅客和房间",
+            "bundleSave": "组合优惠",
+            "addFlight": "添加航班",
+            "addCar": "添加租车",
+            "addHotel": "添加酒店",
+            "directFlightsOnly": "仅直飞航班",
+            "rentalCars": "租赁车辆",
+            "airportRides": "机场接送",
+            "pickUp": "取车",
+            "whereFrom": "从哪里？",
+            "whereTo": "到哪里？",
+            "cityOrAirport": "城市或机场",
+            "addressOrHotel": "地址或酒店",
+            "dropOffLocation": "还车地点",
+            "rentalDates": "租赁日期",
+            "pickUpDate": "取车日期",
+            "pickUpTime": "取车时间",
+            "differentDropOff": "不同的还车地点",
+            "bundle": "套餐",
+            "hotel": "酒店",
+            "flight": "航班",
+            "whereFromQuestion": "从哪里？",
+            "whereToQuestion": "到哪里？",
+            "stayDates": "住宿日期",
+            "travelDates": "旅行日期",
+            "partialHotelStay": "部分酒店住宿",
+            "differentCarDropOff": "不同的还车点",
+            "saveBundleMsg": "组合预订最多可节省625美元！",
+            "rooms": "房间",
+            "adults": "成人",
+            "children": "儿童",
+            "apply": "应用",
+            "multiRoomNote": "多房间套餐限制为8位旅客。",
+            "search": "搜索",
+            "updateSearch": "更新搜索"
+        },
+        "placeholders": {
+            "origin": "城市或机场",
+            "destination": "目的地、城市或酒店"
+        },
+        "packages": {
+            "hotel_flight": "酒店 + 航班",
+            "hotel_flight_car": "酒店 + 航班 + 租车",
+            "flight_car": "航班 + 租车",
+            "hotel_car": "酒店 + 租车"
+        },
+        "cruises": {
+            "title": "奢华启航。",
+            "expertAdvice": "专家咨询：1-866-403-9848",
+            "goingTo": "目的地",
+            "destinationAny": "目的地（所有）",
+            "departingBetween": "出发时间",
+            "selectMonth": "选择月份",
+            "cruiseLine": "邮轮公司",
+            "anyCruiseLine": "所有邮轮",
+            "viewLuxurySuites": "查看豪华套房",
+            "familyDeals": "家庭优惠"
+        },
+        "flightModes": {
+            "roundtrip": "往返",
+            "oneway": "单程",
+            "multicity": "多城市"
+        }
+    },
+    "marketing": {
+        "helpTitle": "需要帮助寻找优惠？",
+        "helpSub": "立即预订 - 24/7全天候服务",
+        "benefits": {
+            "deals": "电话专属优惠",
+            "assist": "个性化旅行协助",
+            "cancel": "24小时取消",
+            "rewards": "双倍ClubMiles积分"
+        },
+        "speakExperts": "与我们的旅行专家交谈"
+    },
+    "offers": {
+        "trending": "热门度假优惠",
+        "smarter": "更智能的票价。更柔和的着陆。",
+        "smarterSub": "更珍惜您时间的旅行。",
+        "majestic": "每一英里都感觉壮丽！",
+        "majesticSub": "飞阿联酋航空。优雅在运动中。",
+        "learn": "了解更多",
+        "book": "立即预订"
+    },
+    "promo": {
+        "matchday": "把比赛日变成度假——享受夏日优惠。",
+        "findDeals": "查找优惠"
+    },
+    "destinations": {
+        "globalExploration": "全球探索",
+        "mostLoved": "最受欢迎的",
+        "destinations": "目的地",
+        "description": "预订由我们的策展人精心挑选的航班、酒店和体验，享受最难忘的旅程。",
+        "startingFrom": "起价 {price}",
+        "parisDesc": "光之城等待着您，拥有标志性地标和世界级美食。",
+        "dubaiDesc": "体验奢华购物、超现代建筑和充满活力的夜生活。",
+        "maldivesDesc": "热带天堂中清澈的海水和原始海滩。"
+    },
+    "inspiration": {
+        "lifestyleTravel": "生活方式旅行",
+        "title": "按您的方式旅行",
+        "experiences": "{count} 种体验"
+    },
+    "categories": {
+        "adventure": "冒险",
+        "relaxation": "放松",
+        "cityLife": "城市生活",
+        "nature": "自然"
+    },
+    "newsletter": {
+        "title": "不错过任何优惠",
+        "subtitle": "订阅获取独家航班优惠、酒店折扣和旅行灵感。",
+        "placeholder": "输入您的邮箱地址",
+        "subscribeButton": "订阅",
+        "tagline": "加入50,000+聪明旅行者"
+    },
+    "stats": {
+        "globalDestinations": "全球目的地",
+        "flightsFilteredDaily": "每日筛选航班",
+        "secureBookings": "安全预订"
+    },
+    "footer": {
+        "about": "关于我们",
+        "blog": "博客",
+        "jobs": "招聘",
+        "press": "新闻",
+        "accessibility": "无障碍",
+        "partners": "合作伙伴",
+        "rights": "© 2024 Flybeth, Inc. 保留所有权利。"
+    },
+    "settings": {
+        "language": "语言",
+        "currency": "货币",
+        "applyChanges": "应用更改"
+    },
+    "flightCard": {
+        "perTraveler": "每位旅客",
+        "selectFlight": "选择航班",
+        "nonstop": "直飞",
+        "stops": "{n} 次中转",
+        "flight": "航班"
+    },
+    "stayCard": {
+        "nightlyAvg": "每晚均价",
+        "viewDeal": "查看优惠",
+        "unnamedProperty": "未命名住宿",
+        "includesTaxes": "总计 ${total} 含税费",
+        "off": "优惠 {percent}%"
+    },
+    "carCard": {
+        "orSimilar": "或类似 {category}",
+        "reviews": "{n} 条评论",
+        "passengers": "乘客",
+        "bags": "行李",
+        "freeCancellation": "免费取消",
+        "totalPrice": "总价",
+        "viewDeal": "查看优惠"
+    },
+    "emptyState": {
+        "defaultTitle": "这里还没有内容",
+        "defaultMessage": "尝试调整搜索筛选条件或浏览我们的热门推荐。"
+    },
+    "flightsPage": {
+        "fromWhere": "从哪里？",
+        "toWhere": "到哪里？",
+        "dates": "日期",
+        "travelers": "旅客",
+        "travelerPlaceholder": "1位旅客",
+        "flightsFound": "找到 {n} 个航班",
+        "filterBy": "筛选",
+        "stops": "中转",
+        "nonstop": "直飞",
+        "oneStop": "1次中转",
+        "twoPlusStops": "2+次中转",
+        "airlines": "航空公司",
+        "noFlightsTitle": "未找到航班",
+        "noFlightsMessage": "未找到匹配的航班。请尝试不同的机场或日期。",
+        "explorePopular": "探索热门航线"
+    },
+    "staysPage": {
+        "whereTo": "到哪里？",
+        "checkIn": "入住",
+        "guests": "客人",
+        "guestsPlaceholder": "2位旅客",
+        "propertiesFound": "找到 {n} 处住宿",
+        "filterBy": "筛选",
+        "pricePerNight": "每晚价格",
+        "lessThan100": "低于$100",
+        "range100to200": "$100 - $200",
+        "range200to300": "$200 - $300",
+        "propertyType": "住宿类型",
+        "hotelType": "酒店",
+        "resortType": "度假村",
+        "apartmentType": "公寓",
+        "noPropertiesTitle": "未找到住宿",
+        "noPropertiesMessage": "未找到匹配的住宿。请尝试不同的地点或日期。",
+        "searchDubai": "搜索迪拜"
+    },
+    "carsPage": {
+        "pickUpLocation": "取车地点",
+        "pickUpDate": "取车日期",
+        "carsFound": "找到 {n} 辆车",
+        "filterBy": "筛选",
+        "carType": "车型",
+        "economy": "经济型",
+        "suv": "SUV",
+        "luxury": "豪华型",
+        "transmission": "变速箱",
+        "automatic": "自动",
+        "manual": "手动",
+        "noCarsTitle": "无可用车辆",
+        "noCarsMessage": "在此地点未找到租车。请尝试其他取车点。",
+        "searchDubaiAirport": "搜索迪拜机场"
+    },
+    "checkout": {
+        "secureCheckout": "安全结账",
+        "travelerDetails": "旅客信息",
+        "firstName": "名",
+        "lastName": "姓",
+        "emailAddress": "邮箱地址",
+        "phoneNumber": "电话号码",
+        "paymentInfo": "支付信息",
+        "cardholderName": "持卡人姓名",
+        "cardNumber": "卡号",
+        "expirationDate": "有效期",
+        "cvv": "CVV",
+        "completeBooking": "完成预订",
+        "processing": "处理中...",
+        "termsAgreement": "结账即表示您同意我们的条款和条件。",
+        "orderSummary": "订单摘要",
+        "basePrice": "基础价格",
+        "taxesFees": "税费",
+        "total": "总计",
+        "freeCancellation": "24小时内免费取消！"
+    },
+    "confirmation": {
+        "bookingConfirmed": "预订已确认！",
+        "referenceText": "您的预订参考号为",
+        "emailSent": "我们已发送确认邮件至您的邮箱。",
+        "backToHome": "返回首页"
+    },
+    "auth": {
+        "authentication": "身份验证",
+        "welcomeBack": "欢迎回来",
+        "noAccount": "还没有账户？",
+        "registerHere": "在此注册",
+        "emailAddress": "邮箱地址",
+        "password": "密码",
+        "forgotPassword": "忘记密码？",
+        "signingIn": "登录中...",
+        "signIn": "登录",
+        "orContinueWith": "或通过以下方式继续",
+        "signInGoogle": "使用Google登录",
+        "getStarted": "开始使用",
+        "createAccount": "创建账户",
+        "alreadyHaveAccount": "已有账户？",
+        "loginHere": "在此登录",
+        "firstNameLabel": "名",
+        "lastNameLabel": "姓",
+        "phoneNumberLabel": "电话号码",
+        "creatingAccount": "创建账户中...",
+        "orJoinWith": "或通过以下方式加入",
+        "signUpGoogle": "使用Google注册",
+        "accountRecovery": "账户恢复",
+        "forgotPasswordTitle": "忘记密码",
+        "rememberedPassword": "想起密码了？",
+        "sending": "发送中...",
+        "sendResetLink": "发送重置链接"
+    },
+    "authLayout": {
+        "journeyStarts": "您的旅程从这里开始",
+        "discover": "发现世界上",
+        "worldsMost": "最令人",
+        "breathtaking": "叹为观止的",
+        "layoutDestinations": "目的地。",
+        "socialProof": "加入50,000+旅行者，通过Flybeth发现独家优惠和隐藏宝石。",
+        "trustedWorldwide": "全球信赖",
+        "averageRating": "4.9 ★ 平均评分",
+        "travelIntelligence": "旅行智能"
+    },
+    "bookingConfirmed": "预订已确认！",
+    "common": {
+        "search": "搜索",
+        "cancel": "取消",
+        "confirm": "确认",
+        "close": "关闭",
+        "loading": "加载中...",
+        "error": "错误",
+        "success": "成功"
+    }
+}

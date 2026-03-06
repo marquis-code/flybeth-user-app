@@ -16,7 +16,7 @@
       <div>
         <div class="flex justify-between items-start">
           <div>
-            <h3 class="text-lg font-bold text-gray-900">{{ stay.name || 'Unnamed Property' }}</h3>
+            <h3 class="text-lg font-bold text-gray-900">{{ stay.name || $t('stayCard.unnamedProperty') }}</h3>
             <p class="text-sm text-gray-500 location-text">{{ stay.location || stay.address || '' }}</p>
           </div>
           <div v-if="stay.price?.discount" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
@@ -37,12 +37,12 @@
 
       <div class="mt-4 flex items-end justify-between">
         <div>
-          <p class="text-xs text-gray-500">Nightly avg.</p>
+          <p class="text-xs text-gray-500">{{ $t('stayCard.nightlyAvg') }}</p>
           <p class="text-xl font-bold text-gray-900">${{ stay.price?.amount || stay.price?.total || stay.pricing?.baseRate || '—' }}</p>
-          <p v-if="stay.price?.total" class="text-xs text-gray-500">Total ${{ stay.price.total }} includes taxes & fees</p>
+          <p v-if="stay.price?.total" class="text-xs text-gray-500">{{ $t('stayCard.includesTaxes', { total: stay.price.total }) }}</p>
         </div>
         <UiBaseButton size="sm" @click="$emit('select', stay)">
-          View Deal
+          {{ $t('stayCard.viewDeal') }}
         </UiBaseButton>
       </div>
     </div>

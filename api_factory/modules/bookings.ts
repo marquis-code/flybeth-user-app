@@ -18,5 +18,8 @@ export const bookingsApi = {
     },
     getStats(tenantId?: string) {
         return GATEWAY_ENDPOINT_WITH_AUTH.get("/bookings/stats", { params: { tenantId } });
+    },
+    emailCapture(data: { email: string; firstName: string; destination: string; checkoutUrl: string; tenantId?: string }) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/bookings/email-capture", data);
     }
 };

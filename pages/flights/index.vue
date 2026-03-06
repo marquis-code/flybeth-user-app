@@ -7,12 +7,10 @@
             <LocationPicker v-model="searchQuery.origin" placeholder="From where?" id="flights-origin" class="text-sm" />
             <LocationPicker v-model="searchQuery.destination" placeholder="To where?" id="flights-dest" class="text-sm" />
             <div class="space-y-2">
-              <label class="text-[11px] uppercase tracking-[0.15em] text-brand-gray font-black px-1 opacity-70 font-header block">Dates</label>
-              <UiBaseInput v-model="searchQuery.departureDate" type="date" placeholder="Dates" class="text-sm !py-5 !rounded-[1.5rem]" />
+              <UiAnimatedInput v-model="searchQuery.departureDate" type="date" label="Departure Date" placeholder="Select Date" class="!py-0" />
             </div>
             <div class="space-y-2">
-              <label class="text-[11px] uppercase tracking-[0.15em] text-brand-gray font-black px-1 opacity-70 font-header block">Travelers</label>
-              <UiBaseInput v-model="searchQuery.passengers" type="number" placeholder="1 traveler" class="text-sm !py-5 !rounded-[1.5rem]" />
+              <UiAnimatedInput v-model="searchQuery.passengers" type="number" label="Travelers" placeholder="1 traveler" class="!py-0" />
             </div>
         </div>
         <UiBaseButton variant="primary" size="lg" :loading="loading" @click="handleSearch" class="px-10 mb-1">Search</UiBaseButton>
@@ -20,11 +18,59 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Airline vs Stops Matrix -->
+      <div v-if="displayedFlights.length && airlineMeta.length" class="mb-10 bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-50/50">
+                <th class="p-6 border-b border-gray-100 min-w-[140px]"></th>
+                <th v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-100 min-w-[160px] text-center">
+                  <div class="flex flex-col items-center gap-2">
+                    <img v-if="airline.logo" :src="airline.logo" :alt="airline.name" class="h-8 w-8 object-contain" />
+                    <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest">{{ airline.name }}</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="stopLabel in ['Non stop', '1 Stop', '1+ Stops']" :key="stopLabel">
+                <td class="p-6 border-b border-gray-50 font-black text-brand-blue uppercase tracking-widest text-[10px] bg-gray-50/20">
+                  {{ stopLabel }}
+                </td>
+                <td v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-50 text-center group cursor-pointer hover:bg-brand-blue/5 transition-colors" @click="filterByMatrix(airline.name, stopLabel)">
+                  <span v-if="getMatrixPriceFor(airline.name, stopLabel)" class="text-sm font-black text-brand-gray/60 group-hover:text-brand-blue transition-colors">
+                    ${{ getMatrixPriceFor(airline.name, stopLabel) }}
+                  </span>
+                  <span v-else class="text-gray-200">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Best Fares Matrix (Quick view) -->
+      <div v-if="displayedFlights.length" class="mb-10 overflow-x-auto pb-4">
+        <div class="flex gap-4 min-w-max">
+          <div v-for="type in ['Cheapest', 'Fastest', 'Recommended']" :key="type" 
+            class="flex-1 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 min-w-[240px]">
+            <p class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest mb-1">{{ type }} Fare</p>
+            <div class="flex items-end justify-between">
+              <span class="text-2xl font-black text-brand-blue">${{ getMatrixPrice(type) }}</span>
+              <div :class="getMatrixColor(type)" class="w-8 h-8 rounded-full flex items-center justify-center">
+                 <component :is="getMatrixIcon(type)" class="w-4 h-4 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Filters Sidebar -->
         <div class="hidden lg:block lg:col-span-1 space-y-6">
-          <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-            <h3 class="font-bold text-gray-900 mb-4">Filter by</h3>
+          <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-32 lg:h-[calc(100vh-10rem)] overflow-y-auto custom-scrollbar">
+            <h3 class="font-black text-brand-blue uppercase tracking-widest text-xs mb-8">Filter Results</h3>
             
             <!-- Stops -->
             <div class="mb-6">
@@ -83,12 +129,17 @@
              @action="searchQuery.origin = 'LHR'; searchQuery.destination = 'DXB'; handleSearch();"
            />
 
-           <FlightCard 
-             v-for="flight in displayedFlights" 
-             :key="flight._id || flight.id" 
-             :flight="flight"
-             @select="selectFlight" 
-           />
+           <div v-if="Object.keys(groupedFlights).length" class="space-y-6">
+             <FlightGroup 
+               v-for="(group, airlineName) in groupedFlights" 
+               :key="airlineName"
+               :id="`group-${airlineName}`"
+               :airlineName="String(airlineName)"
+               :airlineLogo="group[0].airlineLogo"
+               :flights="group"
+               @select="selectFlight"
+             />
+           </div>
         </div>
       </div>
     </div>
@@ -96,17 +147,85 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useSearchFlights } from '@/composables/modules/flights/useSearchFlights';
 import { useFetchPopularFlights } from '@/composables/modules/flights/useFetchPopularFlights';
+import { BanknotesIcon, BoltIcon, StarIcon } from '@heroicons/vue/24/solid';
+import FlightGroup from '@/components/FlightGroup.vue';
 
 const { loading, flights, searchFlights } = useSearchFlights();
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights();
 
 const displayedFlights = computed(() => {
   const source = flights.value?.length ? flights.value : (popularFlights.value || []);
+  if (!Array.isArray(source)) return [];
   return source.filter((f: any) => f != null);
 });
+
+const groupedFlights = computed(() => {
+  const source = displayedFlights.value;
+  if (!Array.isArray(source)) return {};
+  
+  return source.reduce((groups: any, flight: any) => {
+    const airline = flight.airline || 'Other';
+    if (!groups[airline]) {
+      groups[airline] = [];
+    }
+    groups[airline].push(flight);
+    return groups;
+  }, {});
+});
+
+const getMatrixPrice = (type: string) => {
+  if (!displayedFlights.value.length) return '—'
+  if (type === 'Cheapest') {
+    return Math.min(...displayedFlights.value.map((f: any) => f.priceWithCommission || f.price)).toLocaleString()
+  }
+  if (type === 'Fastest') {
+    const fastest = [...displayedFlights.value].sort((a: any, b: any) => (a.duration || 9999) - (b.duration || 9999))[0]
+    return (fastest.priceWithCommission || fastest.price).toLocaleString()
+  }
+  return (displayedFlights.value[0].priceWithCommission || displayedFlights.value[0].price).toLocaleString()
+}
+
+const getMatrixIcon = (type: string) => {
+  if (type === 'Cheapest') return BanknotesIcon
+  if (type === 'Fastest') return BoltIcon
+  return StarIcon
+}
+
+const getMatrixColor = (type: string) => {
+  if (type === 'Cheapest') return 'bg-brand-green'
+  if (type === 'Fastest') return 'bg-brand-orange'
+  return 'bg-brand-blue'
+}
+
+const airlineMeta = computed(() => {
+  const airlines = Object.keys(groupedFlights.value)
+  return airlines.slice(0, 5).map(name => ({
+    name,
+    logo: groupedFlights.value[name][0].airlineLogo
+  }))
+})
+
+const getMatrixPriceFor = (airline: string, stopsLabel: string) => {
+  const stopCount = stopsLabel === 'Non stop' ? 0 : (stopsLabel === '1 Stop' ? 1 : 2)
+  const flights = groupedFlights.value[airline] || []
+  const filtered = flights.filter((f: any) => {
+    if (stopCount === 2) return (f.stops || 0) >= 2
+    return (f.stops || 0) === stopCount
+  })
+  if (!filtered.length) return null
+  return Math.min(...filtered.map((f: any) => f.priceWithCommission || f.price)).toLocaleString()
+}
+
+const filterByMatrix = (airline: string, stopsLabel: string) => {
+  // Logic to filter the list or scroll to the group
+  const element = document.getElementById(`group-${airline}`)
+  if (element) {
+    window.scrollTo({ top: element.offsetTop - 150, behavior: 'smooth' })
+  }
+}
 
 const searchQuery = ref({
   origin: '',
@@ -120,13 +239,17 @@ const handleSearch = () => {
 };
 
 const selectFlight = (flight: any) => {
+  // Save the full offer for the pricing step
+  sessionStorage.setItem('selectedFlight', JSON.stringify(flight));
+  
   navigateTo({
     path: '/checkout',
     query: {
       type: 'flight',
-      id: flight._id || flight.id,
-      name: flight.flightNumber || `${flight.airline?.name} flight`,
-      price: flight.pricing?.baseRate || flight.price?.amount
+      id: flight.offerId || flight._id || flight.id,
+      name: (flight.flightNumbers && flight.flightNumbers[0]) || flight.flightNumber || `${flight.airline || 'Unknown'} flight`,
+      price: flight.priceWithCommission || flight.price,
+      provider: flight.provider
     }
   });
 }
@@ -136,19 +259,18 @@ onMounted(() => {
   // If no search params are in the URL, provide creative defaults
   if (!route.query.origin && !route.query.destination) {
     searchQuery.value = {
-      origin: 'LHR', // London Heathrow
-      destination: 'DXB', // Dubai International
+      origin: 'LHR',
+      destination: 'DXB',
       departureDate: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
       passengers: 1
     };
     handleSearch();
   } else {
-    // Sync query params to state if they exist
-    if (route.query.origin) searchQuery.value.origin = String(route.query.origin);
-    if (route.query.destination) searchQuery.value.destination = String(route.query.destination);
-    if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate);
-    if (route.query.passengers) searchQuery.value.passengers = parseInt(String(route.query.passengers)) || 1;
-    handleSearch();
+  if (route.query.origin) searchQuery.value.origin = String(route.query.origin);
+  if (route.query.destination) searchQuery.value.destination = String(route.query.destination);
+  if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate);
+  if (route.query.passengers) searchQuery.value.passengers = parseInt(String(route.query.passengers)) || 1;
+  handleSearch();
   }
   fetchPopularFlights();
 });

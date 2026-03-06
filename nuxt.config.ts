@@ -18,6 +18,8 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3000',
       googleClientId: process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID,
       paystackPublicKey: process.env.NUXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
+      stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SlIe6FOWpTToNxe7GNqR7K9UbWopqhPgQ3rrJBuG3iqQdEhP7nf3VJ2JDxHaL2g9YMiLpqo9TiXsW6AiyDfNXQ00i1AqxHyG',
+      googleMapsApiKey: process.env.GOOGLE_MAP_API_KEY,
     },
   },
 
@@ -28,47 +30,46 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: "Doctor dey consulting | Admin Dashboard",
+      title: "Flybeth | Premium Flights & Stays Aggregator",
       htmlAttrs: { lang: "en" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "format-detection", content: "telephone=no" },
 
-        // ✅ SEO meta
         {
           name: "description",
           content:
-            "Doctor dey consulting — Book verified doctors, schedule medical appointments, and access secure telehealth and in-clinic consultations. Seamless healthcare access in Nigeria.",
+            "Flybeth — Book cheap flights, luxury hotels, and vacation rentals. Aggregating the best deals from Hotelbeds, Amadeus, and Duffel for a seamless travel experience.",
         },
         {
           name: "keywords",
           content:
-            "doctor booking, medical appointments, telehealth, online consultation, Nigeria healthcare, book doctors online, telemedicine, Doctor dey consulting",
+            "cheap flights, hotel booking, travel aggregator, vacation rentals, Flybeth, Hotelbeds, Amadeus travel, Duffel flights",
         },
-        { name: "author", content: "Doctor dey consulting" },
+        { name: "author", content: "Flybeth" },
 
         // ✅ Open Graph (for social previews)
-        { property: "og:title", content: "Doctor dey consulting — Book Doctors & Medical Consultations" },
+        { property: "og:title", content: "Flybeth — Book Flights, Hotels & Stays" },
         {
           property: "og:description",
           content:
-            "Find trusted medical professionals and book appointments instantly with Doctor dey consulting. Access telemedicine and in-person care securely.",
+            "Find the best travel deals globally. Book cheap flights, luxury hotels, and vacation rentals with Flybeth.",
         },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: "https://drconnect.ng" },
-        { property: "og:image", content: "https://drconnect.ng/og-image.jpg" },
+        { property: "og:url", content: "https://flybeth.com" },
+        { property: "og:image", content: "https://flybeth.com/og-image.jpg" },
 
         // ✅ Twitter meta
         { name: "twitter:card", content: "summary_large_image" },
-        { property: "twitter:url", content: "https://drconnect.ng" },
-        { name: "twitter:title", content: "Doctor dey consulting — Online Doctor Booking & Telehealth" },
+        { property: "twitter:url", content: "https://flybeth.com" },
+        { name: "twitter:title", content: "Flybeth — Online Flight & Hotel Booking" },
         {
           name: "twitter:description",
           content:
-            "Book verified doctors online and access secure telehealth services with Doctor dey consulting.",
+            "Book verified travel deals online and access secure booking services with Flybeth.",
         },
-        { name: "twitter:image", content: "https://drconnect.ng/og-image.jpg" },
+        { name: "twitter:image", content: "https://flybeth.com/og-image.jpg" },
       ],
 
       link: [
@@ -101,19 +102,41 @@ export default defineNuxtConfig({
     "@nuxtjs/robots",
     "@nuxtjs/sitemap",
     "@nuxtjs/seo",
+    "@nuxtjs/i18n",
   ],
 
+  i18n: {
+    locales: [
+      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
+      { code: 'es', iso: 'es-ES', file: 'es.json', name: 'Español' },
+      { code: 'fr', iso: 'fr-FR', file: 'fr.json', name: 'Français' },
+      { code: 'de', iso: 'de-DE', file: 'de.json', name: 'Deutsch' },
+      { code: 'ar', iso: 'ar-SA', file: 'ar.json', name: 'العربية', dir: 'rtl' },
+      { code: 'zh', iso: 'zh-CN', file: 'zh.json', name: '中文' },
+      { code: 'ja', iso: 'ja-JP', file: 'ja.json', name: '日本語' },
+      { code: 'pt', iso: 'pt-BR', file: 'pt.json', name: 'Português' },
+      { code: 'it', iso: 'it-IT', file: 'it.json', name: 'Italiano' },
+      { code: 'ko', iso: 'ko-KR', file: 'ko.json', name: '한국어' },
+      { code: 'tr', iso: 'tr-TR', file: 'tr.json', name: 'Türkçe' },
+      { code: 'hi', iso: 'hi-IN', file: 'hi.json', name: 'हिन्दी' }
+    ],
+    defaultLocale: 'en',
+    langDir: 'lang/',
+    strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      alwaysRedirect: true
+    }
+  },
+
   sitemap: {
-    hostname: 'https://lolaapril.com',
+    hostname: 'https://flybeth.com',
     gzip: true,
     routes: [
       '/',
       '/auth/login',
       '/auth/register',
-      '/features',
-      '/pricing',
-      '/about',
-      '/contact',
     ],
   },
 
@@ -121,17 +144,17 @@ export default defineNuxtConfig({
     UserAgent: '*',
     Allow: '/',
     Disallow: ['/dashboard', '/admin'],
-    Sitemap: 'https://lolaapril.com/sitemap.xml',
+    Sitemap: 'https://flybeth.com/sitemap.xml',
   },
 
   seo: {
     enabled: true,
     meta: {
-      title: 'LolaApril Business Suite - All-in-One Salon & Spa Management Platform',
-      description: 'Stop losing clients to no-shows and chaos. LolaApril helps salons, spas, and wellness businesses manage bookings, teams, finances, and multi-location operations from one intelligent dashboard. Trusted by 500+ businesses across Nigeria.',
-      keywords: 'salon management software, spa booking system, wellness business platform, appointment scheduling, staff management, salon POS, multi-location management, Nigeria salon software, beauty business management, no-show reduction, KYC verification, automated reminders',
-      ogTitle: 'LolaApril Business Suite - All-in-One Salon & Spa Management Platform',
-      ogDescription: 'Manage bookings, teams, finances, and multi-location operations for your salon, spa, or wellness business. Reduce no-shows by 32% and save 4 hours daily.',
+      title: 'Flybeth - Your Gateway to Global Travel',
+      description: 'Find and book the best travel deals globally. Aggregated from top-tier providers like Hotelbeds, Amadeus, and Duffel.',
+      keywords: 'flights, hotels, vacations, travel, flybeth',
+      ogTitle: 'Flybeth - Your Gateway to Global Travel',
+      ogDescription: 'Find and book the best travel deals globally. Aggregated from top-tier providers like Hotelbeds, Amadeus, and Duffel.',
       ogImage: '/img/og-image.jpg',
       twitterCard: 'summary_large_image',
     },

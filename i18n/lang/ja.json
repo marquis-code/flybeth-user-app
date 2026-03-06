@@ -1,0 +1,341 @@
+{
+    "hero": {
+        "title1": "500以上の航空会社で格安航空券を予約！",
+        "title2": "500社以上の航空会社！",
+        "award": "Global Travel受賞",
+        "since": "2024年から"
+    },
+    "nav": {
+        "stays": "宿泊",
+        "flights": "フライト",
+        "cars": "レンタカー",
+        "packages": "パッケージ",
+        "cruises": "クルーズ",
+        "signIn": "ログイン",
+        "explorer": "エクスプローラー",
+        "logout": {
+            "title": "もうお帰りですか？",
+            "message": "Flybethアカウントからログアウトしようとしています。保存されていない変更は失われます。お戻りをお待ちしています！✈️",
+            "confirm": "ログアウト",
+            "cancel": "残る"
+        },
+        "exit": {
+            "title": "待って、行かないで！",
+            "message": "アクティブなセッションがあります。Flybethを離れてもよろしいですか？",
+            "confirm": "離れる",
+            "cancel": "ここに残る"
+        }
+    },
+    "search": {
+        "tabs": {
+            "flights": "フライト",
+            "holidays": "ホリデー",
+            "hotels": "ホテル",
+            "cruises": "クルーズ",
+            "cars": "レンタカー"
+        },
+        "labels": {
+            "from": "出発地",
+            "to": "到着地",
+            "where": "どこに行きますか？",
+            "departure": "出発日",
+            "return": "帰着日",
+            "departure_return": "出発 — 帰着",
+            "departure_date": "出発日",
+            "passengers": "乗客",
+            "cabin": "客室クラス",
+            "letsgo": "出発！",
+            "singleHotel": "シングルホテル",
+            "multiHotel": "マルチホテル",
+            "checkInCheckOut": "チェックイン - チェックアウト",
+            "travelersRooms": "旅行者と部屋",
+            "bundleSave": "まとめて割引",
+            "addFlight": "フライトを追加",
+            "addCar": "レンタカーを追加",
+            "addHotel": "ホテルを追加",
+            "directFlightsOnly": "直行便のみ",
+            "rentalCars": "レンタカー",
+            "airportRides": "空港送迎",
+            "pickUp": "ピックアップ",
+            "whereFrom": "どこから？",
+            "whereTo": "どこへ？",
+            "cityOrAirport": "都市または空港",
+            "addressOrHotel": "住所またはホテル",
+            "dropOffLocation": "返却場所",
+            "rentalDates": "レンタル期間",
+            "pickUpDate": "受取日",
+            "pickUpTime": "受取時間",
+            "differentDropOff": "異なる返却場所",
+            "bundle": "パッケージ",
+            "hotel": "ホテル",
+            "flight": "フライト",
+            "whereFromQuestion": "どこから？",
+            "whereToQuestion": "どこへ？",
+            "stayDates": "宿泊日程",
+            "travelDates": "旅行日程",
+            "partialHotelStay": "部分的ホテル滞在",
+            "differentCarDropOff": "異なる車両返却",
+            "saveBundleMsg": "まとめて予約で最大$625お得！",
+            "rooms": "部屋",
+            "adults": "大人",
+            "children": "子供",
+            "apply": "適用",
+            "multiRoomNote": "マルチルームパッケージは合計8名様までです。",
+            "search": "検索",
+            "updateSearch": "検索を更新"
+        },
+        "placeholders": {
+            "origin": "都市または空港",
+            "destination": "目的地、都市またはホテル"
+        },
+        "packages": {
+            "hotel_flight": "ホテル + フライト",
+            "hotel_flight_car": "ホテル + フライト + レンタカー",
+            "flight_car": "フライト + レンタカー",
+            "hotel_car": "ホテル + レンタカー"
+        },
+        "cruises": {
+            "title": "ラグジュアリーに出航。",
+            "expertAdvice": "専門家相談：1-866-403-9848",
+            "goingTo": "目的地",
+            "destinationAny": "目的地（すべて）",
+            "departingBetween": "出発期間",
+            "selectMonth": "月を選択",
+            "cruiseLine": "クルーズライン",
+            "anyCruiseLine": "すべてのライン",
+            "viewLuxurySuites": "ラグジュアリースイートを見る",
+            "familyDeals": "ファミリーディール"
+        },
+        "flightModes": {
+            "roundtrip": "往復",
+            "oneway": "片道",
+            "multicity": "周遊"
+        }
+    },
+    "marketing": {
+        "helpTitle": "お得な情報をお探しですか？",
+        "helpSub": "今すぐ予約 - 24時間いつでもお電話ください",
+        "benefits": {
+            "deals": "電話限定のお得な情報",
+            "assist": "パーソナライズされた旅行支援",
+            "cancel": "24時間キャンセル",
+            "rewards": "ClubMilesポイント2倍"
+        },
+        "speakExperts": "旅行の専門家にご相談ください"
+    },
+    "offers": {
+        "trending": "人気のホリデーオファー",
+        "smarter": "よりスマートな運賃。より快適な着陸。",
+        "smarterSub": "あなたの時間を大切にする旅。",
+        "majestic": "すべてのマイルが壮大！",
+        "majesticSub": "エミレーツで飛ぶ。動きの中の優雅さ。",
+        "learn": "詳細を見る",
+        "book": "今すぐ予約"
+    },
+    "promo": {
+        "matchday": "試合の日を旅行に — 夏のお得情報をゲット。",
+        "findDeals": "お得情報を探す"
+    },
+    "destinations": {
+        "globalExploration": "世界探検",
+        "mostLoved": "最も愛される",
+        "destinations": "目的地",
+        "description": "キュレーターが厳選したフライト、ホテル、体験を予約して、最も忘れられない旅を。",
+        "startingFrom": "{price}から",
+        "parisDesc": "象徴的なランドマークと世界クラスの料理で待つ光の都市。",
+        "dubaiDesc": "ラグジュアリーショッピング、超近代的建築、活気あるナイトライフを体験。",
+        "maldivesDesc": "トロピカルパラダイスの透き通った海と手つかずのビーチ。"
+    },
+    "inspiration": {
+        "lifestyleTravel": "ライフスタイルトラベル",
+        "title": "あなたらしく旅する",
+        "experiences": "{count} の体験"
+    },
+    "categories": {
+        "adventure": "アドベンチャー",
+        "relaxation": "リラクゼーション",
+        "cityLife": "シティライフ",
+        "nature": "自然"
+    },
+    "newsletter": {
+        "title": "お得情報を見逃さない",
+        "subtitle": "限定フライトディール、ホテル割引、旅のインスピレーションをお届けします。",
+        "placeholder": "メールアドレスを入力",
+        "subscribeButton": "登録",
+        "tagline": "50,000人以上の賢い旅行者に参加"
+    },
+    "stats": {
+        "globalDestinations": "世界の目的地",
+        "flightsFilteredDaily": "毎日フィルタリングされるフライト",
+        "secureBookings": "安全な予約"
+    },
+    "footer": {
+        "about": "会社概要",
+        "blog": "ブログ",
+        "jobs": "採用情報",
+        "press": "プレス",
+        "accessibility": "アクセシビリティ",
+        "partners": "パートナー",
+        "rights": "© 2024 Flybeth, Inc. All rights reserved."
+    },
+    "settings": {
+        "language": "言語",
+        "currency": "通貨",
+        "applyChanges": "変更を適用"
+    },
+    "flightCard": {
+        "perTraveler": "1名あたり",
+        "selectFlight": "フライトを選択",
+        "nonstop": "直行便",
+        "stops": "{n} 回乗り継ぎ",
+        "flight": "フライト"
+    },
+    "stayCard": {
+        "nightlyAvg": "1泊平均",
+        "viewDeal": "詳細を見る",
+        "unnamedProperty": "名前なし宿泊施設",
+        "includesTaxes": "合計 ${total} 税込",
+        "off": "{percent}% OFF"
+    },
+    "carCard": {
+        "orSimilar": "または類似 {category}",
+        "reviews": "{n} 件のレビュー",
+        "passengers": "乗客",
+        "bags": "荷物",
+        "freeCancellation": "無料キャンセル",
+        "totalPrice": "総額",
+        "viewDeal": "詳細を見る"
+    },
+    "emptyState": {
+        "defaultTitle": "まだ何もありません",
+        "defaultMessage": "検索フィルターを調整するか、人気のおすすめをご覧ください。"
+    },
+    "flightsPage": {
+        "fromWhere": "どこから？",
+        "toWhere": "どこへ？",
+        "dates": "日付",
+        "travelers": "旅行者",
+        "travelerPlaceholder": "1名",
+        "flightsFound": "{n} 件のフライトが見つかりました",
+        "filterBy": "絞り込み",
+        "stops": "乗り継ぎ",
+        "nonstop": "直行便",
+        "oneStop": "1回乗り継ぎ",
+        "twoPlusStops": "2回以上乗り継ぎ",
+        "airlines": "航空会社",
+        "noFlightsTitle": "フライトが見つかりません",
+        "noFlightsMessage": "条件に合うフライトが見つかりませんでした。別の空港や日付をお試しください。",
+        "explorePopular": "人気のルートを探す"
+    },
+    "staysPage": {
+        "whereTo": "どこへ？",
+        "checkIn": "チェックイン",
+        "guests": "ゲスト",
+        "guestsPlaceholder": "2名",
+        "propertiesFound": "{n} 件の宿泊施設が見つかりました",
+        "filterBy": "絞り込み",
+        "pricePerNight": "1泊あたりの料金",
+        "lessThan100": "$100未満",
+        "range100to200": "$100 - $200",
+        "range200to300": "$200 - $300",
+        "propertyType": "施設タイプ",
+        "hotelType": "ホテル",
+        "resortType": "リゾート",
+        "apartmentType": "アパートメント",
+        "noPropertiesTitle": "宿泊施設が見つかりません",
+        "noPropertiesMessage": "条件に合う宿泊施設が見つかりませんでした。別の場所や日付をお試しください。",
+        "searchDubai": "ドバイを検索"
+    },
+    "carsPage": {
+        "pickUpLocation": "ピックアップ場所",
+        "pickUpDate": "受取日",
+        "carsFound": "{n} 台の車が見つかりました",
+        "filterBy": "絞り込み",
+        "carType": "車種",
+        "economy": "エコノミー",
+        "suv": "SUV",
+        "luxury": "ラグジュアリー",
+        "transmission": "トランスミッション",
+        "automatic": "オートマチック",
+        "manual": "マニュアル",
+        "noCarsTitle": "利用可能な車がありません",
+        "noCarsMessage": "この場所でレンタカーが見つかりませんでした。別の場所をお試しください。",
+        "searchDubaiAirport": "ドバイ空港を検索"
+    },
+    "checkout": {
+        "secureCheckout": "安全なお支払い",
+        "travelerDetails": "旅行者情報",
+        "firstName": "名",
+        "lastName": "姓",
+        "emailAddress": "メールアドレス",
+        "phoneNumber": "電話番号",
+        "paymentInfo": "お支払い情報",
+        "cardholderName": "カード名義",
+        "cardNumber": "カード番号",
+        "expirationDate": "有効期限",
+        "cvv": "CVV",
+        "completeBooking": "予約を完了",
+        "processing": "処理中...",
+        "termsAgreement": "お支払いにより、利用規約に同意したものとみなされます。",
+        "orderSummary": "注文概要",
+        "basePrice": "基本料金",
+        "taxesFees": "税金・手数料",
+        "total": "合計",
+        "freeCancellation": "24時間以内の無料キャンセル！"
+    },
+    "confirmation": {
+        "bookingConfirmed": "予約確認済み！",
+        "referenceText": "ご予約の参照番号は",
+        "emailSent": "確認メールを送信しました。",
+        "backToHome": "ホームに戻る"
+    },
+    "auth": {
+        "authentication": "認証",
+        "welcomeBack": "おかえりなさい",
+        "noAccount": "アカウントをお持ちでないですか？",
+        "registerHere": "こちらで登録",
+        "emailAddress": "メールアドレス",
+        "password": "パスワード",
+        "forgotPassword": "パスワードをお忘れですか？",
+        "signingIn": "ログイン中...",
+        "signIn": "ログイン",
+        "orContinueWith": "または次で続行",
+        "signInGoogle": "Googleでログイン",
+        "getStarted": "はじめる",
+        "createAccount": "アカウント作成",
+        "alreadyHaveAccount": "既にアカウントをお持ちですか？",
+        "loginHere": "こちらでログイン",
+        "firstNameLabel": "名",
+        "lastNameLabel": "姓",
+        "phoneNumberLabel": "電話番号",
+        "creatingAccount": "アカウント作成中...",
+        "orJoinWith": "または次で参加",
+        "signUpGoogle": "Googleで登録",
+        "accountRecovery": "アカウント復旧",
+        "forgotPasswordTitle": "パスワードを忘れた",
+        "rememberedPassword": "パスワードを思い出しましたか？",
+        "sending": "送信中...",
+        "sendResetLink": "リセットリンクを送信"
+    },
+    "authLayout": {
+        "journeyStarts": "旅はここから始まります",
+        "discover": "世界で最も",
+        "worldsMost": "息をのむほど美しい",
+        "breathtaking": "目的地を",
+        "layoutDestinations": "発見しよう。",
+        "socialProof": "50,000人以上の旅行者がFlybethで限定ディールを見つけています。",
+        "trustedWorldwide": "世界中で信頼",
+        "averageRating": "4.9 ★ 平均評価",
+        "travelIntelligence": "トラベルインテリジェンス"
+    },
+    "bookingConfirmed": "予約確認済み！",
+    "common": {
+        "search": "検索",
+        "cancel": "キャンセル",
+        "confirm": "確認",
+        "close": "閉じる",
+        "loading": "読み込み中...",
+        "error": "エラー",
+        "success": "成功"
+    }
+}

@@ -11,22 +11,22 @@
         <div class="flex justify-between items-start">
            <div>
               <h3 class="text-lg font-bold text-gray-900">{{ car.name }}</h3>
-              <p class="text-sm text-gray-500">or similar {{ car.category }}</p>
+              <p class="text-sm text-gray-500">{{ $t('carCard.orSimilar', { category: car.category }) }}</p>
            </div>
            <div class="flex items-center space-x-2">
               <span class="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full font-bold">{{ car.rating }}/10</span>
-              <span class="text-sm text-gray-500">{{ car.reviews }} reviews</span>
+              <span class="text-sm text-gray-500">{{ $t('carCard.reviews', { n: car.reviews }) }}</span>
            </div>
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-y-2 text-sm text-gray-600">
           <div class="flex items-center">
             <UserIcon class="h-4 w-4 mr-2" />
-            {{ car.seats }} Passengers
+            {{ car.seats }} {{ $t('carCard.passengers') }}
           </div>
           <div class="flex items-center">
             <BriefcaseIcon class="h-4 w-4 mr-2" />
-            {{ car.bags }} Bags
+            {{ car.bags }} {{ $t('carCard.bags') }}
           </div>
           <div class="flex items-center">
             <CogIcon class="h-4 w-4 mr-2" />
@@ -34,17 +34,17 @@
           </div>
           <div class="flex items-center">
              <CheckCircleIcon class="h-4 w-4 mr-2 text-green-500" />
-             Free Cancellation
+             {{ $t('carCard.freeCancellation') }}
           </div>
         </div>
       </div>
       
       <div class="mt-4 md:mt-0 pt-4 flex items-end justify-between border-t border-gray-100 md:border-t-0">
           <div>
-            <p class="text-xs text-gray-500">Total Price</p>
+            <p class="text-xs text-gray-500">{{ $t('carCard.totalPrice') }}</p>
             <p class="text-2xl font-bold text-gray-900">${{ car.price }}</p>
           </div>
-          <UiBaseButton @click="$emit('select', car.id)">View Deal</UiBaseButton>
+          <UiBaseButton @click="$emit('select', car.id)">{{ $t('carCard.viewDeal') }}</UiBaseButton>
       </div>
     </div>
   </div>

@@ -9,12 +9,31 @@ export const useSearchFlights = () => {
     const searchFlights = async (searchData: any) => {
         loading.value = true;
         try {
-            const { data, status } = await flightsApi.searchLocal(searchData);
+            // Mapping frontend searchData to backend LiveFlightSearchDto
+            const payload = {
+                origin: searchData.origin,
+                destination: searchData.destination,
+                originLat: searchData.originLat,
+                originLng: searchData.originLng,
+                destLat: searchData.destLat,
+                destLng: searchData.destLng,
+                departureDate: searchData.departureDate,
+                returnDate: searchData.returnDate,
+                adults: searchData.passengers || 1,
+                cabinClass: searchData.class || 'economy',
+            };
+
+            const { data, status } = await flightsApi.searchLive(payload);
+            console.log(data, 'flights data here')
+
             if (status === 200 || status === 201) {
-                flights.value = data.data;
-                searchMeta.value = data.meta;
+                // Robustly unwrap the results
+                const results = data?.data?.results || data?.results || (Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []));
+                flights.value = results;
+                searchMeta.value = data?.meta || data?.data?.meta;
+                return results;
             }
-            return data;
+            return [];
         } catch (error) {
             console.error('Error searching flights:', error);
             throw error;

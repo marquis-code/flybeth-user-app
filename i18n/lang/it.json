@@ -1,0 +1,341 @@
+{
+    "hero": {
+        "title1": "Prenota voli economici su oltre",
+        "title2": "500 compagnie aeree!",
+        "award": "Premiato da Global Travel",
+        "since": "Dal 2024"
+    },
+    "nav": {
+        "stays": "Soggiorni",
+        "flights": "Voli",
+        "cars": "Auto",
+        "packages": "Pacchetti",
+        "cruises": "Crociere",
+        "signIn": "Accedi",
+        "explorer": "Esploratore",
+        "logout": {
+            "title": "Te ne vai già?",
+            "message": "Stai per disconnetterti dal tuo account Flybeth. Le modifiche non salvate andranno perse. Ti aspettiamo al tuo ritorno! ✈️",
+            "confirm": "Esci",
+            "cancel": "Resta"
+        },
+        "exit": {
+            "title": "Aspetta, non andare!",
+            "message": "Hai una sessione attiva. Sei sicuro di voler lasciare Flybeth?",
+            "confirm": "Lascia",
+            "cancel": "Resta qui"
+        }
+    },
+    "search": {
+        "tabs": {
+            "flights": "Voli",
+            "holidays": "Vacanze",
+            "hotels": "Hotel",
+            "cruises": "Crociere",
+            "cars": "Auto"
+        },
+        "labels": {
+            "from": "Partenza da",
+            "to": "Destinazione",
+            "where": "Dove stai andando?",
+            "departure": "Data di Partenza",
+            "return": "Data di Ritorno",
+            "departure_return": "Andata — Ritorno",
+            "departure_date": "Data di Partenza",
+            "passengers": "Passeggeri",
+            "cabin": "Classe",
+            "letsgo": "PARTIAMO!",
+            "singleHotel": "Hotel Singolo",
+            "multiHotel": "Multi Hotel",
+            "checkInCheckOut": "Check-in - Check-out",
+            "travelersRooms": "Viaggiatori e Camere",
+            "bundleSave": "Combina e Risparmia",
+            "addFlight": "Aggiungi un volo",
+            "addCar": "Aggiungi un'auto",
+            "addHotel": "Aggiungi Hotel",
+            "directFlightsOnly": "Solo Voli Diretti",
+            "rentalCars": "Auto a noleggio",
+            "airportRides": "Transfer aeroporto",
+            "pickUp": "Ritiro",
+            "whereFrom": "Da dove?",
+            "whereTo": "Dove?",
+            "cityOrAirport": "Città o aeroporto",
+            "addressOrHotel": "Indirizzo o hotel",
+            "dropOffLocation": "Luogo di riconsegna",
+            "rentalDates": "Date Noleggio",
+            "pickUpDate": "Data di ritiro",
+            "pickUpTime": "Ora di ritiro",
+            "differentDropOff": "Luogo di riconsegna diverso",
+            "bundle": "Pacchetto",
+            "hotel": "Hotel",
+            "flight": "Volo",
+            "whereFromQuestion": "Da dove?",
+            "whereToQuestion": "Dove?",
+            "stayDates": "Date Soggiorno",
+            "travelDates": "Date Viaggio",
+            "partialHotelStay": "Soggiorno parziale in hotel",
+            "differentCarDropOff": "Riconsegna auto diversa",
+            "saveBundleMsg": "Risparmia fino a $625 combinando il tuo viaggio!",
+            "rooms": "Camere",
+            "adults": "Adulti",
+            "children": "Bambini",
+            "apply": "Applica",
+            "multiRoomNote": "I pacchetti multi-camera sono limitati a 8 viaggiatori.",
+            "search": "Cerca",
+            "updateSearch": "Aggiorna Ricerca"
+        },
+        "placeholders": {
+            "origin": "Città o Aeroporto",
+            "destination": "Destinazione, Città o Hotel"
+        },
+        "packages": {
+            "hotel_flight": "Hotel + Volo",
+            "hotel_flight_car": "Hotel + Volo + Auto",
+            "flight_car": "Volo + Auto",
+            "hotel_car": "Hotel + Auto"
+        },
+        "cruises": {
+            "title": "Salpa nel Lusso.",
+            "expertAdvice": "Consulenza Esperta: 1-866-403-9848",
+            "goingTo": "Destinazione",
+            "destinationAny": "Destinazione (Tutte)",
+            "departingBetween": "Partenza tra",
+            "selectMonth": "Seleziona Mese",
+            "cruiseLine": "Compagnia Crociera",
+            "anyCruiseLine": "Qualsiasi Compagnia",
+            "viewLuxurySuites": "Vedi Suite di Lusso",
+            "familyDeals": "Offerte Famiglia"
+        },
+        "flightModes": {
+            "roundtrip": "Andata e Ritorno",
+            "oneway": "Solo Andata",
+            "multicity": "Multi-Città"
+        }
+    },
+    "marketing": {
+        "helpTitle": "Serve aiuto per trovare offerte?",
+        "helpSub": "Prenota ora - Chiamaci in qualsiasi momento",
+        "benefits": {
+            "deals": "Offerte esclusive telefoniche",
+            "assist": "Assistenza viaggio personalizzata",
+            "cancel": "Cancellazione entro 24 ore",
+            "rewards": "Punti ClubMiles doppi"
+        },
+        "speakExperts": "Parla con i nostri esperti di viaggio"
+    },
+    "offers": {
+        "trending": "Offerte Vacanze di Tendenza",
+        "smarter": "Tariffe più intelligenti. Atterraggi più morbidi.",
+        "smarterSub": "Viaggi che valorizzano il tuo tempo.",
+        "majestic": "Ogni miglio è maestoso!",
+        "majesticSub": "Vola Emirates. Eleganza in movimento.",
+        "learn": "Scopri di più",
+        "book": "Prenota ora"
+    },
+    "promo": {
+        "matchday": "Trasforma la giornata sportiva in una vacanza — risparmia d'estate.",
+        "findDeals": "Trova offerte"
+    },
+    "destinations": {
+        "globalExploration": "Esplorazione Globale",
+        "mostLoved": "Più Amate",
+        "destinations": "Destinazioni",
+        "description": "Prenota voli, hotel ed esperienze selezionate per i viaggi più indimenticabili.",
+        "startingFrom": "A partire da {price}",
+        "parisDesc": "La città delle luci vi aspetta con i suoi monumenti iconici e la cucina mondiale.",
+        "dubaiDesc": "Scopri lo shopping di lusso, l'architettura ultramoderna e una vivace vita notturna.",
+        "maldivesDesc": "Acque cristalline e spiagge incontaminate in un paradiso tropicale."
+    },
+    "inspiration": {
+        "lifestyleTravel": "Viaggio Lifestyle",
+        "title": "Viaggia a Modo Tuo",
+        "experiences": "{count} Esperienze"
+    },
+    "categories": {
+        "adventure": "Avventura",
+        "relaxation": "Relax",
+        "cityLife": "Vita Cittadina",
+        "nature": "Natura"
+    },
+    "newsletter": {
+        "title": "Non Perdere Nessuna Offerta",
+        "subtitle": "Iscriviti per ricevere offerte esclusive su voli, sconti hotel e ispirazione di viaggio.",
+        "placeholder": "Inserisci la tua e-mail",
+        "subscribeButton": "Iscriviti",
+        "tagline": "Unisciti a oltre 50.000 viaggiatori intelligenti"
+    },
+    "stats": {
+        "globalDestinations": "Destinazioni Globali",
+        "flightsFilteredDaily": "Voli Filtrati Quotidianamente",
+        "secureBookings": "Prenotazioni Sicure"
+    },
+    "footer": {
+        "about": "Chi Siamo",
+        "blog": "Blog",
+        "jobs": "Lavora con Noi",
+        "press": "Stampa",
+        "accessibility": "Accessibilità",
+        "partners": "Partner",
+        "rights": "© 2024 Flybeth, Inc. Tutti i diritti riservati."
+    },
+    "settings": {
+        "language": "Lingua",
+        "currency": "Valuta",
+        "applyChanges": "Applica Modifiche"
+    },
+    "flightCard": {
+        "perTraveler": "per viaggiatore",
+        "selectFlight": "Seleziona Volo",
+        "nonstop": "Diretto",
+        "stops": "{n} scalo/i",
+        "flight": "Volo"
+    },
+    "stayCard": {
+        "nightlyAvg": "Media a notte",
+        "viewDeal": "Vedi Offerta",
+        "unnamedProperty": "Struttura senza nome",
+        "includesTaxes": "Totale ${total} tasse incluse",
+        "off": "{percent}% SCONTO"
+    },
+    "carCard": {
+        "orSimilar": "o simile {category}",
+        "reviews": "{n} recensioni",
+        "passengers": "Passeggeri",
+        "bags": "Bagagli",
+        "freeCancellation": "Cancellazione Gratuita",
+        "totalPrice": "Prezzo Totale",
+        "viewDeal": "Vedi Offerta"
+    },
+    "emptyState": {
+        "defaultTitle": "Niente qui ancora",
+        "defaultMessage": "Prova a modificare i filtri di ricerca o esplora le nostre raccomandazioni."
+    },
+    "flightsPage": {
+        "fromWhere": "Da dove?",
+        "toWhere": "Dove?",
+        "dates": "Date",
+        "travelers": "Viaggiatori",
+        "travelerPlaceholder": "1 viaggiatore",
+        "flightsFound": "{n} voli trovati",
+        "filterBy": "Filtra per",
+        "stops": "Scali",
+        "nonstop": "Diretto",
+        "oneStop": "1 Scalo",
+        "twoPlusStops": "2+ Scali",
+        "airlines": "Compagnie Aeree",
+        "noFlightsTitle": "Nessun volo trovato",
+        "noFlightsMessage": "Non abbiamo trovato voli corrispondenti. Prova aeroporti o date diverse.",
+        "explorePopular": "Esplora Rotte Popolari"
+    },
+    "staysPage": {
+        "whereTo": "Dove?",
+        "checkIn": "Check-in",
+        "guests": "Ospiti",
+        "guestsPlaceholder": "2 viaggiatori",
+        "propertiesFound": "{n} strutture trovate",
+        "filterBy": "Filtra per",
+        "pricePerNight": "Prezzo per notte",
+        "lessThan100": "Meno di $100",
+        "range100to200": "$100 - $200",
+        "range200to300": "$200 - $300",
+        "propertyType": "Tipo Struttura",
+        "hotelType": "Hotel",
+        "resortType": "Resort",
+        "apartmentType": "Appartamento",
+        "noPropertiesTitle": "Nessuna struttura trovata",
+        "noPropertiesMessage": "Non abbiamo trovato strutture corrispondenti. Prova un'altra località o modifica le date.",
+        "searchDubai": "Cerca Dubai"
+    },
+    "carsPage": {
+        "pickUpLocation": "Luogo di ritiro",
+        "pickUpDate": "Data di Ritiro",
+        "carsFound": "{n} auto trovate",
+        "filterBy": "Filtra per",
+        "carType": "Tipo Auto",
+        "economy": "Economy",
+        "suv": "SUV",
+        "luxury": "Lusso",
+        "transmission": "Cambio",
+        "automatic": "Automatico",
+        "manual": "Manuale",
+        "noCarsTitle": "Nessuna auto disponibile",
+        "noCarsMessage": "Non abbiamo trovato auto a noleggio. Prova un altro luogo di ritiro.",
+        "searchDubaiAirport": "Cerca Aeroporto Dubai"
+    },
+    "checkout": {
+        "secureCheckout": "Pagamento Sicuro",
+        "travelerDetails": "Dati Viaggiatore",
+        "firstName": "Nome",
+        "lastName": "Cognome",
+        "emailAddress": "E-mail",
+        "phoneNumber": "Telefono",
+        "paymentInfo": "Informazioni di Pagamento",
+        "cardholderName": "Nome Titolare",
+        "cardNumber": "Numero Carta",
+        "expirationDate": "Scadenza",
+        "cvv": "CVV",
+        "completeBooking": "Completa Prenotazione",
+        "processing": "Elaborazione...",
+        "termsAgreement": "Pagando accetti i nostri Termini e Condizioni.",
+        "orderSummary": "Riepilogo Ordine",
+        "basePrice": "Prezzo Base",
+        "taxesFees": "Tasse e Commissioni",
+        "total": "Totale",
+        "freeCancellation": "Cancellazione gratuita entro 24 ore!"
+    },
+    "confirmation": {
+        "bookingConfirmed": "Prenotazione Confermata!",
+        "referenceText": "Il tuo riferimento è",
+        "emailSent": "Abbiamo inviato un'e-mail di conferma.",
+        "backToHome": "Torna alla Home"
+    },
+    "auth": {
+        "authentication": "Autenticazione",
+        "welcomeBack": "Bentornato",
+        "noAccount": "Non hai un account?",
+        "registerHere": "Registrati qui",
+        "emailAddress": "E-mail",
+        "password": "Password",
+        "forgotPassword": "Password dimenticata?",
+        "signingIn": "Accesso in corso...",
+        "signIn": "Accedi",
+        "orContinueWith": "Oppure continua con",
+        "signInGoogle": "Accedi con Google",
+        "getStarted": "Inizia",
+        "createAccount": "Crea Account",
+        "alreadyHaveAccount": "Hai già un account?",
+        "loginHere": "Accedi qui",
+        "firstNameLabel": "Nome",
+        "lastNameLabel": "Cognome",
+        "phoneNumberLabel": "Telefono",
+        "creatingAccount": "Creazione account...",
+        "orJoinWith": "Oppure unisciti con",
+        "signUpGoogle": "Registrati con Google",
+        "accountRecovery": "Recupero Account",
+        "forgotPasswordTitle": "Password Dimenticata",
+        "rememberedPassword": "Ricordi la password?",
+        "sending": "Invio...",
+        "sendResetLink": "Invia Link di Reset"
+    },
+    "authLayout": {
+        "journeyStarts": "Il Tuo Viaggio Inizia Qui",
+        "discover": "Scopri le",
+        "worldsMost": "destinazioni più",
+        "breathtaking": "mozzafiato",
+        "layoutDestinations": "del mondo.",
+        "socialProof": "Unisciti a oltre 50.000 viaggiatori che trovano offerte esclusive con Flybeth.",
+        "trustedWorldwide": "Fiducia mondiale",
+        "averageRating": "4.9 ★ Valutazione Media",
+        "travelIntelligence": "Intelligenza di Viaggio"
+    },
+    "bookingConfirmed": "Prenotazione Confermata!",
+    "common": {
+        "search": "Cerca",
+        "cancel": "Annulla",
+        "confirm": "Conferma",
+        "close": "Chiudi",
+        "loading": "Caricamento...",
+        "error": "Errore",
+        "success": "Successo"
+    }
+}

@@ -1,111 +1,143 @@
 <template>
-  <div class="fixed bottom-10 right-10 z-[9999]">
+  <div class="fixed bottom-8 right-8 z-[100]">
     <!-- Trigger Button -->
     <button 
-      @click="toggleVoice"
-      class="h-18 w-18 md:h-10 md:w-10 rounded-full bg-brand-blue text-white shadow-[0_20px_50px_rgba(13,29,173,0.3)] flex items-center justify-center transform transition-all duration-500 hover:scale-110 active:scale-95 group relative ring-4 ring-white"
-      :class="{ 'bg-red-500 shadow-[0_20px_50px_rgba(239,68,68,0.4)]': isRecording }"
-      aria-label="Toggle Voice AI Assistant"
+      @click="toggleOverlay"
+      class="w-16 h-16 rounded-full bg-brand-blue shadow-2xl flex items-center justify-center hover:scale-110 transition-transform duration-300 group overflow-hidden relative"
+      :class="{ 'animate-pulse bg-red-500': isRecording }"
     >
-      <div v-if="isRecording" class="absolute inset-0 rounded-full animate-ping bg-red-400 opacity-75"></div>
-      <div class="absolute -inset-2 bg-brand-blue/20 rounded-full blur-xl group-hover:bg-brand-blue/30 transition-all"></div>
+      <div v-if="isRecording" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+        <div class="voice-wave"></div>
+      </div>
       
-      <svg v-if="!isRecording" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg v-if="!isRecording" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white group-hover:rotate-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
       </svg>
-      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
       </svg>
     </button>
 
-    <!-- Sidebar/Drawer Overlay -->
-    <Transition name="slide-up">
-      <div 
-        v-if="isOpen"
-        class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-[-20px_0_60px_-15px_rgba(13,29,173,0.15)] border-l border-gray-50 flex flex-col z-[190] overflow-hidden rounded-l-[3rem]"
-      >
+    <!-- Overlay Interface -->
+    <Transition name="fade-slide">
+      <div v-if="showOverlay" class="absolute bottom-20 right-0 w-[400px] max-h-[600px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100/50 flex flex-col overflow-hidden backdrop-blur-xl">
         <!-- Header -->
-        <div class="p-8 border-b border-gray-50 flex items-center justify-between bg-brand-blue/5">
-          <div>
-            <h2 class="text-2xl font-black text-brand-blue font-header tracking-tighter">Flybeth AI</h2>
-            <p class="text-[10px] uppercase font-black tracking-widest text-brand-blue/40 mt-1">Real-time Voice Assistant</p>
-          </div>
-          <button @click="isOpen = false" class="text-brand-gray/40 hover:text-brand-blue transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <div class="p-8 bg-brand-blue text-white">
+          <h3 class="text-xl font-serif font-black flex items-center gap-3">
+            Flybeth Voice Assistant
+            <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
+          </h3>
+          <p class="text-xs font-bold text-white/60 uppercase tracking-[0.2em] mt-1">Real-time Conversational Booking</p>
         </div>
 
-        <!-- Chat Area -->
-        <div class="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar bg-white" ref="chatRef">
-          <div v-if="messages.length === 0" class="h-full flex flex-col items-center justify-center text-center py-12">
-            <div class="h-20 w-20 rounded-full bg-brand-blue/5 flex items-center justify-center mb-6">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-brand-blue/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-              </svg>
-            </div>
-            <h3 class="text-lg font-black text-brand-blue/40">Ready to help with your booking</h3>
-            <p class="text-xs text-brand-gray/40 mt-2 max-w-[240px]">Tap the microphone and say "Find me a flight to London" or "I need a hotel in Paris".</p>
-          </div>
-
-          <div v-for="(msg, idx) in messages" :key="idx" :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-            <div 
-              :class="[
-                'max-w-[85%] p-5 rounded-3xl text-sm font-bold tracking-tight',
-                msg.role === 'user' ? 'bg-brand-blue text-white shadow-xl shadow-brand-blue/20' : 'bg-gray-50 text-brand-gray border border-gray-100'
-              ]"
-            >
+        <!-- Chat History -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-4 min-h-[300px]" ref="chatBox">
+          <div v-for="(msg, i) in conversation" :key="i" 
+               :class="['flex', msg.role === 'user' ? 'justify-end' : 'justify-start']">
+            <div :class="[
+              'max-w-[85%] p-4 rounded-3xl text-sm font-medium shadow-sm',
+              msg.role === 'user' ? 'bg-brand-blue text-white rounded-tr-none' : 'bg-gray-50 text-brand-blue rounded-tl-none border border-gray-100'
+            ]">
               {{ msg.text }}
-              
-              <!-- Intent Data Cards (Flights/Stays) -->
-              <div v-if="msg.data" class="mt-4 space-y-4">
-                <div v-if="msg.data.type === 'flight'" class="p-4 bg-white/10 rounded-2xl border border-white/20">
-                  <p class="text-[10px] font-black uppercase opacity-60">Search Result</p>
-                  <div class="flex items-center justify-between mt-2">
-                    <span class="text-lg font-black">{{ msg.data.origin }} → {{ msg.data.destination }}</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
-
-          <!-- Real-time Partial Transcript -->
-          <div v-if="isRecording && partialTranscript" class="flex justify-end">
-            <div class="max-w-[85%] p-5 rounded-3xl bg-brand-blue/10 text-brand-blue text-sm font-bold tracking-tight animate-pulse border border-brand-blue/20 italic">
+          
+          <!-- Partial Transcript (Real-time feedback) -->
+          <div v-if="partialTranscript" class="flex justify-end opacity-50 italic">
+            <div class="max-w-[85%] p-4 rounded-3xl text-sm font-medium bg-brand-blue/30 text-white rounded-tr-none border border-white/20">
               {{ partialTranscript }}...
             </div>
           </div>
+          
+          <!-- AI Thinking Indicator -->
+          <div v-if="isThinking" class="flex justify-start">
+            <div class="bg-gray-50 p-4 rounded-3xl rounded-tl-none border border-gray-100 flex gap-1">
+              <span class="w-1.5 h-1.5 bg-brand-blue/40 rounded-full animate-bounce"></span>
+              <span class="w-1.5 h-1.5 bg-brand-blue/40 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+              <span class="w-1.5 h-1.5 bg-brand-blue/40 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+            </div>
+          </div>
+          
+          <!-- Flight Results Preview -->
+          <div v-if="latestResults.length" class="space-y-4 mt-6">
+             <div class="flex items-center gap-2 px-2">
+                <span class="text-[10px] font-black uppercase text-brand-blue tracking-widest">Available Options</span>
+                <div class="flex-1 h-[1px] bg-brand-blue/10"></div>
+             </div>
+             <div v-for="flight in latestResults" :key="flight.offerId" class="p-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-md hover:border-brand-blue transition-all group overflow-hidden relative">
+                <div class="absolute top-0 right-0 p-3">
+                   <span class="px-2 py-1 bg-brand-green/10 text-brand-green text-[8px] font-black rounded-full uppercase">Verified</span>
+                </div>
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <div class="text-[10px] font-black uppercase text-brand-gray/40 mb-1 leading-none">{{ flight.airline }}</div>
+                    <div class="text-[11px] font-bold text-brand-blue">{{ flight.flightNumbers?.join(', ') }}</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-xs text-brand-gray/40 font-bold mb-1">Price</div>
+                    <div class="text-xl font-black text-brand-blue leading-none">${{ flight.priceWithCommission }}</div>
+                  </div>
+                </div>
+                
+                <div class="flex items-center justify-between gap-4 mt-2">
+                   <div class="text-center">
+                      <div class="text-lg font-black text-brand-blue leading-none">{{ flight.origin }}</div>
+                      <div class="text-[9px] font-bold text-gray-400 mt-1">Origin</div>
+                   </div>
+                   
+                   <div class="flex-1 flex flex-col items-center gap-1 group-hover:px-2 transition-all">
+                      <div class="text-[8px] font-black text-brand-blue/30 uppercase">{{ flight.duration }}m</div>
+                      <div class="w-full h-[2px] bg-brand-blue/10 relative rounded-full overflow-hidden">
+                        <div class="absolute inset-0 bg-brand-blue/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                      </div>
+                      <div class="text-[8px] font-black text-brand-blue/30 uppercase">{{ flight.stops === 0 ? 'Direct' : `${flight.stops} Stop` }}</div>
+                   </div>
+
+                   <div class="text-center">
+                      <div class="text-lg font-black text-brand-blue leading-none">{{ flight.destination }}</div>
+                      <div class="text-[9px] font-bold text-gray-400 mt-1">Dest</div>
+                   </div>
+                </div>
+             </div>
+          </div>
         </div>
 
-        <!-- Footer / Visualizer -->
-        <div class="p-8 bg-gray-50/50 border-t border-gray-100">
-          <div v-if="isRecording" class="flex flex-col items-center gap-6">
-            <div class="flex items-center gap-2 h-12">
-              <div v-for="i in 8" :key="i" 
-                class="w-1 bg-brand-blue rounded-full transition-all duration-75"
-                :style="{ height: Math.max(8, Math.random() * 40) + 'px' }"
-              ></div>
+        <!-- Debug Perspective Toggle -->
+        <div v-if="debugLogs.length" class="px-8 pb-4">
+          <button @click="showDebug = !showDebug" class="text-[9px] font-black uppercase tracking-widest text-brand-gray/40 hover:text-brand-blue flex items-center gap-2">
+            {{ showDebug ? 'Hide Console' : 'Show Debug Console' }}
+            <span :class="{'rotate-180': showDebug}" class="transition-transform">▼</span>
+          </button>
+          <div v-if="showDebug" class="mt-2 p-4 bg-black/90 text-[10px] font-mono text-green-400 rounded-2xl max-h-40 overflow-y-auto border border-white/10 shadow-inner">
+            <div v-for="(log, i) in debugLogs" :key="i" class="mb-1 opacity-80 border-b border-white/5 pb-1">
+              {{ log }}
             </div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-brand-blue animate-pulse">Listening for your command...</p>
-            <UiBaseButton variant="secondary" size="lg" block @click="stopRecording" class="!bg-red-500 !text-white hover:!bg-red-600 border-none">
-              Stop Recording
-            </UiBaseButton>
           </div>
-          <div v-else class="flex flex-col items-center gap-4">
-             <UiBaseButton 
-                variant="primary" 
-                size="lg" 
-                block 
-                @click="startRecording" 
-                class="flex items-center justify-center gap-3 shadow-xl shadow-brand-blue/30"
-             >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                </svg>
-                <span class="font-black uppercase tracking-widest text-xs">Speak to AI</span>
-             </UiBaseButton>
+        </div>
+
+        <!-- Footer Control -->
+        <div class="p-8 border-t border-gray-50 bg-gray-50/50">
+          <div class="flex items-center justify-between mb-4">
+             <div class="flex gap-1 h-4 items-center">
+                <div v-for="i in 5" :key="i" class="w-1 bg-brand-blue rounded-full" 
+                     :style="{ height: isRecording ? `${Math.random() * 100}%` : '20%', transition: 'height 0.1s' }"></div>
+             </div>
+             <span class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest">
+               {{ isThinking ? 'AI is processing...' : (isRecording ? 'Listening...' : 'Ready to help') }}
+             </span>
           </div>
+          
+          <button 
+            @click="isRecording ? stopRecording() : startRecording()"
+            :disabled="sessionStatus === 'connecting' || isThinking"
+            class="w-full py-4 rounded-full font-black text-[11px] uppercase tracking-[0.2em] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-brand-blue/5"
+            :class="isRecording ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-brand-blue text-white hover:scale-[1.01] active:scale-[0.98]'"
+          >
+            <span v-if="sessionStatus === 'connecting'">Connecting...</span>
+            <span v-else-if="isThinking">Thinking...</span>
+            <span v-else>{{ isRecording ? 'Stop Recording' : 'Start Talking' }}</span>
+          </button>
         </div>
       </div>
     </Transition>
@@ -113,145 +145,147 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
-import { useStartVoiceSession } from '@/composables/modules/voice-agent/useStartVoiceSession'
-import { useVoiceSocket } from '@/composables/modules/voice-agent/useVoiceSocket'
-import { useVoiceResponse } from '@/composables/modules/voice-agent/useVoiceResponse'
-import { useVoiceFlow } from '@/composables/modules/voice-agent/useVoiceFlow'
-import { useVoiceTextInput } from '@/composables/modules/voice-agent/useVoiceTextInput'
+import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue';
+import { useVoiceStreaming } from '~/composables/useVoiceStreaming';
+import { useRuntimeConfig } from '#app';
+import { useAuth } from '~/composables/modules/auth/useAuth';
 
-const { startSession, sessionId, streamingToken } = useStartVoiceSession()
-const { connect, isConnected } = useVoiceSocket()
-const { aiResponse } = useVoiceResponse()
-const { flowUpdate } = useVoiceFlow()
-const { emitTextInput } = useVoiceTextInput()
+const { token } = useAuth();
+const config = useRuntimeConfig();
+const { isRecording, transcripts, aiResponses, debugLogs, sessionStatus, startStreaming, stopStreaming } = useVoiceStreaming(config.public.apiBase || 'http://localhost:3000');
 
-const isOpen = ref(false)
-const isRecording = ref(false)
-const partialTranscript = ref('')
-const messages = ref<{role: 'user' | 'ai', text: string, data?: any}[]>([])
-const chatRef = ref<HTMLElement | null>(null)
+const showOverlay = ref(false);
+const showDebug = ref(false);
+const chatBox = ref<HTMLElement | null>(null);
+const latestResults = ref<any[]>([]);
+const conversation = ref<{ role: 'user' | 'assistant'; text: string }[]>([]);
+const isThinking = ref(false);
+const partialTranscript = ref('');
 
-// AssemblyAI Realtime STT State
-let transcriber: any = null
-let socket: WebSocket | null = null
+// Track last processed indices so we append chronologically
+let lastTranscriptIdx = 0;
+let lastAiResponseIdx = 0;
 
-const toggleVoice = () => {
-  isOpen.value = !isOpen.value
-}
-
-watch(isOpen, async (val) => {
-  if (val) {
-    if (!sessionId.value) {
-      await startSession()
+// Watch for new final transcripts — push to conversation in order
+watch(transcripts, (val) => {
+  if (!val) return;
+  for (let i = lastTranscriptIdx; i < val.length; i++) {
+    const item = val[i];
+    if (item) {
+      if (item.isFinal) {
+        conversation.value.push({ role: 'user', text: item.text });
+        partialTranscript.value = ''; // Clear partial when final arrives
+        
+        // Start "Thinking" when a user finishes speaking
+        isThinking.value = true;
+      } else {
+        partialTranscript.value = item.text;
+      }
     }
-    connect()
   }
-})
+  lastTranscriptIdx = val.length;
+  scrollToBottom();
+}, { deep: true });
 
-watch(aiResponse, (resp) => {
-  if (resp) {
-    messages.value.push({ role: 'ai', text: resp.response, data: resp.data })
-    scrollToBottom()
-  }
-})
+// Watch for new AI responses — push to conversation in order
+watch(aiResponses, (val) => {
+  if (!val) return;
+  for (let i = lastAiResponseIdx; i < val.length; i++) {
+    const item = val[i];
+    if (item) {
+      // AI responded, stop thinking
+      isThinking.value = false;
+      
+      conversation.value.push({ role: 'assistant', text: item.text });
 
-const scrollToBottom = () => {
-  nextTick(() => {
-    if (chatRef.value) {
-      chatRef.value.scrollTop = chatRef.value.scrollHeight
+      // Handle specific actions
+      if (item.action === 'show_results' && item.data) {
+        latestResults.value = item.data;
+      }
+
+      if (item.action === 'init_checkout') {
+         // In a real app, you'd redirect to /checkout or open a modal
+         console.log('Initiating checkout with:', item.data);
+         setTimeout(() => {
+            alert('Transferring you to checkout for: ' + (item.data.fullName || 'booking'));
+         }, 1500);
+      }
+
+      // Speak the AI response aloud
+      speakText(item.text);
     }
-  })
-}
+  }
+  lastAiResponseIdx = val.length;
+  scrollToBottom();
+}, { deep: true });
+
+const toggleOverlay = () => {
+  showOverlay.value = !showOverlay.value;
+};
 
 const startRecording = async () => {
+  // Reset conversation state for a fresh session
+  conversation.value = [];
+  latestResults.value = [];
+  partialTranscript.value = '';
+  lastTranscriptIdx = 0;
+  lastAiResponseIdx = 0;
+  
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    isRecording.value = true
-    partialTranscript.value = ''
-    
-    // Direct AssemblyAI WSS implementation
-    if (!streamingToken.value) {
-      await startSession()
-    }
-
-    const url = `wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${streamingToken.value}`
-    socket = new WebSocket(url)
-
-    socket.onmessage = (message) => {
-      const { message_type, text } = JSON.parse(message.data)
-      if (message_type === 'PartialTranscript') {
-        partialTranscript.value = text
-      } else if (message_type === 'FinalTranscript') {
-        partialTranscript.value = ''
-        if (text) {
-          messages.value.push({ role: 'user', text })
-          emitTextInput(text, sessionId.value!)
-          scrollToBottom()
-        }
-      }
-    }
-
-    socket.onopen = () => {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 })
-      const source = audioContext.createMediaStreamSource(stream)
-      const processor = audioContext.createScriptProcessor(4096, 1, 1)
-
-      source.connect(processor)
-      processor.connect(audioContext.destination)
-
-      processor.onaudioprocess = (e) => {
-        if (socket?.readyState === WebSocket.OPEN) {
-          const inputData = e.inputBuffer.getChannelData(0)
-          const audioBuffer = new Int16Array(inputData.length)
-          for (let i = 0; i < inputData.length; i++) {
-            audioBuffer[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF
-          }
-          socket.send(JSON.stringify({ audio_data: btoa(String.fromCharCode(...new Uint8Array(audioBuffer.buffer))) }))
-        }
-      }
-    }
-
-    socket.onerror = (e) => {
-      console.error('AssemblyAI WSS Error:', e)
-      stopRecording()
-    }
-
+    await startStreaming(token.value);
   } catch (err) {
-    console.error('Failed to start recording:', err)
+    console.error('Start streaming failed:', err);
+    showDebug.value = true; // Auto-show debug on error
   }
-}
+};
 
 const stopRecording = () => {
-  isRecording.value = false
-  if (socket) {
-    socket.send(JSON.stringify({ terminate_session: true }))
-    socket.close()
-    socket = null
+  stopStreaming();
+  window.speechSynthesis?.cancel();
+};
+
+const speakText = (text: string) => {
+  if (!('speechSynthesis' in window)) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  window.speechSynthesis.speak(utterance);
+};
+
+const scrollToBottom = async () => {
+  await nextTick();
+  if (chatBox.value) {
+    chatBox.value.scrollTop = chatBox.value.scrollHeight;
   }
-}
+};
+
+onMounted(() => {
+  scrollToBottom();
+});
 </script>
 
 <style scoped>
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+.voice-wave {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, white 0%, transparent 70%);
+  animation: pulse 2s infinite ease-in-out;
 }
 
-.slide-up-enter-from,
-.slide-up-leave-to {
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.1; }
+  50% { transform: scale(3); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 0.1; }
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
   opacity: 0;
-  transform: translateX(100px);
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(13, 29, 173, 0.05);
-  border-radius: 10px;
+  transform: translateY(20px) scale(0.95);
 }
 </style>

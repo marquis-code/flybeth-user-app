@@ -3,10 +3,20 @@ import { authApiFactory } from "@/api_factory/modules/auth";
 import { useUser } from "./user";
 import { useCustomToast } from "@/composables/core/useCustomToast";
 
+const isAuthModalVisible = ref(false);
+
 export const useAuth = () => {
     const loading = ref(false);
-    const { setToken, setUser, setRefreshToken, logOut: clearUser } = useUser();
+    const { token, user, setToken, setUser, setRefreshToken, logOut } = useUser();
     const { showToast } = useCustomToast();
+
+    const openAuthModal = () => {
+        isAuthModalVisible.value = true;
+    };
+
+    const closeAuthModal = () => {
+        isAuthModalVisible.value = false;
+    };
 
     const login = async (payload: any) => {
         loading.value = true;
@@ -108,11 +118,11 @@ export const useAuth = () => {
         }
     };
 
-    const logout = async () => {
+    const logoutUser = async () => {
         loading.value = true;
         try {
             await authApiFactory.logout();
-            clearUser();
+            logOut();
         } catch (error: any) {
             console.error(error);
         } finally {
@@ -192,7 +202,12 @@ export const useAuth = () => {
         forgotPassword,
         resetPassword,
         verifyOtp,
-        logout,
+        logout: logoutUser,
         loginWithGoogle,
+        isAuthModalVisible,
+        openAuthModal,
+        closeAuthModal,
+        token,
+        user,
     };
 };

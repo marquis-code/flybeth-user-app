@@ -1,24 +1,24 @@
 <template>
   <div class="space-y-8">
     <div>
-      <h2 class="text-[10px] font-black text-brand-green uppercase tracking-[0.3em] mb-4">Get Started</h2>
-      <h3 class="text-4xl font-black text-brand-blue font-header tracking-tighter">Create Account</h3>
+      <h2 class="text-[10px] font-black text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.getStarted') }}</h2>
+      <h3 class="text-4xl font-black text-brand-blue font-header tracking-tighter">{{ $t('auth.createAccount') }}</h3>
       <p class="mt-3 text-sm text-brand-gray/60 font-bold">
-        Already have an account?
-        <NuxtLink to="/auth/login" class="text-brand-green hover:underline font-black">Login here</NuxtLink>
+        {{ $t('auth.alreadyHaveAccount') }}
+        <NuxtLink to="/auth/login" class="text-brand-green hover:underline font-black">{{ $t('auth.loginHere') }}</NuxtLink>
       </p>
     </div>
 
     <form class="space-y-6" @submit.prevent="handleRegister">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <UiBaseInput
-          label="First Name"
+          :label="$t('auth.firstNameLabel')"
           placeholder="John"
           v-model="registerData.firstName"
           required
         />
         <UiBaseInput
-          label="Last Name"
+          :label="$t('auth.lastNameLabel')"
           placeholder="Doe"
           v-model="registerData.lastName"
           required
@@ -26,7 +26,7 @@
       </div>
 
       <UiBaseInput
-        label="Email Address"
+        :label="$t('auth.emailAddress')"
         type="email"
         placeholder="john@example.com"
         v-model="registerData.email"
@@ -34,13 +34,13 @@
       />
 
       <UiPhoneInput
-        label="Phone Number"
+        :label="$t('auth.phoneNumberLabel')"
         v-model="registerData.phone"
         @country-change="onCountryChange"
       />
 
       <UiBaseInput
-        label="Password"
+        :label="$t('auth.password')"
         type="password"
         placeholder="••••••••"
         v-model="registerData.password"
@@ -52,8 +52,8 @@
         :disabled="loading"
         class="w-full py-4 bg-brand-blue text-white rounded-2xl text-sm font-black uppercase tracking-[0.15em] shadow-[0_10px_30px_-5px_rgba(13,29,173,0.3)] hover:shadow-brand-blue/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-blue/20 disabled:opacity-50"
       >
-        <span v-if="loading">Creating account...</span>
-        <span v-else>Create Account</span>
+        <span v-if="loading">{{ $t('auth.creatingAccount') }}</span>
+        <span v-else>{{ $t('auth.createAccount') }}</span>
       </button>
 
       <div class="relative py-2">
@@ -61,7 +61,7 @@
           <div class="w-full border-t border-gray-100"></div>
         </div>
         <div class="relative flex justify-center text-xs uppercase">
-          <span class="bg-white px-4 text-brand-gray/40 font-black tracking-widest">Or join with</span>
+          <span class="bg-white px-4 text-brand-gray/40 font-black tracking-widest">{{ $t('auth.orJoinWith') }}</span>
         </div>
       </div>
 
@@ -76,7 +76,7 @@
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
         </svg>
-        Sign up with Google
+        {{ $t('auth.signUpGoogle') }}
       </button>
     </form>
   </div>
