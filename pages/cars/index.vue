@@ -4,10 +4,10 @@
     <div class="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 py-6 sticky top-0 z-30 transition-all duration-300">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-6 items-end">
         <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-            <LocationPicker v-model="searchQuery.location" placeholder="Pick-up location" id="cars-location" class="text-sm" />
+            <LocationPicker v-model="searchQuery.pickUpLocation" placeholder="Pick-up location" id="cars-location" class="text-sm" />
             <div class="space-y-2">
               <label class="text-[11px] uppercase tracking-[0.15em] text-brand-gray font-black px-1 opacity-70 font-header block">Pick-up Date</label>
-              <UiBaseInput v-model="searchQuery.date" type="date" placeholder="Dates" class="text-sm !py-5 !rounded-[1.5rem]" />
+              <UiBaseInput v-model="searchQuery.pickUpDate" type="date" placeholder="Dates" class="text-sm !py-5 !rounded-[1.5rem]" />
             </div>
         </div>
         <UiBaseButton variant="primary" size="lg" :loading="loading" @click="handleSearch" class="px-12 mb-1">Search</UiBaseButton>
@@ -71,7 +71,7 @@
              title="No cars available"
              message="We couldn't find rental cars at this location. Try a different pick-up point or date."
              actionLabel="Search Dubai Airport"
-             @action="searchQuery.location = 'Dubai International Airport (DXB)'; handleSearch();"
+             @action="searchQuery.pickUpLocation = 'Dubai International Airport (DXB)'; handleSearch();"
            />
            
            <CarCard 
@@ -93,8 +93,10 @@ import { useSearchCars } from '@/composables/modules/cars/useSearchCars';
 const { loading, cars, searchCars } = useSearchCars();
 
 const searchQuery = ref({
-  location: '',
-  date: ''
+  type: 'rental',
+  pickUpLocation: '',
+  pickUpDate: '',
+  dropOffDate: ''
 });
 
 const handleSearch = () => {
@@ -115,14 +117,27 @@ const selectCar = (car: any) => {
 
 onMounted(() => {
   const route = useRoute();
-  if (!route.query.location) {
+  if (!route.query.location && !route.query.pickUpLocation) {
+    const futureDate = new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0];
+    const dropOffDate = new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().split('T')[0];
     searchQuery.value = {
-      location: 'Dubai International Airport (DXB)',
-      date: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0]
+      type: 'rental',
+      pickUpLocation: 'Dubai International Airport (DXB)',
+      pickUpDate: futureDate,
+      dropOffDate: dropOffDate
     };
   } else {
-    if (route.query.location) searchQuery.value.location = String(route.query.location);
-    if (route.query.date) searchQuery.value.date = String(route.query.date);
+    searchQuery.value.type = (route.query.type as string) || 'rental';
+    searchQuery.value.pickUpLocation = (route.query.pickUpLocation || route.query.location) as string || '';
+    searchQuery.value.pickUpDate = (route.query.pickUpDate || route.query.date) as string || '';
+    searchQuery.value.dropOffDate = (route.query.dropOffDate) as string || '';
+    
+    // If dropOffDate is missing, default to pickUpDate + 1 day
+    if (searchQuery.value.pickUpDate && !searchQuery.value.dropOffDate) {
+      const d = new Date(searchQuery.value.pickUpDate);
+      d.setDate(d.getDate() + 1);
+      searchQuery.value.dropOffDate = d.toISOString().split('T')[0];
+    }
   }
   handleSearch();
 });

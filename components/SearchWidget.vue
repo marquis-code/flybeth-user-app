@@ -3,34 +3,43 @@
     class="bg-white/95 backdrop-blur-xl shadow-2xl shadow-brand-blue/10 border-b border-gray-100 font-body relative transition-all duration-700 ease-in-out"
     :class="[isSticky ? 'rounded-b-[2.5rem] border-x-0 border-t-0 py-1' : 'rounded-[2.5rem] border border-gray-100 py-0']"
   >
-    <!-- Redesigned Tabs (Wakanow Style: Icon on top, Text below) -->
-    <div class="bg-gray-50/50 border-b border-gray-100/50 overflow-x-auto no-scrollbar rounded-t-full">
-      <nav class="flex px-4 min-w-max md:justify-center" aria-label="Tabs">
+    <!-- Redesigned Tabs (Priceline Style: Horizontal, Icon + Text) -->
+    <div class="bg-white rounded-t-[2.5rem] border-b border-gray-100 overflow-x-auto no-scrollbar">
+      <nav class="flex px-8 gap-8" aria-label="Tabs">
         <button
           v-for="tab in tabs"
           :key="tab.name"
           @click="currentTab = tab.name"
           :class="[
             currentTab === tab.name
-              ? 'text-brand-blue border-brand-blue bg-white shadow-sm'
-              : 'text-brand-gray/60 hover:text-brand-blue hover:bg-gray-100/50',
-            'flex flex-col items-center justify-center gap-1.5 transition-all border-b-4 border-transparent relative z-10 px-6 py-4 md:px-8',
-            isSticky ? 'scale-90' : ''
+              ? 'text-brand-blue border-brand-blue'
+              : 'text-brand-gray/60 hover:text-brand-blue border-transparent',
+            'flex items-center gap-3 transition-all border-b-2 py-5 relative z-10 whitespace-nowrap px-6',
           ]"
         >
-          <div class="relative">
-            <component :is="tab.icon" :class="[isSticky ? 'h-5 w-5' : 'h-7 w-7', 'transition-transform duration-500', currentTab === tab.name ? 'scale-110' : 'group-hover:scale-110']" />
-            <span v-if="tab.badge" class="absolute -top-2 -right-6 bg-brand-green text-[8px] text-white px-1.5 py-0.5 rounded-full font-black animate-pulse uppercase">{{ tab.badge }}</span>
+          <div 
+            class="h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300"
+            :class="[currentTab === tab.name ? 'bg-brand-blue/10' : 'bg-transparent']"
+          >
+            <component :is="tab.icon" class="h-5 w-5" />
           </div>
-          <span class="text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap">{{ $t(`search.tabs.${tab.name.toLowerCase()}`) }}</span>
+          <span class="text-sm font-black tracking-wider uppercase">{{ tab.name }}</span>
+          <span v-if="tab.badge" class="ml-1 bg-brand-green/10 text-[10px] text-brand-green px-2 py-0.5 rounded-full font-black uppercase tracking-widest">{{ tab.badge }}</span>
         </button>
       </nav>
     </div>
 
+    <!-- Backdrop Overlay (Dim effect on focus) -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div v-if="isFocused" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998]" @click="isFocused = false"></div>
+      </Transition>
+    </Teleport>
+
     <!-- Redesigned Content Area -->
     <div 
-      class="bg-white transition-all duration-700 ease-in-out"
-      :class="[isSticky ? 'p-2 md:p-4 !space-y-4' : 'p-6 md:p-8 space-y-8']"
+      class="bg-white transition-all duration-700 ease-in-out relative z-[10000]"
+      :class="[isSticky ? 'p-2 md:p-4 !space-y-4' : 'p-6 md:p-8 space-y-8', isFocused ? '!rounded-b-[2.5rem]' : '']"
     >
       <!-- Stays (Hotels) Panel -->
       <div v-if="currentTab === 'Hotels'" class="space-y-6">
@@ -59,54 +68,45 @@
 
         <!-- Single Hotel — Unified Inline Row -->
         <div v-if="stayMode === 'single'" class="flex flex-col gap-6">
-          <div class="flex flex-col md:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm overflow-visible">
+          <div 
+            class="flex flex-col md:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm overflow-visible transition-all duration-300"
+            :class="isFocused ? 'ring-4 ring-brand-blue/10 border-brand-blue' : ''"
+          >
             <!-- Location -->
-            <div class="flex-[2] relative border-b md:border-b-0 md:border-r border-gray-100">
+            <div class="flex-[1.8] relative border-b md:border-b-0 md:border-r border-gray-100">
               <LocationPicker 
                 v-model="searchState.location" 
-                label="City, Property Name or Location"
+                label="Going to"
                 placeholder="Where are you going?"
                 id="stay-location"
+                @focus="isFocused = true"
+                @close="isFocused = false"
                 @select="handleLocationSelect"
               />
             </div>
             
             <!-- Date Range Picker for Check-in / Check-out -->
-            <div class="flex-[2] border-b md:border-b-0 md:border-r border-gray-100">
+            <div class="flex-[1.8] border-b md:border-b-0 md:border-r border-gray-100">
               <FlightDateRangePicker
                 :departure="searchState.checkIn"
                 :return="searchState.checkOut"
                 mode="roundtrip"
+                @focus="isFocused = true"
+                @close="isFocused = false"
                 @update:departure="(v: string) => searchState.checkIn = v"
                 @update:return="(v: string) => searchState.checkOut = v"
               />
             </div>
 
             <!-- Rooms & Guests -->
-            <div class="flex-1 relative p-4 cursor-pointer group" @click="showOccupancy = !showOccupancy">
-              <label class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest mb-1 flex items-center gap-1 group-hover:text-brand-blue transition-colors">
-                Rooms & Guests
-                <ChevronDownIcon class="h-3 w-3 inline text-brand-blue transition-transform" :class="showOccupancy ? 'rotate-180' : ''" />
-              </label>
-              <div class="text-2xl font-black text-brand-blue flex items-baseline gap-2">
-                {{ occupancy.rooms }} <span class="text-sm font-bold text-gray-400">Room{{ occupancy.rooms > 1 ? 's' : '' }},</span>
-                {{ occupancy.adults + occupancy.children }} <span class="text-sm font-bold text-gray-400">Guest{{ (occupancy.adults + occupancy.children) > 1 ? 's' : '' }}</span>
-              </div>
-
-              <!-- Popover -->
-              <Transition name="fade-up">
-                <div v-if="showOccupancy" @click.stop class="absolute top-full right-0 mt-3 z-[200] w-72 bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 p-6 space-y-5">
-                  <div v-for="type in ['Rooms', 'Adults', 'Children']" :key="type" class="flex items-center justify-between">
-                    <span class="text-sm font-bold text-brand-blue">{{ type }}</span>
-                    <div class="flex items-center space-x-3 bg-gray-50 p-1 rounded-xl">
-                      <button @click.prevent="updateOccupancy(type, -1)" class="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue hover:shadow-sm transition-all">-</button>
-                      <span class="text-sm font-black w-4 text-center text-brand-blue">{{ (occupancy as any)[type.toLowerCase()] }}</span>
-                      <button @click.prevent="updateOccupancy(type, 1)" class="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue hover:shadow-sm transition-all">+</button>
-                    </div>
-                  </div>
-                  <UiBaseButton block variant="primary" @click="showOccupancy = false">Apply</UiBaseButton>
-                </div>
-              </Transition>
+            <div class="flex-1 relative border-gray-100">
+               <Occupancypicker
+                 v-model:rooms="occupancy.rooms"
+                 v-model:adults="occupancy.adults"
+                 v-model:children="occupancy.children"
+                 @focus="isFocused = true"
+                 @close="isFocused = false"
+               />
             </div>
           </div>
 
@@ -151,28 +151,17 @@
                </div>
                <span class="text-xs font-black" :class="flightMode === 'multicity' ? 'text-brand-blue' : 'text-brand-gray/60 group-hover:text-brand-blue'">Multi City</span>
              </label>
-             <div class="relative flex items-center gap-2 group cursor-pointer" v-if="flightMode === 'multicity'">
-                 <button @click="showFlightTravelers = !showFlightTravelers" class="text-xs font-black text-brand-gray/80 flex items-center outline-none pr-4 cursor-pointer hover:text-brand-blue transition-colors">
-                    {{ totalFlightTravelers }} Passenger{{ totalFlightTravelers > 1 ? 's' : '' }}
-                    <ChevronDownIcon class="h-3 w-3 ml-1" />
-                 </button>
-                 
-                 <!-- Travelers Popover -->
-                 <Transition name="fade-up">
-                   <div v-if="showFlightTravelers" @click.stop class="absolute top-full left-0 mt-2 w-72 bg-white rounded-[1.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 p-6 space-y-5 z-[200]">
-                      <div v-for="type in ['Adults', 'Children', 'InfantsOnLap', 'InfantsInSeat']" :key="type" class="flex items-center justify-between">
-                        <div>
-                          <p class="text-sm font-bold text-brand-blue">{{ type.replace(/([A-Z])/g, ' $1').trim() }}</p>
-                          <p v-if="type === 'InfantsOnLap'" class="text-[9px] text-gray-400 font-bold">Under 2, on lap</p>
-                        </div>
-                        <div class="flex items-center space-x-3 bg-gray-50 p-1 rounded-xl">
-                          <button @click.prevent="updateFlightTravelers(type.charAt(0).toLowerCase() + type.slice(1), -1)" class="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue hover:shadow-sm transition-all">-</button>
-                          <span class="text-sm font-black w-4 text-center text-brand-blue">{{ (flightTravelers as any)[type.charAt(0).toLowerCase() + type.slice(1)] }}</span>
-                          <button @click.prevent="updateFlightTravelers(type.charAt(0).toLowerCase() + type.slice(1), 1)" class="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue hover:shadow-sm transition-all">+</button>
-                        </div>
-                      </div>
-                   </div>
-                 </Transition>
+             <div class="relative flex items-center pr-4" v-if="flightMode === 'multicity'">
+                <Occupancypicker
+                  label="Passengers"
+                  variant="flight"
+                  v-model:adults="flightTravelers.adults"
+                  v-model:children="flightTravelers.children"
+                  v-model:infantsOnLap="flightTravelers.infantsOnLap"
+                  v-model:infantsInSeat="flightTravelers.infantsInSeat"
+                  @focus="isFocused = true"
+                  @close="isFocused = false"
+                />
              </div>
            </div>
            
@@ -197,19 +186,21 @@
            <div 
              v-for="(leg, index) in flightMode === 'multicity' ? multiFlightLegs : [flightSearchState]" 
              :key="index"
-             class="flex flex-col lg:flex-row w-full bg-white border border-gray-200 rounded-xl lg:rounded-2xl shadow-sm relative transition-all"
+             class="flex flex-col lg:flex-row w-full bg-white border border-gray-200 rounded-xl lg:rounded-2xl shadow-sm relative transition-all duration-300"
+             :class="isFocused ? 'ring-4 ring-brand-blue/10 border-brand-blue' : ''"
            >
               <!-- Origin & Destination -->
-              <div class="flex flex-col md:flex-row w-full" :class="flightMode === 'multicity' ? 'lg:w-[65%]' : 'lg:w-[50%]'">
+              <div class="flex flex-col md:flex-row w-full" :class="flightMode === 'multicity' ? 'lg:w-[65%]' : 'lg:w-[42%]'">
                 <div class="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-200 p-1 relative">
-                   <div class="px-2 pt-2 text-[10px uppercase font-black tracking-widest text-brand-gray/40">From</div>
                    <LocationPicker 
                      v-model="leg.origin" 
                      :id="`origin-${index}`" 
                      label="From"
+                     @focus="isFocused = true"
+                     @close="isFocused = false"
                      @select="flightMode === 'multicity' ? handleMultiFlightOriginSelect($event, index) : handleFlightOriginSelect($event)"
                    />
-                   <!-- Toggle Button (only on the first row or non-multicity to save space, but lets put on all) -->
+                   <!-- Toggle Button -->
                    <button 
                      @click.prevent="swapFlightLocations(index)"
                      class="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 bg-white border border-gray-100 rounded-full items-center justify-center text-brand-blue/60 z-[110] hover:bg-gray-50 hover:text-brand-blue transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
@@ -219,51 +210,42 @@
                 </div>
                 
                 <div class="w-full md:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 p-1 pl-4">
-                   <div class="px-2 pt-2 text-[10px] uppercase font-black tracking-widest text-brand-gray/40">To</div>
                    <LocationPicker 
                      v-model="leg.destination" 
                      :id="`destination-${index}`" 
                      label="To"
+                     @focus="isFocused = true"
+                     @close="isFocused = false"
                      @select="flightMode === 'multicity' ? handleMultiFlightDestSelect($event, index) : handleFlightDestSelect($event)"
                    />
                 </div>
               </div>
 
               <!-- Dates & Passengers -->
-              <div class="flex flex-col md:flex-row w-full relative" :class="flightMode === 'multicity' ? 'lg:w-[35%]' : 'lg:w-[50%]'">
+              <div class="flex flex-col md:flex-row w-full relative" :class="flightMode === 'multicity' ? 'lg:w-[35%]' : 'lg:w-[58%]'">
                 <!-- Roundtrip / Oneway Dates & Passenger -->
                 <template v-if="flightMode !== 'multicity'">
-                   <div class="w-full md:w-[65%] border-b md:border-b-0 md:border-r border-gray-200 pt-1 relative">
+                   <div class="w-full md:w-[60%] border-b md:border-b-0 md:border-r border-gray-200 pt-1 relative">
                      <FlightDateRangePicker 
-                       :mode="flightMode"
+                       :mode="(flightMode as any)"
                        v-model:departure="leg.departureDate"
                        v-model:return="leg.returnDate"
+                       @focus="isFocused = true"
+                       @close="isFocused = false"
                      />
                    </div>
-                   
-                   <div class="w-full md:w-[35%] py-3 px-4 relative cursor-pointer group transition-colors hover:bg-gray-50/50 rounded-r-2xl" @click="showFlightTravelers = !showFlightTravelers">
-                     <label class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest mb-1 flex items-center gap-1 group-hover:text-brand-blue">Passenger <ChevronDownIcon class="h-3 w-3 inline text-brand-blue transition-transform" :class="showFlightTravelers ? 'rotate-180' : ''"/></label>
-                     <div class="text-2xl font-black text-brand-blue flex items-baseline gap-2">
-                       {{ totalFlightTravelers }} <span class="text-sm font-bold text-gray-400 font-body">Passenger{{ totalFlightTravelers > 1 ? 's' : '' }}</span>
-                     </div>
-                     
-                     <!-- Passenger Popover -->
-                     <Transition name="fade-up">
-                       <div v-if="showFlightTravelers" @click.stop class="absolute top-full right-0 mt-4 w-72 bg-white rounded-[1.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 p-6 space-y-5 z-[200]">
-                         <div v-for="type in ['Adults', 'Children', 'InfantsOnLap', 'InfantsInSeat']" :key="type" class="flex items-center justify-between">
-                           <div>
-                             <p class="text-sm font-bold text-brand-blue">{{ type.replace(/([A-Z])/g, ' $1').trim() }}</p>
-                             <p v-if="type === 'InfantsOnLap'" class="text-[9px] text-gray-400 font-bold">Under 2, on lap</p>
-                           </div>
-                           <div class="flex items-center space-x-3 bg-gray-50 p-1 rounded-xl">
-                             <button @click.prevent="updateFlightTravelers(type.charAt(0).toLowerCase() + type.slice(1), -1)" class="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue hover:shadow-sm transition-all">-</button>
-                             <span class="text-sm font-black w-4 text-center text-brand-blue">{{ (flightTravelers as any)[type.charAt(0).toLowerCase() + type.slice(1)] }}</span>
-                             <button @click.prevent="updateFlightTravelers(type.charAt(0).toLowerCase() + type.slice(1), 1)" class="h-8 w-8 rounded-lg bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue hover:shadow-sm transition-all">+</button>
-                           </div>
-                         </div>
-                       </div>
-                     </Transition>
-                   </div>
+                                      <div class="w-full md:w-[40%] relative">
+                      <Occupancypicker
+                        label="Passenger"
+                        variant="flight"
+                        v-model:adults="flightTravelers.adults"
+                        v-model:children="flightTravelers.children"
+                        v-model:infantsOnLap="flightTravelers.infantsOnLap"
+                        v-model:infantsInSeat="flightTravelers.infantsInSeat"
+                        @focus="isFocused = true"
+                        @close="isFocused = false"
+                      />
+                    </div>
                 </template>
 
                 <!-- Multi City Dates & Cabin -->
@@ -272,6 +254,8 @@
                      <FlightDateRangePicker 
                        mode="oneway"
                        v-model:departure="leg.departureDate"
+                       @focus="isFocused = true"
+                       @close="isFocused = false"
                      />
                    </div>
                    <!-- Cabin/Class selector per leg or overall. Design shows Economy per block -->
@@ -347,27 +331,22 @@
           </div>
 
           <!-- Passenger Count -->
-          <div class="relative inline-block">
-            <button @click="showCarPassengers = !showCarPassengers" class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg text-sm font-bold text-brand-blue hover:bg-gray-200 transition-colors">
-              {{ carPassengers }} Passenger{{ carPassengers > 1 ? 's' : '' }}
-              <ChevronDownIcon class="h-3.5 w-3.5" />
-            </button>
-            <Transition name="fade-up">
-              <div v-if="showCarPassengers" @click.stop class="absolute top-full left-0 mt-2 z-[200] w-48 bg-white rounded-2xl shadow-lg border border-gray-100 p-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-bold text-brand-blue">Passengers</span>
-                  <div class="flex items-center space-x-2 bg-gray-50 p-1 rounded-lg">
-                    <button @click.prevent="carPassengers = Math.max(1, carPassengers - 1)" class="h-7 w-7 rounded-md bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue transition-all text-sm">-</button>
-                    <span class="text-sm font-black w-4 text-center text-brand-blue">{{ carPassengers }}</span>
-                    <button @click.prevent="carPassengers = Math.min(10, carPassengers + 1)" class="h-7 w-7 rounded-md bg-white flex items-center justify-center font-black text-brand-gray hover:text-brand-blue transition-all text-sm">+</button>
-                  </div>
-                </div>
-              </div>
-            </Transition>
+          <div class="relative inline-block min-w-[200px]">
+            <Occupancypicker
+              label="Passengers"
+              variant="flight"
+              :adults="carPassengers"
+              @update:adults="carPassengers = $event"
+              @focus="isFocused = true"
+              @close="isFocused = false"
+            />
           </div>
 
           <!-- Main Fields — Unified Inline Row -->
-          <div class="flex flex-col md:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm overflow-visible mb-6">
+          <div 
+            class="flex flex-col md:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm overflow-visible mb-6 transition-all duration-300"
+            :class="isFocused ? 'ring-4 ring-brand-blue/10 border-brand-blue' : ''"
+          >
             <!-- Pick-up -->
             <div class="flex-[1.5] relative border-b md:border-b-0 md:border-r border-gray-100">
               <LocationPicker 
@@ -375,6 +354,8 @@
                 :placeholder="carMode === 'pickup' ? 'Search airport...' : 'Enter city'"  
                 id="car-origin" 
                 v-model="carSearchState.origin" 
+                @focus="isFocused = true"
+                @close="isFocused = false"
               />
             </div>
             
@@ -385,6 +366,8 @@
                 :placeholder="carMode === 'pickup' ? 'Enter city' : 'Search airport...'"
                 id="car-destination" 
                 v-model="carSearchState.destination" 
+                @focus="isFocused = true"
+                @close="isFocused = false"
               />
             </div>
 
@@ -393,12 +376,14 @@
               <FlightDateRangePicker
                 :departure="carSearchState.pickUpDate"
                 mode="oneway"
+                @focus="isFocused = true"
+                @close="isFocused = false"
                 @update:departure="(v: string) => carSearchState.pickUpDate = v"
               />
             </div>
 
             <!-- Pick-up Time -->
-            <div class="flex-1 relative p-4">
+            <div class="flex-1 relative p-4" @click="isFocused = true">
               <label class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest block mb-1">Pick up Time</label>
               <div class="relative">
                 <input 
@@ -455,14 +440,24 @@
 
           <!-- Main Fields — Unified Inline Row -->
           <div class="flex flex-col md:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm overflow-visible mb-6">
-            <!-- Where from? -->
             <div v-if="packageType !== 'hotel+car'" class="flex-1 relative border-b md:border-b-0 md:border-r border-gray-100">
-               <LocationPicker label="Where from?" id="package-origin" v-model="packageSearchState.origin" />
+               <LocationPicker 
+                 label="Where from?" 
+                 id="package-origin" 
+                 v-model="packageSearchState.origin" 
+                 @focus="isFocused = true"
+                 @close="isFocused = false"
+               />
             </div>
             
-            <!-- Where to? -->
             <div class="relative border-b md:border-b-0 md:border-r border-gray-100" :class="packageType === 'hotel+car' ? 'flex-[2]' : 'flex-1'">
-               <LocationPicker label="Where to?" id="package-destination" v-model="packageSearchState.destination" />
+               <LocationPicker 
+                 label="Where to?" 
+                 id="package-destination" 
+                 v-model="packageSearchState.destination" 
+                 @focus="isFocused = true"
+                 @close="isFocused = false"
+               />
             </div>
 
             <!-- Stay/Travel Dates -->
@@ -471,37 +466,23 @@
                 :departure="packageSearchState.departureDate"
                 :return="packageSearchState.returnDate"
                 mode="roundtrip"
+                @focus="isFocused = true"
+                @close="isFocused = false"
                 @update:departure="(v: string) => packageSearchState.departureDate = v"
                 @update:return="(v: string) => packageSearchState.returnDate = v"
               />
             </div>
 
             <!-- Travelers & Rooms -->
-            <div class="flex-1 relative p-4 cursor-pointer group" @click="showPackageOccupancy = !showPackageOccupancy">
-               <label class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest mb-1 flex items-center gap-1 group-hover:text-brand-blue transition-colors">
-                 Travelers & Rooms
-                 <ChevronDownIcon class="h-3 w-3 inline text-brand-blue transition-transform" :class="showPackageOccupancy ? 'rotate-180' : ''" />
-               </label>
-               <div class="text-2xl font-black text-brand-blue flex items-baseline gap-2">
-                 {{ packageOccupancy.rooms }} <span class="text-sm font-bold text-gray-400">Room{{ packageOccupancy.rooms > 1 ? 's' : '' }},</span>
-                 {{ packageOccupancy.adults + packageOccupancy.children }} <span class="text-sm font-bold text-gray-400">Guest{{ (packageOccupancy.adults + packageOccupancy.children) > 1 ? 's' : '' }}</span>
-               </div>
-               
-               <!-- Popover -->
-               <Transition name="fade-up">
-                 <div v-if="showPackageOccupancy" @click.stop class="absolute top-full right-0 mt-3 z-[200] w-72 bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 p-6 space-y-5">
-                  <div v-for="type in ['Rooms', 'Adults', 'Children']" :key="type" class="flex items-center justify-between">
-                    <span class="text-sm font-bold text-brand-blue">{{ type }}</span>
-                    <div class="flex items-center space-x-4">
-                      <button @click="updatePackageOccupancy(type, -1)" class="h-10 w-10 rounded-xl bg-gray-50 flex items-center justify-center font-bold text-brand-gray hover:bg-brand-blue hover:text-white transition-all">-</button>
-                      <span class="text-sm font-black w-4 text-center text-brand-blue">{{ (packageOccupancy as any)[type.toLowerCase()] }}</span>
-                      <button @click="updatePackageOccupancy(type, 1)" class="h-10 w-10 rounded-xl bg-gray-50 flex items-center justify-center font-bold text-brand-gray hover:bg-brand-blue hover:text-white transition-all">+</button>
-                    </div>
-                  </div>
-                  <p class="text-[10px] text-brand-gray/40 italic leading-relaxed">Optimization: Multi-room packages are currently limited to 8 travelers total.</p>
-                  <UiBaseButton block variant="green" @click="showPackageOccupancy = false">Apply</UiBaseButton>
-                </div>
-              </Transition>
+            <div class="flex-1 relative border-gray-100">
+               <Occupancypicker
+                 v-model:rooms="packageOccupancy.rooms"
+                 v-model:adults="packageOccupancy.adults"
+                 v-model:children="packageOccupancy.children"
+                 variant="package"
+                 @focus="isFocused = true"
+                 @close="isFocused = false"
+               />
             </div>
 
 
@@ -692,20 +673,26 @@
             <button v-for="cat in ['Tours', 'Attractions', 'Day Trips', 'Water Sports', 'Food & Drink']" :key="cat" class="px-5 py-2.5 rounded-xl border border-gray-100 bg-gray-50/50 text-xs font-bold text-brand-blue hover:bg-brand-blue hover:text-white transition-all">{{ cat }}</button>
          </div>
        </div>
-
+      
+      <!-- Bottom Footer Disclaimer (mockup style) -->
+      <div v-if="!isSticky" class="border-t border-gray-50/50 py-3 bg-gray-50/30 rounded-b-[2.5rem] flex items-center justify-center">
+         <span class="text-[11px] font-bold text-brand-blue/60">
+           {{ currentTab }} prices now shown with fees included.
+         </span>
+      </div>
     </div>
 
-    <!-- Central Search Button (Wakanow Style) -->
+    <!-- Central Search Button (Priceline Style: Wide Blue) -->
     <div 
-      class="absolute left-1/2 -translate-x-1/2 -bottom-6 z-20 transition-all duration-500"
-      :class="[isSticky ? 'scale-90 -bottom-4' : 'scale-100 -bottom-6']"
+      class="absolute left-1/2 -translate-x-1/2 -bottom-7 z-20 transition-all duration-500"
+      :class="[isSticky ? 'scale-90 -bottom-5' : 'scale-100 -bottom-7']"
     >
       <button 
         @click="handleSearch"
-        class="bg-[#ff6801] hover:bg-[#e65d00] text-white px-16 py-4 rounded-full font-black text-lg tracking-[0.2em] shadow-[0_15px_30px_-5px_rgba(255,104,1,0.4)] hover:shadow-[0_20px_40px_-5px_rgba(255,104,1,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center gap-4 uppercase"
+        class="bg-[#006CE4] hover:bg-[#0057b7] text-white px-20 py-4.5 rounded-full font-black text-lg shadow-[0_15px_40px_-10px_rgba(0,108,228,0.5)] hover:shadow-[0_20px_50px_-10px_rgba(0,108,228,0.6)] transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-4"
       >
-        <span>{{ $t('search.labels.search') }}</span>
-        <SparklesIcon class="h-6 w-6 animate-pulse" />
+        <span>Find your {{ currentTab === 'Hotels' ? 'Hotel' : currentTab.endsWith('s') ? currentTab.slice(0, -1) : currentTab }}</span>
+        <ArrowRightIcon class="h-6 w-6" />
       </button>
     </div>
   </div>
@@ -741,41 +728,44 @@ const props = defineProps({
 })
 
 const { tripPurpose, fetchTripPurpose } = useMarketInsights()
-const emit = defineEmits(['update:tab'])
+const emit = defineEmits(['update:tab', 'focus-change'])
+
+const isFocused = ref(false)
+watch(isFocused, (val) => {
+  emit('focus-change', val)
+})
 
 const getPackageKey = (value: string) => value.replace(/\+/g, '_')
 
 const tabs = [
+  { name: 'Hotels', icon: HotelIcon, badge: null },
   { name: 'Flights', icon: PaperAirplaneIcon, badge: null },
-  { name: 'Hotels', icon: HotelIcon, badge: 'New' },
-  { name: 'Transfers', icon: TruckIcon, badge: null },
-  { name: 'Activities', icon: TicketIcon, badge: null },
-  { name: 'Cruises', icon: CruiseIcon, badge: null },
   { name: 'Cars', icon: CarIcon, badge: null },
+  { name: 'Cruises', icon: CruiseIcon, badge: null },
+  { name: 'Activities', icon: TicketIcon, badge: null },
+  { name: 'Transfers', icon: TruckIcon, badge: null },
 ]
 
 const currentTab = ref('Flights')
-// ... rest of scripts remain the same logic-wise
-const stayMode = ref('single')
-const showOccupancy = ref(false)
+const stayMode   = ref('single')
 
 const occupancy = reactive({
-  rooms: 1,
-  adults: 2,
+  rooms:    1,
+  adults:   2,
   children: 0
 })
 
 const searchState = reactive({
-  location: '',
-  latitude: null as number | null,
+  location:  '',
+  latitude:  null as number | null,
   longitude: null as number | null,
-  checkIn: new Date().toISOString().split('T')[0],
-  checkOut: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0]
+  checkIn:   new Date().toISOString().split('T')[0],
+  checkOut:  new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0]
 })
 
 const handleLocationSelect = (loc: any) => {
-  searchState.latitude = loc.latitude
   searchState.longitude = loc.longitude
+  searchState.latitude  = loc.latitude
 }
 
 const multiHotels = ref([
@@ -783,60 +773,54 @@ const multiHotels = ref([
 ])
 
 const bundles = reactive({
-  bundleFlight: false,
-  bundleCar: false,
+  bundleFlight:        false,
+  bundleCar:           false,
   bundleFlightAddStay: false,
-  bundleFlightAddCar: false,
-  bundleCarHotel: false,
-  bundleCarFlight: false
+  bundleFlightAddCar:  false,
+  bundleCarHotel:      false,
+  bundleCarFlight:     false
 })
 
 const occupancySummary = computed(() => {
   return `${occupancy.rooms} Room${occupancy.rooms > 1 ? 's' : ''}, ${occupancy.adults + occupancy.children} Traveler${(occupancy.adults + occupancy.children) > 1 ? 's' : ''}`
 })
 
-const updateOccupancy = (type: string, change: number) => {
-  const key = type.toLowerCase() as keyof typeof occupancy;
-  const min = key === 'rooms' || key === 'adults' ? 1 : 0
-  occupancy[key] = Math.max(min, occupancy[key] + change)
-}
-
-const addHotel = () => {
-  if (multiHotels.value.length < 5) {
-    multiHotels.value.push({ location: '', dates: { start: null, end: null } })
-  }
-}
-
-const removeHotel = (index: number) => {
-  multiHotels.value.splice(index, 1)
-}
-
 // Flight State
-const flightMode = ref('roundtrip')
-const showFlightTravelers = ref(false)
+const flightMode         = ref('roundtrip')
+const flightTravelers    = reactive({
+  adults:        1,
+  children:      0,
+  infantsOnLap:  0,
+  infantsInSeat: 0
+})
+
+const totalFlightTravelers = computed(() => {
+  return flightTravelers.adults + flightTravelers.children + flightTravelers.infantsOnLap + flightTravelers.infantsInSeat
+})
+
 const flightSearchState = reactive({
-  origin: '',
-  originLat: null as number | null,
-  originLng: null as number | null,
-  destination: '',
-  destLat: null as number | null,
-  destLng: null as number | null,
+  origin:        '',
+  originLat:     null as number | null,
+  originLng:     null as number | null,
+  destination:   '',
+  destLat:       null as number | null,
+  destLng:       null as number | null,
   departureDate: new Date().toISOString().split('T')[0],
-  returnDate: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
-  cabinClass: 'Economy',
+  returnDate:    new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0],
+  cabinClass:    'Economy',
   flexibleDates: false
 })
 
 const handleFlightOriginSelect = (loc: any) => {
   flightSearchState.originLat = loc.latitude
   flightSearchState.originLng = loc.longitude
-  flightSearchState.origin = loc.iataCode // Using 3-letter code
+  flightSearchState.origin    = loc.iataCode 
 }
 
 const handleFlightDestSelect = (loc: any) => {
-  flightSearchState.destLat = loc.latitude
-  flightSearchState.destLng = loc.longitude
-  flightSearchState.destination = loc.iataCode // Using 3-letter code
+  flightSearchState.destLat     = loc.latitude
+  flightSearchState.destLng     = loc.longitude
+  flightSearchState.destination = loc.iataCode 
 }
 
 // Watch for trip purpose prediction
@@ -848,20 +832,20 @@ watch([
 ], ([origin, dest, dep, ret]) => {
   if (origin && dest && dep && (flightMode.value === 'oneway' || ret)) {
     const originStr = origin as string
-    const destStr = dest as string
-    const depStr = dep as string
-    const retStr = ret as string | undefined
+    const destStr   = dest   as string
+    const depStr    = dep    as string
+    const retStr    = ret    as string | undefined
     
     // Only call if we have codes (3 letters usually)
     const originCode = originStr.match(/[A-Z]{3}/)?.[0] || originStr
-    const destCode = destStr.match(/[A-Z]{3}/)?.[0] || destStr
+    const destCode   = destStr.match(/[A-Z]{3}/)?.[0]   || destStr
     
     if (originCode.length === 3 && destCode.length === 3) {
       fetchTripPurpose({
-        originLocationCode: originCode,
+        originLocationCode:      originCode,
         destinationLocationCode: destCode,
-        departureDate: depStr,
-        returnDate: retStr || depStr
+        departureDate:           depStr,
+        returnDate:              retStr || depStr
       })
     }
   }
@@ -895,69 +879,48 @@ const swapFlightLocations = (index?: number) => {
   }
 }
 
-const totalFlightTravelers = computed(() => flightTravelers.adults + flightTravelers.children + flightTravelers.infantsOnLap + flightTravelers.infantsInSeat)
-
-const flightTravelers = reactive({
-  adults: 1,
-  children: 0,
-  infantsOnLap: 0,
-  infantsInSeat: 0
-})
-
 const flightTravelersSummary = computed(() => {
-  const total = flightTravelers.adults + flightTravelers.children + flightTravelers.infantsOnLap + flightTravelers.infantsInSeat
+  const total = totalFlightTravelers.value
   return `${total} traveler${total > 1 ? 's' : ''}, ${flightSearchState.cabinClass}`
 })
 
-const updateFlightTravelers = (type: string, change: number) => {
-  const min = type === 'adults' ? 1 : 0
-  const key = type as keyof typeof flightTravelers;
-  flightTravelers[key] = Math.max(min, flightTravelers[key] + change)
-}
-
 // Car State
-const carMode = ref('pickup')
-const carPassengers = ref(1)
-const showCarPassengers = ref(false)
-const showDifferentDropOff = ref(false)
+const carMode          = ref('pickup')
+const carPassengers    = ref(1)
 const carSearchState = reactive({
-  origin: '',
+  origin:      '',
   destination: '',
-  pickUpDate: new Date().toISOString().split('T')[0],
-  dropOffDate: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString().split('T')[0],
-  pickUpTime: 'Noon'
+  pickUpDate:  new Date().toISOString().split('T')[0],
+  pickUpTime:  '10:00'
 })
 
 // Cruise State
 const cruiseSearchState = reactive({
-  destination: '',
+  destination:    '',
   departureMonth: '',
-  minNights: 3,
-  maxNights: 9,
-  cruiseLine: 'Any'
+  cruiseLine:     'Any'
 })
 
 // Package State
-const packageType = ref('hotel+flight')
-const showPackageOccupancy = ref(false)
-const onlyPartialHotel = ref(false)
+const packageType         = ref('hotel+flight')
+const onlyPartialHotel    = ref(false)
 const differentCarDropoff = ref(false)
-const packageOccupancy = reactive({
-  rooms: 1,
-  adults: 2,
+const packageOccupancy    = reactive({
+  rooms:    1,
+  adults:   2,
   children: 0
 })
 const packageSearchState = reactive({
-  origin: '',
-  destination: '',
+  origin:        '',
+  destination:   '',
   departureDate: new Date().toISOString().split('T')[0],
-  returnDate: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0]
+  returnDate:    new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0]
 })
 
 // Transfer State
 const transferSearchState = reactive({
   from: '',
-  to: '',
+  to:   '',
   date: new Date().toISOString().split('T')[0]
 })
 
@@ -965,35 +928,7 @@ const transferSearchState = reactive({
 const activitySearchState = reactive({
   location: '',
   fromDate: new Date().toISOString().split('T')[0],
-  toDate: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString().split('T')[0]
-})
-
-const packageOccupancySummary = computed(() => {
-  return `${packageOccupancy.rooms} Room${packageOccupancy.rooms > 1 ? 's' : ''}, ${packageOccupancy.adults + packageOccupancy.children} Traveler${(packageOccupancy.adults + packageOccupancy.children) > 1 ? 's' : ''}`
-})
-
-const updatePackageOccupancy = (type: string, change: number) => {
-  const key = type.toLowerCase() as keyof typeof packageOccupancy;
-  const min = key === 'rooms' || key === 'adults' ? 1 : 0
-  const max = 8 
-  if (change > 0 && (packageOccupancy.adults + packageOccupancy.children) >= max && key !== 'rooms') return
-  packageOccupancy[key] = Math.max(min, packageOccupancy[key] + change)
-}
-
-// Click outside to close all popovers
-const closeAllPopovers = () => {
-  showOccupancy.value = false
-  showFlightTravelers.value = false
-  showCarPassengers.value = false
-  showPackageOccupancy.value = false
-}
-
-onMounted(() => {
-    window.addEventListener('click', closeAllPopovers)
-})
-
-onUnmounted(() => {
-    window.removeEventListener('click', closeAllPopovers)
+  toDate:   new Date(new Date().setDate(new Date().getDate() + 3)).toISOString().split('T')[0]
 })
 
 const addFlightLeg = () => {
@@ -1007,21 +942,18 @@ const removeFlightLeg = (index: number) => {
 }
 
 const handleSearch = () => {
-    const formatDate = (date: any) => {
-        if (!date) return ''
-        const d = date instanceof Date ? date : new Date(date)
-        return isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0]
-    }
+    isFocused.value = false
+    console.log('Searching for:', currentTab.value, searchState)
 
     if (currentTab.value === 'Flights') {
         if (flightMode.value === 'multicity') {
             const query = {
                 legs: JSON.stringify(multiFlightLegs.value.map(leg => ({
-                    origin: leg.origin,
-                    destination: leg.destination,
+                    origin:        leg.origin,
+                    destination:   leg.destination,
                     departureDate: leg.departureDate
                 }))),
-                passengers: flightTravelers.adults + flightTravelers.children,
+                passengers: totalFlightTravelers.value,
                 cabinClass: multiFlightLegs.value[0]?.cabinClass || 'Economy'
             }
             navigateTo({ path: '/flights/multi', query })
@@ -1029,15 +961,15 @@ const handleSearch = () => {
         }
 
         const query: any = {
-            origin: flightSearchState.origin,
-            destination: flightSearchState.destination,
+            origin:        flightSearchState.origin,
+            destination:   flightSearchState.destination,
             departureDate: flightSearchState.departureDate,
-            passengers: flightTravelers.adults + flightTravelers.children,
-            cabinClass: flightSearchState.cabinClass,
-            originLat: flightSearchState.originLat,
-            originLng: flightSearchState.originLng,
-            destLat: flightSearchState.destLat,
-            destLng: flightSearchState.destLng
+            passengers:    totalFlightTravelers.value,
+            cabinClass:    flightSearchState.cabinClass,
+            originLat:     flightSearchState.originLat,
+            originLng:     flightSearchState.originLng,
+            destLat:       flightSearchState.destLat,
+            destLng:       flightSearchState.destLng
         }
         if (flightMode.value === 'roundtrip' && flightSearchState.returnDate) {
             query.returnDate = flightSearchState.returnDate
@@ -1046,17 +978,17 @@ const handleSearch = () => {
     } else if (currentTab.value === 'Hotels') {
         const query: any = {
             location: searchState.location,
-            lat: searchState.latitude,
-            lng: searchState.longitude,
-            checkIn: searchState.checkIn,
+            lat:      searchState.latitude,
+            lng:      searchState.longitude,
+            checkIn:  searchState.checkIn,
             checkOut: searchState.checkOut,
-            guests: occupancy.adults + occupancy.children
+            guests:   occupancy.adults + occupancy.children
         }
         navigateTo({ path: '/stays', query })
     } else if (currentTab.value === 'Transfers') {
         const query = {
             from: transferSearchState.from,
-            to: transferSearchState.to,
+            to:   transferSearchState.to,
             date: transferSearchState.date
         }
         navigateTo({ path: '/transfers', query })
@@ -1064,7 +996,7 @@ const handleSearch = () => {
         const query = {
             location: activitySearchState.location,
             fromDate: activitySearchState.fromDate,
-            toDate: activitySearchState.toDate
+            toDate:   activitySearchState.toDate
         }
         navigateTo({ path: '/things-to-do', query })
     } else {

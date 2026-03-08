@@ -1,69 +1,53 @@
 <template>
   <div class="min-h-screen bg-white overflow-x-hidden relative">
-    <!-- Premium Hero Section with Dynamic Video Background -->
-    <div class="relative min-h-[700px] flex items-center pt-20 pb-32 overflow-hidden">
-      <!-- Dynamic Background Asset Layer -->
-      <div class="absolute inset-0 z-0">
-        <transition name="fade-bg" mode="out-in">
-          <div :key="activeBackground.url" class="absolute inset-0 w-full h-full overflow-hidden">
-            <video 
-              v-if="activeBackground.type === 'video'"
-              autoplay 
-              muted 
-              loop 
-              playsinline
-              class="absolute min-w-full min-h-full w-auto h-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 scale-105"
-            >
-              <source :src="activeBackground.url" type="video/mp4">
-            </video>
-            <img 
-              v-else
-              :src="activeBackground.url" 
-              class="absolute min-w-full min-h-full w-auto h-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-cover opacity-90 scale-105"
-            />
-            <!-- Dark Overlay Gradient -->
-            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-white/90"></div>
-            <div class="absolute inset-0 bg-black/20"></div>
-          </div>
-        </transition>
-      </div>
-
-      <!-- Award Badge -->
-      <!-- <div class="absolute top-10 right-10 z-20 animate-fade-in-delayed group cursor-help">
-        <div class="flex flex-col items-center bg-white/5 backdrop-blur-md p-4 rounded-3xl border border-white/10 shadow-2xl">
-          <SparklesIcon class="h-10 w-10 text-[#FFC107] mb-2 animate-pulse" />
-          <div class="text-white text-[9px] font-black uppercase tracking-[0.3em] text-center drop-shadow-md leading-tight">
-            {{ $t('hero.award') }} <br/> <span class="text-[7px] text-white/50 opacity-0 group-hover:opacity-100 transition-opacity">Since 2024</span>
-          </div>
-        </div>
-      </div> -->
-
+    <!-- Premium Hero Section with Clean Background -->
+    <div class="relative min-h-[700px] flex items-center pt-8 overflow-hidden bg-[#eff6ff]">
+      <!-- Abstract Background Curves (Priceline style) -->
+      <div class="absolute top-0 right-0 w-[1200px] h-[1200px] bg-brand-blue/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+      <div class="absolute -top-[10%] -right-[5%] w-[800px] h-[800px] bg-brand-blue rounded-full opacity-10"></div>
+      <div class="absolute top-[20%] right-[10%] w-64 h-64 bg-brand-blue/10 rounded-full blur-2xl"></div>
+      
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <!-- Main Search Widget (Prioritized Left) -->
-          <div class="lg:col-span-12 xl:col-span-12">
-            <div class="max-w-5xl mx-auto relative">
-               <div class="mb-12 text-center lg:text-left text-white drop-shadow-2xl">
-                  <h1 class="text-4xl md:text-6xl font-black tracking-tighter mb-4">
-                    {{ $t('hero.title1') }} <br/>
-                    <span class="text-brand-green opacity-90">{{ $t('hero.title2') }}</span>
-                  </h1>
-               </div>
-               <!-- Aggressive Fixed/Sticky Wrapper -->
-               <div ref="widgetContainer" class="relative">
-                 <div 
-                   :class="[
-                     isWidgetSticky 
-                       ? 'fixed top-[65px] left-0 right-0 z-[9999] bg-white shadow-2xl shadow-brand-blue/20 py-0 px-0 rounded-b-[2.5rem]' 
-                       : 'relative max-w-5xl mx-auto rounded-[2.5rem]'
-                   ]"
-                   class="transition-all duration-700 ease-in-out"
-                 >
-                   <SearchWidget :is-sticky="isWidgetSticky" @update:tab="currentTab = $event" />
-                 </div>
-                 <!-- Placeholder to prevent layout jump -->
-                 <div v-if="isWidgetSticky" :style="{ height: (widgetHeight || 400) + 'px' }"></div>
-               </div>
+        <div class="flex flex-col lg:flex-row items-center gap-12">
+          <!-- Left Content: Dynamic Title + Search -->
+          <div class="w-full lg:w-[80%]">
+            <div class="mb-8 block">
+               <h1 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-brand-blue text-left animate-fade-in drop-shadow-sm mb-4">
+                 {{ heroTitle }}
+               </h1>
+            </div>
+            
+            <div ref="widgetContainer" class="relative">
+              <div 
+                :class="[
+                  isWidgetSticky 
+                    ? 'fixed top-[65px] left-0 right-0 z-[9999] bg-white shadow-2xl py-0 px-0 rounded-b-[2.5rem]' 
+                    : 'relative rounded-[2.5rem]'
+                ]"
+                class="transition-all duration-700 ease-in-out"
+              >
+                <SearchWidget 
+                  :is-sticky="isWidgetSticky" 
+                  @update:tab="handleTabUpdate" 
+                  @focus-change="isWidgetFocused = $event" 
+                />
+              </div>
+              <!-- Placeholder to prevent layout jump -->
+              <div v-if="isWidgetSticky" :style="{ height: (widgetHeight || 400) + 'px' }"></div>
+            </div>
+          </div>
+
+          <!-- Right Content: Premium Image (Smaller per mockup) -->
+          <div class="hidden lg:block w-full lg:w-[20%] relative animate-fade-in-up">
+            <div class="relative">
+              <!-- Clip path / organic shape container for image -->
+              <div class="relative z-10 overflow-hidden rounded-[3rem] shadow-2xl border-4 border-white/50">
+                <img 
+                  src="@/assets/img/happy-trips.jpg" 
+                  class="w-full h-auto scale-110"
+                  alt="Happy Traveler"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -648,6 +632,24 @@ const backgrounds: Record<string, BackgroundAsset> = {
     type: 'image', 
     url: 'https://cdn.travelwings.com/assets/images/LP_banner_car_rentals_GH_f0a1352ff1.jpg' 
   }
+}
+
+const isWidgetFocused = ref(false)
+
+const heroTitle = computed(() => {
+  switch (currentTab.value) {
+    case 'Flights': return 'Save big on your next flight';
+    case 'Hotels': return 'Save big on your next hotel';
+    case 'Transfers': return 'Book reliable airport transfers';
+    case 'Activities': return 'Discover amazing things to do';
+    case 'Cruises': return 'Sail away with exclusive cruise deals';
+    case 'Cars': return 'Rent a car for your next adventure';
+    default: return 'Save big on your next trip';
+  }
+});
+
+const handleTabUpdate = (tab: string) => {
+  currentTab.value = tab;
 }
 
 const activeBackground = computed((): BackgroundAsset => {
