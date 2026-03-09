@@ -8,31 +8,67 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center transition-all duration-500">
         <!-- Logo Area -->
-        <div class="flex items-center">
+        <div class="flex items-center gap-3">
           <NuxtLink to="/" class="flex items-center group">
             <img src="@/assets/img/logo.png" class="h-10 w-auto mr-3 drop-shadow-lg group-hover:scale-110 transition-transform duration-500" alt="Flybeth Logo" />
           </NuxtLink>
+          
+          <!-- Explore Travel Dropdown -->
+          <div class="relative group">
+            <button class="flex items-center gap-1.5 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-brand-blue bg-white border border-brand-blue/20 hover:border-brand-blue/40 shadow-sm transition-all group">
+              Explore Travel
+              <ChevronDownIcon class="h-3 w-3 transition-transform group-hover:rotate-180" />
+            </button>
+            
+            <div class="absolute left-0 top-full mt-2 flex invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-[200]">
+              <!-- Main Categories -->
+              <div class="bg-white border border-gray-100 rounded-2xl shadow-2xl p-2 py-3 w-56 overflow-visible relative">
+                <NuxtLink 
+                  v-for="item in exploreLinks" 
+                  :key="item.name" 
+                  :to="item.path"
+                  class="flex items-center gap-3 px-4 py-3 hover:bg-brand-blue/5 rounded-xl transition-colors group/item relative"
+                  @mouseenter="activeSubMenu = item.name === 'Deals' ? 'Deals' : null"
+                >
+                  <component :is="item.icon" class="h-4 w-4 text-brand-blue/60 group-hover/item:text-brand-blue" />
+                  <span class="text-xs font-black text-brand-blue/80 group-hover/item:text-brand-blue">{{ item.name }}</span>
+                  <ChevronRightIcon v-if="item.hasArrow" class="h-3 w-3 ml-auto text-gray-300" />
+                  
+                  <!-- Deals Mega Menu Expansion (Persistent on hover) -->
+                  <div 
+                    v-if="item.name === 'Deals'"
+                    class="absolute left-full top-[-12px] h-fit w-[640px] bg-white border border-gray-100 border-l-0 rounded-r-2xl shadow-2xl p-8 flex gap-8 invisible group-hover/item:visible opacity-0 group-hover/item:opacity-100 transition-all duration-300 z-[210] ml-[-1px]"
+                  >
+                    <div v-for="col in megaDeals" :key="col.title" class="flex-1">
+                      <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue mb-6 border-b border-gray-50 pb-2">{{ col.title }}</h4>
+                      <ul class="space-y-4">
+                        <li v-for="link in col.links" :key="link">
+                          <NuxtLink to="/explore" class="text-xs font-bold text-brand-gray/60 hover:text-brand-blue transition-colors block">
+                            {{ link }}
+                          </NuxtLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </NuxtLink>
+              </div>
+            </div>
+          </div>
+
+          <NuxtLink to="/help" class="hidden sm:flex items-center gap-1.5 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-brand-blue bg-white border border-brand-blue/20 hover:border-brand-blue/40 shadow-sm transition-all">
+             <QuestionMarkCircleIcon class="h-3 w-3" />
+             Help
+          </NuxtLink>
         </div>
 
-        <!-- Desktop Navigation -->
+        <!-- Desktop Navigation Hidden as requested -->
         <div class="hidden lg:flex items-center space-x-1">
-          <NuxtLink 
-            v-for="link in navLinks" 
-            :key="link.path"
-            :to="link.path"
-            :class="[
-              isScrolled ? 'text-brand-blue hover:bg-brand-blue/5' : 'text-brand-blue/70 hover:bg-brand-blue/5 hover:text-brand-blue',
-              route.path === link.path ? 'bg-brand-blue/10 text-brand-blue' : '',
-              'px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300'
-            ]"
-          >
-            {{ $t(link.name) }}
-          </NuxtLink>
+          <!-- Separator or spacer if needed -->
         </div>
 
         <!-- User Actions -->
         <div class="flex items-center space-x-6">
-          <!-- Language & Currency Switcher (Wakanow Style) -->
+          <!-- Language & Currency Switcher -->
           <button 
             @click="showSettings = true"
             class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-100 hover:border-brand-blue/30 hover:bg-brand-blue/5 transition-all group"
@@ -41,6 +77,45 @@
             <span class="text-[10px] font-black uppercase tracking-widest text-brand-blue">{{ locale }} | {{ currentCurrency.code }}</span>
             <ChevronDownIcon class="h-3 w-3 text-brand-gray group-hover:text-brand-blue transition-colors" />
           </button>
+
+          <!-- Call Us Popover -->
+          <div class="relative group hidden sm:block">
+            <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-brand-blue/10 hover:border-brand-blue/30 bg-white hover:bg-brand-blue/5 transition-all group-hover:scale-105">
+              <PhoneIcon class="h-3 w-3 text-brand-blue" />
+              <span class="text-[10px] font-black uppercase tracking-widest text-brand-blue">Call Us</span>
+            </button>
+            
+            <!-- Popover -->
+            <div class="absolute right-0 top-full mt-3 w-72 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-[110]">
+              <div class="bg-white/95 backdrop-blur-xl border border-gray-100 p-6 rounded-3xl shadow-2xl overflow-hidden relative">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-brand-blue/5 rounded-full -mr-12 -mt-12"></div>
+                
+                <div class="flex items-center gap-3 mb-5">
+                  <div class="w-10 h-10 rounded-2xl bg-brand-blue/10 flex items-center justify-center">
+                    <PhoneIcon class="h-5 w-5 text-brand-blue" />
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-black text-brand-blue uppercase tracking-widest leading-tight">24/7 Expert Support</p>
+                    <p class="text-[11px] font-bold text-brand-gray/60 italic leading-tight">Get Exclusive Phone Rates</p>
+                  </div>
+                </div>
+                
+                <a href="tel:+16462376851" class="block w-full text-center bg-brand-blue text-white py-3.5 rounded-2xl font-black text-lg shadow-lg shadow-brand-blue/20 hover:shadow-xl hover:scale-[1.02] transition-all mb-2">
+                  +1-646-237-6851
+                </a>
+                <p class="text-center text-[10px] font-bold text-brand-gray/40 mb-5 uppercase tracking-tighter">Mention "DIAL10" for $10 Credit</p>
+                
+                <div class="space-y-2.5 pt-4 border-t border-gray-50">
+                  <div v-for="prop in ['Private Unlisted Fares', 'Free Cancellation Help', 'Priority Rebooking']" :key="prop" class="flex items-center gap-2">
+                    <div class="w-4 h-4 rounded-full bg-green-500/10 flex items-center justify-center">
+                      <CheckIcon class="h-2.5 w-2.5 text-green-600" />
+                    </div>
+                    <span class="text-[10px] font-bold text-brand-blue">{{ prop }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <button 
             type="button" 
@@ -103,7 +178,47 @@
 <script setup lang="ts">
 import { ref, inject, type Ref } from 'vue'
 import { useAuth } from '@/composables/modules/auth/useAuth';
-import { BellIcon, ArrowRightOnRectangleIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { 
+  BellIcon, 
+  ArrowRightOnRectangleIcon, 
+  ChevronDownIcon,
+  ChevronRightIcon,
+  PhoneIcon,
+  CheckIcon,
+  QuestionMarkCircleIcon,
+  PaperAirplaneIcon,
+  HomeModernIcon as HotelIcon,
+  KeyIcon as CarIcon,
+  GiftIcon,
+  MapIcon,
+  TagIcon
+} from '@heroicons/vue/24/outline'
+
+const exploreLinks = [
+  { name: 'Flights', path: '/flights', icon: PaperAirplaneIcon },
+  { name: 'Hotels', path: '/stays', icon: HotelIcon },
+  { name: 'Cars', path: '/cars', icon: CarIcon },
+  { name: 'Packages', path: '/packages', icon: GiftIcon },
+  { name: 'Explore', path: '/explore', icon: MapIcon },
+  { name: 'Deals', path: '/deals', icon: TagIcon, hasArrow: true },
+]
+
+const activeSubMenu = ref<string | null>(null)
+
+const megaDeals = [
+  {
+    title: 'Top Deals',
+    links: ['Domestic Flights', 'International Flights', 'One Way Flights', 'Round Trip Flights', 'First Class Flights', 'Business Class Flights', 'Last Minute Flights', 'Flights to London']
+  },
+  {
+    title: 'Travel by Region',
+    links: ['Flights to Europe', 'Flights to India', 'Flights to Australia', 'Flights to France', 'Flights to Canada', 'Flights to Spain', 'Flights to Mexico', 'Flights to Paris']
+  },
+  {
+    title: 'Travel by Price',
+    links: ['Flights Under $199', 'Flights Under $99', 'Flights Under $49', 'Flights Under $29', 'Multi City Flights', 'Hotels Under $100', 'Vacation Under $500', 'Flights to Madrid']
+  }
+]
 import { useSettings } from '@/composables/useSettings'
 import { useI18n } from 'vue-i18n'
 

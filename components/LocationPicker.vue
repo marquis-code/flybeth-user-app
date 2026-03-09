@@ -3,20 +3,19 @@
 
     <!-- ── Trigger row ──────────────────────────────────────────────────────── -->
     <div
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[72px] flex flex-col justify-center group select-none"
+      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none"
       :class="showDropdown ? 'bg-blue-50/40' : 'hover:bg-gray-50/60'"
       @click="openDropdown"
     >
       <p
-        class="text-[10px] font-black uppercase tracking-widest mb-0.5 transition-colors"
+        class="text-[9px] font-black uppercase tracking-widest mb-0.5 transition-colors"
         :class="showDropdown ? 'text-brand-blue' : 'text-brand-gray/40 group-hover:text-brand-blue'"
       >
         {{ label }}
       </p>
 
-      <!-- Has a selection -->
       <div v-if="selectedLocationName && !showDropdown" class="flex items-baseline gap-2 min-w-0">
-        <span class="text-[17px] font-black text-brand-blue leading-tight truncate">
+        <span class="text-[14px] font-black text-brand-blue leading-tight truncate">
           {{ selectedLocationName }}
         </span>
         <span class="text-xs font-black text-brand-gray/40 uppercase shrink-0">{{ modelValue }}</span>
@@ -28,7 +27,7 @@
           class="h-5 w-5 shrink-0 transition-colors"
           :class="showDropdown ? 'text-brand-blue' : 'text-gray-300'"
         />
-        <span class="text-[17px] font-black text-gray-300">
+        <span class="text-[14px] font-black text-gray-300">
           {{ placeholder || 'Search city or airport...' }}
         </span>
       </div>

@@ -20,6 +20,9 @@ export const flightsApi = {
     cancel(data: any) {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/cancel", data);
     },
+    getLiveDeals(origin: string) {
+        return GATEWAY_ENDPOINT.get("/flights/deals/live", { params: { origin } });
+    },
 
     // Legacy/Individual Provider Endpoints (Keep for compatibility if needed, but mark as deprecated)
     /** @deprecated Use searchLive */

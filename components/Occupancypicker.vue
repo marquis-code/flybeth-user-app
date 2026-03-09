@@ -3,14 +3,14 @@
     <!-- Trigger Field -->
     <div
       @click="openPicker"
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[72px] flex flex-col justify-center group select-none"
+      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none"
     >
-      <p class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-brand-blue transition-colors">
+      <p class="text-[9px] font-black text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-brand-blue transition-colors">
         {{ label }}
       </p>
       <div class="flex items-center gap-2">
-        <UserGroupIcon class="h-5 w-5 text-gray-400 shrink-0" />
-        <span class="text-lg font-black text-brand-blue">{{ summary }}</span>
+        <UserGroupIcon class="h-4 w-4 text-gray-400 shrink-0" />
+        <span class="text-[14.5px] font-black text-brand-blue">{{ summary }}</span>
       </div>
     </div>
 
