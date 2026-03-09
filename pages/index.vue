@@ -33,7 +33,7 @@
                   @focus-change="isWidgetFocused = $event" 
                 />
               </div>
-              <!-- Placeholder to prevent layout jump -->
+
               <div v-if="isWidgetSticky" :style="{ height: (widgetHeight || 400) + 'px' }"></div>
             </div>
           </div>
