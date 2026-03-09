@@ -160,5 +160,10 @@ export default defineNuxtConfig({
     },
   },
 
+  site: {
+    url: 'https://flybeth.com',
+    name: 'Flybeth',
+  },
+
   compatibilityDate: "2025-11-01"
 });
