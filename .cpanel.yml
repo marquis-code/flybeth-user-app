@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/qhch72hhp8lo/public_html
+    - export DEPLOYPATH=/home/qhch72hhp8lo/public_html/flybeth.com
     - npm install
     - npm run generate
     - /bin/cp -R .output/public/* $DEPLOYPATH/
