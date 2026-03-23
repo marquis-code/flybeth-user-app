@@ -5,7 +5,7 @@
       @click="isOpen = !isOpen"
       class="bg-white px-6 py-3 hover:bg-gray-50 transition-all cursor-pointer border-r border-gray-100 h-full flex flex-col justify-center"
     >
-      <div class="flex items-center text-[10px] font-black text-brand-blue uppercase tracking-widest mb-1.5">
+      <div class="flex items-center text-sm font-black text-brand-blue uppercase tracking-widest mb-1.5">
         Rooms & Guests
         <svg class="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{'rotate-180': isOpen}"><path d="m6 9 6 6 6-6"/></svg>
       </div>
@@ -48,11 +48,11 @@
                 <option v-for="i in 11" :key="i-1" :value="i-1">{{ i-1 }}</option>
               </select>
             </div>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tight">0y - 17y</p>
+            <p class="text-sm text-gray-400 font-bold uppercase tracking-tight">0y - 17y</p>
           </div>
         </div>
 
-        <p class="text-[10px] text-gray-400 font-medium leading-relaxed mt-4 italic">
+        <p class="text-sm text-gray-400 font-medium leading-relaxed mt-4 italic">
           Please provide right number of children along with their right age for best options and prices.
         </p>
 

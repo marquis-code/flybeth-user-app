@@ -12,7 +12,7 @@
         <h3 class="font-black text-brand-blue uppercase tracking-widest text-sm">{{ airlineName }}</h3>
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest">Starting from</span>
+        <span class="text-sm font-black text-brand-gray/40 uppercase tracking-widest">Starting from</span>
         <span class="text-lg font-black text-brand-blue">${{ cheapestPrice }}</span>
       </div>
     </div>
@@ -37,7 +37,7 @@
             <img v-if="airlineLogo" :src="airlineLogo" class="w-full h-full object-cover opacity-60" />
          </div>
       </div>
-      <span class="text-[10px] font-black text-brand-gray/60 uppercase tracking-widest group-hover:text-brand-blue transition-colors">
+      <span class="text-sm font-black text-brand-gray/60 uppercase tracking-widest group-hover:text-brand-blue transition-colors">
         {{ isExpanded ? 'Hide' : `+${otherOffers.length}` }} {{ airlineName }} flights
       </span>
       <ChevronDownIcon 

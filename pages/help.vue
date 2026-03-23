@@ -11,7 +11,7 @@
           <h3 class="text-xs font-black text-brand-blue uppercase tracking-widest">Global Travel Alert</h3>
           <p class="text-[11px] font-bold text-brand-gray/60">Check the latest travel requirements and COVID-19 updates for your destination.</p>
         </div>
-        <button class="ml-auto text-[10px] font-black text-brand-blue underline decoration-2 underline-offset-4">Learn More</button>
+        <button class="ml-auto text-sm font-black text-brand-blue underline decoration-2 underline-offset-4">Learn More</button>
       </div>
 
       <div class="flex flex-col lg:flex-row gap-8">
@@ -37,7 +37,7 @@
                 </button>
                 
                 <div v-if="category.isOpen" class="pl-10 pr-4 py-2 space-y-2">
-                  <a v-for="sub in category.sub" :key="sub" href="#" class="block text-[10px] font-bold text-brand-gray/60 hover:text-brand-blue transition-colors">
+                  <a v-for="sub in category.sub" :key="sub" href="#" class="block text-sm font-bold text-brand-gray/60 hover:text-brand-blue transition-colors">
                     {{ sub }}
                   </a>
                 </div>
@@ -49,7 +49,7 @@
           <div class="bg-brand-blue rounded-3xl p-6 shadow-xl shadow-brand-blue/20 text-white relative overflow-hidden">
             <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
             <h3 class="text-sm font-black uppercase tracking-widest mb-2 relative z-10">Need Live Help?</h3>
-            <p class="text-[10px] font-bold opacity-80 mb-6 relative z-10">Our travel experts are available 24/7 to assist you.</p>
+            <p class="text-sm font-bold opacity-80 mb-6 relative z-10">Our travel experts are available 24/7 to assist you.</p>
             <button class="w-full bg-white text-brand-blue py-3 rounded-2xl font-black text-xs hover:scale-[1.02] active:scale-95 transition-all">
               Start Live Chat
             </button>

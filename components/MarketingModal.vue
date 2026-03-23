@@ -56,7 +56,7 @@
             </a>
           </div>
 
-          <p class="mt-6 text-[10px] text-brand-gray/30 font-black uppercase tracking-widest">Speak with our expert travel advisors</p>
+          <p class="mt-6 text-sm text-brand-gray/30 font-black uppercase tracking-widest">Speak with our expert travel advisors</p>
         </div>
       </div>
     </div>

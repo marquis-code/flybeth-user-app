@@ -10,7 +10,7 @@
              <div class="w-6 h-6 rounded bg-brand-blue/5 flex items-center justify-center">
                 <svg class="w-3.5 h-3.5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
              </div>
-             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">Flight</span>
+             <span class="text-sm font-black text-gray-400 uppercase tracking-widest italic">Flight</span>
           </div>
           <div class="route-line">
             <span class="route-origin">{{ flightOffer.origin }}</span>
@@ -26,7 +26,7 @@
              <div class="w-6 h-6 rounded bg-brand-blue/5 flex items-center justify-center">
                 <svg class="w-3.5 h-3.5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
              </div>
-             <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">Hotel</span>
+             <span class="text-sm font-black text-gray-400 uppercase tracking-widest italic">Hotel</span>
           </div>
           <div class="route-line">
             <span class="route-origin">{{ stay.hotelName || stay.name || stay.stay?.name }}</span>
@@ -51,10 +51,10 @@
 
     <div class="payment-toggle-card bg-brand-blue rounded-3xl p-8 border border-blue-400/20 shadow-xl shadow-blue-100/50 text-white relative overflow-hidden">
       <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-      <h3 class="toggle-title text-[10px] font-black text-blue-100 uppercase tracking-widest mb-4 italic">Payment Summary</h3>
+      <h3 class="toggle-title text-sm font-black text-blue-100 uppercase tracking-widest mb-4 italic">Payment Summary</h3>
       <div class="flex flex-col gap-1 items-start">
         <span class="text-3xl font-black italic tracking-tighter">${{ formatPrice(totalPrice) }}</span>
-        <span class="text-[10px] font-bold text-blue-100 uppercase tracking-widest opacity-80 mt-1 flex items-center gap-2">
+        <span class="text-sm font-bold text-blue-100 uppercase tracking-widest opacity-80 mt-1 flex items-center gap-2">
            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
            Are your travel plans confirmed? Then, go ahead & book.
         </span>

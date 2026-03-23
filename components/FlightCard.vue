@@ -11,15 +11,15 @@
         </div>
         <div>
           <span class="block font-black text-brand-blue text-lg leading-tight">{{ flight.airline }}</span>
-          <span class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest">{{ flight.flightNumbers?.join(' • ') || flight.flightNumber }}</span>
+          <span class="text-sm font-black text-brand-gray/40 uppercase tracking-widest">{{ flight.flightNumbers?.join(' • ') || flight.flightNumber }}</span>
         </div>
       </div>
       <div class="text-right">
         <div class="flex items-center justify-end gap-1">
-          <span class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest">From</span>
+          <span class="text-sm font-black text-brand-gray/40 uppercase tracking-widest">From</span>
           <p class="text-2xl font-black text-brand-blue">${{ formatPrice(flight.priceWithCommission || flight.price) }}</p>
         </div>
-        <p class="text-[10px] font-black text-brand-green uppercase tracking-widest mt-0.5">{{ flight.cabinClass }}</p>
+        <p class="text-sm font-black text-brand-green uppercase tracking-widest mt-0.5">{{ flight.cabinClass }}</p>
       </div>
     </div>
 
@@ -50,7 +50,7 @@
              <PaperAirplaneIcon class="h-4 w-4 text-brand-blue/20 transform rotate-90" />
            </div>
         </div>
-        <p class="text-[10px] font-black mt-3 uppercase tracking-widest" :class="flight.stops === 0 ? 'text-brand-green' : 'text-brand-orange'">
+        <p class="text-sm font-black mt-3 uppercase tracking-widest" :class="flight.stops === 0 ? 'text-brand-green' : 'text-brand-orange'">
           {{ flight.stops === 0 ? 'Non-stop' : `${flight.stops} Stop${flight.stops > 1 ? 's' : ''}` }}
         </p>
       </div>
@@ -65,12 +65,12 @@
     <!-- Footer Action -->
     <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <p v-if="flight.seatsAvailable" class="text-[10px] font-black text-brand-orange/60 uppercase tracking-widest">
+        <p v-if="flight.seatsAvailable" class="text-sm font-black text-brand-orange/60 uppercase tracking-widest">
            {{ flight.seatsAvailable }} Seats left
         </p>
         <div v-if="flight.conditions?.refundable" class="flex items-center gap-1.5">
            <div class="w-1.5 h-1.5 rounded-full bg-brand-green"></div>
-           <span class="text-[10px] font-black text-brand-green uppercase tracking-widest">Refundable</span>
+           <span class="text-sm font-black text-brand-green uppercase tracking-widest">Refundable</span>
         </div>
       </div>
       <button 

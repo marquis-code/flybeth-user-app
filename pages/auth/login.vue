@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-8">
     <div>
-      <h2 class="text-[10px] font-black text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.authentication') }}</h2>
+      <h2 class="text-sm font-black text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.authentication') }}</h2>
       <h3 class="text-4xl font-black text-brand-blue font-header tracking-tighter">{{ $t('auth.welcomeBack') }}</h3>
       <p class="mt-3 text-sm text-brand-gray/60 font-bold">
         {{ $t('auth.noAccount') }}

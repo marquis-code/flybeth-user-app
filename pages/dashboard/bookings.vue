@@ -5,7 +5,7 @@
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-1">My Account</p>
+            <p class="text-sm font-black text-gray-400 uppercase tracking-[0.25em] mb-1">My Account</p>
             <h1 class="text-3xl font-black text-brand-blue">My Bookings</h1>
           </div>
           <div class="flex items-center gap-3">
@@ -70,14 +70,14 @@
               <div class="flex items-center gap-3">
                 <div :class="['w-2.5 h-2.5 rounded-full mt-1', booking.status === 'confirmed' ? 'bg-green-400' : booking.status === 'cancelled' ? 'bg-red-400' : 'bg-amber-400 animate-pulse']"></div>
                 <div>
-                  <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Reference</p>
+                  <p class="text-sm font-black text-gray-400 uppercase tracking-widest">Reference</p>
                   <p class="text-xl font-black text-brand-blue">{{ booking.pnr }}</p>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Status</p>
+                <p class="text-sm font-black text-gray-400 uppercase tracking-widest mb-1">Status</p>
                 <span :class="[
-                  'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest',
+                  'px-3 py-1 rounded-full text-sm font-black uppercase tracking-widest',
                   booking.status === 'confirmed' ? 'bg-green-50 text-green-700' :
                   booking.status === 'cancelled' ? 'bg-red-50 text-red-700' :
                   'bg-amber-50 text-amber-700'
@@ -109,11 +109,11 @@
 
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Booked on</p>
+                <p class="text-sm font-black text-gray-400 uppercase tracking-wider">Booked on</p>
                 <p class="text-sm font-bold text-gray-600">{{ formatDate(booking.bookedAt || booking.createdAt) }}</p>
               </div>
               <div class="text-center">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Total</p>
+                <p class="text-sm font-black text-gray-400 uppercase tracking-wider">Total</p>
                 <p class="text-xl font-black text-brand-blue">{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.totalAmount) }}</p>
               </div>
               <div class="flex gap-2">

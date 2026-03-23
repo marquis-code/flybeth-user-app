@@ -39,7 +39,7 @@
 
         <!-- Cancellation Policies -->
         <div v-if="stay.cancellationPolicies?.length > 0" class="bg-gray-50 rounded-2xl p-6 border border-gray-100 border-dashed">
-          <h3 class="text-[10px] font-black text-gray-900 uppercase tracking-widest mb-4 italic">Cancellation Policy</h3>
+          <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-4 italic">Cancellation Policy</h3>
           <div class="space-y-3">
             <div v-for="(policy, idx) in stay.cancellationPolicies" :key="idx" class="flex justify-between items-center text-xs font-bold">
               <span class="text-gray-500 uppercase tracking-tight">By {{ formatDate(policy.from) }}</span>
@@ -51,7 +51,7 @@
         <!-- Property Notice -->
         <div class="flex items-start gap-4 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
            <svg class="w-5 h-5 text-brand-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-           <p class="text-[10px] font-bold text-gray-500 leading-relaxed uppercase italic">Standard check-in is after 2:00 PM. Please have your identification ready for a seamless check-in experience.</p>
+           <p class="text-sm font-bold text-gray-500 leading-relaxed uppercase italic">Standard check-in is after 2:00 PM. Please have your identification ready for a seamless check-in experience.</p>
         </div>
       </div>
     </div>

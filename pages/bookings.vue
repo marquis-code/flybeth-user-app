@@ -79,18 +79,18 @@
             </span>
           </div>
           <div class="text-right">
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Booking Reference</p>
+            <p class="text-sm font-black text-gray-400 uppercase tracking-widest">Booking Reference</p>
             <p class="text-xl font-black text-brand-blue">{{ booking.pnr }}</p>
           </div>
         </div>
 
         <!-- Flight Info -->
         <div v-if="booking.flights?.length" class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">Flight Details</h3>
+          <h3 class="text-sm font-black uppercase text-gray-400 tracking-widest mb-4">Flight Details</h3>
           <div v-for="(flt, idx) in booking.flights" :key="idx" class="flex items-center justify-between gap-4">
             <div class="text-center">
               <p class="text-2xl font-black text-brand-blue">{{ flt.flight?.departure?.iataCode || '—' }}</p>
-              <p class="text-[10px] font-bold text-gray-400">Origin</p>
+              <p class="text-sm font-bold text-gray-400">Origin</p>
             </div>
             <div class="flex-1 flex flex-col items-center gap-1">
               <div class="w-full h-[2px] bg-gray-100 relative">
@@ -100,33 +100,33 @@
                   </svg>
                 </div>
               </div>
-              <span class="text-[10px] font-black text-gray-400 uppercase">{{ flt.class || 'Economy' }}</span>
+              <span class="text-sm font-black text-gray-400 uppercase">{{ flt.class || 'Economy' }}</span>
             </div>
             <div class="text-center">
               <p class="text-2xl font-black text-brand-blue">{{ flt.flight?.arrival?.iataCode || '—' }}</p>
-              <p class="text-[10px] font-bold text-gray-400">Destination</p>
+              <p class="text-sm font-bold text-gray-400">Destination</p>
             </div>
           </div>
         </div>
 
         <!-- Traveller Info -->
         <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">Contact Information</h3>
+          <h3 class="text-sm font-black uppercase text-gray-400 tracking-widest mb-4">Contact Information</h3>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Full Name</p>
+              <p class="text-sm font-black text-gray-400 uppercase tracking-wider">Full Name</p>
               <p class="font-bold text-brand-blue">{{ booking.contactDetails?.firstName }} {{ booking.contactDetails?.lastName }}</p>
             </div>
             <div>
-              <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Email</p>
+              <p class="text-sm font-black text-gray-400 uppercase tracking-wider">Email</p>
               <p class="font-bold text-brand-blue">{{ booking.contactDetails?.email }}</p>
             </div>
             <div>
-              <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Phone</p>
+              <p class="text-sm font-black text-gray-400 uppercase tracking-wider">Phone</p>
               <p class="font-bold text-brand-blue">{{ booking.contactDetails?.phone }}</p>
             </div>
             <div>
-              <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Booked On</p>
+              <p class="text-sm font-black text-gray-400 uppercase tracking-wider">Booked On</p>
               <p class="font-bold text-brand-blue">{{ formatDate(booking.bookedAt || booking.createdAt) }}</p>
             </div>
           </div>
@@ -134,7 +134,7 @@
 
         <!-- Pricing -->
         <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">Fare Summary</h3>
+          <h3 class="text-sm font-black uppercase text-gray-400 tracking-widest mb-4">Fare Summary</h3>
           <div class="space-y-2">
             <div class="flex justify-between text-sm font-bold text-gray-600">
               <span>Base Fare</span>
@@ -152,16 +152,32 @@
         </div>
 
         <!-- Payment CTA (for pending) -->
-        <div v-if="booking.payment?.status === 'pending' || booking.status === 'pending'" class="bg-amber-50 border border-amber-100 rounded-2xl p-6 flex items-center justify-between shadow-sm">
+        <div v-if="booking.payment?.status === 'pending' || booking.status === 'pending'" class="bg-amber-50 border border-amber-100 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-sm">
           <div>
             <p class="font-black text-amber-800">Payment Pending</p>
             <p class="text-sm text-amber-700/70 font-bold">Your booking is awaiting payment to be confirmed.</p>
           </div>
           <button
             @click="handlePayment"
-            class="px-6 py-3 bg-orange-500 text-white rounded-xl font-black text-sm uppercase tracking-wider hover:bg-orange-600 transition-all shadow-lg shadow-orange-200"
+            class="px-6 py-3 mt-4 md:mt-0 bg-orange-500 text-white rounded-xl font-black text-sm uppercase tracking-wider hover:bg-orange-600 transition-all shadow-lg shadow-orange-200 whitespace-nowrap"
           >
             Complete Payment
+          </button>
+        </div>
+
+        <!-- Cancel Transfer CTA -->
+        <div v-if="booking.type === 'transfer' && booking.status !== 'cancelled'" class="bg-red-50 border border-red-100 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-sm mt-4">
+          <div>
+            <p class="font-black text-red-800">Cancel Reservation</p>
+            <p class="text-sm text-red-700/70 font-bold">Need to cancel your transfer? Proceed below.</p>
+          </div>
+          <button
+            @click="handleCancelTransfer(booking)"
+            :disabled="cancelling"
+            class="px-6 py-3 mt-4 md:mt-0 bg-red-600 text-white rounded-xl font-black text-sm uppercase tracking-wider hover:bg-red-700 transition-all shadow-lg shadow-red-200 whitespace-nowrap disabled:opacity-50"
+          >
+            <span v-if="cancelling">Cancelling...</span>
+            <span v-else>Cancel Transfer</span>
           </button>
         </div>
       </div>
@@ -173,11 +189,13 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, navigateTo } from '#app'
 import { bookingsApi } from '@/api_factory/modules/bookings'
+import { transfersApi } from '@/api_factory/modules/transfers'
 
 const route = useRoute()
 
 const loading = ref(false)
 const notFound = ref(false)
+const cancelling = ref(false)
 const booking = ref<any>(null)
 const pnrInput = ref('')
 
@@ -206,11 +224,33 @@ const handlePayment = () => {
   navigateTo({
     path: '/checkout',
     query: {
-      type: 'flight',
+      type: booking.value.type || 'flight',
       id: booking.value._id,
-      provider: 'amadeus',
+      provider: booking.value.provider || 'amadeus',
     }
   })
+}
+
+const handleCancelTransfer = async (bkg: any) => {
+  if (!confirm('Are you sure you want to cancel this transfer booking? This action cannot be undone.')) return
+  
+  cancelling.value = true
+  try {
+    const payload = {
+      orderId: bkg.metadata?.orderId || bkg.orderId || bkg.id || bkg._id,
+      confirmNbr: bkg.pnr || bkg.metadata?.confirmationNumber,
+      provider: bkg.provider || 'amadeus'
+    }
+    
+    await transfersApi.cancel(payload)
+    alert('Transfer successfully cancelled.')
+    booking.value.status = 'cancelled'
+  } catch (err: any) {
+    const msg = err.response?.data?.message || err.message || 'Failed to cancel transfer'
+    alert(`Could not cancel: ${msg}`)
+  } finally {
+    cancelling.value = false
+  }
 }
 
 onMounted(async () => {

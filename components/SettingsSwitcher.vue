@@ -26,7 +26,7 @@
                 <img :src="getLocaleFlag(locale.code)" class="h-6 w-8 object-cover rounded shadow-sm" />
                 <div class="text-left">
                   <div class="text-sm font-black text-brand-blue">{{ locale.name }}</div>
-                  <div class="text-[10px] text-brand-gray/50 uppercase tracking-widest">{{ locale.iso }}</div>
+                  <div class="text-sm text-brand-gray/50 uppercase tracking-widest">{{ locale.iso }}</div>
                 </div>
                 <!-- Selection Indicator -->
                 <div v-if="currentLocale === locale.code" class="ml-auto">
@@ -51,7 +51,7 @@
               >
                 <img :src="currency.flag" class="h-4 w-6 object-cover rounded shadow-sm mb-3" />
                 <div class="text-sm font-black text-brand-blue">{{ currency.code }}</div>
-                <div class="text-[10px] text-brand-gray/40 font-bold">{{ currency.symbol }}</div>
+                <div class="text-sm text-brand-gray/40 font-bold">{{ currency.symbol }}</div>
                 
                 <div v-if="currentCurrency.code === currency.code" class="mt-2 text-brand-green flex items-center justify-center">
                    <CheckIcon class="h-3 w-3" />
@@ -63,7 +63,7 @@
 
         <!-- Sticky Footer Action -->
         <div class="px-8 md:px-12 py-6 bg-gray-50/50 border-t border-gray-100 flex justify-end items-center gap-6">
-           <p class="text-[10px] font-bold text-brand-gray/40 uppercase tracking-widest">Global preferences will be saved</p>
+           <p class="text-sm font-bold text-brand-gray/40 uppercase tracking-widest">Global preferences will be saved</p>
            <UiBaseButton variant="primary" size="lg" @click="$emit('close')" class="!rounded-full px-12 shadow-xl shadow-brand-blue/20">
               {{ $t('settings.applyChanges') }}
            </UiBaseButton>

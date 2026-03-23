@@ -57,7 +57,7 @@
           <!-- My Cart (Fixed context) -->
           <div v-if="pendingBooking" class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
              <div class="bg-brand-blue p-4 flex justify-between items-center">
-                <span class="text-[10px] font-black text-white uppercase tracking-widest italic">My Cart</span>
+                <span class="text-sm font-black text-white uppercase tracking-widest italic">My Cart</span>
                 <button @click="clearPendingBooking" class="text-white/60 hover:text-white">
                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -68,7 +68,7 @@
                       <img :src="pendingBooking.stay?.photos?.[0] || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80'" class="w-full h-full object-cover" />
                    </div>
                    <div class="flex-1">
-                      <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Hotel</div>
+                      <div class="text-sm font-black text-gray-400 uppercase tracking-widest mb-0.5">Hotel</div>
                       <div class="text-xs font-black text-gray-900 leading-tight">{{ pendingBooking.stay?.name }}</div>
                       <div class="text-[9px] font-bold text-gray-500">{{ pendingBooking.selectedRoom?.name }}</div>
                    </div>
@@ -139,7 +139,7 @@
               </div>
               <h3 class="text-xl font-black text-gray-900 mb-2 uppercase">No Properties Found</h3>
               <p class="text-gray-500 font-bold text-xs uppercase tracking-widest max-w-xs mx-auto mb-8 opacity-60">Try adjusting your filters or price range to find matching stays.</p>
-              <button @click="resetFilters" class="bg-brand-blue text-white font-black px-8 py-4 rounded-xl hover:bg-brand-blue/90 transition-all uppercase tracking-widest text-[10px]">
+              <button @click="resetFilters" class="bg-brand-blue text-white font-black px-8 py-4 rounded-xl hover:bg-brand-blue/90 transition-all uppercase tracking-widest text-sm">
                 Reset All Filters
               </button>
             </div>
@@ -158,7 +158,7 @@
           <!-- Map View (Large) -->
           <div v-else class="h-[calc(100vh-120px)] bg-white rounded-3xl border border-gray-100 shadow-2xl overflow-hidden relative">
              <div id="full-map" class="w-full h-full"></div>
-             <button @click="showFullMap = false" class="absolute top-6 right-6 z-[1000] bg-[#1a2b33] text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-2xl flex items-center gap-2 border border-white/10 backdrop-blur-md">
+             <button @click="showFullMap = false" class="absolute top-6 right-6 z-[1000] bg-[#1a2b33] text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest shadow-2xl flex items-center gap-2 border border-white/10 backdrop-blur-md">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 Return to List
              </button>

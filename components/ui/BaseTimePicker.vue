@@ -42,7 +42,7 @@
         class="absolute z-[110] mt-3 w-full bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(13,29,173,0.15)] border border-gray-50 p-8 transform origin-top"
       >
         <!-- Quick Options -->
-        <h4 class="text-[10px] font-black text-brand-gray/50 uppercase tracking-widest mb-4 px-2">Quick Select</h4>
+        <h4 class="text-sm font-black text-brand-gray/50 uppercase tracking-widest mb-4 px-2">Quick Select</h4>
         <div class="grid grid-cols-2 gap-3 mb-6">
           <button 
             v-for="quick in quickTimes" 
@@ -55,13 +55,13 @@
         </div>
 
         <!-- Custom Selector (Simplified Slider/Grid) -->
-        <h4 class="text-[10px] font-black text-brand-gray/50 uppercase tracking-widest mb-4 px-2">Every Hour</h4>
+        <h4 class="text-sm font-black text-brand-gray/50 uppercase tracking-widest mb-4 px-2">Every Hour</h4>
         <div class="grid grid-cols-4 gap-2 max-h-[160px] overflow-y-auto custom-scrollbar px-1">
           <button 
             v-for="hour in 24" 
             :key="hour"
             @click="selectTime(`${(hour-1).toString().padStart(2, '0')}:00`)"
-            class="py-2.5 rounded-xl text-[10px] font-bold text-brand-gray hover:bg-brand-blue/5 hover:text-brand-blue transition-all"
+            class="py-2.5 rounded-xl text-sm font-bold text-brand-gray hover:bg-brand-blue/5 hover:text-brand-blue transition-all"
             :class="{ 'bg-brand-blue/5 text-brand-blue ring-1 ring-brand-blue/10': modelValue === `${(hour-1).toString().padStart(2, '0')}:00` }"
           >
             {{ (hour-1).toString().padStart(2, '0') }}:00
@@ -71,7 +71,7 @@
         <!-- Done Button -->
         <button 
           @click="isOpen = false"
-          class="w-full mt-6 py-3 bg-brand-green text-white text-[10px] font-black rounded-full hover:bg-brand-green/90 transition-all shadow-lg uppercase tracking-widest"
+          class="w-full mt-6 py-3 bg-brand-green text-white text-sm font-black rounded-full hover:bg-brand-green/90 transition-all shadow-lg uppercase tracking-widest"
         >
           Close
         </button>

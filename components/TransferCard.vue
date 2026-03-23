@@ -19,7 +19,7 @@
           </div>
           <div class="text-right">
             <p class="text-2xl font-black text-brand-blue tracking-tighter">{{ formatPrice(transfer.price) }}</p>
-            <p class="text-[10px] font-bold text-brand-gray/40 uppercase tracking-widest">Total for 2 pax</p>
+            <p class="text-sm font-bold text-brand-gray/40 uppercase tracking-widest">Total for 2 pax</p>
           </div>
         </div>
 
@@ -45,7 +45,7 @@
         <div class="flex justify-between items-center pt-2">
           <div class="flex items-center gap-2 text-brand-green">
             <CheckCircleIcon class="h-4 w-4" />
-            <span class="text-[10px] font-black uppercase tracking-widest">Meet & Greet Included</span>
+            <span class="text-sm font-black uppercase tracking-widest">Meet & Greet Included</span>
           </div>
           <UiBaseButton variant="primary" @click="$emit('select', transfer)" class="!bg-brand-blue !rounded-xl px-10 font-bold uppercase tracking-widest">
             Book Now

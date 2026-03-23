@@ -89,32 +89,13 @@
               </div>
             </div>
 
-            <!-- Detect location -->
-            <div
-              @click="detectLocation"
-              class="flex items-center gap-3 mx-4 mb-3 px-4 py-3 rounded-xl hover:bg-green-50 cursor-pointer transition-colors group/detect border border-gray-100 hover:border-green-200"
-            >
-              <div class="h-8 w-8 rounded-lg bg-green-50 group-hover/detect:bg-green-500 flex items-center justify-center shrink-0 transition-colors">
-                <svg class="h-4 w-4 text-green-500 group-hover/detect:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
-                </svg>
-              </div>
-              <div class="min-w-0">
-                <p class="text-sm font-bold text-gray-800 group-hover/detect:text-green-700 transition-colors">
-                  Detect my location
-                </p>
-                <p class="text-sm text-gray-400 font-medium">Find nearby airports automatically</p>
-              </div>
-            </div>
-
             <!-- Divider -->
             <div class="h-px bg-gray-100" />
 
             <!-- ── Search results ─────────────────────────────────────────── -->
             <div v-if="results.length" class="max-h-[340px] overflow-y-auto rounded-b-2xl">
               <p class="px-5 pt-3 pb-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                Airports &amp; Cities
+                Cities
               </p>
               <div
                 v-for="res in results"
@@ -123,17 +104,14 @@
                 class="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 cursor-pointer transition-colors group/item border-b border-gray-50 last:border-0"
               >
                 <div class="h-9 w-9 rounded-xl bg-gray-50 group-hover/item:bg-brand-blue/10 flex items-center justify-center shrink-0 transition-colors">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    class="text-gray-400 group-hover/item:text-brand-blue transition-colors">
-                    <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="currentColor"/>
-                  </svg>
+                  <MapPinIcon class="w-[18px] h-[18px] text-gray-400 group-hover/item:text-brand-blue transition-colors" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-bold text-gray-800 group-hover/item:text-brand-blue transition-colors truncate">
                     {{ res.address?.cityName || res.name }}, {{ res.address?.countryName || res.address?.countryCode }}
                   </p>
                   <p class="text-xs text-gray-400 font-medium truncate mt-0.5">
-                    {{ res.name }}{{ res.subType === 'AIRPORT' ? ' Airport' : '' }}
+                    {{ res.name }}
                   </p>
                 </div>
                 <span class="text-xs font-black text-gray-300 group-hover/item:text-brand-blue/60 transition-colors shrink-0 ml-2">
@@ -145,14 +123,14 @@
             <!-- Loading -->
             <div v-else-if="isLoading" class="py-10 text-center rounded-b-2xl">
               <div class="animate-spin h-6 w-6 border-2 border-brand-blue/20 border-t-brand-blue rounded-full mx-auto mb-3" />
-              <p class="text-sm text-gray-400 font-medium">Searching airports &amp; cities...</p>
+              <p class="text-sm text-gray-400 font-medium">Searching cities...</p>
             </div>
 
             <!-- No results -->
             <div v-else-if="!isLoading && searchQuery.length >= 2" class="py-10 text-center rounded-b-2xl">
               <MapPinIcon class="h-8 w-8 text-gray-200 mx-auto mb-3" />
               <p class="text-sm text-gray-500 font-semibold">No results for "{{ searchQuery }}"</p>
-              <p class="text-xs text-gray-400 mt-1">Try a different city or airport name</p>
+              <p class="text-xs text-gray-400 mt-1">Try a different city</p>
             </div>
 
             <!-- Popular destinations default state -->
@@ -191,7 +169,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { MapPinIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import { useAmadeusLocations } from '@/composables/modules/flights/useAmadeusLocations'
+import { useCitySearch } from '@/composables/modules/experiences/useCitySearch'
 
 // ── Props & Emits ─────────────────────────────────────────────────────────────
 const props = defineProps({
@@ -209,7 +187,7 @@ const emit = defineEmits<{
 }>()
 
 // ── Composable ────────────────────────────────────────────────────────────────
-const { locations: results, loading: isLoading, searchLocations, detectNearestAirports } = useAmadeusLocations()
+const { locations: results, loading: isLoading, searchCities: searchLocations } = useCitySearch()
 
 // ── Refs ──────────────────────────────────────────────────────────────────────
 const pickerRef       = ref<HTMLElement | null>(null)
@@ -226,14 +204,14 @@ const locationCache = new Map<string, { name: string; sub: string }>()
 
 // ── Suggestions ───────────────────────────────────────────────────────────────
 const suggestions = [
-  { city: 'Lagos',        iataCode: 'LOS', name: 'Murtala Muhammed Int\'l',    subType: 'AIRPORT' },
-  { city: 'Abuja',        iataCode: 'ABV', name: 'Nnamdi Azikiwe Int\'l',       subType: 'AIRPORT' },
-  { city: 'Dubai',        iataCode: 'DXB', name: 'Dubai International',         subType: 'AIRPORT' },
-  { city: 'London',       iataCode: 'LON', name: 'All London Airports',         subType: 'CITY'    },
-  { city: 'Portharcourt', iataCode: 'PHC', name: 'Port Harcourt International', subType: 'AIRPORT' },
-  { city: 'Johannesburg', iataCode: 'JNB', name: 'OR Tambo International',      subType: 'AIRPORT' },
-  { city: 'Accra',        iataCode: 'ACC', name: 'Kotoka International',        subType: 'AIRPORT' },
-  { city: 'Istanbul',     iataCode: 'IST', name: 'Istanbul Airport',            subType: 'AIRPORT' },
+  { city: 'Paris',        iataCode: 'PAR', name: 'Paris',                subType: 'CITY' },
+  { city: 'London',       iataCode: 'LON', name: 'London',               subType: 'CITY' },
+  { city: 'New York',     iataCode: 'NYC', name: 'New York',             subType: 'CITY' },
+  { city: 'Dubai',        iataCode: 'DXB', name: 'Dubai',                subType: 'CITY' },
+  { city: 'Rome',         iataCode: 'ROM', name: 'Rome',                 subType: 'CITY' },
+  { city: 'Tokyo',        iataCode: 'TYO', name: 'Tokyo',                subType: 'CITY' },
+  { city: 'Barcelona',    iataCode: 'BCN', name: 'Barcelona',            subType: 'CITY' },
+  { city: 'Istanbul',     iataCode: 'IST', name: 'Istanbul',             subType: 'CITY' },
 ]
 
 // ── Debounce ──────────────────────────────────────────────────────────────────
@@ -308,30 +286,15 @@ const selectAmadeusResult = (location: any) => {
   closeDropdown()
 }
 
-const selectSuggestion = (dest: { city: string; iataCode: string; name: string; subType: string }) => {
-  locationCache.set(dest.iataCode, { name: dest.city, sub: dest.name })
-  selectedLocationName.value = dest.city
-  selectedLocationSub.value  = dest.name
-
-  emit('update:modelValue', dest.iataCode)
-  emit('select', { iataCode: dest.iataCode, cityName: dest.city, name: dest.name, subType: dest.subType })
-
+const selectSuggestion = (sug: typeof suggestions[0]) => {
+  const display = `${sug.city}`
+  selectedLocationName.value = sug.city
+  searchQuery.value = display
+  locationCache.set(sug.iataCode, { name: sug.city, sub: sug.name })
+  
+  emit('update:modelValue', sug.iataCode)
+  emit('select', { ...sug, name: sug.city, address: { cityName: sug.city, countryCode: '' } })
   closeDropdown()
-}
-
-// ── Geolocation ───────────────────────────────────────────────────────────────
-const detectLocation = () => {
-  if (!('geolocation' in navigator)) return
-  isLoading.value = true
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      try {
-        const data = await detectNearestAirports(pos.coords.latitude, pos.coords.longitude)
-        if (data?.length) selectAmadeusResult(data[0])
-      } finally { isLoading.value = false }
-    },
-    () => { isLoading.value = false }
-  )
 }
 
 // ── Sync external modelValue (swap button etc.) ───────────────────────────────

@@ -5,7 +5,7 @@
       @click="openPicker('checkIn')"
       class="w-full lg:w-48 bg-white px-6 py-3 border-r border-gray-100 hover:bg-gray-50 transition-all cursor-pointer"
     >
-      <div class="flex items-center text-[10px] font-black text-brand-blue uppercase tracking-widest mb-1.5">
+      <div class="flex items-center text-sm font-black text-brand-blue uppercase tracking-widest mb-1.5">
         Check-In 
         <svg class="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{'rotate-180': isOpen}"><path d="m6 9 6 6 6-6"/></svg>
       </div>
@@ -19,7 +19,7 @@
       @click="openPicker('checkOut')"
       class="w-full lg:w-48 bg-white px-6 py-3 border-r border-gray-100 hover:bg-gray-50 transition-all cursor-pointer"
     >
-      <div class="flex items-center text-[10px] font-black text-brand-blue uppercase tracking-widest mb-1.5">
+      <div class="flex items-center text-sm font-black text-brand-blue uppercase tracking-widest mb-1.5">
         Check-Out
         <svg class="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{'rotate-180': isOpen}"><path d="m6 9 6 6 6-6"/></svg>
       </div>

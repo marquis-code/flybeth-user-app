@@ -6,12 +6,12 @@
       @click="openCalendar"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none"
     >
-      <p class="text-[8.5px] font-black text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-brand-blue transition-colors">
+      <p class="text-[11px] font-black text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-brand-blue transition-colors">
         {{ mode === 'oneway' ? 'Departure Date' : 'Check-in – Check-out' }}
       </p>
       <div class="flex items-center gap-2">
-        <CalendarDaysIcon class="h-4 w-4 text-gray-400 shrink-0" />
-        <span class="text-[14.5px] font-black">
+        <CalendarDaysIcon class="h-5 w-5 text-gray-400 shrink-0" />
+        <span class="text-base font-black">
           <template v-if="mode === 'oneway'">
             <span :class="startDate ? 'text-brand-blue' : 'text-gray-300'">
               {{ startDate ? formatDisplay(startDate) : 'Select date' }}

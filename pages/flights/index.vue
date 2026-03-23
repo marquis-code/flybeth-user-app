@@ -18,6 +18,33 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      <!-- Trip Purpose Prediction Badge -->
+      <transition enter-active-class="transition duration-500 ease-out" enter-from-class="opacity-0 translateY(-10px)" enter-to-class="opacity-100 translateY(0)" leave-active-class="transition duration-300 ease-in" leave-from-class="opacity-100 translateY(0)" leave-to-class="opacity-0 translateY(-10px)">
+        <div v-if="prediction && !purposeLoading" class="mb-6 rounded-2xl p-4 flex items-center justify-between shadow-sm border" :class="prediction.result === 'BUSINESS' ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100' : 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-100'">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md" :class="prediction.result === 'BUSINESS' ? 'bg-indigo-500' : 'bg-orange-500'">
+               <BriefcaseIcon v-if="prediction.result === 'BUSINESS'" class="w-5 h-5" />
+               <SunIcon v-else class="w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm font-bold" :class="prediction.result === 'BUSINESS' ? 'text-indigo-900' : 'text-orange-900'">
+                 {{ prediction.result === 'BUSINESS' ? 'Looks like a Business Trip!' : 'Planning a Leisure Getaway?' }}
+              </p>
+              <p class="text-xs mt-0.5 opacity-80" :class="prediction.result === 'BUSINESS' ? 'text-indigo-800' : 'text-orange-800'">
+                 {{ prediction.result === 'BUSINESS' ? 'Check out our Premium and Business class fares for maximum comfort.' : 'Don\'t forget to book some unforgettable Activities and Experiences!' }}
+              </p>
+            </div>
+          </div>
+          <div class="hidden sm:block">
+             <NuxtLink v-if="prediction.result !== 'BUSINESS'" to="/things-to-do" class="text-xs font-bold px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow transition-all" :class="'text-orange-600'">
+               Explore Activities
+             </NuxtLink>
+             <span v-else class="text-sm font-black tracking-widest uppercase text-indigo-400 opacity-60 px-2 py-1 bg-white/50 rounded-md">Smart Prediction</span>
+          </div>
+        </div>
+      </transition>
+
       <!-- Airline vs Stops Matrix -->
       <div v-if="displayedFlights.length && airlineMeta.length" class="mb-10 bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto custom-scrollbar">
@@ -28,14 +55,14 @@
                 <th v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-100 min-w-[160px] text-center">
                   <div class="flex flex-col items-center gap-2">
                     <img v-if="airline.logo" :src="airline.logo" :alt="airline.name" class="h-8 w-8 object-contain" />
-                    <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest">{{ airline.name }}</span>
+                    <span class="text-sm font-black text-brand-blue uppercase tracking-widest">{{ airline.name }}</span>
                   </div>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="stopLabel in ['Non stop', '1 Stop', '1+ Stops']" :key="stopLabel">
-                <td class="p-6 border-b border-gray-50 font-black text-brand-blue uppercase tracking-widest text-[10px] bg-gray-50/20">
+                <td class="p-6 border-b border-gray-50 font-black text-brand-blue uppercase tracking-widest text-sm bg-gray-50/20">
                   {{ stopLabel }}
                 </td>
                 <td v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-50 text-center group cursor-pointer hover:bg-brand-blue/5 transition-colors" @click="filterByMatrix(airline.name, stopLabel)">
@@ -55,7 +82,7 @@
         <div class="flex gap-4 min-w-max">
           <div v-for="type in ['Cheapest', 'Fastest', 'Recommended']" :key="type" 
             class="flex-1 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 min-w-[240px]">
-            <p class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest mb-1">{{ type }} Fare</p>
+            <p class="text-sm font-black text-brand-gray/40 uppercase tracking-widest mb-1">{{ type }} Fare</p>
             <div class="flex items-end justify-between">
               <span class="text-2xl font-black text-brand-blue">${{ getMatrixPrice(type) }}</span>
               <div :class="getMatrixColor(type)" class="w-8 h-8 rounded-full flex items-center justify-center">
@@ -150,11 +177,13 @@
 import { ref, onMounted, computed } from 'vue';
 import { useSearchFlights } from '@/composables/modules/flights/useSearchFlights';
 import { useFetchPopularFlights } from '@/composables/modules/flights/useFetchPopularFlights';
-import { BanknotesIcon, BoltIcon, StarIcon } from '@heroicons/vue/24/solid';
+import { useTripPurpose } from '@/composables/modules/flights/useTripPurpose';
+import { BanknotesIcon, BoltIcon, StarIcon, BriefcaseIcon, SunIcon } from '@heroicons/vue/24/solid';
 import FlightGroup from '@/components/FlightGroup.vue';
 
 const { loading, flights, searchFlights } = useSearchFlights();
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights();
+const { loading: purposeLoading, prediction, predictTripPurpose } = useTripPurpose();
 
 const displayedFlights = computed(() => {
   const source = flights.value?.length ? flights.value : (popularFlights.value || []);
@@ -236,6 +265,11 @@ const searchQuery = ref({
 
 const handleSearch = () => {
   searchFlights(searchQuery.value);
+  predictTripPurpose({
+    origin: searchQuery.value.origin,
+    destination: searchQuery.value.destination,
+    departureDate: searchQuery.value.departureDate
+  });
 };
 
 const selectFlight = (flight: any) => {

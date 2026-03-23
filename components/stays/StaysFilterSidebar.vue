@@ -43,7 +43,7 @@
       <div class="space-y-3">
         <label v-for="star in [3, 4, 5]" :key="star" class="flex items-center group cursor-pointer">
           <div class="relative flex items-center justify-center w-5 h-5 border-2 border-gray-300 rounded mr-3 group-hover:border-brand-blue transition-colors" :class="{'bg-brand-blue border-brand-blue': filters.ratings.includes(star)}">
-            <input type="checkbox" :value="star" v-model="filters.ratings" class="absolute opacity-0 cursor-pointer w-full h-full" />
+            <input type="checkbox" :value="star" v-model="filters.ratings" class="custom-checkbox" />
             <svg v-if="filters.ratings.includes(star)" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <span class="text-sm text-gray-700 font-medium">{{ star }} star</span>
@@ -58,7 +58,7 @@
         <label v-for="amenity in commonAmenities" :key="amenity.id" class="flex items-center justify-between group cursor-pointer">
           <div class="flex items-center">
             <div class="relative flex items-center justify-center w-5 h-5 border-2 border-gray-300 rounded mr-3 group-hover:border-brand-blue transition-colors" :class="{'bg-brand-blue border-brand-blue': filters.amenities.includes(amenity.id)}">
-              <input type="checkbox" :value="amenity.id" v-model="filters.amenities" class="absolute opacity-0 cursor-pointer w-full h-full" />
+              <input type="checkbox" :value="amenity.id" v-model="filters.amenities" class="custom-checkbox" />
               <svg v-if="filters.amenities.includes(amenity.id)" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <span class="text-sm text-gray-700 font-medium">{{ amenity.label }}</span>
@@ -75,7 +75,7 @@
       <div class="space-y-3">
         <label v-for="type in accommodationTypes" :key="type" class="flex items-center group cursor-pointer">
           <div class="relative flex items-center justify-center w-5 h-5 border-2 border-gray-300 rounded mr-3 group-hover:border-brand-blue transition-colors" :class="{'bg-brand-blue border-brand-blue': filters.types.includes(type)}">
-            <input type="checkbox" :value="type" v-model="filters.types" class="absolute opacity-0 cursor-pointer w-full h-full" />
+            <input type="checkbox" :value="type" v-model="filters.types" class="custom-checkbox" />
             <svg v-if="filters.types.includes(type)" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <span class="text-sm text-gray-700 font-medium">{{ type }}</span>

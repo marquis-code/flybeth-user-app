@@ -24,7 +24,7 @@
       <div v-if="showOverlay" class="absolute bottom-20 right-0 w-[400px] max-h-[600px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100/50 flex flex-col overflow-hidden backdrop-blur-xl">
         <!-- Header -->
         <div class="p-8 bg-brand-blue text-white">
-          <h3 class="text-xl font-serif font-black flex items-center gap-3">
+          <h3 class="text-xl  font-black flex items-center gap-3">
             Flybeth Voice Assistant
             <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
           </h3>
@@ -62,7 +62,7 @@
           <!-- Flight Results Preview -->
           <div v-if="latestResults.length" class="space-y-4 mt-6">
              <div class="flex items-center gap-2 px-2">
-                <span class="text-[10px] font-black uppercase text-brand-blue tracking-widest">Available Options</span>
+                <span class="text-sm font-black uppercase text-brand-blue tracking-widest">Available Options</span>
                 <div class="flex-1 h-[1px] bg-brand-blue/10"></div>
              </div>
              <div v-for="flight in latestResults" :key="flight.offerId" class="p-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-md hover:border-brand-blue transition-all group overflow-hidden relative">
@@ -71,7 +71,7 @@
                 </div>
                 <div class="flex justify-between items-start mb-4">
                   <div>
-                    <div class="text-[10px] font-black uppercase text-brand-gray/40 mb-1 leading-none">{{ flight.airline }}</div>
+                    <div class="text-sm font-black uppercase text-brand-gray/40 mb-1 leading-none">{{ flight.airline }}</div>
                     <div class="text-[11px] font-bold text-brand-blue">{{ flight.flightNumbers?.join(', ') }}</div>
                   </div>
                   <div class="text-right">
@@ -109,7 +109,7 @@
             {{ showDebug ? 'Hide Console' : 'Show Debug Console' }}
             <span :class="{'rotate-180': showDebug}" class="transition-transform">▼</span>
           </button>
-          <div v-if="showDebug" class="mt-2 p-4 bg-black/90 text-[10px] font-mono text-green-400 rounded-2xl max-h-40 overflow-y-auto border border-white/10 shadow-inner">
+          <div v-if="showDebug" class="mt-2 p-4 bg-black/90 text-sm font-mono text-green-400 rounded-2xl max-h-40 overflow-y-auto border border-white/10 shadow-inner">
             <div v-for="(log, i) in debugLogs" :key="i" class="mb-1 opacity-80 border-b border-white/5 pb-1">
               {{ log }}
             </div>
@@ -123,7 +123,7 @@
                 <div v-for="i in 5" :key="i" class="w-1 bg-brand-blue rounded-full" 
                      :style="{ height: isRecording ? `${Math.random() * 100}%` : '20%', transition: 'height 0.1s' }"></div>
              </div>
-             <span class="text-[10px] font-black text-brand-gray/40 uppercase tracking-widest">
+             <span class="text-sm font-black text-brand-gray/40 uppercase tracking-widest">
                {{ isThinking ? 'AI is processing...' : (isRecording ? 'Listening...' : 'Ready to help') }}
              </span>
           </div>

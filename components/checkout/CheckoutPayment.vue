@@ -42,7 +42,7 @@
         </div>
 
         <div v-if="activeMethod === 'card'" class="method-details px-4 pb-4 border-t border-gray-100 pt-4 bg-blue-50/30">
-          <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
+          <label class="block text-sm font-black uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
           <div v-if="provider === 'stripe'" class="provider-option flex items-center justify-between p-3 bg-white border border-blue-200 rounded-lg shadow-sm">
             <div class="flex items-center gap-3">
               <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/512px-Stripe_Logo%2C_revised_2016.svg.png" class="h-4" />
@@ -81,7 +81,7 @@
             </div>
             <div class="flex flex-col">
               <span class="method-name font-bold text-gray-800">Bank Transfer Payment</span>
-              <span class="text-[10px] text-green-600 font-bold uppercase tracking-tight">Instant ticketing</span>
+              <span class="text-sm text-green-600 font-bold uppercase tracking-tight">Instant ticketing</span>
             </div>
           </div>
            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 transition-transform" :class="{ 'rotate-180': activeMethod === 'bank' }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,7 +89,7 @@
           </svg>
         </div>
         <div v-if="activeMethod === 'bank'" class="method-details px-4 pb-4 border-t border-gray-100 pt-4 bg-green-50/30">
-           <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
+           <label class="block text-sm font-black uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
            <div class="provider-option flex items-center justify-between p-3 bg-white border border-green-200 rounded-lg shadow-sm">
               <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
@@ -110,7 +110,7 @@
 
       <!-- Apple Pay -->
       <div v-if="provider === 'stripe'" class="apple-pay-section space-y-2 mt-4">
-        <label class="block text-[10px] font-black uppercase tracking-wider text-gray-400 mb-2">Or Pay with Apple Pay</label>
+        <label class="block text-sm font-black uppercase tracking-wider text-gray-400 mb-2">Or Pay with Apple Pay</label>
         <ApplePayButton 
           :amount="totalAmount"
           :currency="currency"
@@ -139,7 +139,7 @@
           Processing...
         </div>
       </button>
-      <p class="text-center text-[10px] text-gray-400 font-bold mt-4 px-8">
+      <p class="text-center text-sm text-gray-400 font-bold mt-4 px-8">
         By clicking Complete Payment, you agree to Flybeth's Terms of Service and Privacy Policy.
       </p>
     </div>

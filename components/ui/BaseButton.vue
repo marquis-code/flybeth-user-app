@@ -55,7 +55,7 @@ const variantClasses = computed(() => {
 const sizeClasses = computed(() => {
   switch (props.size) {
     case 'sm':
-      return 'px-5 py-2.5 text-[10px]'
+      return 'px-5 py-2.5 text-sm'
     case 'lg':
       return 'px-10 py-4 text-sm'
     default:

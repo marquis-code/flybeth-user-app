@@ -28,7 +28,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-brand-blue via-transparent to-transparent"></div>
                 
                 <div class="absolute bottom-16 left-12 right-12 text-white space-y-4">
-                  <span class="text-brand-green font-black uppercase tracking-[0.3em] text-[10px]">Flybeth Travel Intelligence</span>
+                  <span class="text-brand-green font-black uppercase tracking-[0.3em] text-sm">Flybeth Travel Intelligence</span>
                   <h2 class="text-4xl font-black font-header tracking-tighter leading-tight">{{ slide.title }}</h2>
                   <p class="text-white/60 font-bold text-sm max-w-xs">{{ slide.description }}</p>
                 </div>
@@ -87,7 +87,7 @@
                     <div class="absolute inset-0 flex items-center">
                       <div class="w-full border-t border-gray-100"></div>
                     </div>
-                    <div class="relative flex justify-center text-[10px] uppercase">
+                    <div class="relative flex justify-center text-sm uppercase">
                       <span class="bg-white px-4 text-brand-gray/30 font-black tracking-widest">Or continue with</span>
                     </div>
                   </div>

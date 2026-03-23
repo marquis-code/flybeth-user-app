@@ -14,7 +14,7 @@
       <!-- Overlay Content -->
       <div class="relative z-10 h-full flex flex-col justify-end p-16">
         <div class="space-y-6">
-          <span class="text-brand-green font-black uppercase tracking-[0.3em] text-[10px]">{{ $t('authLayout.journeyStarts') }}</span>
+          <span class="text-brand-green font-black uppercase tracking-[0.3em] text-sm">{{ $t('authLayout.journeyStarts') }}</span>
           <h2 class="text-5xl font-black text-white font-header tracking-tighter leading-tight">
             {{ $t('authLayout.discover') }}<br/>{{ $t('authLayout.worldsMost') }}<br/>
             <span class="text-brand-green/80">{{ $t('authLayout.breathtaking') }}</span><br/>{{ $t('authLayout.layoutDestinations') }}
@@ -33,7 +33,7 @@
             </div>
             <div>
               <p class="text-white font-black text-sm">{{ $t('authLayout.trustedWorldwide') }}</p>
-              <p class="text-white/40 text-[10px] font-black uppercase tracking-widest">{{ $t('authLayout.averageRating') }}</p>
+              <p class="text-white/40 text-sm font-black uppercase tracking-widest">{{ $t('authLayout.averageRating') }}</p>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@
 
         <!-- Footer -->
         <div class="mt-10 pt-6 border-t border-gray-100">
-          <p class="text-[10px] text-brand-gray/40 font-black uppercase tracking-[0.2em]">
+          <p class="text-sm text-brand-gray/40 font-black uppercase tracking-[0.2em]">
             © {{ new Date().getFullYear() }} Flybeth &nbsp;•&nbsp; {{ $t('authLayout.travelIntelligence') }}
           </p>
         </div>

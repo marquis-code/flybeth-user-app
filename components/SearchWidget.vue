@@ -1,29 +1,27 @@
 <template>
   <div 
-    class="bg-white/95 backdrop-blur-xl shadow-2xl shadow-brand-blue/10 border-b border-gray-100 font-body relative transition-all duration-700 ease-in-out"
+    class="bg-white/95 backdrop-blur-xl shadow-2xl shadow-brand-blue/10 border-b border-gray-100 font-body relative z-10 transition-all duration-700 ease-in-out"
     :class="[isSticky ? 'rounded-b-[2.5rem] border-x-0 border-t-0 py-1' : 'rounded-[2.5rem] border border-gray-100 py-0']"
   >
     <!-- Redesigned Tabs -->
     <div class="bg-white rounded-t-[2.5rem] border-b border-gray-100 overflow-x-auto no-scrollbar">
-      <nav class="flex px-8 gap-1" aria-label="Tabs">
+      <nav class="flex justify-center px-4 md:px-8 gap-2 md:gap-8 min-w-max w-full mx-auto" aria-label="Tabs">
         <button
-          v-for="tab in tabs.filter(t => t.name !== 'Activities')"
+          v-for="tab in tabs"
           :key="tab.name"
           @click="currentTab = tab.name"
           :class="[
             currentTab === tab.name
               ? 'text-brand-blue border-brand-blue'
               : 'text-brand-gray/60 hover:text-brand-blue border-transparent',
-            'flex items-center gap-2 transition-all border-b-2 py-5 relative z-10 whitespace-nowrap px-4',
+            'flex flex-col items-center justify-center gap-1.5 transition-all border-b-[3px] pt-4 pb-3 relative z-10 whitespace-nowrap px-2 md:px-4',
           ]"
         >
-          <div 
-            class="h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300"
-            :class="[currentTab === tab.name ? 'bg-brand-blue/10' : 'bg-transparent']"
-          >
-            <component :is="tab.icon" class="h-5 w-5" />
+          <div class="flex items-center justify-center h-10 md:h-12 transition-all duration-300">
+            <img v-if="tab.customIcon" :src="tab.customIcon" class="h-8 w-8 md:h-10 md:w-10 object-contain transition-all duration-300" :class="currentTab === tab.name ? 'opacity-100 scale-110' : 'opacity-60 grayscale-[50%]'" />
+            <component v-else :is="tab.icon" class="h-6 w-6 stroke-[2]" :class="currentTab === tab.name ? 'text-brand-blue' : 'text-brand-gray/70'" />
           </div>
-          <span class="text-sm font-black tracking-tight">{{ tab.name }}</span>
+          <span class="text-sm md:text-[15px] font-black tracking-wide" :class="[currentTab === tab.name ? 'text-brand-blue' : 'text-brand-gray/80']">{{ tab.label || tab.name }}</span>
         </button>
       </nav>
     </div>
@@ -31,7 +29,8 @@
     <!-- Backdrop Overlay -->
     <Teleport to="body">
       <Transition name="fade">
-        <div v-if="isFocused || activeCruiseField" class="fixed inset-0 bg-black/5 backdrop-blur-[2px] z-[9998]" @click="isFocused = false; activeCruiseField = null"></div>
+        <div v-if="isFocused || activeCruiseField" class="fixed inset-0 bg-black/5 backdrop-blur-[2px] z-[9]" @click="isFocused = false; activeCruiseField = null"></div>
+        <!-- <div v-if="isFocused || activeCruiseField" class="fixed inset-0 bg-black/5 backdrop-blur-[2px] z-[9998]" @click="isFocused = false; activeCruiseField = null"></div> -->
       </Transition>
     </Teleport>
 
@@ -42,7 +41,7 @@
     >
        <!-- Stays (Hotels) Panel -->
        <div v-if="currentTab === 'Hotels'" class="space-y-6">
-         <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3>
+         <!-- <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
          <!-- Stay Mode Toggle -->
          <div class="flex items-center space-x-8 pb-2">
            <label 
@@ -105,7 +104,7 @@
            <div class="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-gray-50">
              <div class="flex items-center gap-6">
                <div class="flex items-center bg-brand-green/5 px-4 py-2 rounded-xl border border-brand-green/10">
-                 <span class="text-[10px] font-black text-brand-green uppercase tracking-widest mr-4">Bundle + Save</span>
+                 <span class="text-sm font-black text-brand-green uppercase tracking-widest mr-4">Bundle + Save</span>
                  <label class="flex items-center text-xs font-bold text-brand-blue cursor-pointer mr-4">
                    <input type="checkbox" v-model="bundles.bundleFlight" class="mr-2 custom-checkbox" />
                    Add a flight
@@ -148,7 +147,7 @@
 
       <!-- Flights Panel -->
       <div v-if="currentTab === 'Flights'" class="space-y-4">
-        <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3>
+        <!-- <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
            <div class="flex items-center space-x-6">
               <label v-for="mode in ['oneway', 'roundtrip', 'multicity']" :key="mode" class="flex items-center space-x-2 cursor-pointer group">
@@ -184,17 +183,30 @@
               </div>
            </div>
         </div>
-        <div class="flex justify-end pt-4 border-t border-gray-50">
-           <button @click="handleSearch" class="bg-brand-blue text-white px-12 py-3.5 rounded-full font-black text-sm shadow-lg flex items-center justify-center gap-2">
-             <span>Find Your Flight</span>
-             <ArrowRightIcon class="h-4 w-4" />
-           </button>
+        <div class="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-gray-50">
+             <div class="flex items-center gap-6">
+               <div class="flex items-center bg-brand-green/5 px-4 py-2 rounded-xl border border-brand-green/10">
+                 <span class="text-sm font-black text-brand-green uppercase tracking-widest mr-4">Bundle + Save</span>
+                 <label class="flex items-center text-xs font-bold text-brand-blue cursor-pointer mr-4">
+                   <input type="checkbox" v-model="bundles.bundleHotel" class="mr-2 custom-checkbox" />
+                   Add a hotel
+                 </label>
+                 <label class="flex items-center text-xs font-bold text-brand-blue cursor-pointer">
+                   <input type="checkbox" v-model="bundles.bundleCar" class="mr-2 custom-checkbox" />
+                   Add a car
+                 </label>
+               </div>
+             </div>
+             <button @click="handleSearch" class="w-full md:w-auto bg-brand-blue text-white px-12 py-3.5 rounded-full font-black text-sm shadow-lg flex items-center justify-center gap-2">
+               <span>Find Your Flight</span>
+               <ArrowRightIcon class="h-4 w-4" />
+             </button>
         </div>
       </div>
 
       <!-- Packages Panel -->
       <div v-if="currentTab === 'Packages'" class="space-y-6">
-        <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3>
+        <!-- <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
         <div class="flex flex-wrap items-center gap-6 pb-2">
           <label 
             v-for="mode in [
@@ -243,7 +255,7 @@
 
           <Transition name="fade">
             <div v-if="onlyPartialHotel" class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mt-2 w-full">
-              <p class="text-[10px] font-black uppercase tracking-widest text-brand-blue mb-3">Hotel Stay Dates</p>
+              <p class="text-sm font-black uppercase tracking-widest text-brand-blue mb-3">Hotel Stay Dates</p>
               <div class="max-w-md bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden h-[68px]">
                  <FlightDateRangePicker :departure="packageSearchState.hotelCheckIn" :return="packageSearchState.hotelCheckOut" mode="roundtrip" @update:departure="(v: string) => packageSearchState.hotelCheckIn = v" @update:return="(v: string) => packageSearchState.hotelCheckOut = v" />
               </div>
@@ -264,10 +276,10 @@
 
       <!-- Cars Panel -->
       <div v-if="currentTab === 'Cars'" class="space-y-6">
-        <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3>
-        <div class="flex rounded-xl overflow-hidden border border-gray-200">
-          <button @click="carMode = 'pickup'" class="flex-1 py-3 text-xs font-black" :class="carMode === 'pickup' ? 'bg-[#3BB4C1] text-white' : 'bg-white text-gray-400'">Airport Pick-up</button>
-          <button @click="carMode = 'dropoff'" class="flex-1 py-3 text-xs font-black" :class="carMode === 'dropoff' ? 'bg-[#3BB4C1] text-white' : 'bg-white text-gray-400'">Airport Drop-off</button>
+        <!-- <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
+        <div class="flex rounded-xl overflow-hidden border border-brand-blue/20 p-1 bg-gray-50">
+          <button @click="carMode = 'pickup'" class="flex-1 py-3 text-sm md:text-base font-black rounded-lg transition-all" :class="carMode === 'pickup' ? 'bg-brand-blue text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-brand-blue'">Airport Pick-up</button>
+          <button @click="carMode = 'dropoff'" class="flex-1 py-3 text-sm md:text-base font-black rounded-lg transition-all" :class="carMode === 'dropoff' ? 'bg-brand-blue text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-brand-blue'">Airport Drop-off</button>
         </div>
         <div class="flex flex-col md:flex-row bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
           <div class="flex-1 border-r border-gray-100">
@@ -291,11 +303,11 @@
 
       <!-- Cruises Panel -->
       <div v-if="currentTab === 'Cruises'" class="space-y-8">
-        <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3>
+        <!-- <h3 class="text-xl font-black text-brand-blue mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
           <!-- Destination Dropdown -->
-          <div class="relative group">
+          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'destination' }">
             <button 
               @click="activeCruiseField = activeCruiseField === 'destination' ? null : 'destination'"
               class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex items-center text-left hover:border-brand-blue transition-all relative z-20"
@@ -304,7 +316,7 @@
               <div class="absolute left-5 top-1/2 -translate-y-1/2 text-brand-blue/40">
                 <MagnifyingGlassIcon class="h-5 w-5" />
               </div>
-              <span class="text-sm font-black text-brand-blue line-clamp-1">{{ cruiseSearchState.destinationLabel || 'Destination (Any)' }}</span>
+              <span class="text-base font-black text-brand-blue line-clamp-1">{{ cruiseSearchState.destinationLabel || 'Destination (Any)' }}</span>
             </button>
 
             <Transition name="fade">
@@ -322,7 +334,7 @@
           </div>
 
           <!-- Departing Dropdown -->
-          <div class="relative group">
+          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'departing' }">
             <button 
               @click="activeCruiseField = activeCruiseField === 'departing' ? null : 'departing'"
               class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex flex-col justify-center text-left hover:border-brand-blue transition-all relative z-20"
@@ -331,8 +343,8 @@
               <div class="absolute left-5 top-1/2 -translate-y-1/2 text-brand-blue/40">
                 <CalendarIcon class="h-5 w-5" />
               </div>
-              <span class="text-[9px] font-black text-brand-blue/30 uppercase tracking-[0.2em] mb-0.5 leading-none">Departing</span>
-              <span class="text-sm font-black text-brand-blue leading-tight">{{ cruiseSearchState.departingLabel || 'Select Month' }}</span>
+              <span class="text-[11px] font-black text-brand-blue/40 uppercase tracking-[0.2em] mb-0.5 leading-none">Departing</span>
+              <span class="text-base font-black text-brand-blue leading-tight">{{ cruiseSearchState.departingLabel || 'Select Month' }}</span>
             </button>
 
             <Transition name="fade">
@@ -352,7 +364,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           <!-- Length Dropdown -->
-          <div class="relative group">
+          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'length' }">
             <button 
               @click="activeCruiseField = activeCruiseField === 'length' ? null : 'length'"
               class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex items-center text-left hover:border-brand-blue transition-all relative z-20"
@@ -361,7 +373,7 @@
               <div class="absolute left-5 top-1/2 -translate-y-1/2 text-brand-blue/40">
                 <ClockIcon class="h-5 w-5" />
               </div>
-              <span class="text-sm font-black text-brand-blue">{{ cruiseSearchState.lengthLabel || 'Cruise Length (Any)' }}</span>
+              <span class="text-base font-black text-brand-blue">{{ cruiseSearchState.lengthLabel || 'Cruise Length (Any)' }}</span>
             </button>
 
             <Transition name="fade">
@@ -379,7 +391,7 @@
           </div>
 
           <!-- Cruise Line Dropdown -->
-          <div class="relative group">
+          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'line' }">
             <button 
               @click="activeCruiseField = activeCruiseField === 'line' ? null : 'line'"
               class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex items-center text-left hover:border-brand-blue transition-all relative z-20"
@@ -388,7 +400,7 @@
               <div class="absolute left-5 top-1/2 -translate-y-1/2 text-brand-blue/40">
                 <SparklesIcon class="h-5 w-5" />
               </div>
-              <span class="text-sm font-black text-brand-blue line-clamp-1">{{ cruiseSearchState.lineLabel || 'Cruise Line (Any)' }}</span>
+              <span class="text-base font-black text-brand-blue line-clamp-1">{{ cruiseSearchState.lineLabel || 'Cruise Line (Any)' }}</span>
             </button>
 
             <Transition name="fade">
@@ -418,11 +430,63 @@
         </div>
       </div>
 
-      <div v-if="currentTab === 'Transfers'" class="p-8 text-center text-brand-gray/40 font-black uppercase tracking-widest">Transfers Search coming soon</div>
-      <div v-if="currentTab === 'Activities'" class="p-8 text-center text-brand-gray/40 font-black uppercase tracking-widest">Activities Search coming soon</div>
+      <!-- Transfers Panel -->
+      <div v-if="currentTab === 'Transfers'" class="space-y-6">
+        <div class="flex rounded-xl overflow-hidden border border-brand-blue/20 p-1 bg-gray-50">
+          <button @click="transferMode = 'pickup'" class="flex-1 py-3 text-sm md:text-base font-black rounded-lg transition-all" :class="transferMode === 'pickup' ? 'bg-brand-blue text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-brand-blue'">Airport Pick-up</button>
+          <button @click="transferMode = 'dropoff'" class="flex-1 py-3 text-sm md:text-base font-black rounded-lg transition-all" :class="transferMode === 'dropoff' ? 'bg-brand-blue text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-brand-blue'">Airport Drop-off</button>
+        </div>
+        <div class="flex flex-col xl:flex-row bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden min-h-[72px]">
+          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
+             <LocationPicker v-model="transferSearchState.origin" label="From" />
+          </div>
+          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
+             <LocationPicker v-model="transferSearchState.destination" label="To" />
+          </div>
+          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
+             <FlightDateRangePicker :departure="transferSearchState.date" mode="oneway" @update:departure="(v) => transferSearchState.date = v" />
+          </div>
+          
+          <div class="flex-[0.5] border-b xl:border-b-0 xl:border-r border-gray-100 relative group cursor-pointer px-4 pt-3 pb-2 flex flex-col justify-center min-h-[68px]">
+            <p class="text-[11px] font-black uppercase tracking-widest text-brand-gray/40 group-hover:text-brand-blue mb-0.5 transition-colors">Time</p>
+            <div class="flex items-center gap-2">
+              <ClockIcon class="h-5 w-5 text-gray-400 shrink-0" />
+              <input type="time" v-model="transferSearchState.time" class="bg-transparent text-base font-black text-brand-blue outline-none w-full cursor-pointer" />
+            </div>
+          </div>
 
-      <div v-if="!isSticky" class="border-t border-gray-50/50 py-3 bg-gray-50/30 rounded-b-[2.5rem] flex items-center justify-center">
-         <span class="text-[11px] font-bold text-brand-blue/60">{{ currentTab }} prices now shown with fees included.</span>
+          <div class="flex-[0.8]">
+             <Occupancypicker v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" label="Passengers" variant="flight" />
+          </div>
+        </div>
+        
+        <div class="flex justify-end pt-4 border-t border-gray-50">
+           <button @click="handleSearch" class="bg-brand-blue text-white px-12 py-3.5 rounded-full font-black text-sm shadow-lg hover:bg-brand-blue/90 transition-colors">Find Transfer</button>
+        </div>
+      </div>
+
+      <!-- Activities Panel -->
+      <div v-if="currentTab === 'Activities'" class="space-y-6 animate-fade-in pt-4">
+        <div class="flex flex-col xl:flex-row bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden min-h-[72px]">
+          <div class="flex-[1.5] border-b xl:border-b-0 xl:border-r border-gray-100">
+             <CityPicker v-model="activitiesSearchState.destination" label="Destination" placeholder="Search a city..." />
+          </div>
+          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
+             <FlightDateRangePicker :departure="activitiesSearchState.date" mode="oneway" @update:departure="(v) => activitiesSearchState.date = v" />
+          </div>
+          <div class="flex-[0.8] px-4 pt-3 pb-2 flex flex-col justify-center min-h-[68px]">
+            <p class="text-[11px] font-black uppercase tracking-widest text-brand-gray/40 mb-0.5">Type</p>
+            <p class="text-base font-black text-brand-blue truncate">All Activities</p>
+          </div>
+        </div>
+        
+        <div class="flex justify-end pt-4 border-t border-gray-50">
+           <button @click="handleSearch" class="bg-brand-blue text-white px-12 py-3.5 rounded-full font-black text-sm shadow-lg hover:bg-brand-blue/90 transition-colors">Find Things to Do</button>
+        </div>
+      </div>
+
+      <div v-if="!isSticky" class="border-t border-gray-50/50 py-3 bg-gray-50/30 rounded-b-[2.5rem] flex items-center justify-center mt-6">
+         <span class="text-[11px] font-bold text-brand-blue/60">{{ currentTab === 'Activities' ? 'Tours and activities powered by Amadeus' : currentTab + ' prices now shown with fees included.' }}</span>
       </div>
     </div>
   </div>
@@ -452,21 +516,29 @@ const props = defineProps({
   isSticky: { type: Boolean, default: false }
 })
 
-const emit = defineEmits(['focus-change'])
+const emit = defineEmits(['focus-change', 'update:tab'])
 const isFocused = ref(false)
 watch(isFocused, (val) => emit('focus-change', val))
 
+import flightIcon from '@/assets/icons/light__flight.svg'
+import hotelIcon from '@/assets/icons/light__bed.svg'
+import carIcon from '@/assets/icons/light__car.svg'
+import packageIcon from '@/assets/icons/light__package.svg'
+import cruiseIcon from '@/assets/icons/light__cruise.svg'
+import activityIcon from '@/assets/icons/light__ticket.svg'
+
 const tabs = [
-  { name: 'Hotels', icon: BuildingOfficeIcon }, // Use BuildingOffice per UI
-  { name: 'Flights', icon: PaperAirplaneIcon },
-  { name: 'Packages', icon: SunIcon }, // Use Sun per UI (palm tree substitute)
-  { name: 'Cars', icon: CarIcon },
-  { name: 'Cruises', icon: CruiseIcon },
-  { name: 'Activities', icon: TicketIcon },
-  { name: 'Transfers', icon: TruckIcon }
+  { name: 'Flights', label: 'Flights', customIcon: flightIcon },
+  { name: 'Hotels', label: 'Hotels', customIcon: hotelIcon },
+  { name: 'Transfers', label: 'Transfers', icon: TruckIcon },
+  { name: 'Activities', label: 'Activities', customIcon: activityIcon },
+  { name: 'Cars', label: 'Car Rentals', customIcon: carIcon },
+  { name: 'Packages', label: 'Packages', customIcon: packageIcon },
+  { name: 'Cruises', label: 'Cruises', customIcon: cruiseIcon }
 ]
 
-const currentTab = ref('Hotels')
+const currentTab = ref('Flights')
+watch(currentTab, (val) => emit('update:tab', val), { immediate: true })
 const stayMode   = ref('single')
 const flightMode = ref('roundtrip')
 const carMode    = ref('pickup')
@@ -476,7 +548,7 @@ const addHotelLeg = () => { if (multiHotelLegs.value.length < 5) multiHotelLegs.
 
 const occupancy = reactive({ rooms: 1, adults: 2, children: 0 })
 const searchState = reactive({ location: '', checkIn: '', checkOut: '' })
-const bundles = reactive({ bundleFlight: false, bundleCar: false })
+const bundles = reactive({ bundleFlight: false, bundleHotel: false, bundleCar: false })
 
 const flightTravelers = reactive({ adults: 1, children: 0 })
 const flightSearchState = reactive({ origin: '', destination: '', departureDate: '', returnDate: '' })
@@ -484,6 +556,12 @@ const multiFlightLegs = ref([{ origin: '', destination: '', departureDate: '', r
 
 const carSearchState = reactive({ origin: '', destination: '', pickUpDate: '' })
 const differentCarDropoff = ref(false)
+
+const transferMode = ref('pickup')
+const transferSearchState = reactive({ origin: '', destination: '', date: '', time: '10:00' })
+const transferOccupancy = reactive({ adults: 1, children: 0 })
+
+const activitiesSearchState = reactive({ destination: '', date: '' })
 
 const activeCruiseField = ref<string | null>(null)
 
@@ -664,9 +742,15 @@ const handleSearch = () => {
     Object.assign(query, cruiseSearchState)
   } else if (currentTab.value === 'Flights') {
     Object.assign(query, flightSearchState)
+  } else if (currentTab.value === 'Transfers') {
+    Object.assign(query, transferSearchState)
+    query.mode = transferMode.value
+  } else if (currentTab.value === 'Activities') {
+    Object.assign(query, activitiesSearchState)
   }
   
-  navigateTo({ path: '/' + currentTab.value.toLowerCase(), query })
+  const routePath = currentTab.value === 'Activities' ? '/things-to-do' : '/' + currentTab.value.toLowerCase()
+  navigateTo({ path: routePath, query })
 }
 </script>
 

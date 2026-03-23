@@ -4,7 +4,7 @@
       @click="isOpen = !isOpen"
       class="flex-1 min-w-[280px] bg-white rounded-l-lg px-6 py-3 border-r border-gray-100 group hover:bg-gray-50 transition-all cursor-pointer"
     >
-      <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 opacity-60">City, Property Name or Location</p>
+      <p class="text-sm font-black text-gray-400 uppercase tracking-widest mb-1.5 opacity-60">City, Property Name or Location</p>
       <div class="flex items-center font-black text-gray-900 leading-none truncate">
         {{ modelValue || 'Select Location' }}
       </div>
@@ -36,7 +36,7 @@
         <div class="max-h-[400px] overflow-y-auto custom-scrollbar">
           <!-- Recent Searches -->
           <div v-if="!searchQuery && recentSearches.length > 0" class="mb-4">
-            <h3 class="px-6 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Recent searches</h3>
+            <h3 class="px-6 py-2 text-sm font-black text-gray-400 uppercase tracking-widest">Recent searches</h3>
             <div 
               v-for="item in recentSearches" 
               :key="item.name"
@@ -52,7 +52,7 @@
 
           <!-- Popular Sections -->
           <div v-if="!searchQuery" class="mb-4">
-             <h3 class="px-6 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Popular cities</h3>
+             <h3 class="px-6 py-2 text-sm font-black text-gray-400 uppercase tracking-widest">Popular cities</h3>
              <div 
               v-for="city in popularCities" 
               :key="city.name"
@@ -82,7 +82,7 @@
                 <p class="text-sm font-bold text-gray-700 group-hover:text-brand-blue transition-colors truncate">
                   {{ res.address?.cityName || res.name }}, {{ res.address?.countryName || res.address?.countryCode }}
                 </p>
-                <p class="text-[10px] font-bold text-gray-400 truncate uppercase opacity-60">
+                <p class="text-sm font-bold text-gray-400 truncate uppercase opacity-60">
                   {{ res.name }}
                 </p>
               </div>

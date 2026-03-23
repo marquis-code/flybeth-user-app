@@ -27,7 +27,7 @@
             </p>
             <div class="flex items-center gap-2 mt-0.5">
               <span class="text-sm md:text-base font-black tracking-tight">1-646-738-4832</span>
-              <a href="#" class="text-[10px] md:text-xs font-bold text-brand-blue-light underline decoration-brand-blue-light/30 hover:text-white transition-colors">Learn more</a>
+              <a href="#" class="text-sm md:text-xs font-bold text-brand-blue-light underline decoration-brand-blue-light/30 hover:text-white transition-colors">Learn more</a>
             </div>
           </div>
         </div>

@@ -14,10 +14,17 @@
     <div class="checkout-body">
       <div class="checkout-grid">
         <div class="checkout-content">
-          <!-- Step 0: Flight/Stay Details -->
+          <!-- Step 0: Flight/Stay/Transfer Details -->
           <CheckoutFlightDetails
             v-if="currentStep === 0 && bookingDetails.type === 'flight'"
             :flightOffer="priceDetailed"
+            @continue="goToStep(1)"
+            />
+
+          <CheckoutTransferDetails
+            v-if="currentStep === 0 && bookingDetails.type === 'transfer'"
+            :name="bookingDetails.name"
+            :provider="bookingDetails.provider"
             @continue="goToStep(1)"
           />
 
@@ -110,6 +117,7 @@ import { useFlightCheckout } from '@/composables/modules/flights/useFlightChecko
 import BrandedLoader from '~/components/BrandedLoader.vue'
 import CheckoutStepper from '@/components/checkout/CheckoutStepper.vue'
 import CheckoutFlightDetails from '@/components/checkout/CheckoutFlightDetails.vue'
+import CheckoutTransferDetails from '@/components/checkout/CheckoutTransferDetails.vue'
 import CheckoutTravellerForm from '@/components/checkout/CheckoutTravellerForm.vue'
 import CheckoutTripCustomization from '~/components/checkout/CheckoutTripCustomization.vue'
 import CheckoutPayment from '~/components/checkout/CheckoutPayment.vue'
@@ -119,6 +127,7 @@ import ManualPaymentDetailsModal from '~/components/checkout/ManualPaymentDetail
 import CheckoutSidebar from '@/components/checkout/CheckoutSidebar.vue'
 import CheckoutStayDetails from '@/components/checkout/CheckoutStayDetails.vue'
 import { flightsApi } from '@/api_factory/modules/flights'
+import { transfersApi } from '@/api_factory/modules/transfers'
 import { bookingsApi } from '@/api_factory/modules/bookings'
 
 const route = useRoute()
@@ -157,7 +166,7 @@ const bookingDetails = computed(() => ({
   type: route.query.type as string,
   id: route.query.id as string,
   roomId: route.query.roomId as string,
-  name: route.query.name || 'Selected Item',
+  name: (route.query.name as string) || 'Selected Item',
   price: Number(route.query.price) || 0,
   provider: route.query.provider as string,
 }))
@@ -399,8 +408,51 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
       return
     }
 
+    if (bookingDetails.value.type === 'transfer') {
+      const transferPayload = {
+        offerId: bookingDetails.value.id,
+        provider: bookingDetails.value.provider,
+        passengerDetails: {
+          firstName: travellerData.value.firstName,
+          lastName: travellerData.value.lastName,
+          title: travellerData.value.title.toUpperCase(),
+          email: travellerData.value.email,
+          phone: travellerData.value.phoneCountryCode.replace('+', '') + travellerData.value.phone,
+          payment: {
+            methodOfPayment: 'CREDIT_CARD',
+            creditCard: {
+              number: "4111111111111111",
+              holderName: `${travellerData.value.firstName} ${travellerData.value.lastName}`.toUpperCase(),
+              vendorCode: "VI",
+              expiryDate: "1225",
+              cvv: "111"
+            }
+          }
+        }
+      }
+
+      loaderStatus.value = 'Booking your transfer...'
+      const response = await transfersApi.book(transferPayload)
+      const bookData = response.data?.data || response.data
+
+      if (bookData?.orderId || bookData?.bookingId || bookData?.id) {
+         const bookingId = bookData.orderId || bookData.bookingId || bookData.id
+         const pnr = bookData.confirmationNumber || bookData.orderId
+         navigateTo({
+           path: '/confirmation',
+           query: {
+             type: 'transfer',
+             orderId: bookingId,
+             pnr: pnr,
+             status: 'confirmed'
+           }
+         })
+      }
+      return
+    }
+
     if (paymentInfo.provider === 'manual') {
-      const { data } = await paymentsApi.getBankAccounts(priceDetailed.value.currency)
+      const { data } = await paymentsApi.getBankAccounts(priceDetailed.value.currency || 'USD')
       if (data.success) {
         bankAccounts.value = data.data
         isManualDetailsVisible.value = true

@@ -15,7 +15,7 @@
           
           <!-- Explore Travel Dropdown -->
           <div class="relative group">
-            <button class="flex items-center gap-1.5 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-brand-blue bg-white border border-brand-blue/20 hover:border-brand-blue/40 shadow-sm transition-all group">
+            <button class="flex items-center gap-1.5 px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest text-brand-blue bg-white border border-brand-blue/20 hover:border-brand-blue/40 shadow-sm transition-all group">
               Explore Travel
               <ChevronDownIcon class="h-3 w-3 transition-transform group-hover:rotate-180" />
             </button>
@@ -40,7 +40,7 @@
                     class="absolute left-full top-[-12px] h-fit w-[640px] bg-white border border-gray-100 border-l-0 rounded-r-2xl shadow-2xl p-8 flex gap-8 invisible group-hover/item:visible opacity-0 group-hover/item:opacity-100 transition-all duration-300 z-[210] ml-[-1px]"
                   >
                     <div v-for="col in megaDeals" :key="col.title" class="flex-1">
-                      <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue mb-6 border-b border-gray-50 pb-2">{{ col.title }}</h4>
+                      <h4 class="text-sm font-black uppercase tracking-[0.2em] text-brand-blue mb-6 border-b border-gray-50 pb-2">{{ col.title }}</h4>
                       <ul class="space-y-4">
                         <li v-for="link in col.links" :key="link">
                           <NuxtLink to="/explore" class="text-xs font-bold text-brand-gray/60 hover:text-brand-blue transition-colors block">
@@ -55,7 +55,7 @@
             </div>
           </div>
 
-          <NuxtLink to="/help" class="hidden sm:flex items-center gap-1.5 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest text-brand-blue bg-white border border-brand-blue/20 hover:border-brand-blue/40 shadow-sm transition-all">
+          <NuxtLink to="/help" class="hidden sm:flex items-center gap-1.5 px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest text-brand-blue bg-white border border-brand-blue/20 hover:border-brand-blue/40 shadow-sm transition-all">
              <QuestionMarkCircleIcon class="h-3 w-3" />
              Help
           </NuxtLink>
@@ -74,7 +74,7 @@
             class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-100 hover:border-brand-blue/30 hover:bg-brand-blue/5 transition-all group"
           >
             <img :src="getFlag(locale)" class="h-3 w-5 object-cover rounded shadow-sm" />
-            <span class="text-[10px] font-black uppercase tracking-widest text-brand-blue">{{ locale }} | {{ currentCurrency.code }}</span>
+            <span class="text-sm font-black uppercase tracking-widest text-brand-blue">{{ locale }} | {{ currentCurrency.code }}</span>
             <ChevronDownIcon class="h-3 w-3 text-brand-gray group-hover:text-brand-blue transition-colors" />
           </button>
 
@@ -82,7 +82,7 @@
           <div class="relative group hidden sm:block">
             <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-brand-blue/10 hover:border-brand-blue/30 bg-white hover:bg-brand-blue/5 transition-all group-hover:scale-105">
               <PhoneIcon class="h-3 w-3 text-brand-blue" />
-              <span class="text-[10px] font-black uppercase tracking-widest text-brand-blue">Call Us</span>
+              <span class="text-sm font-black uppercase tracking-widest text-brand-blue">Call Us</span>
             </button>
             
             <!-- Popover -->
@@ -95,7 +95,7 @@
                     <PhoneIcon class="h-5 w-5 text-brand-blue" />
                   </div>
                   <div>
-                    <p class="text-[10px] font-black text-brand-blue uppercase tracking-widest leading-tight">24/7 Expert Support</p>
+                    <p class="text-sm font-black text-brand-blue uppercase tracking-widest leading-tight">24/7 Expert Support</p>
                     <p class="text-[11px] font-bold text-brand-gray/60 italic leading-tight">Get Exclusive Phone Rates</p>
                   </div>
                 </div>
@@ -103,14 +103,14 @@
                 <a href="tel:+16462376851" class="block w-full text-center bg-brand-blue text-white py-3.5 rounded-2xl font-black text-lg shadow-lg shadow-brand-blue/20 hover:shadow-xl hover:scale-[1.02] transition-all mb-2">
                   +1-646-237-6851
                 </a>
-                <p class="text-center text-[10px] font-bold text-brand-gray/40 mb-5 uppercase tracking-tighter">Mention "DIAL10" for $10 Credit</p>
+                <p class="text-center text-sm font-bold text-brand-gray/40 mb-5 uppercase tracking-tighter">Mention "DIAL10" for $10 Credit</p>
                 
                 <div class="space-y-2.5 pt-4 border-t border-gray-50">
                   <div v-for="prop in ['Private Unlisted Fares', 'Free Cancellation Help', 'Priority Rebooking']" :key="prop" class="flex items-center gap-2">
                     <div class="w-4 h-4 rounded-full bg-green-500/10 flex items-center justify-center">
                       <CheckIcon class="h-2.5 w-2.5 text-green-600" />
                     </div>
-                    <span class="text-[10px] font-bold text-brand-blue">{{ prop }}</span>
+                    <span class="text-sm font-bold text-brand-blue">{{ prop }}</span>
                   </div>
                 </div>
               </div>
@@ -130,7 +130,7 @@
              <div class="flex items-center gap-4">
                <div class="hidden sm:flex flex-col items-end">
                  <span class="text-brand-blue text-sm font-black transition-colors duration-500">{{ user?.firstName }} {{ user?.lastName }}</span>
-                 <span class="text-brand-gray/40 text-[10px] uppercase font-black tracking-widest">Explorer</span>
+                 <span class="text-brand-gray/40 text-sm uppercase font-black tracking-widest">Explorer</span>
                </div>
                <div @click="showLogoutModal = true" class="h-10 w-10 rounded-xl bg-brand-blue/10 flex items-center justify-center cursor-pointer hover:bg-red-500 group transition-all duration-500">
                  <ArrowRightOnRectangleIcon class="h-5 w-5 text-brand-blue group-hover:text-white" />

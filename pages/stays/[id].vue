@@ -3,11 +3,11 @@
     <!-- Top Nav / Breadcrumbs -->
     <div class="bg-white border-b border-gray-100 py-4">
       <div class="container mx-auto px-4 flex items-center justify-between">
-        <button @click="router.back()" class="flex items-center text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-gray-900 transition-all">
+        <button @click="router.back()" class="flex items-center text-sm font-black uppercase tracking-widest text-gray-500 hover:text-gray-900 transition-all">
           <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
           Go Back
         </button>
-        <div class="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+        <div class="flex items-center text-sm font-bold text-gray-400 uppercase tracking-widest">
           <NuxtLink to="/" class="hover:text-gray-900">Home</NuxtLink>
           <span class="mx-2 opacity-30">></span>
           <NuxtLink to="/stays" class="hover:text-gray-900">Hotels in {{ (stayDetails as any)?.location?.city || 'Selected Area' }}</NuxtLink>
@@ -95,7 +95,7 @@
         <div class="bg-brand-blue rounded-xl p-8 shadow-2xl flex flex-wrap lg:flex-nowrap items-center gap-6 border border-blue-400/20 relative z-[20]">
           <div class="flex-1 min-w-[200px]">
             <h3 class="text-white font-black text-xl mb-1 uppercase tracking-tight">Change Dates and Guest(s)</h3>
-            <p class="text-blue-100 text-[10px] font-bold opacity-80 uppercase tracking-widest">
+            <p class="text-blue-100 text-sm font-bold opacity-80 uppercase tracking-widest">
               Check-In: 2:00 PM - 4:00 PM | Check-Out: 10:00 AM - 12:00 PM
             </p>
           </div>
@@ -129,7 +129,7 @@
         <!-- Room Type Table -->
         <div class="space-y-4">
           <div class="flex items-center mb-4 pl-2">
-            <input type="checkbox" id="refundable" class="w-4 h-4 rounded border-gray-300 text-brand-blue focus:ring-brand-blue mr-3" />
+            <input type="checkbox" id="refundable" class="custom-checkbox" />
             <label for="refundable" class="text-xs font-black uppercase tracking-widest text-gray-700 cursor-pointer">Show deals with Refundable</label>
           </div>
 
@@ -148,7 +148,7 @@
                   <td class="px-6 py-8 align-top border-r border-gray-50 w-1/3">
                     <h4 class="text-[#00a3e0] font-black text-base mb-3 tracking-tight underline">{{ room.name }}</h4>
                     <div class="space-y-2">
-                      <div v-for="(amenity, aIdx) in room.amenities?.slice(0, 5)" :key="aIdx" class="flex items-center text-[10px] font-bold text-gray-600">
+                      <div v-for="(amenity, aIdx) in room.amenities?.slice(0, 5)" :key="aIdx" class="flex items-center text-sm font-bold text-gray-600">
                         <svg class="w-3.5 h-3.5 mr-2 text-brand-blue opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                         {{ typeof amenity === 'string' ? amenity : (amenity as any).description }}
                       </div>
@@ -163,11 +163,11 @@
                     <div class="text-[9px] font-bold text-gray-400">Includes taxes and charges</div>
                   </td>
                   <td class="px-6 py-8 align-top space-y-3">
-                    <div class="flex items-center text-[10px] font-bold text-gray-700">
+                    <div class="flex items-center text-sm font-bold text-gray-700">
                        <svg class="w-3.5 h-3.5 mr-2 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                        Non Refundable
                     </div>
-                    <div class="flex items-center text-[10px] font-bold text-gray-700">
+                    <div class="flex items-center text-sm font-bold text-gray-700">
                        <svg class="w-3.5 h-3.5 mr-2 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                        No Discount
                     </div>
@@ -183,7 +183,7 @@
       <div class="space-y-6 lg:sticky lg:top-24">
         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-xl shadow-gray-200/50">
           <div class="bg-brand-blue p-4">
-             <div class="text-[10px] font-black text-white uppercase tracking-widest italic">Summary</div>
+             <div class="text-sm font-black text-white uppercase tracking-widest italic">Summary</div>
           </div>
           <div class="p-6">
             <div v-if="!selectedRoom" class="text-center py-10 opacity-40">
@@ -194,7 +194,7 @@
               <div class="flex flex-col gap-2 border-b border-gray-100 pb-6">
                 <div class="text-sm font-black text-gray-900">{{ searchQuery.rooms }} rooms for</div>
                 <div class="text-4xl font-black text-gray-900 tracking-tighter">${{ Math.round((selectedRoom as any).rates?.[0]?.priceWithCommission || 0) }}</div>
-                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Includes taxes and charges</div>
+                <div class="text-sm font-bold text-gray-400 uppercase tracking-widest italic">Includes taxes and charges</div>
               </div>
               
               <button 

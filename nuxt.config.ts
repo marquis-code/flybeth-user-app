@@ -3,6 +3,14 @@ import { defineNuxtConfig } from "nuxt/config";
 export default defineNuxtConfig({
   ssr: false,
 
+    nitro: {
+    prerender: {
+      routes: ['/', '/404.html'],  // Changed: Added '/' to generate index.html
+      ignore: ['/dynamic-routes', '/api'],
+      failOnError: false
+    }
+  },
+
   postcss: {
     plugins: {
       "postcss-import": {},
@@ -25,7 +33,13 @@ export default defineNuxtConfig({
 
   devServer: {
     port: 3001,
-    host: 'localhost' // or '0.0.0.0' to allow external access
+    host: '0.0.0.0'
+  },
+
+  vite: {
+    server: {
+      strictPort: true,
+    },
   },
 
   app: {
@@ -58,7 +72,7 @@ export default defineNuxtConfig({
         },
         { property: "og:type", content: "website" },
         { property: "og:url", content: "https://flybeth.com" },
-        { property: "og:image", content: "https://flybeth.com/og-image.jpg" },
+        { property: "og:image", content: "/logo.png" },
 
         // ✅ Twitter meta
         { name: "twitter:card", content: "summary_large_image" },
@@ -69,7 +83,7 @@ export default defineNuxtConfig({
           content:
             "Book verified travel deals online and access secure booking services with Flybeth.",
         },
-        { name: "twitter:image", content: "https://flybeth.com/og-image.jpg" },
+        { name: "twitter:image", content: "/logo.png" },
       ],
 
       link: [
@@ -77,7 +91,7 @@ export default defineNuxtConfig({
         { rel: "shortcut icon", href: "/favicon.ico", type: "image/x-icon" },
         { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
         { rel: "icon", type: "image/png", sizes: "96x96", href: "/favicon-96x96.png" },
-        { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+        { rel: "icon", type: "image/png", href: "/logo.png" },
         { rel: "manifest", href: "/site.webmanifest" }
       ],
 
@@ -155,7 +169,7 @@ export default defineNuxtConfig({
       keywords: 'flights, hotels, vacations, travel, flybeth',
       ogTitle: 'Flybeth - Your Gateway to Global Travel',
       ogDescription: 'Find and book the best travel deals globally. Aggregated from top-tier providers like Hotelbeds, Amadeus, and Duffel.',
-      ogImage: '/img/og-image.jpg',
+      ogImage: '/logo.png',
       twitterCard: 'summary_large_image',
     },
   },

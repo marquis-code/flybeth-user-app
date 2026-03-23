@@ -57,7 +57,7 @@
             <div v-if="activeFilter === filter.id" class="absolute left-0 mt-4 w-72 bg-white border border-gray-100 rounded-[2rem] shadow-2xl z-[200] p-8 origin-top">
               <div v-if="filter.id === 'price'" class="space-y-8">
                 <div class="flex justify-between items-center">
-                  <span class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">Price Range</span>
+                  <span class="text-sm font-black uppercase tracking-[0.2em] text-brand-blue">Price Range</span>
                 </div>
                 <div class="space-y-6">
                   <div class="flex justify-between text-[11px] font-bold text-brand-gray/40 italic">
@@ -67,12 +67,12 @@
                   <input type="range" min="50" max="2000" class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-blue" />
                 </div>
                 <div class="pt-6 border-t border-gray-50 flex justify-end">
-                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
+                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-sm font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
                 </div>
               </div>
 
               <div v-if="filter.id === 'stops'" class="space-y-6">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Number of Stops</h4>
+                <h4 class="text-sm font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Number of Stops</h4>
                 <div class="space-y-4">
                   <div v-for="stop in ['Any Stops', 'Non-stop', '1 stop', '2 stops']" :key="stop" class="flex items-center gap-3 group/opt cursor-pointer" @click="filterState.stops = stop">
                     <div class="w-5 h-5 rounded-full border-2 border-gray-200 flex items-center justify-center transition-all group-hover/opt:border-brand-blue" :class="{ 'border-brand-blue bg-brand-blue': filterState.stops === stop }">
@@ -82,12 +82,12 @@
                   </div>
                 </div>
                 <div class="pt-6 border-t border-gray-50 flex justify-end">
-                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
+                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-sm font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
                 </div>
               </div>
 
               <div v-if="filter.id === 'duration'" class="space-y-8 text-left">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Flight Duration</h4>
+                <h4 class="text-sm font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Flight Duration</h4>
                 <div class="space-y-6">
                   <div class="flex justify-between text-[11px] font-bold text-brand-gray/40 italic">
                     <span>Any</span>
@@ -96,12 +96,12 @@
                   <input type="range" min="2" max="30" v-model="filterState.duration" class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-blue" />
                 </div>
                 <div class="pt-6 border-t border-gray-50 flex justify-end">
-                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
+                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-sm font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
                 </div>
               </div>
 
               <div v-if="filter.id === 'layover'" class="space-y-8 text-left">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Layover Duration</h4>
+                <h4 class="text-sm font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Layover Duration</h4>
                 <div class="space-y-6">
                   <div class="flex justify-between text-[11px] font-bold text-brand-gray/40 italic">
                     <span>Any</span>
@@ -110,12 +110,12 @@
                   <input type="range" min="0" max="24" v-model="filterState.layover" class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-blue" />
                 </div>
                 <div class="pt-6 border-t border-gray-50 flex justify-end">
-                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
+                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-sm font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
                 </div>
               </div>
 
               <div v-if="filter.id === 'interest'" class="space-y-6 text-left">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Travel Interest</h4>
+                <h4 class="text-sm font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Travel Interest</h4>
                 <div class="space-y-4 max-h-64 overflow-y-auto pr-2 scrollbar-thin">
                   <div v-for="interest in ['Anything', 'City', 'Skiing', 'Beach', 'Foodie', 'Night Life', 'Romantic', 'National Parks']" :key="interest" class="flex items-center gap-3 group/opt cursor-pointer" @click="filterState.interest = interest">
                     <div class="w-5 h-5 rounded-full border-2 border-gray-200 flex items-center justify-center transition-all group-hover/opt:border-brand-blue" :class="{ 'border-brand-blue bg-brand-blue': filterState.interest === interest }">
@@ -125,12 +125,12 @@
                   </div>
                 </div>
                 <div class="pt-6 border-t border-gray-50 flex justify-end">
-                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
+                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-sm font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
                 </div>
               </div>
 
               <div v-if="filter.id === 'weekend'" class="space-y-6">
-                <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Weekend Getaways</h4>
+                <h4 class="text-sm font-black uppercase tracking-[0.2em] text-brand-blue border-b border-gray-50 pb-2">Weekend Getaways</h4>
                 <div class="space-y-4">
                   <div v-for="opt in ['Any', 'This Weekend', 'Next Weekend', 'Last Weekend']" :key="opt" class="flex items-center gap-3 group/opt cursor-pointer" @click="filterState.weekend = opt">
                     <div class="w-5 h-5 rounded-full border-2 border-gray-200 flex items-center justify-center transition-all group-hover/opt:border-brand-blue" :class="{ 'border-brand-blue bg-brand-blue': filterState.weekend === opt }">
@@ -140,7 +140,7 @@
                   </div>
                 </div>
                 <div class="pt-6 border-t border-gray-50 flex justify-end">
-                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
+                  <button @click="activeFilter = null" class="bg-brand-blue text-white text-sm font-black uppercase tracking-widest px-8 py-3 rounded-2xl hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/10 transition-all">Done</button>
                 </div>
               </div>
             </div>
@@ -166,13 +166,13 @@
             <h3 class="text-sm font-black text-brand-blue mb-1">{{ deal.name }}</h3>
             <div class="flex items-baseline gap-1 mb-4">
               <span class="text-2xl font-black text-brand-green">${{ deal.price.toLocaleString() }}</span>
-              <span class="text-[10px] font-bold text-brand-gray/40">.80 *</span>
+              <span class="text-sm font-bold text-brand-gray/40">.80 *</span>
             </div>
             
             <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-2xl border border-gray-100">
                <div class="flex flex-col">
-                 <span class="text-[10px] font-black text-brand-blue uppercase tracking-widest">{{ deal.route }}</span>
-                 <span class="text-[10px] font-bold text-brand-gray/40">{{ deal.dates }}</span>
+                 <span class="text-sm font-black text-brand-blue uppercase tracking-widest">{{ deal.route }}</span>
+                 <span class="text-sm font-bold text-brand-gray/40">{{ deal.dates }}</span>
                </div>
                <button class="w-8 h-8 rounded-full border border-brand-blue/10 flex items-center justify-center group-hover:bg-brand-blue group-hover:border-brand-blue transition-all">
                  <ChevronRightIcon class="h-4 w-4 text-brand-blue group-hover:text-white" />

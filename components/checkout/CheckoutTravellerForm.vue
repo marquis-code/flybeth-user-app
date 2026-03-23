@@ -84,7 +84,7 @@
 
         <!-- Gender -->
         <div class="py-2 px-3 bg-gray-50/50 rounded-2xl border border-gray-100 flex items-center justify-between">
-          <span class="text-[10px] font-black text-brand-gray uppercase tracking-widest pl-2">Gender *</span>
+          <span class="text-sm font-black text-brand-gray uppercase tracking-widest pl-2">Gender *</span>
           <div class="flex gap-4 pr-2">
             <label class="flex items-center gap-2 cursor-pointer group">
               <input type="radio" v-model="form.gender" value="male" class="w-4 h-4 accent-brand-blue" />
@@ -388,11 +388,11 @@ const handleContinue = () => {
   cursor: pointer;
 }
 
-.checkbox-input {
+/* .checkbox-input {
   accent-color: #0D1DAD;
   width: 16px;
   height: 16px;
-}
+} */
 
 .terms-link {
   color: #0D1DAD;

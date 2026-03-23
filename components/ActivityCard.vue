@@ -8,7 +8,7 @@
         />
         <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
           <StarIcon class="h-3 w-3 text-[#FFC107] fill-current" />
-          <span class="text-[10px] font-black text-brand-blue">{{ activity.reviews?.summary?.averageRating || '4.8' }}</span>
+          <span class="text-sm font-black text-brand-blue">{{ activity.reviews?.summary?.averageRating || '4.8' }}</span>
         </div>
       </div>
 
@@ -16,11 +16,11 @@
       <div class="flex-grow p-6 flex flex-col justify-between">
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <span class="text-[10px] font-black text-brand-green uppercase tracking-[0.2em] bg-brand-green/5 px-2 py-1 rounded-md">
+            <span class="text-sm font-black text-brand-green uppercase tracking-[0.2em] bg-brand-green/5 px-2 py-1 rounded-md">
               {{ activity.content?.category || 'Activity' }}
             </span>
             <div class="text-right">
-              <p class="text-[10px] text-brand-gray/40 font-bold uppercase tracking-widest">From</p>
+              <p class="text-sm text-brand-gray/40 font-bold uppercase tracking-widest">From</p>
               <p class="text-xl font-black text-brand-blue tracking-tighter">{{ formatPrice(activity.amountsFrom?.[0]) }}</p>
             </div>
           </div>
@@ -36,11 +36,11 @@
           <div class="flex items-center gap-4">
              <div class="flex items-center gap-1.5 grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
                 <ClockIcon class="h-4 w-4 text-brand-blue" />
-                <span class="text-[10px] font-bold text-brand-blue uppercase">{{ activity.content?.duration?.value }} {{ activity.content?.duration?.unit }}</span>
+                <span class="text-sm font-bold text-brand-blue uppercase">{{ activity.content?.duration?.value }} {{ activity.content?.duration?.unit }}</span>
              </div>
              <div class="flex items-center gap-1.5 grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
                 <TicketIcon class="h-4 w-4 text-brand-blue" />
-                <span class="text-[10px] font-bold text-brand-blue uppercase">Mobile Ticket</span>
+                <span class="text-sm font-bold text-brand-blue uppercase">Mobile Ticket</span>
              </div>
           </div>
           <UiBaseButton variant="primary" @click="$emit('select', activity)" class="!bg-brand-blue !rounded-xl px-8 font-bold uppercase tracking-widest">

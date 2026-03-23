@@ -17,7 +17,7 @@
              <polyline points="21 15 16 10 5 21"/>
           </svg>
         </div>
-        <p class="text-[10px] font-black uppercase tracking-widest opacity-60">No Image Available</p>
+        <p class="text-sm font-black uppercase tracking-widest opacity-60">No Image Available</p>
       </div>
       <!-- Badge -->
       <div class="absolute top-4 left-4">
@@ -89,7 +89,7 @@
           <div class="text-3xl font-black text-gray-900 mb-0.5">
             ${{ Math.round(stay.priceWithCommission) }}
           </div>
-          <div class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+          <div class="text-sm font-bold text-gray-400 uppercase tracking-tighter">
             Includes taxes and charges
           </div>
         </div>

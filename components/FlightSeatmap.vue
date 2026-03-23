@@ -16,22 +16,22 @@
             <h3 class="text-sm font-black text-brand-blue uppercase tracking-widest">
               Segment {{ seatmap.segmentId }}
             </h3>
-            <p class="text-[10px] text-brand-gray/40 font-bold uppercase tracking-widest">
+            <p class="text-sm text-brand-gray/40 font-bold uppercase tracking-widest">
               {{ seatmap.carrierCode }}{{ seatmap.number }}
             </p>
           </div>
           <div class="flex space-x-4">
             <div class="flex items-center space-x-2">
               <div class="w-3 h-3 bg-brand-blue rounded-sm"></div>
-              <span class="text-[10px] font-bold text-brand-gray/60 uppercase">Selected</span>
+              <span class="text-sm font-bold text-brand-gray/60 uppercase">Selected</span>
             </div>
             <div class="flex items-center space-x-2">
               <div class="w-3 h-3 bg-gray-100 rounded-sm"></div>
-              <span class="text-[10px] font-bold text-brand-gray/60 uppercase">Available</span>
+              <span class="text-sm font-bold text-brand-gray/60 uppercase">Available</span>
             </div>
             <div class="flex items-center space-x-2">
               <div class="w-3 h-3 bg-gray-300 rounded-sm"></div>
-              <span class="text-[10px] font-bold text-brand-gray/60 uppercase">Occupied</span>
+              <span class="text-sm font-bold text-brand-gray/60 uppercase">Occupied</span>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@
                     
                     <!-- Tooltip -->
                     <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
-                      <div class="bg-brand-blue text-white text-[10px] font-black py-2 px-3 rounded-xl shadow-xl whitespace-nowrap">
+                      <div class="bg-brand-blue text-white text-sm font-black py-2 px-3 rounded-xl shadow-xl whitespace-nowrap">
                         {{ seat.number }} - {{ seat.available ? 'Available' : 'Occupied' }}
                         <div v-if="seat.price" class="text-brand-green mt-1">+{{ seat.price }} {{ seat.currency }}</div>
                       </div>
