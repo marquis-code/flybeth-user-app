@@ -755,9 +755,6 @@ const handleSearch = () => {
 </script>
 
 <style scoped>
-.custom-checkbox {
-  @apply rounded border-gray-300 text-brand-blue focus:ring-brand-blue;
-}
 .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

@@ -23,7 +23,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3000',
+      apiBase: process.env.VITE_BASE_URL || process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3000/api/v1',
       googleClientId: process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID,
       paystackPublicKey: process.env.NUXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
       stripePublishableKey: process.env.NUXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_51SlIe6FOWpTToNxe7GNqR7K9UbWopqhPgQ3rrJBuG3iqQdEhP7nf3VJ2JDxHaL2g9YMiLpqo9TiXsW6AiyDfNXQ00i1AqxHyG',
