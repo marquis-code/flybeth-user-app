@@ -10,7 +10,7 @@
           <div class="relative flex-shrink-0">
             <div class="h-10 w-10 md:h-12 md:w-12 rounded-full overflow-hidden border-2 border-brand-green/30">
               <img 
-                src="/Users/mac/.gemini/antigravity/brain/44cb00a5-a7cb-47f1-8407-9c3d5aae81d2/travel_expert_avatar_1772933316573.png" 
+                src="/images/expert-avatar.png" 
                 alt="Travel Expert" 
                 class="h-full w-full object-cover"
               />
