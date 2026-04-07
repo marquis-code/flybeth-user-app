@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white shadow-sm rounded-[2rem] p-8 border border-gray-100 overflow-hidden">
-    <h2 class="text-xl font-black text-brand-blue mb-6 flex items-center tracking-tighter">
+    <h2 class="text-xl  text-gray-900 mb-6 flex items-center tracking-tighter">
       <UsersIcon class="h-6 w-6 mr-3 text-brand-green" /> Select Your Seats
     </h2>
 
@@ -13,7 +13,7 @@
       <div v-for="(seatmap, smIdx) in seatmaps" :key="smIdx" class="space-y-8">
         <div class="flex items-center justify-between border-b border-gray-100 pb-4">
           <div>
-            <h3 class="text-sm font-black text-brand-blue uppercase tracking-widest">
+            <h3 class="text-sm  text-gray-900 uppercase tracking-widest">
               Segment {{ seatmap.segmentId }}
             </h3>
             <p class="text-sm text-brand-gray/40 font-bold uppercase tracking-widest">
@@ -56,18 +56,18 @@
                     v-else
                     :disabled="!seat.available || seat.isOccupied"
                     @click="toggleSeat(smIdx, seat.number)"
-                    class="w-8 h-8 rounded-lg flex items-center justify-center text-[8px] font-black transition-all duration-300"
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-[8px]  transition-all duration-300"
                     :class="[
                       isSelected(smIdx, seat.number) 
                         ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30 scale-110' 
-                        : (seat.isOccupied ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-white border border-gray-200 text-brand-blue hover:border-brand-blue/50')
+                        : (seat.isOccupied ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-white border border-gray-200 text-gray-900 hover:border-brand-blue/50')
                     ]"
                   >
                     {{ seat.number }}
                     
                     <!-- Tooltip -->
                     <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
-                      <div class="bg-brand-blue text-white text-sm font-black py-2 px-3 rounded-xl shadow-xl whitespace-nowrap">
+                      <div class="bg-brand-blue text-white text-sm  py-2 px-3 rounded-xl shadow-xl whitespace-nowrap">
                         {{ seat.number }} - {{ seat.available ? 'Available' : 'Occupied' }}
                         <div v-if="seat.price" class="text-brand-green mt-1">+{{ seat.price }} {{ seat.currency }}</div>
                       </div>

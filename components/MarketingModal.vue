@@ -1,62 +1,121 @@
 <template>
-  <Transition name="fade-scale">
-    <div v-if="show" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div class="bg-white rounded-[2.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] w-full max-w-[480px] overflow-hidden relative animate-float">
+  <Transition name="modal-scale">
+    <div v-if="show" class="fixed inset-0 z-[200] flex items-center justify-center p-4" @click.self="$emit('close')">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-md"></div>
+
+      <!-- Modal Card -->
+      <div class="relative w-full max-w-[820px] rounded-[2rem] overflow-hidden shadow-[0_40px_120px_-20px_rgba(0,53,128,0.4)] animate-modal-enter">
+        
         <!-- Close Button -->
         <button 
           @click="$emit('close')" 
-          class="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
+          class="absolute top-5 right-5 z-30 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all duration-300 group"
         >
-          <XMarkIcon class="h-6 w-6 text-gray-400" />
+          <XMarkIcon class="h-5 w-5 text-white group-hover:rotate-90 transition-transform duration-300" />
         </button>
 
-        <div class="p-10 pt-16 text-center">
-          <!-- Agent Avatar -->
-          <div class="relative inline-block mb-8">
-            <div class="h-24 w-24 rounded-full border-4 border-brand-green/20 p-1 relative z-10 overflow-hidden bg-gray-100">
-              <img 
-                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200" 
-                alt="Agent" 
-                class="w-full h-full object-cover"
-              />
-            </div>
-            <div class="absolute -bottom-1 -right-1 h-6 w-6 bg-brand-green border-4 border-white rounded-full z-20"></div>
-          </div>
+        <div class="flex flex-col md:flex-row min-h-[420px]">
+          
+          <!-- Left Gradient Panel -->
+          <div class="relative md:w-[45%] bg-gradient-to-br from-[#003580] via-[#0046a8] to-[#002a66] p-8 md:p-10 flex flex-col justify-between overflow-hidden">
+            <!-- Animated decorative elements -->
+            <div class="absolute -top-20 -right-20 w-60 h-60 bg-white/5 rounded-full blur-2xl animate-pulse-slow"></div>
+            <div class="absolute -bottom-16 -left-16 w-48 h-48 bg-[#F48221]/10 rounded-full blur-2xl animate-pulse-slow delay-1000"></div>
+            
+            <!-- Shimmer effect -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -translate-x-full animate-shimmer"></div>
 
-          <!-- Header -->
-          <h3 class="text-2xl font-black text-brand-blue mb-2 leading-tight">{{ $t('marketing.helpTitle') }}</h3>
-          <p class="text-brand-gray/60 font-bold mb-8 italic">{{ $t('marketing.helpSub') }}</p>
-
-          <!-- Divider -->
-          <div class="h-px bg-gray-100 w-full mb-8"></div>
-
-          <!-- Benefits List -->
-          <div class="space-y-4 mb-10 text-left px-4">
-            <div v-for="(benefit, idx) in benefits" :key="idx" class="flex items-center gap-4 group">
-              <div class="h-6 w-6 rounded-full bg-brand-green/10 flex items-center justify-center group-hover:bg-brand-green group-hover:text-white transition-all">
-                <CheckIcon class="h-4 w-4 text-brand-green group-hover:text-white" />
+            <div class="relative z-10">
+              <!-- Badge -->
+              <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 mb-6 border border-white/10">
+                <div class="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse"></div>
+                <span class="text-[10px] font-bold text-white/90 uppercase tracking-[0.2em]">Live Support</span>
               </div>
-              <span class="text-sm font-bold text-brand-blue/80">{{ benefit }}</span>
+
+              <h3 class="text-2xl md:text-[28px] font-bold text-white leading-[1.2] mb-4 tracking-tight">
+                Need help<br/>finding the<br/>
+                <span class="text-[#F48221]">perfect deal?</span>
+              </h3>
+              <p class="text-sm text-white/60 leading-relaxed max-w-[260px]">
+                Our expert travel advisors are standing by 24/7 to help you save more on your next trip.
+              </p>
+            </div>
+
+            <!-- Trust indicators -->
+            <div class="relative z-10 flex items-center gap-4 mt-8">
+              <div class="flex -space-x-2">
+                <div v-for="i in 3" :key="i" class="h-8 w-8 rounded-full border-2 border-[#003580] overflow-hidden bg-white/20">
+                  <img :src="`https://i.pravatar.cc/80?img=${i + 20}`" class="w-full h-full object-cover" :alt="`Agent ${i}`" />
+                </div>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-white/80 uppercase tracking-wider">Trusted by</p>
+                <p class="text-xs font-bold text-white">40,000+ travelers</p>
+              </div>
             </div>
           </div>
 
-          <!-- Call Button -->
-          <div class="relative group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-brand-green to-brand-green/50 blur opacity-25 group-hover:opacity-100 transition duration-1000"></div>
-            <a 
-              href="tel:1-845-848-0154" 
-              class="relative w-full flex items-center justify-between bg-white border-2 border-brand-green rounded-full px-4 py-3 group-hover:bg-brand-green transition-all duration-300"
-            >
-              <div class="h-12 w-12 rounded-full bg-brand-green flex items-center justify-center text-white scale-100 group-hover:scale-110 transition-transform shadow-lg">
-                <PhoneIcon class="h-6 w-6" />
+          <!-- Right Content Panel -->
+          <div class="md:w-[55%] bg-white p-8 md:p-10 flex flex-col justify-between">
+            
+            <!-- Benefits List -->
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-6">Why call us?</p>
+              <div class="space-y-4">
+                <div 
+                  v-for="(benefit, idx) in benefits" 
+                  :key="idx" 
+                  class="flex items-start gap-3.5 group benefit-item"
+                  :style="{ animationDelay: `${300 + idx * 120}ms` }"
+                >
+                  <div class="h-9 w-9 rounded-xl flex-shrink-0 flex items-center justify-center transition-all duration-500"
+                    :class="benefit.color">
+                    <component :is="benefit.icon" class="h-4.5 w-4.5" />
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-gray-900 leading-snug">{{ benefit.title }}</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">{{ benefit.subtitle }}</p>
+                  </div>
+                </div>
               </div>
-              <span class="text-[20px] font-black text-brand-green group-hover:text-white transition-colors mr-10 tabular-nums">
-                1-845-848-0154
-              </span>
-            </a>
-          </div>
+            </div>
 
-          <p class="mt-6 text-sm text-brand-gray/30 font-black uppercase tracking-widest">Speak with our expert travel advisors</p>
+            <!-- CTA Section -->
+            <div class="mt-8 space-y-3">
+              <!-- Call Button -->
+              <a 
+                href="tel:1-845-848-0154" 
+                class="w-full flex items-center justify-between bg-gradient-to-r from-[#003580] to-[#0046a8] rounded-2xl px-5 py-4 group hover:shadow-xl hover:shadow-brand-blue/20 transition-all duration-500 active:scale-[0.98]"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="h-12 w-12 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/25 group-hover:scale-110 transition-all duration-500">
+                    <PhoneIcon class="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <p class="text-[9px] font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Call us now</p>
+                    <p class="text-lg font-bold text-white tabular-nums tracking-wide">1-845-848-0154</p>
+                  </div>
+                </div>
+                <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+              </a>
+
+              <!-- Secondary Chat CTA -->
+              <button 
+                @click="$emit('close')"
+                class="w-full flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 rounded-2xl px-5 py-3.5 transition-all duration-300 group"
+              >
+                <ChatBubbleLeftEllipsisIcon class="h-4 w-4 text-gray-400 group-hover:text-[#003580] transition-colors" />
+                <span class="text-xs font-bold text-gray-500 group-hover:text-gray-900 transition-colors">Or chat with us online</span>
+              </button>
+
+              <p class="text-center text-[9px] text-gray-300 font-bold uppercase tracking-[0.15em] pt-1">
+                Available 24/7 · No booking fees · Price match guarantee
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -64,7 +123,14 @@
 </template>
 
 <script setup lang="ts">
-import { XMarkIcon, CheckIcon, PhoneIcon } from '@heroicons/vue/24/solid'
+import { XMarkIcon, PhoneIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/solid'
+import { 
+  TicketIcon, 
+  UserGroupIcon, 
+  ArrowPathIcon, 
+  SparklesIcon 
+} from '@heroicons/vue/24/outline'
+import { computed } from 'vue'
 
 defineProps({
   show: Boolean
@@ -72,34 +138,98 @@ defineProps({
 
 defineEmits(['close'])
 
-const { t } = useI18n() as any
-
 const benefits = computed(() => [
-  t('marketing.benefits.deals'),
-  t('marketing.benefits.assist'),
-  t('marketing.benefits.cancel'),
-  t('marketing.benefits.rewards')
+  { 
+    title: 'Phone-only exclusive deals', 
+    subtitle: 'Access rates not available online',
+    icon: TicketIcon,
+    color: 'bg-blue-50 text-[#003580]'
+  },
+  { 
+    title: 'Personalized travel planning', 
+    subtitle: 'Expert advisors tailor your perfect trip',
+    icon: UserGroupIcon,
+    color: 'bg-emerald-50 text-emerald-600'
+  },
+  { 
+    title: '24-hour free cancellation', 
+    subtitle: 'Flexible booking with full refund',
+    icon: ArrowPathIcon,
+    color: 'bg-amber-50 text-amber-600'
+  },
+  { 
+    title: '2× Flybeth reward points', 
+    subtitle: 'Double miles on phone bookings',
+    icon: SparklesIcon,
+    color: 'bg-purple-50 text-purple-600'
+  }
 ])
 </script>
 
 <style scoped>
-.fade-scale-enter-active,
-.fade-scale-leave-active {
+.modal-scale-enter-active {
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.fade-scale-enter-from,
-.fade-scale-leave-to {
+.modal-scale-leave-active {
+  transition: all 0.35s cubic-bezier(0.55, 0, 1, 0.45);
+}
+.modal-scale-enter-from {
   opacity: 0;
-  transform: scale(0.9) translateY(20px);
+}
+.modal-scale-leave-to {
+  opacity: 0;
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+.animate-modal-enter {
+  animation: modal-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+@keyframes modal-enter {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.92) translateY(30px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.animate-shimmer {
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(100%); }
+}
+
+.benefit-item {
+  animation: benefit-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes benefit-enter {
+  0% { 
+    opacity: 0; 
+    transform: translateX(-12px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+.delay-1000 {
+  animation-delay: 1s;
 }
 </style>

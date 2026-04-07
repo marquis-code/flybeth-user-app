@@ -44,10 +44,9 @@
           </svg>
         </div>
   
-        <!-- Dropdown -->
         <div
           v-if="showDropdown"
-          class="absolute z-[99999] mt-1 w-full bg-white shadow-xl rounded-2xl overflow-hidden"
+          class="absolute z-[10000000] mt-1 w-full bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden border border-gray-100"
         >
           <!-- Search Input -->
           <div class="p-2 border-b-[0.5px] border-gray-50 sticky top-0 bg-white">

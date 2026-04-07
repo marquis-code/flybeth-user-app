@@ -102,7 +102,8 @@ export const useSearchStays = () => {
             } else if (searchData.lat && searchData.lng) {
                 payload.location = {
                     latitude: Number(searchData.lat),
-                    longitude: Number(searchData.lng)
+                    longitude: Number(searchData.lng),
+                    radius: 20
                 };
             }
 

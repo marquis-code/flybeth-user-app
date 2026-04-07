@@ -1,6 +1,6 @@
 <template>
   <div class="relative" ref="phoneRef">
-    <label v-if="label" class="text-[11px] uppercase tracking-[0.15em] text-brand-gray font-black mb-2 px-1 opacity-70 font-header block">
+    <label v-if="label" class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70 font-header block">
       {{ label }}
     </label>
 
@@ -9,10 +9,10 @@
       <button 
         type="button" 
         @click="showDropdown = !showDropdown"
-        class="flex items-center gap-2 px-4 bg-white border border-gray-100 border-r-0 rounded-l-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:bg-gray-50 transition-all text-sm font-bold text-brand-blue min-w-[100px] justify-center"
+        class="flex items-center gap-2 px-4 bg-white border border-gray-100 border-r-0 rounded-l-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:bg-gray-50 transition-all text-sm font-bold text-gray-900 min-w-[100px] justify-center"
       >
         <span class="text-lg">{{ selectedCountry.flag }}</span>
-        <span class="text-xs font-black text-brand-blue/70">{{ selectedCountry.dialCode }}</span>
+        <span class="text-xs  text-gray-900">{{ selectedCountry.dialCode }}</span>
         <svg class="h-3 w-3 text-brand-gray/40 transition-transform" :class="{ 'rotate-180': showDropdown }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
         </svg>
@@ -24,7 +24,7 @@
         :placeholder="placeholder || '812 345 6789'"
         :value="phoneNumber"
         @input="onPhoneInput"
-        class="flex-grow px-5 py-4 bg-white border border-gray-100 border-l-0 rounded-r-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue focus:shadow-xl transition-all duration-500 font-bold text-brand-blue placeholder-brand-gray/30"
+        class="flex-grow px-5 py-4 bg-white border border-gray-100 border-l-0 rounded-r-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue focus:shadow-xl transition-all duration-500 font-bold text-gray-900 placeholder-brand-gray/30"
       />
     </div>
 
@@ -37,7 +37,7 @@
             v-model="searchQuery" 
             type="text" 
             placeholder="Search countries..." 
-            class="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm font-bold text-brand-blue placeholder-brand-gray/30 focus:outline-none focus:ring-2 focus:ring-brand-blue/10"
+            class="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm font-bold text-gray-900 placeholder-brand-gray/30 focus:outline-none focus:ring-2 focus:ring-brand-blue/10"
           />
         </div>
         <!-- Country List -->
@@ -51,8 +51,8 @@
             :class="{ 'bg-brand-blue/5': selectedCountry.code === country.code }"
           >
             <span class="text-lg">{{ country.flag }}</span>
-            <span class="flex-grow text-sm font-bold text-brand-blue">{{ country.name }}</span>
-            <span class="text-xs font-black text-brand-gray/40">{{ country.dialCode }}</span>
+            <span class="flex-grow text-sm font-bold text-gray-900">{{ country.name }}</span>
+            <span class="text-xs  text-brand-gray/40">{{ country.dialCode }}</span>
           </button>
         </div>
       </div>

@@ -1,104 +1,90 @@
 <template>
-  <div class="stay-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 mb-6 flex flex-col md:flex-row h-full md:h-[300px] group">
+  <div 
+    class="stay-card bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-700 mb-6 flex flex-col md:flex-row h-full md:h-[280px] group cursor-pointer"
+    @click="$emit('select', stay)"
+  >
     <!-- Image Section -->
-    <div class="md:w-[35%] relative overflow-hidden h-64 md:h-auto bg-gray-100 flex items-center justify-center">
+    <div class="md:w-[32%] relative overflow-hidden h-64 md:h-auto bg-gray-50 flex items-center justify-center shrink-0">
       <img 
         v-if="stay.photos?.[0] || stay.image"
         :src="stay.photos?.[0] || stay.image" 
         :alt="stay.name"
-        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
       />
-      <!-- Premium Empty State for Image -->
-      <div v-else class="flex flex-col items-center justify-center text-gray-400 p-8 text-center group-hover:scale-105 transition-transform duration-500">
-        <div class="w-16 h-16 mb-4 bg-gray-200 rounded-full flex items-center justify-center">
-          <svg class="w-8 h-8 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-             <circle cx="8.5" cy="8.5" r="1.5"/>
-             <polyline points="21 15 16 10 5 21"/>
-          </svg>
-        </div>
-        <p class="text-sm font-black uppercase tracking-widest opacity-60">No Image Available</p>
+      <!-- Premium Empty State -->
+      <div v-else class="flex flex-col items-center justify-center text-gray-200 p-8 text-center bg-gray-50 h-full w-full">
+        <svg class="w-12 h-12 mb-3 opacity-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <p class="text-xs font-black tracking-wide opacity-50">No preview available</p>
       </div>
-      <!-- Badge -->
-      <div class="absolute top-4 left-4">
-        <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-white/90 backdrop-blur-sm text-brand-blue text-xs font-bold border border-white/20 shadow-sm">
-          <svg class="w-3.5 h-3.5 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          {{ stay.type || 'Stay' }}
+      <!-- Type Badge (Minimalist) -->
+      <div class="absolute top-5 left-5">
+        <span class="inline-flex items-center px-4 py-2 rounded-xl bg-white/95 backdrop-blur-md text-gray-900 text-xs font-black border border-gray-100 shadow-xl tracking-wide">
+          {{ stay.type || 'Hotel' }}
         </span>
       </div>
-      <!-- Provider Badge -->
-      <div class="absolute bottom-4 left-4">
-        <span class="px-2 py-0.5 rounded bg-black/50 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-tighter">
-          Via {{ stay.provider }}
-        </span>
-      </div>
-      <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
     </div>
 
     <!-- Info Section -->
-    <div class="flex-1 p-6 flex flex-col md:flex-row">
+    <div class="flex-1 p-8 flex flex-col md:flex-row gap-8">
       <!-- Left Info -->
-      <div class="flex-1 pr-4 mb-4 md:mb-0">
-        <div class="flex justify-between items-start mb-1">
-          <h3 class="text-xl font-extrabold text-gray-900 leading-tight group-hover:text-brand-blue transition-colors">
+      <div class="flex-1 min-w-0 flex flex-col">
+        <div class="mb-6">
+          <h3 class="text-2xl font-black text-gray-900 leading-tight mb-2 group-hover:text-gray-600 transition-colors line-clamp-2 tracking-tight">
             {{ stay.name }}
           </h3>
-        </div>
-        
-        <div class="flex items-center text-gray-500 text-sm mb-4">
-          <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <span v-if="stay.location?.address">{{ stay.location?.address }}, </span>{{ stay.location?.city || 'City' }}<span v-if="stay.location?.countryCode">, {{ stay.location.countryCode }}</span>
+          
+          <div class="flex items-center text-gray-400 mt-2">
+            <svg class="w-4 h-4 mr-2 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="text-sm font-bold tracking-wide line-clamp-1 opacity-70 group-hover:opacity-100 transition-opacity">
+              <span v-if="stay.location?.address">{{ stay.location?.address }}, </span>{{ stay.location?.city || 'City' }}
+            </span>
+          </div>
         </div>
 
-        <div v-if="visibleAmenities.length > 0" class="mb-4">
-          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Highlights & Amenities</p>
-          <div class="flex flex-wrap gap-4 text-gray-600">
-            <div v-for="amenity in visibleAmenities" :key="amenity.label" class="flex items-center text-sm font-medium">
-              <span class="w-5 h-5 flex items-center justify-center mr-1 text-gray-400" v-html="amenity.icon"></span>
+        <div v-if="visibleAmenities.length > 0" class="mb-6">
+          <div class="flex flex-wrap gap-2.5">
+            <div v-for="amenity in visibleAmenities" :key="amenity.label" class="flex items-center text-xs font-black text-gray-500 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 tracking-wide">
+              <span class="w-4 h-4 flex items-center justify-center mr-2 text-gray-400 group-hover:text-gray-600 transition-colors" v-html="amenity.icon"></span>
               {{ amenity.label }}
             </div>
           </div>
         </div>
 
-        <div v-if="stay.conditions?.length" class="space-y-1.5">
-          <div v-for="(condition, idx) in stay.conditions.slice(0, 3)" :key="idx" class="flex items-center text-sm font-bold text-gray-700">
-            <svg class="w-4 h-4 mr-1.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-            {{ condition.title }}
+        <div class="mt-auto flex flex-wrap gap-x-6 gap-y-3 pt-6 border-t border-gray-50">
+          <div class="flex items-center text-xs font-black text-gray-900 tracking-wide">
+            <svg class="w-4 h-4 mr-2 text-emerald-500 stroke-[4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Instant confirm
           </div>
-        </div>
-        <div v-else class="space-y-1.5">
-          <div class="flex items-center text-sm font-bold text-gray-500">
-            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-            Best Available Rate
-          </div>
-          <div class="flex items-center text-sm font-bold text-gray-500">
-            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-            Immediate Confirmation
+          <div class="flex items-center text-xs font-black text-gray-900 tracking-wide opacity-50">
+            <svg class="w-4 h-4 mr-2 text-gray-300 stroke-[4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Best price match
           </div>
         </div>
       </div>
 
       <!-- Price & Rating Side -->
-      <div class="md:w-[180px] md:border-l border-gray-100 md:pl-6 flex flex-col justify-between items-center md:items-end">
-        <div class="flex items-center bg-brand-blue text-white px-3 py-1.5 rounded-lg mb-2">
-          <span class="text-xs font-bold mr-2 uppercase tracking-wide">Excellent</span>
-          <span class="text-base font-black">{{ (stay.rating || 5.0).toFixed(1) }}</span>
-        </div>
-
-        <div class="text-center md:text-right mt-auto mb-4">
-          <div class="text-3xl font-black text-gray-900 mb-0.5">
-            ${{ Math.round(stay.priceWithCommission) }}
+      <div class="md:w-[220px] md:border-l border-gray-50 md:pl-8 flex flex-col justify-between items-center md:items-end">
+        <div class="w-full flex md:flex-col justify-between items-center md:items-end gap-4 mb-6">
+          <div class="flex items-center bg-gray-50 text-gray-900 px-4 py-2.5 rounded-xl border border-gray-100">
+            <span class="text-sm font-black mr-2">{{ (stay.rating || 5.0).toFixed(1) }}</span>
+            <span class="text-xs font-black tracking-wide opacity-60">Rating</span>
           </div>
-          <div class="text-sm font-bold text-gray-400 uppercase tracking-tighter">
-            Includes taxes and charges
+          <div class="flex flex-col items-end">
+            <div class="text-xs text-gray-500 font-black tracking-wide mb-2">Price from</div>
+            <div class="text-4xl font-black text-gray-900 leading-none tracking-tighter">
+              ${{ Math.round(stay.priceWithCommission || stay.cheapestPrice || 0) }}
+            </div>
           </div>
         </div>
 
         <button 
-          @click="$emit('select', stay)"
-          class="w-full bg-brand-orange hover:bg-orange-600 text-white font-black py-3 rounded-xl transition-all shadow-lg shadow-orange-200 active:scale-[0.98]"
+          @click.stop="$emit('select', stay)"
+          class="w-full bg-gray-900 hover:bg-gray-700 text-white font-black h-16 rounded-2xl transition-all duration-300 shadow-xl shadow-gray-900/10 active:scale-[0.98] text-sm tracking-wide flex items-center justify-center gap-3 group/btn"
         >
-          See Availability
+          View details
+          <svg class="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
       </div>
     </div>
@@ -136,15 +122,3 @@ const visibleAmenities = computed(() => {
   return [];
 });
 </script>
-
-<style scoped>
-.bg-brand-orange {
-  background-color: #ff8a00;
-}
-.text-brand-blue {
-  color: #0084ff;
-}
-.bg-brand-blue {
-  background-color: #0084ff;
-}
-</style>

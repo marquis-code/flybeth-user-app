@@ -114,7 +114,7 @@
         <!-- Month View -->
         <div v-if="currentView === 'month'" class="h-full flex flex-col min-w-[1000px] bg-white text-gray-900">
            <div class="grid grid-cols-7 border-b border-gray-100 sticky top-0 bg-white z-20">
-             <div v-for="d in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="d" class="py-2.5 text-center text-base font-black text-gray-400 uppercase tracking-widest border-r border-gray-100 last:border-0">{{ d }}</div>
+             <div v-for="d in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="d" class="py-2.5 text-center text-base  text-gray-400 uppercase tracking-widest border-r border-gray-100 last:border-0">{{ d }}</div>
            </div>
            <div class="flex-grow grid grid-cols-7 grid-rows-6 min-h-[800px]">
              <div 
@@ -150,7 +150,7 @@
                 class="flex-1 min-w-[200px] border-r border-gray-100 py-3 flex flex-col items-center gap-0.5"
                 :class="{ 'bg-blue-50/30': isToday(day) }"
               >
-                <span class="text-base font-black text-gray-400 uppercase tracking-widest">{{ formatDayOfWeek(day) }} {{ day.getDate() }} {{ formatMonthShort(day) }}</span>
+                <span class="text-base  text-gray-400 uppercase tracking-widest">{{ formatDayOfWeek(day) }} {{ day.getDate() }} {{ formatMonthShort(day) }}</span>
               </div>
            </div>
 
@@ -158,7 +158,7 @@
               <!-- Time Sidebar -->
               <div class="w-16 flex-shrink-0 bg-white border-r border-gray-100 z-30">
                 <div v-for="hour in 24" :key="hour-1" class="h-24 border-b border-gray-100/50 relative px-2">
-                  <span class="text-xl font-black text-gray-400 absolute top-[-7px] leading-none uppercase tracking-tighter">
+                  <span class="text-xl  text-gray-400 absolute top-[-7px] leading-none uppercase tracking-tighter">
                     {{ formatHour(hour - 1) }}
                   </span>
                 </div>
@@ -196,14 +196,14 @@
                       :style="getAppointmentStyle(apt)"
                       @click.stop="$emit('select-appointment', apt)"
                     >
-                      <div class="flex justify-between items-start mb-1 text-[11px] font-black tracking-tight flex-wrap gap-1">
+                      <div class="flex justify-between items-start mb-1 text-[11px]  tracking-tight flex-wrap gap-1">
                         <span class="opacity-80">{{ apt.startTime }} - {{ apt.endTime }}</span>
                         <div class="flex items-center gap-1">
                            <span class="opacity-40 uppercase text-[9px]">{{ apt.status }}</span>
                            <Tag :size="10" class="opacity-40" />
                         </div>
                       </div>
-                      <div class="text-[12px] font-black truncate text-gray-900 mb-0.5 uppercase tracking-wide">{{ apt.clientName }}</div>
+                      <div class="text-[12px]  truncate text-gray-900 mb-0.5 uppercase tracking-wide">{{ apt.clientName }}</div>
                       <div class="text-[11px] font-bold opacity-80 leading-tight flex items-center gap-1.5 mt-1 text-gray-700">
                         <span class="w-1.5 h-1.5 rounded-full shrink-0" :style="{ backgroundColor: apt.color }"></span>
                         <span class="truncate">{{ apt.serviceName }}</span>
@@ -548,10 +548,10 @@ const DatePickerPanel = {
   template: `
     <div class="flex-1 select-none">
       <div class="flex items-center justify-center mb-6">
-        <h4 class="font-black text-[13px] uppercase tracking-widest text-gray-900">{{ monthName }} {{ year }}</h4>
+        <h4 class=" text-[13px] uppercase tracking-widest text-gray-900">{{ monthName }} {{ year }}</h4>
       </div>
       <div class="grid grid-cols-7 gap-1">
-        <div v-for="d in ['M', 'T', 'W', 'T', 'F', 'S', 'S']" :key="d" class="text-base font-black text-gray-400 text-center py-2">{{ d }}</div>
+        <div v-for="d in ['M', 'T', 'W', 'T', 'F', 'S', 'S']" :key="d" class="text-base  text-gray-400 text-center py-2">{{ d }}</div>
         <button 
           v-for="day in days" :key="day.getTime()"
           @click="$emit('select', day)"

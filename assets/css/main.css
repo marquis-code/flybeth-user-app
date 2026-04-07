@@ -4,10 +4,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Global Styles */
+html,
 body {
-  @apply bg-gray-50 text-gray-900 font-body;
+  font-family: 'Onest', sans-serif;
 }
+
+* {
+  font-family: 'Onest', sans-serif;
+}
+
+h1 {
+  font-family: 'Onest', sans-serif;
+  font-weight: bold;
+}
+
 
 
 

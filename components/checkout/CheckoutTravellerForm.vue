@@ -84,15 +84,15 @@
 
         <!-- Gender -->
         <div class="py-2 px-3 bg-gray-50/50 rounded-2xl border border-gray-100 flex items-center justify-between">
-          <span class="text-sm font-black text-brand-gray uppercase tracking-widest pl-2">Gender *</span>
+          <span class="text-sm font-bold text-gray-400 tracking-widest pl-2 italic lowercase">Gender *</span>
           <div class="flex gap-4 pr-2">
             <label class="flex items-center gap-2 cursor-pointer group">
               <input type="radio" v-model="form.gender" value="male" class="w-4 h-4 accent-brand-blue" />
-              <span class="text-sm font-bold text-brand-blue/70 group-hover:text-brand-blue transition-colors">Male</span>
+              <span class="text-sm font-bold text-gray-900 group-hover:text-gray-900 transition-colors">Male</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer group">
               <input type="radio" v-model="form.gender" value="female" class="w-4 h-4 accent-brand-blue" />
-              <span class="text-sm font-bold text-brand-blue/70 group-hover:text-brand-blue transition-colors">Female</span>
+              <span class="text-sm font-bold text-gray-900 group-hover:text-gray-900 transition-colors">Female</span>
             </label>
           </div>
         </div>
@@ -100,8 +100,8 @@
 
       <!-- Passport Section -->
       <div class="p-6 border-t-[2px] border-dashed border-gray-100 mt-2">
-        <h3 class="text-sm font-black text-brand-blue uppercase tracking-widest mb-4 flex items-center gap-2">
-          Passport Information
+        <h3 class="text-sm  text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+          Passport information
           <span class="flex-1 h-[1px] bg-gray-100"></span>
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -130,7 +130,7 @@
     <div class="step-footer">
       <label class="terms-checkbox">
         <input type="checkbox" v-model="termsAccepted" class="checkbox-input" />
-        <span>By proceeding you agree you have read and accepted our <a href="#" class="terms-link">Terms and Conditions</a></span>
+        <span>By proceeding you agree you have read and accepted our <NuxtLink to="/terms" target="_blank" class="terms-link underline">Terms and Conditions</NuxtLink></span>
       </label>
       <button @click="handleContinue" :disabled="!canContinue" class="continue-btn" :class="{ disabled: !canContinue }">
         Continue
@@ -223,7 +223,6 @@ const handleContinue = () => {
   background: white;
   border-radius: 1rem;
   border: 1px solid #e5e7eb;
-  overflow: hidden;
 }
 
 .traveller-header {
@@ -245,8 +244,9 @@ const handleContinue = () => {
 }
 
 .header-title {
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-family: 'Spectral', serif;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #1a2332;
 }
 
@@ -257,25 +257,27 @@ const handleContinue = () => {
 }
 
 .form-notice {
-  background: #fef3c7;
-  color: #92400e;
+  background: #fdf2f2;
+  color: #991b1b;
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid #fde68a;
+  font-weight: 500;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #fee2e2;
 }
 
 .adult-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  margin: 1rem 1.5rem 0;
-  background: #0D1DAD;
-  color: white;
+  gap: 0.5rem;
+  margin: 1.5rem 1.5rem 0;
+  background: #f1f5f9;
+  color: #1a2332;
   font-size: 0.75rem;
-  font-weight: 800;
-  padding: 0.35rem 0.75rem;
-  border-radius: 0.25rem;
+  font-weight: 700;
+  padding: 0.35rem 1rem;
+  border-radius: 2rem;
+  letter-spacing: 0.05em;
+  border: 1px solid #e2e8f0;
 }
 
 .form-grid {
@@ -292,10 +294,9 @@ const handleContinue = () => {
 }
 
 .form-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: #9ca3af;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
@@ -404,27 +405,29 @@ const handleContinue = () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #f97316;
+  background: #0D1DAD;
   color: white;
   border: none;
-  padding: 0.85rem 2.5rem;
-  border-radius: 0.5rem;
+  padding: 0.65rem 1.75rem;
+  border-radius: 0.85rem;
   font-size: 0.85rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(13, 29, 173, 0.1);
 }
 
 .continue-btn:hover:not(.disabled) {
-  background: #ea580c;
+  background: #0a168a;
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 8px rgba(13, 29, 173, 0.15);
 }
 
 .continue-btn.disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 </style>

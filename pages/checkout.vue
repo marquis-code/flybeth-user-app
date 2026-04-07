@@ -13,80 +13,84 @@
 
     <div class="checkout-body">
       <div class="checkout-grid">
-        <div class="checkout-content">
+        <div class="checkout-content space-y-6">
           <!-- Step 0: Flight/Stay/Transfer Details -->
-          <CheckoutFlightDetails
-            v-if="currentStep === 0 && bookingDetails.type === 'flight'"
-            :flightOffer="priceDetailed"
-            @continue="goToStep(1)"
+          <div v-if="currentStep === 0" class="bg-white rounded-3xl border border-gray-100 overflow-hidden animate-slide-up">
+            <div class="p-8 border-b border-gray-50 flex items-center justify-between">
+               <h2 class="text-xl font-header text-gray-900">Review your trip</h2>
+               <div class="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] uppercase tracking-widest rounded-full font-bold">Secure Booking</div>
+            </div>
+            
+            <CheckoutFlightDetails
+              v-if="bookingDetails.type === 'flight'"
+              :flightOffer="priceDetailed"
+              @continue="goToStep(1)"
             />
 
-          <CheckoutTransferDetails
-            v-if="currentStep === 0 && bookingDetails.type === 'transfer'"
-            :name="bookingDetails.name"
-            :provider="bookingDetails.provider"
-            @continue="goToStep(1)"
-          />
+            <CheckoutTransferDetails
+              v-if="bookingDetails.type === 'transfer'"
+              :name="bookingDetails.name"
+              :provider="bookingDetails.provider"
+              @continue="goToStep(1)"
+            />
 
-          <CheckoutStayDetails
-            v-if="currentStep === 0 && bookingDetails.type === 'stay'"
-            :stay="priceDetailed"
-            :currency-symbol="currencySymbol"
-            @continue="goToStep(1)"
-          />
+            <CheckoutStayDetails
+              v-if="bookingDetails.type === 'stay'"
+              :stay="priceDetailed"
+              :currency-symbol="currencySymbol"
+              @continue="goToStep(1)"
+            />
+          </div>
 
           <!-- Step 1: Traveller Info -->
-          <CheckoutTravellerForm 
-            v-if="currentStep === 1" 
-            v-model="travellerData" 
-            @continue="handleTravellerContinue" 
-            @email-blur="handleEmailBlur"
-          />
+          <div v-if="currentStep === 1" class="animate-slide-up">
+            <CheckoutTravellerForm 
+              v-model="travellerData" 
+              @continue="handleTravellerContinue" 
+              @email-blur="handleEmailBlur"
+            />
+          </div>
 
           <!-- Step 2: Trip Customization -->
-          <CheckoutTripCustomization
-            v-if="currentStep === 2"
-            :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
-            :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
-            :traveller="travellerData"
-            :totalPrice="displayPrices.total"
-            v-model:selectedAddOns="selectedAddOns"
-            @continue="goToStep(3)"
-          />
+          <div v-if="currentStep === 2" class="animate-slide-up">
+            <CheckoutTripCustomization
+              :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
+              :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
+              :traveller="travellerData"
+              :totalPrice="displayPrices.total"
+              v-model:selectedAddOns="selectedAddOns"
+              @continue="goToStep(3)"
+            />
+          </div>
 
           <!-- Step 3: Overview & Payment -->
-          <CheckoutPayment 
-            v-if="currentStep === 3" 
-            :total-amount="priceDetailed?.priceWithCommission" 
-            :currency-symbol="currencySymbol"
-            :currency="priceDetailed?.currency"
-            :processing="paymentProcessing"
-            @complete-payment="handlePayment"
-            @change-currency="isCurrencyModalVisible = true"
-          />
+            <div v-if="currentStep === 3" class="animate-slide-up space-y-6">
+              <!-- Security Disclaimer -->
+              <div class="bg-brand-blue/5 border border-brand-blue/10 rounded-2xl p-6 flex gap-4">
+                <div class="w-10 h-10 rounded-full bg-brand-blue flex-shrink-0 flex items-center justify-center text-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div class="space-y-1">
+                  <h4 class="text-sm font-bold text-brand-blue uppercase tracking-wider">Itinerary Verification Required</h4>
+                  <p class="text-sm text-gray-600 leading-relaxed">
+                    We recommend <span class="font-bold text-gray-900 underline">double-checking your route and itinerary</span> before continuing. This helps avoid any issues, as Flybeth cannot be held responsible for errors resulting from an incorrect route selection.
+                  </p>
+                </div>
+              </div>
 
-          <!-- Modals -->
-          <CurrencySelectorModal 
-            :visible="isCurrencyModalVisible"
-            :current-currency="priceDetailed?.currency"
-            @close="isCurrencyModalVisible = false"
-            @select="handleCurrencySelect"
-          />
-
-          <CurrencyConversionLoader :visible="isConversionLoading" />
-
-          <ManualPaymentDetailsModal 
-            :visible="isManualDetailsVisible"
-            :amount="priceDetailed?.priceWithCommission"
-            :currency="priceDetailed?.currency"
-            :bank-accounts="bankAccounts"
-            @close="isManualDetailsVisible = false"
-            @confirm="handleManualConfirm"
-          />
+              <CheckoutPayment 
+                :total-amount="priceDetailed?.priceWithCommission" 
+                :currency-symbol="currencySymbol"
+                :currency="priceDetailed?.currency"
+                :processing="paymentProcessing"
+                @complete-payment="handlePayment"
+                @change-currency="isCurrencyModalVisible = true"
+              />
+            </div>
         </div>
 
         <!-- Right Sidebar -->
-        <div class="checkout-sidebar-col">
+        <div class="checkout-sidebar-col sticky top-8">
           <CheckoutSidebar
             :flight="bookingDetails.type === 'flight' ? priceDetailed : null"
             :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
@@ -130,6 +134,11 @@ import { flightsApi } from '@/api_factory/modules/flights'
 import { transfersApi } from '@/api_factory/modules/transfers'
 import { bookingsApi } from '@/api_factory/modules/bookings'
 
+import { useAuth } from '@/composables/modules/auth/useAuth'
+import { useCustomToast } from '@/composables/core/useCustomToast'
+
+const { token, openAuthModal } = useAuth()
+const { showToast } = useCustomToast()
 const route = useRoute()
 const router = useRouter()
 
@@ -166,36 +175,46 @@ const bookingDetails = computed(() => ({
   type: route.query.type as string,
   id: route.query.id as string,
   roomId: route.query.roomId as string,
-  name: (route.query.name as string) || 'Selected Item',
-  price: Number(route.query.price) || 0,
+  name: (route.query.hotelName as string) || (route.query.name as string) || 'Selected trip',
   provider: route.query.provider as string,
+  price: route.query.price ? Number(route.query.price) : 0,
+  currency: (route.query.currency as string) || 'USD',
+  quoteId: route.query.quoteId as string,
+  checkIn: route.query.checkIn as string,
+  checkOut: route.query.checkOut as string,
+  adults: route.query.adults ? Number(route.query.adults) : 2,
+  children: route.query.children ? Number(route.query.children) : 0,
+  rooms: route.query.rooms ? Number(route.query.rooms) : 1,
 }))
 
 // Price display
 const displayPrices = computed(() => {
   let base = 0
   let total = 0
+  let tax = 0
+  let serviceCharge = 0
   let currency = 'USD'
 
   if (priceDetailed.value) {
-    total += priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
-    base += priceDetailed.value.price || 0
+    total = priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
+    base = priceDetailed.value.price || 0
+    tax = priceDetailed.value.tax || (base * 0.12)
+    // If total is greater than base + tax, the remainder is service charge/commission
+    const remainder = total - base - tax
+    serviceCharge = remainder > 0 ? remainder : (base * 0.05)
     currency = priceDetailed.value.currency || 'USD'
-  } else if (bookingDetails.value.price) {
-    base += bookingDetails.value.price
-    total += bookingDetails.value.price * 1.17
   }
 
   if (bundledStay.value) {
     const stayPrice = bundledStay.value.price || 0
     base += stayPrice
-    total += stayPrice // Stay price usually already includes commission from backend
+    total += stayPrice
   }
 
   return {
     base,
-    tax: base * 0.12,
-    serviceCharge: base * 0.05,
+    tax,
+    serviceCharge,
     total: total
   }
 })
@@ -227,9 +246,69 @@ const parseDuration = (durationStr: string) => {
 const normalizeFlightData = (rawFlight: any) => {
   if (!rawFlight) return null
 
-  // If already normalized or Duffel format
-  if (rawFlight.origin && rawFlight.destination && typeof rawFlight.price === 'number') {
+  // If already normalized or custom format
+  if (rawFlight.origin && rawFlight.destination && typeof rawFlight.price === 'number' && rawFlight.segments) {
     return rawFlight
+  }
+
+  // Duffel Format (slices, total_amount, total_currency)
+  if (rawFlight.slices && rawFlight.slices.length > 0) {
+    const slice = rawFlight.slices[0]
+    const segments = slice.segments || []
+    const firstSegment = segments[0]
+    const lastSegment = segments[segments.length - 1]
+
+    const basePrice = Number(rawFlight.base_amount || 0)
+    const totalPrice = Number(rawFlight.total_amount || 0)
+    const taxPrice = Number(rawFlight.tax_amount || 0)
+
+    const normalizedSegments = segments.map((s: any) => ({
+      flightNumber: s.marketing_carrier_flight_number || s.operating_carrier_flight_number || 'N/A',
+      airline: s.marketing_carrier?.name || s.operating_carrier?.name || 'Airline',
+      airlineLogo: s.marketing_carrier?.logo_symbol_url || s.operating_carrier?.logo_symbol_url || `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.marketing_carrier?.iata_code || s.operating_carrier?.iata_code}.svg`,
+      origin: s.origin?.iata_code || s.origin?.iata_city_code || 'N/A',
+      originName: s.origin?.name || s.origin?.city_name || 'N/A',
+      destination: s.destination?.iata_code || s.destination?.iata_city_code || 'N/A',
+      destinationName: s.destination?.name || s.destination?.city_name || 'N/A',
+      departureTime: s.departing_at,
+      arrivalTime: s.arriving_at,
+      duration: parseDuration(s.duration),
+      originTerminal: s.origin_terminal,
+      destinationTerminal: s.destination_terminal,
+      aircraft: s.aircraft?.name || s.aircraft?.code || 'Aircraft',
+    }))
+
+    const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + (s.duration || 0), 0)
+
+    // Duffel conditions
+    const canChange = rawFlight.conditions?.change_before_departure?.allowed || false
+    const canRefund = rawFlight.conditions?.refund_before_departure?.allowed || false
+
+    return {
+      ...rawFlight,
+      origin: firstSegment?.origin?.iata_code || firstSegment?.origin?.iata_city_code || 'N/A',
+      originName: firstSegment?.origin?.city_name || 'N/A',
+      destination: lastSegment?.destination?.iata_code || lastSegment?.destination?.iata_city_code || 'N/A',
+      destinationName: lastSegment?.destination?.city_name || 'N/A',
+      departureTime: firstSegment?.departing_at,
+      arrivalTime: lastSegment?.arriving_at,
+      duration: totalDuration,
+      price: basePrice,
+      tax: taxPrice,
+      priceWithCommission: totalPrice, // Assuming commission logic is handled on backend or already factored in
+      currency: rawFlight.total_currency || 'USD',
+      stops: segments.length - 1,
+      segments: normalizedSegments,
+      cabinClass: (slice.fare_brand_name || segments[0]?.passengers?.[0]?.cabin_class || 'Economy').toLowerCase(),
+      airline: rawFlight.owner?.name || firstSegment?.marketing_carrier?.name || 'Airline',
+      airlineLogo: rawFlight.owner?.logo_symbol_url || firstSegment?.marketing_carrier?.logo_symbol_url,
+      totalEmissionsKg: rawFlight.total_emissions_kg,
+      conditions: {
+        refundable: canRefund,
+        changeable: canChange
+      },
+      rawOffer: rawFlight,
+    }
   }
 
   // Amadeus / GDS Format
@@ -298,9 +377,13 @@ const handleGoBack = () => {
 }
 
 const handleTravellerContinue = () => {
-  if (!localStorage.getItem('token')) {
-    alert('Please sign in or create an account to complete your booking.')
-    navigateTo('/?requireLogin=true')
+  if (!token.value) {
+    showToast({
+      title: "Authentication Required",
+      message: "Please sign in or create an account to complete your booking.",
+      toastType: "info",
+    });
+    openAuthModal();
     return
   }
   goToStep(2)
@@ -361,18 +444,33 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
   
   try {
     if (bookingDetails.value.type === 'stay') {
+      const guestsList = [];
+      const numAdults = bookingDetails.value.adults || 1;
+      const numChildren = bookingDetails.value.children || 0;
+      
+      for (let i = 0; i < numAdults; i++) {
+        guestsList.push({
+          type: 'AD',
+          firstName: i === 0 ? travellerData.value.firstName : `Adult ${i + 1}`,
+          lastName: travellerData.value.lastName
+        });
+      }
+      for (let i = 0; i < numChildren; i++) {
+        guestsList.push({
+          type: 'CH',
+          firstName: `Child ${i + 1}`,
+          lastName: travellerData.value.lastName,
+          age: 7
+        });
+      }
+
       const stayPayload = {
         quoteId: priceDetailed.value?.quoteId || bookingDetails.value.roomId,
         provider: bookingDetails.value.provider,
         guestDetails: {
           email: travellerData.value.email,
           phoneNumber: travellerData.value.phone,
-          guests: [
-            {
-              firstName: travellerData.value.firstName,
-              lastName: travellerData.value.lastName,
-            }
-          ],
+          guests: guestsList,
         }
       }
 
@@ -467,6 +565,9 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
       offerId: bookingDetails.value.id,
       provider: bookingDetails.value.provider,
       offer: flightOffer,
+      ipAddress: 'detect-on-backend', // Simplification or use a service
+      userAgent: navigator.userAgent,
+      deviceFingerprint: btoa(navigator.userAgent + screen.width + screen.height), // Basic fingerprint
       passengers: [{
         title: travellerData.value.title,
         firstName: travellerData.value.firstName,
@@ -490,7 +591,11 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
     if (!dob || new Date(dob) >= new Date()) {
       showBrandedLoader.value = false
       paymentProcessing.value = false
-      alert('Please enter a valid Date of Birth. The date must be in the past.')
+      showToast({
+        title: "Invalid Date of Birth",
+        message: "Please enter a valid Date of Birth. The date must be in the past.",
+        toastType: "error",
+      });
       return
     }
     
@@ -519,7 +624,11 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
       } catch (paymentErr: any) {
         console.warn('Payment initialization failed:', paymentErr)
         // Aggressive feedback as requested
-        alert(`Payment initialization failed: ${paymentErr.response?.data?.message || paymentErr.message}. You can still view your booking details below.`)
+        showToast({
+          title: "Payment Error",
+          message: `Payment initialization failed: ${paymentErr.response?.data?.message || paymentErr.message}. You can still view your booking details below.`,
+          toastType: "error",
+        });
       }
       
       navigateTo({
@@ -536,7 +645,11 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
     showBrandedLoader.value = false
     paymentProcessing.value = false
     const msg = error.response?.data?.message || error.message || 'An unexpected error occurred'
-    alert(`Booking failed: ${msg}`)
+    showToast({
+      title: "Booking Failed",
+      message: msg,
+      toastType: "error",
+    });
   } finally {
     paymentProcessing.value = false
   }
@@ -577,8 +690,8 @@ onMounted(async () => {
         airline: bookingDetails.value.name,
         origin: 'N/A',
         destination: 'N/A',
-        price: bookingDetails.value.price,
-        priceWithCommission: bookingDetails.value.price,
+        price: 0,
+        priceWithCommission: 0,
         currency: 'USD',
         segments: [],
         conditions: {},
@@ -587,16 +700,32 @@ onMounted(async () => {
   } else if (bookingDetails.value.type === 'stay') {
     loaderStatus.value = 'Finalizing property rates...'
     try {
-      const response = await staysApi.createQuote(bookingDetails.value.roomId, bookingDetails.value.provider)
-      priceDetailed.value = response.data?.data || response.data
+      // Use quoteId if available, otherwise create a new quote
+      const quoteId = bookingDetails.value.quoteId || bookingDetails.value.roomId
+      const response = await staysApi.createQuote(quoteId, bookingDetails.value.provider)
+      const quoteResult = response.data?.data || response.data
+      
+      // Merge query param data with quote result
+      priceDetailed.value = {
+        ...quoteResult,
+        hotelName: quoteResult?.hotelName || bookingDetails.value.name,
+        quoteId: quoteResult?.id || quoteId,
+        checkIn: bookingDetails.value.checkIn,
+        checkOut: bookingDetails.value.checkOut,
+      }
     } catch (err) {
-      console.error('Stay quote failed:', err)
-      // If quote fails, try to use basic info as fallback
+      console.error('Stay quote failed, using fallback from query params:', err)
+      // Use query param data as fallback so user can still proceed
       priceDetailed.value = {
         hotelName: bookingDetails.value.name,
-        currency: 'USD',
-        price: bookingDetails.value.price,
-        priceWithCommission: bookingDetails.value.price
+        currency: bookingDetails.value.currency || 'USD',
+        price: bookingDetails.value.price || 0,
+        priceWithCommission: bookingDetails.value.price || 0,
+        quoteId: bookingDetails.value.quoteId || bookingDetails.value.roomId,
+        checkIn: bookingDetails.value.checkIn,
+        checkOut: bookingDetails.value.checkOut,
+        rooms: bookingDetails.value.rooms,
+        adults: bookingDetails.value.adults,
       }
     }
   }
@@ -656,7 +785,11 @@ const handleManualConfirm = async (account: any) => {
   } catch (error: any) {
     console.error('Manual booking failed:', error)
     showBrandedLoader.value = false
-    alert(`Manual booking failed: ${error.response?.data?.message || error.message}`)
+    showToast({
+      title: "Manual Booking Error",
+      message: error.response?.data?.message || error.message,
+      toastType: "error",
+    });
   } finally {
     paymentProcessing.value = false
   }
@@ -666,36 +799,35 @@ const handleManualConfirm = async (account: any) => {
 <style scoped>
 .checkout-page {
   min-height: 100vh;
-  background: #f0f2f5;
+  background: linear-gradient(to bottom, #ffffff, #f9fafb);
+  font-family: 'Roboto', sans-serif;
 }
 
 .checkout-body {
-  max-width: 80rem;
+  max-width: 85rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 3rem 1.5rem 6rem;
 }
 
 .checkout-grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 2rem;
+  grid-template-columns: 1fr 380px;
+  gap: 3rem;
   align-items: start;
 }
 
-.checkout-content {
-  min-width: 0;
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.checkout-sidebar-col {
-  min-width: 0;
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 1024px) {
   .checkout-grid {
     grid-template-columns: 1fr;
-  }
-  .checkout-sidebar-col {
-    order: -1;
   }
 }
 </style>

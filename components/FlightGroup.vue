@@ -6,14 +6,14 @@
         <div class="h-10 w-10 rounded-xl bg-white p-2 shadow-sm border border-gray-100">
           <img v-if="airlineLogo" :src="airlineLogo" :alt="airlineName" class="h-full w-full object-contain" />
           <div v-else class="h-full w-full flex items-center justify-center bg-brand-blue/5 rounded-lg">
-             <span class="text-brand-blue font-black text-xs uppercase">{{ airlineName.slice(0, 2) }}</span>
+             <span class="text-gray-900  text-xs uppercase">{{ airlineName.slice(0, 2) }}</span>
           </div>
         </div>
-        <h3 class="font-black text-brand-blue uppercase tracking-widest text-sm">{{ airlineName }}</h3>
+        <h3 class=" text-gray-900 uppercase tracking-widest text-sm">{{ airlineName }}</h3>
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-sm font-black text-brand-gray/40 uppercase tracking-widest">Starting from</span>
-        <span class="text-lg font-black text-brand-blue">${{ cheapestPrice }}</span>
+        <span class="text-sm  text-brand-gray/40 uppercase tracking-widest">Starting from</span>
+        <span class="text-lg  text-gray-900">${{ cheapestPrice }}</span>
       </div>
     </div>
 
@@ -37,7 +37,7 @@
             <img v-if="airlineLogo" :src="airlineLogo" class="w-full h-full object-cover opacity-60" />
          </div>
       </div>
-      <span class="text-sm font-black text-brand-gray/60 uppercase tracking-widest group-hover:text-brand-blue transition-colors">
+      <span class="text-sm  text-brand-gray/60 uppercase tracking-widest group-hover:text-gray-900 transition-colors">
         {{ isExpanded ? 'Hide' : `+${otherOffers.length}` }} {{ airlineName }} flights
       </span>
       <ChevronDownIcon 

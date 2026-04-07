@@ -4,25 +4,25 @@
     <!-- ── Trigger ─────────────────────────────────────────────────────────── -->
     <div
       @click="openCalendar"
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none"
+      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none whitespace-nowrap"
     >
-      <p class="text-[11px] font-black text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-brand-blue transition-colors">
-        {{ mode === 'oneway' ? 'Departure Date' : 'Check-in – Check-out' }}
+      <p class="text-[11px] font-bold text-brand-gray/40 tracking-widest mb-0.5 group-hover:text-gray-900 transition-colors italic">
+        {{ mode === 'oneway' ? 'Departure date' : 'Check-in – Check-out' }}
       </p>
       <div class="flex items-center gap-2">
-        <CalendarDaysIcon class="h-5 w-5 text-gray-400 shrink-0" />
-        <span class="text-base font-black">
+        <CalendarDaysIcon class="h-4 w-4 text-brand-blue/60 shrink-0" />
+        <span class="text-sm font-semibold tracking-tight">
           <template v-if="mode === 'oneway'">
-            <span :class="startDate ? 'text-brand-blue' : 'text-gray-300'">
+            <span :class="startDate ? 'text-gray-900' : 'text-gray-300'">
               {{ startDate ? formatDisplay(startDate) : 'Select date' }}
             </span>
           </template>
           <template v-else>
-            <span :class="startDate ? 'text-brand-blue' : 'text-gray-300'">
+            <span :class="startDate ? 'text-gray-900' : 'text-gray-300'">
               {{ startDate ? formatDisplay(startDate) : 'Check-in' }}
             </span>
-            <span class="text-gray-300 mx-2">–</span>
-            <span :class="endDate ? 'text-brand-blue' : 'text-gray-300'">
+            <span class="text-gray-300 mx-1.5">–</span>
+            <span :class="endDate ? 'text-gray-900' : 'text-gray-300'">
               {{ endDate ? formatDisplay(endDate) : 'Check-out' }}
             </span>
           </template>
@@ -68,8 +68,8 @@
               </button>
 
               <div class="flex-1 grid grid-cols-2 text-center gap-4">
-                <p class="text-base font-black text-gray-800">{{ monthName(currentYear, currentMonth) }}</p>
-                <p class="text-base font-black text-gray-800">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
+                <p class="text-base  text-gray-800">{{ monthName(currentYear, currentMonth) }}</p>
+                <p class="text-base  text-gray-800">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
               </div>
 
               <button
@@ -88,7 +88,7 @@
                 <div class="grid grid-cols-7 mb-2">
                   <div
                     v-for="d in dayHeaders" :key="`lh-${d}`"
-                    class="text-center text-[11px] font-black text-gray-400 py-1"
+                    class="text-center text-[11px]  text-gray-400 py-1"
                   >{{ d }}</div>
                 </div>
                 <div class="grid grid-cols-7">
@@ -119,7 +119,7 @@
                 <div class="grid grid-cols-7 mb-2">
                   <div
                     v-for="d in dayHeaders" :key="`rh-${d}`"
-                    class="text-center text-[11px] font-black text-gray-400 py-1"
+                    class="text-center text-[11px]  text-gray-400 py-1"
                   >{{ d }}</div>
                 </div>
                 <div class="grid grid-cols-7">
@@ -155,7 +155,7 @@
                 <span v-else-if="mode !== 'oneway' && !endDate">
                   Now select your check-out date
                 </span>
-                <span v-else class="font-black text-brand-blue">
+                <span v-else class=" text-gray-900">
                   {{ mode === 'oneway' ? formatDisplay(startDate) : `${formatDisplay(startDate)} – ${formatDisplay(endDate!)}` }}
                   <template v-if="mode !== 'oneway' && nightCount > 0">
                     &nbsp;·&nbsp;{{ nightCount }} night{{ nightCount !== 1 ? 's' : '' }}
@@ -174,7 +174,7 @@
                 <button
                   @click="done"
                   :disabled="!startDate || (mode !== 'oneway' && !endDate)"
-                  class="px-8 py-2.5 bg-brand-blue text-white rounded-full font-black text-sm
+                  class="px-8 py-2.5 bg-brand-blue text-white rounded-full  text-sm
                          disabled:opacity-40 disabled:cursor-not-allowed
                          hover:bg-blue-700 transition-colors active:scale-95"
                 >
@@ -280,14 +280,17 @@ function monthName(year: number, month: number): string {
 
 function formatDisplay(iso: string): string {
   if (!iso) return ''
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+  const parts = iso.split('-').map(Number)
+  if (parts.length !== 3) return ''
+  const [y, m, d] = parts
+  return new Date(y!, m! - 1, d!).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
   })
 }
 
 function cellDay(iso: string): string {
-  return String(parseInt(iso.split('-')[2], 10))
+  const parts = iso.split('-')
+  return String(parseInt(parts[2] || '0', 10))
 }
 
 function isPast(iso: string): boolean {
@@ -353,15 +356,15 @@ function dayClass(iso: string): string {
   if (isPast(iso)) return 'text-gray-200 cursor-not-allowed'
 
   if (isStartDay(iso) || isEndDay(iso)) {
-    return 'bg-brand-blue text-white font-black shadow-md'
+    return 'bg-brand-blue text-white  shadow-md'
   }
   if (inRange(iso)) {
-    return 'text-brand-blue font-semibold hover:bg-brand-blue/10'
+    return 'text-gray-900 font-semibold hover:bg-brand-blue/10'
   }
   if (iso === todayStr) {
-    return 'font-black text-brand-blue border-2 border-brand-blue/30 hover:bg-brand-blue hover:text-white'
+    return ' text-gray-900 border-2 border-brand-blue/30 hover:bg-brand-blue hover:text-white'
   }
-  return 'text-gray-700 font-semibold hover:bg-gray-100 hover:text-brand-blue'
+  return 'text-gray-700 font-semibold hover:bg-gray-100 hover:text-gray-900'
 }
 
 // ── Date selection logic ──────────────────────────────────────────────────────

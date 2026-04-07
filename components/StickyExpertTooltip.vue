@@ -22,12 +22,12 @@
           <div class="flex flex-col">
             <p class="text-[11px] md:text-xs font-bold text-gray-400 leading-tight">
               Call our Travel Experts 24/7. Say 
-              <span class="bg-[#FFC107] text-black px-1.5 py-0.5 rounded-[4px] font-black text-[9px] mx-0.5 scale-95 inline-block">DIAL10</span> 
+              <span class="bg-[#FFC107] text-black px-1.5 py-0.5 rounded-[4px]  text-[9px] mx-0.5 scale-95 inline-block">DIAL10</span> 
               to save:
             </p>
             <div class="flex items-center gap-2 mt-0.5">
-              <span class="text-sm md:text-base font-black tracking-tight">1-646-738-4832</span>
-              <a href="#" class="text-sm md:text-xs font-bold text-brand-blue-light underline decoration-brand-blue-light/30 hover:text-white transition-colors">Learn more</a>
+              <span class="text-sm md:text-base  tracking-tight">1-646-738-4832</span>
+              <a href="#" class="text-sm md:text-xs font-bold text-gray-900-light underline decoration-brand-blue-light/30 hover:text-white transition-colors">Learn more</a>
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@ if (process.client && sessionStorage.getItem('expert_tooltip_dismissed')) {
   transform: translate(-50%, 100%);
 }
 
-.text-brand-blue-light {
+.text-gray-900-light {
   color: #3BB4C1;
 }
 </style>

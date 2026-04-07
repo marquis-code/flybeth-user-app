@@ -40,7 +40,7 @@
              <NuxtLink v-if="prediction.result !== 'BUSINESS'" to="/things-to-do" class="text-xs font-bold px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow transition-all" :class="'text-orange-600'">
                Explore Activities
              </NuxtLink>
-             <span v-else class="text-sm font-black tracking-widest uppercase text-indigo-400 opacity-60 px-2 py-1 bg-white/50 rounded-md">Smart Prediction</span>
+             <span v-else class="text-sm  tracking-widest uppercase text-indigo-400 opacity-60 px-2 py-1 bg-white/50 rounded-md">Smart Prediction</span>
           </div>
         </div>
       </transition>
@@ -55,18 +55,18 @@
                 <th v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-100 min-w-[160px] text-center">
                   <div class="flex flex-col items-center gap-2">
                     <img v-if="airline.logo" :src="airline.logo" :alt="airline.name" class="h-8 w-8 object-contain" />
-                    <span class="text-sm font-black text-brand-blue uppercase tracking-widest">{{ airline.name }}</span>
+                    <span class="text-sm  text-gray-900 uppercase tracking-widest">{{ airline.name }}</span>
                   </div>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="stopLabel in ['Non stop', '1 Stop', '1+ Stops']" :key="stopLabel">
-                <td class="p-6 border-b border-gray-50 font-black text-brand-blue uppercase tracking-widest text-sm bg-gray-50/20">
+                <td class="p-6 border-b border-gray-50  text-gray-900 uppercase tracking-widest text-sm bg-gray-50/20">
                   {{ stopLabel }}
                 </td>
                 <td v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-50 text-center group cursor-pointer hover:bg-brand-blue/5 transition-colors" @click="filterByMatrix(airline.name, stopLabel)">
-                  <span v-if="getMatrixPriceFor(airline.name, stopLabel)" class="text-sm font-black text-brand-gray/60 group-hover:text-brand-blue transition-colors">
+                  <span v-if="getMatrixPriceFor(airline.name, stopLabel)" class="text-sm  text-brand-gray/60 group-hover:text-gray-900 transition-colors">
                     ${{ getMatrixPriceFor(airline.name, stopLabel) }}
                   </span>
                   <span v-else class="text-gray-200">—</span>
@@ -82,9 +82,9 @@
         <div class="flex gap-4 min-w-max">
           <div v-for="type in ['Cheapest', 'Fastest', 'Recommended']" :key="type" 
             class="flex-1 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 min-w-[240px]">
-            <p class="text-sm font-black text-brand-gray/40 uppercase tracking-widest mb-1">{{ type }} Fare</p>
+            <p class="text-sm  text-brand-gray/40 uppercase tracking-widest mb-1">{{ type }} Fare</p>
             <div class="flex items-end justify-between">
-              <span class="text-2xl font-black text-brand-blue">${{ getMatrixPrice(type) }}</span>
+              <span class="text-2xl  text-gray-900">${{ getMatrixPrice(type) }}</span>
               <div :class="getMatrixColor(type)" class="w-8 h-8 rounded-full flex items-center justify-center">
                  <component :is="getMatrixIcon(type)" class="w-4 h-4 text-white" />
               </div>
@@ -97,7 +97,7 @@
         <!-- Filters Sidebar -->
         <div class="hidden lg:block lg:col-span-1 space-y-6">
           <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-32 lg:h-[calc(100vh-10rem)] overflow-y-auto custom-scrollbar">
-            <h3 class="font-black text-brand-blue uppercase tracking-widest text-xs mb-8">Filter Results</h3>
+            <h3 class=" text-gray-900 uppercase tracking-widest text-xs mb-8">Filter Results</h3>
             
             <!-- Stops -->
             <div class="mb-6">

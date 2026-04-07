@@ -3,7 +3,7 @@
     <div class="payment-header flex justify-between items-center mb-6">
       <div class="amount-display">
         <span class="currency-symbol text-2xl font-bold text-gray-500 mr-1">{{ currencySymbol }}</span>
-        <span class="amount-value text-3xl font-black text-gray-900">{{ formatAmount(totalAmount) }}</span>
+        <span class="amount-value text-3xl  text-gray-900">{{ formatAmount(totalAmount) }}</span>
       </div>
       <button 
         type="button"
@@ -42,7 +42,7 @@
         </div>
 
         <div v-if="activeMethod === 'card'" class="method-details px-4 pb-4 border-t border-gray-100 pt-4 bg-blue-50/30">
-          <label class="block text-sm font-black uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
+          <label class="block text-sm  uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
           <div v-if="provider === 'stripe'" class="provider-option flex items-center justify-between p-3 bg-white border border-blue-200 rounded-lg shadow-sm">
             <div class="flex items-center gap-3">
               <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/512px-Stripe_Logo%2C_revised_2016.svg.png" class="h-4" />
@@ -89,7 +89,7 @@
           </svg>
         </div>
         <div v-if="activeMethod === 'bank'" class="method-details px-4 pb-4 border-t border-gray-100 pt-4 bg-green-50/30">
-           <label class="block text-sm font-black uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
+           <label class="block text-sm  uppercase tracking-wider text-gray-400 mb-3">Select your preferred payment channel</label>
            <div class="provider-option flex items-center justify-between p-3 bg-white border border-green-200 rounded-lg shadow-sm">
               <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
@@ -110,7 +110,7 @@
 
       <!-- Apple Pay -->
       <div v-if="provider === 'stripe'" class="apple-pay-section space-y-2 mt-4">
-        <label class="block text-sm font-black uppercase tracking-wider text-gray-400 mb-2">Or Pay with Apple Pay</label>
+        <label class="block text-sm  uppercase tracking-wider text-gray-400 mb-2">Or Pay with Apple Pay</label>
         <ApplePayButton 
           :amount="totalAmount"
           :currency="currency"
@@ -127,7 +127,7 @@
       <button 
         @click="handlePay" 
         :disabled="processing"
-        class="w-full h-14 rounded-xl font-black text-white uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-orange-200"
+        class="w-full h-14 rounded-xl  text-white uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-orange-200"
         :class="processing ? 'bg-orange-400 cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-600 hover:scale-[1.01] active:scale-[0.99]'"
       >
         <span v-if="!processing">Complete Payment</span>

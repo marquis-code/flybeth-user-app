@@ -1,11 +1,11 @@
 <template>
   <div class="space-y-8">
     <div>
-      <h2 class="text-sm font-black text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.getStarted') }}</h2>
-      <h3 class="text-4xl font-black text-brand-blue font-header tracking-tighter">{{ $t('auth.createAccount') }}</h3>
+      <h2 class="text-sm  text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.getStarted') }}</h2>
+      <h3 class="text-4xl  text-gray-900 font-header tracking-tighter">{{ $t('auth.createAccount') }}</h3>
       <p class="mt-3 text-sm text-brand-gray/60 font-bold">
         {{ $t('auth.alreadyHaveAccount') }}
-        <NuxtLink to="/auth/login" class="text-brand-green hover:underline font-black">{{ $t('auth.loginHere') }}</NuxtLink>
+        <NuxtLink to="/auth/login" class="text-brand-green hover:underline ">{{ $t('auth.loginHere') }}</NuxtLink>
       </p>
     </div>
 
@@ -50,7 +50,7 @@
       <button
         type="submit"
         :disabled="loading"
-        class="w-full py-4 bg-brand-blue text-white rounded-2xl text-sm font-black uppercase tracking-[0.15em] shadow-[0_10px_30px_-5px_rgba(13,29,173,0.3)] hover:shadow-brand-blue/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-blue/20 disabled:opacity-50"
+        class="w-full py-4 bg-brand-blue text-white rounded-2xl text-sm  uppercase tracking-[0.15em] shadow-[0_10px_30px_-5px_rgba(13,29,173,0.3)] hover:shadow-brand-blue/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-blue/20 disabled:opacity-50"
       >
         <span v-if="loading">{{ $t('auth.creatingAccount') }}</span>
         <span v-else>{{ $t('auth.createAccount') }}</span>
@@ -61,14 +61,14 @@
           <div class="w-full border-t border-gray-100"></div>
         </div>
         <div class="relative flex justify-center text-xs uppercase">
-          <span class="bg-white px-4 text-brand-gray/40 font-black tracking-widest">{{ $t('auth.orJoinWith') }}</span>
+          <span class="bg-white px-4 text-brand-gray/40  tracking-widest">{{ $t('auth.orJoinWith') }}</span>
         </div>
       </div>
 
       <button
         type="button"
         @click="loginWithGoogle"
-        class="w-full flex items-center justify-center gap-3 px-4 py-4 border border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition-all font-bold text-brand-blue shadow-sm hover:shadow-md"
+        class="w-full flex items-center justify-center gap-3 px-4 py-4 border border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition-all font-bold text-gray-900 shadow-sm hover:shadow-md"
       >
         <svg class="h-5 w-5" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -113,10 +113,7 @@ const onCountryChange = (info: { code: string; currency: string; dialCode: strin
 const handleRegister = async () => {
   const res = await register(registerData);
   if (res && (res.status === 200 || res.status === 201)) {
-    router.push({
-      path: '/auth/verify-otp',
-      query: { email: registerData.email }
-    });
+    router.push('/');
   }
 };
 </script>

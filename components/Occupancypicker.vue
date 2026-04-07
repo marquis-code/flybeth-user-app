@@ -5,12 +5,12 @@
       @click="openPicker"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none"
     >
-      <p class="text-[11px] font-black text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-brand-blue transition-colors">
+      <p class="text-[11px]  text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-gray-900 transition-colors">
         {{ label }}
       </p>
       <div class="flex items-center gap-2">
         <UserGroupIcon class="h-5 w-5 text-gray-400 shrink-0" />
-        <span class="text-base font-black text-brand-blue">{{ summary }}</span>
+        <span class="text-base  text-gray-900">{{ summary }}</span>
       </div>
     </div>
 
@@ -57,14 +57,14 @@
                 >
                   −
                 </button>
-                <span class="w-5 text-center text-base font-black text-gray-800">{{ local[row.key] }}</span>
+                <span class="w-5 text-center text-base  text-gray-800">{{ local[row.key] }}</span>
                 <button
                   @click="increment(row.key)"
                   :disabled="local[row.key] >= row.max"
                   class="h-9 w-9 rounded-full border-2 flex items-center justify-center text-lg font-bold transition-all"
                   :class="local[row.key] >= row.max
                     ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-                    : 'border-brand-blue text-brand-blue hover:bg-blue-50'"
+                    : 'border-brand-blue text-gray-900 hover:bg-blue-50'"
                 >
                   +
                 </button>
@@ -79,7 +79,7 @@
             <!-- Done Button -->
             <button
               @click="done"
-              class="w-full bg-brand-blue text-white py-3 rounded-full font-black text-sm hover:bg-blue-700 transition-colors"
+              class="w-full bg-brand-blue text-white py-3 rounded-full  text-sm hover:bg-blue-700 transition-colors"
             >
               Done
             </button>

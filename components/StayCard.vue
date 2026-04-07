@@ -4,7 +4,7 @@
     <div class="md:w-1/3 relative h-48 md:h-auto">
       <img v-if="stay.image" :src="stay.image" :alt="stay.name" class="w-full h-full object-cover" />
       <div v-else class="w-full h-full bg-gradient-to-br from-brand-blue/10 to-brand-green/10 flex items-center justify-center">
-        <span class="text-brand-blue/30 font-black text-4xl">🏨</span>
+        <span class="text-gray-900  text-4xl">🏨</span>
       </div>
       <div v-if="stay.rating" class="absolute top-2 right-2 bg-white px-2 py-1 rounded-md text-xs font-bold shadow-sm">
         {{ stay.rating }} / 5

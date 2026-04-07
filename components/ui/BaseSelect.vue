@@ -2,7 +2,7 @@
   <div class="relative w-full font-body" ref="selectRef">
     <label 
       v-if="label" 
-      class="text-[11px] uppercase tracking-[0.15em] text-brand-gray font-black mb-2 px-1 opacity-70 font-header block"
+      class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70 font-header block"
     >
       {{ label }}
     </label>
@@ -15,18 +15,18 @@
     >
       <div class="flex items-center gap-4">
         <div v-if="icon" class="p-2.5 border border-brand-blue/10 rounded-xl bg-brand-blue/5 group-hover:bg-brand-blue group-hover:text-white transition-all duration-500">
-          <component :is="icon" class="h-5 w-5" :class="isOpen ? 'text-white' : 'text-brand-blue'" />
+          <component :is="icon" class="h-5 w-5" :class="isOpen ? 'text-white' : 'text-gray-900'" />
         </div>
         <div class="flex flex-col">
-          <span class="text-sm font-bold text-brand-blue tracking-tight">
+          <span class="text-sm font-bold text-gray-900 tracking-tight">
             {{ selectedOptionLabel || placeholder }}
           </span>
         </div>
       </div>
       <svg 
         xmlns="http://www.w3.org/2000/svg" 
-        class="h-5 w-5 text-brand-blue/40 group-hover:text-brand-blue transition-all duration-300" 
-        :class="{ 'rotate-180 text-brand-blue': isOpen }"
+        class="h-5 w-5 text-gray-900 group-hover:text-gray-900 transition-all duration-300" 
+        :class="{ 'rotate-180 text-gray-900': isOpen }"
         fill="none" viewBox="0 0 24 24" stroke="currentColor"
       >
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
@@ -49,7 +49,7 @@
           >
             <span 
               class="text-sm font-bold transition-all duration-300"
-              :class="modelValue === option.value ? 'text-brand-blue' : 'text-brand-gray/80 group-hover:text-brand-blue'"
+              :class="modelValue === option.value ? 'text-gray-900' : 'text-brand-gray/80 group-hover:text-gray-900'"
             >
               {{ option.label }}
             </span>

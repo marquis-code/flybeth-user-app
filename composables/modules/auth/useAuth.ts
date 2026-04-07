@@ -24,10 +24,18 @@ export const useAuth = () => {
             const res = await authApiFactory.login(payload);
             if (res.status === 200 || res.status === 201) {
                 // The data is nested inside a 'data' property
-                const authData = res.data.data;
-                setToken(authData.accessToken);
-                setRefreshToken(authData.refreshToken);
-                setUser(authData.user);
+                const authData = res.data?.data || res.data;
+                const tokenResponse = authData.tokens || authData;
+                
+                if (tokenResponse.accessToken) {
+                    setToken(tokenResponse.accessToken);
+                }
+                if (tokenResponse.refreshToken) {
+                    setRefreshToken(tokenResponse.refreshToken);
+                }
+                if (authData.user) {
+                    setUser(authData.user);
+                }
                 showToast({
                     title: "Success",
                     message: "Login successful",
@@ -47,9 +55,21 @@ export const useAuth = () => {
         try {
             const res = await authApiFactory.register(payload);
             if (res.status === 200 || res.status === 201) {
+                const authData = res.data?.data || res.data;
+                const tokenResponse = authData.tokens || authData;
+                
+                if (tokenResponse.accessToken) {
+                    setToken(tokenResponse.accessToken);
+                }
+                if (tokenResponse.refreshToken) {
+                    setRefreshToken(tokenResponse.refreshToken);
+                }
+                if (authData.user) {
+                    setUser(authData.user);
+                }
                 showToast({
                     title: "Success",
-                    message: "Registration successful. Please verify your email.",
+                    message: "Registration successful. You are now logged in.",
                     toastType: "success",
                 });
                 return res;

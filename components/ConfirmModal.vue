@@ -24,7 +24,7 @@
               </div>
 
               <!-- Title -->
-              <h3 class="text-2xl font-black text-brand-blue font-header tracking-tight mb-3 animate-text-up">
+              <h3 class="text-2xl  text-gray-900 font-header tracking-tight mb-3 animate-text-up">
                 {{ title }}
               </h3>
 
@@ -37,13 +37,13 @@
               <div class="flex gap-4 animate-buttons-up">
                 <button 
                   @click="onCancel" 
-                  class="flex-1 py-4 px-6 rounded-2xl border-2 border-gray-100 text-brand-blue text-xs font-black uppercase tracking-[0.15em] hover:bg-gray-50 hover:border-gray-200 active:scale-95 transition-all duration-300"
+                  class="flex-1 py-4 px-6 rounded-2xl border-2 border-gray-100 text-gray-900 text-xs  uppercase tracking-[0.15em] hover:bg-gray-50 hover:border-gray-200 active:scale-95 transition-all duration-300"
                 >
                   {{ cancelText || 'Cancel' }}
                 </button>
                 <button 
                   @click="onConfirm" 
-                  class="flex-1 py-4 px-6 rounded-2xl text-white text-xs font-black uppercase tracking-[0.15em] active:scale-95 transition-all duration-300 shadow-lg hover:scale-[1.02]"
+                  class="flex-1 py-4 px-6 rounded-2xl text-white text-xs  uppercase tracking-[0.15em] active:scale-95 transition-all duration-300 shadow-lg hover:scale-[1.02]"
                   :class="confirmBtnClass"
                 >
                   {{ confirmText || 'Confirm' }}
@@ -119,7 +119,7 @@ const iconColorClass = computed(() => {
   const map: Record<string, string> = {
     warning: 'text-amber-500',
     danger: 'text-red-500',
-    logout: 'text-brand-blue',
+    logout: 'text-gray-900',
     info: 'text-sky-500',
     exit: 'text-orange-500',
   }

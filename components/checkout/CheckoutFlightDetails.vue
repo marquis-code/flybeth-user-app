@@ -3,7 +3,12 @@
     <!-- Flight Itinerary -->
     <div v-if="flightOffer" class="itinerary-card">
       <div class="itinerary-header">
-        <h2 class="itinerary-route">{{ flightOffer.origin }} → {{ flightOffer.destination }}</h2>
+        <div class="flex flex-col gap-1">
+          <h2 class="itinerary-route">{{ flightOffer.originName || flightOffer.origin }} → {{ flightOffer.destinationName || flightOffer.destination }}</h2>
+          <div class="route-iata text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+             {{ flightOffer.origin }} ➔ {{ flightOffer.destination }}
+          </div>
+        </div>
         <button @click="expanded = !expanded" class="expand-btn">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform" :class="{ 'rotate-180': expanded }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
         </button>
@@ -77,11 +82,11 @@
           </div>
 
           <!-- Layover -->
-          <div v-if="idx < flightOffer.segments.length - 1" class="layover-card">
+          <div v-if="(idx as number) < flightOffer.segments.length - 1" class="layover-card">
             <div class="layover-icon">⏱</div>
             <div>
               <span class="layover-title">Layover</span>
-              <span class="layover-info">{{ calcLayover(segment, flightOffer.segments[idx + 1]) }} Layover in {{ segment.destination }}</span>
+              <span class="layover-info">{{ calcLayover(segment, flightOffer.segments[(idx as number) + 1]) }} Layover in {{ segment.destination }}</span>
             </div>
           </div>
         </template>
@@ -97,7 +102,7 @@
         </div>
         <div v-if="flightOffer.totalEmissionsKg" class="emissions">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" /></svg>
-          <span>{{ flightOffer.totalEmissionsKg }}kg CO₂</span>
+          <span class="font-bold">{{ flightOffer.totalEmissionsKg }}kg CO₂</span>
         </div>
       </div>
     </div>
@@ -182,41 +187,51 @@ const calcLayover = (seg1: any, seg2: any) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 1.5rem 2rem;
+  background: white;
 }
 
 .itinerary-route {
-  font-size: 1.15rem;
-  font-weight: 900;
+  font-family: 'Spectral', serif;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: #1a2332;
+  letter-spacing: -0.01em;
 }
 
 .expand-btn {
-  background: none;
-  border: none;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  border: 1px solid #f1f5f9;
   cursor: pointer;
-  color: #6b7280;
-  padding: 0.25rem;
+  color: #64748b;
+  padding: 0.5rem;
+  transition: all 0.2s;
+}
+
+.expand-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
 .date-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #f3f4f6;
+  gap: 1.5rem;
+  padding: 1.25rem 2rem;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
 }
 
 .date-badge {
-  background: #ef4444;
+  background: #0D1DAD;
   color: white;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 1rem;
+  border-radius: 2rem;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .stops-badge, .duration-badge {
@@ -478,23 +493,26 @@ const calcLayover = (seg1: any, seg2: any) => {
 .continue-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: #f97316;
+  gap: 0.6rem;
+  background: #0D1DAD;
   color: white;
   border: none;
-  padding: 0.85rem 2.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 900;
+  padding: 1rem 2.5rem;
+  border-radius: 0.85rem;
+  font-size: 0.854rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .continue-btn:hover {
-  background: #ea580c;
+  background: #0a168a;
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.3);
+}
+
+.continue-btn:active {
+  transform: translateY(0);
 }
 </style>

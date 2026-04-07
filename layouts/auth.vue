@@ -14,8 +14,8 @@
       <!-- Overlay Content -->
       <div class="relative z-10 h-full flex flex-col justify-end p-16">
         <div class="space-y-6">
-          <span class="text-brand-green font-black uppercase tracking-[0.3em] text-sm">{{ $t('authLayout.journeyStarts') }}</span>
-          <h2 class="text-5xl font-black text-white font-header tracking-tighter leading-tight">
+          <span class="text-brand-green  uppercase tracking-[0.3em] text-sm">{{ $t('authLayout.journeyStarts') }}</span>
+          <h2 class="text-5xl  text-white font-header tracking-tighter leading-tight">
             {{ $t('authLayout.discover') }}<br/>{{ $t('authLayout.worldsMost') }}<br/>
             <span class="text-brand-green/80">{{ $t('authLayout.breathtaking') }}</span><br/>{{ $t('authLayout.layoutDestinations') }}
           </h2>
@@ -26,14 +26,14 @@
           <!-- Social Proof -->
           <div class="flex items-center gap-6 pt-4">
             <div class="flex -space-x-3">
-              <div class="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white text-xs font-black">JD</div>
-              <div class="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white text-xs font-black">AM</div>
-              <div class="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white text-xs font-black">SK</div>
-              <div class="h-10 w-10 rounded-full bg-brand-green/40 backdrop-blur-md border-2 border-brand-green/30 flex items-center justify-center text-white text-xs font-black">+5K</div>
+              <div class="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white text-xs ">JD</div>
+              <div class="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white text-xs ">AM</div>
+              <div class="h-10 w-10 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white text-xs ">SK</div>
+              <div class="h-10 w-10 rounded-full bg-brand-green/40 backdrop-blur-md border-2 border-brand-green/30 flex items-center justify-center text-white text-xs ">+5K</div>
             </div>
             <div>
-              <p class="text-white font-black text-sm">{{ $t('authLayout.trustedWorldwide') }}</p>
-              <p class="text-white/40 text-sm font-black uppercase tracking-widest">{{ $t('authLayout.averageRating') }}</p>
+              <p class="text-white  text-sm">{{ $t('authLayout.trustedWorldwide') }}</p>
+              <p class="text-white/40 text-sm  uppercase tracking-widest">{{ $t('authLayout.averageRating') }}</p>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@
 
         <!-- Footer -->
         <div class="mt-10 pt-6 border-t border-gray-100">
-          <p class="text-sm text-brand-gray/40 font-black uppercase tracking-[0.2em]">
+          <p class="text-sm text-brand-gray/40  uppercase tracking-[0.2em]">
             © {{ new Date().getFullYear() }} Flybeth &nbsp;•&nbsp; {{ $t('authLayout.travelIntelligence') }}
           </p>
         </div>

@@ -3,7 +3,7 @@
     <div v-if="visible" class="loader-overlay">
       <div class="loader-content">
         <p class="loader-title text-center font-bold mb-2 text-sm text-gray-800">Just a moment...</p>
-        <h4 class="loader-text text-center font-black text-xl mb-4 text-gray-900 leading-tight">
+        <h4 class="loader-text text-center  text-xl mb-4 text-gray-900 leading-tight">
           Currency<br />conversion...ongoing
         </h4>
         <div class="progress-container">

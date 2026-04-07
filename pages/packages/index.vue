@@ -3,8 +3,8 @@
     <!-- Header Section -->
     <div class="bg-brand-blue text-white py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <span class="text-brand-green font-black uppercase tracking-[0.3em] text-sm">Bundle & Save</span>
-        <h1 class="text-5xl font-black tracking-tighter font-header mt-2">Vacation Packages</h1>
+        <span class="text-brand-green  uppercase tracking-[0.3em] text-sm">Bundle & Save</span>
+        <h1 class="text-5xl  tracking-tighter font-header mt-2">Vacation Packages</h1>
         <p class="text-white/60 font-bold mt-2">Save money by booking flights and stays together.</p>
       </div>
     </div>

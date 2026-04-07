@@ -8,26 +8,26 @@
       @click="openDropdown"
     >
       <p
-        class="text-[11px] font-black uppercase tracking-widest mb-0.5 transition-colors"
-        :class="showDropdown ? 'text-brand-blue' : 'text-brand-gray/40 group-hover:text-brand-blue'"
+        class="text-[11px]  uppercase tracking-widest mb-0.5 transition-colors"
+        :class="showDropdown ? 'text-gray-900' : 'text-brand-gray/40 group-hover:text-gray-900'"
       >
         {{ label }}
       </p>
 
       <div v-if="selectedLocationName && !showDropdown" class="flex items-baseline gap-2 min-w-0">
-        <span class="text-base font-black text-brand-blue leading-tight truncate">
+        <span class="text-base  text-gray-900 leading-tight truncate">
           {{ selectedLocationName }}
         </span>
-        <span class="text-xs font-black text-brand-gray/40 uppercase shrink-0">{{ modelValue }}</span>
+        <span class="text-xs  text-brand-gray/40 uppercase shrink-0">{{ modelValue }}</span>
       </div>
 
       <!-- Empty placeholder -->
       <div v-else class="flex items-center gap-2">
         <MapPinIcon
           class="h-5 w-5 shrink-0 transition-colors"
-          :class="showDropdown ? 'text-brand-blue' : 'text-gray-300'"
+          :class="showDropdown ? 'text-gray-900' : 'text-gray-300'"
         />
-        <span class="text-base font-black text-gray-300">
+        <span class="text-base  text-gray-300">
           {{ placeholder || 'Search city or airport...' }}
         </span>
       </div>
@@ -67,7 +67,7 @@
             <!-- Search input -->
             <div class="p-4 pb-3">
               <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 border-2 border-brand-blue">
-                <MagnifyingGlassIcon class="h-[18px] w-[18px] text-brand-blue shrink-0" />
+                <MagnifyingGlassIcon class="h-[18px] w-[18px] text-gray-900 shrink-0" />
                 <input
                   ref="searchInputRef"
                   v-model="searchQuery"
@@ -124,19 +124,19 @@
               >
                 <div class="h-9 w-9 rounded-xl bg-gray-50 group-hover/item:bg-brand-blue/10 flex items-center justify-center shrink-0 transition-colors">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    class="text-gray-400 group-hover/item:text-brand-blue transition-colors">
+                    class="text-gray-400 group-hover/item:text-gray-900 transition-colors">
                     <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="currentColor"/>
                   </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-bold text-gray-800 group-hover/item:text-brand-blue transition-colors truncate">
+                  <p class="text-sm font-bold text-gray-800 group-hover/item:text-gray-900 transition-colors truncate">
                     {{ res.address?.cityName || res.name }}, {{ res.address?.countryName || res.address?.countryCode }}
                   </p>
                   <p class="text-xs text-gray-400 font-medium truncate mt-0.5">
                     {{ res.name }}{{ res.subType === 'AIRPORT' ? ' Airport' : '' }}
                   </p>
                 </div>
-                <span class="text-xs font-black text-gray-300 group-hover/item:text-brand-blue/60 transition-colors shrink-0 ml-2">
+                <span class="text-xs  text-gray-300 group-hover/item:text-gray-900 transition-colors shrink-0 ml-2">
                   {{ res.iataCode }}
                 </span>
               </div>
@@ -168,13 +168,13 @@
                   class="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 cursor-pointer transition-colors group/sug"
                 >
                   <div class="h-8 w-8 rounded-lg bg-brand-blue/5 group-hover/sug:bg-brand-blue/10 flex items-center justify-center shrink-0 transition-colors">
-                    <MapPinIcon class="h-[15px] w-[15px] text-brand-blue/70 group-hover/sug:text-brand-blue transition-colors" />
+                    <MapPinIcon class="h-[15px] w-[15px] text-gray-900 group-hover/sug:text-gray-900 transition-colors" />
                   </div>
                   <div class="min-w-0">
-                    <p class="text-sm font-bold text-gray-700 group-hover/sug:text-brand-blue transition-colors truncate leading-tight">
+                    <p class="text-sm font-bold text-gray-700 group-hover/sug:text-gray-900 transition-colors truncate leading-tight">
                       {{ dest.city }}
                     </p>
-                    <p class="text-sm font-black text-gray-300 uppercase tracking-wide">{{ dest.iataCode }}</p>
+                    <p class="text-sm  text-gray-300 uppercase tracking-wide">{{ dest.iataCode }}</p>
                   </div>
                 </div>
               </div>

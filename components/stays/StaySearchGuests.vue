@@ -3,67 +3,85 @@
     <!-- Trigger -->
     <div 
       @click="isOpen = !isOpen"
-      class="bg-white px-6 py-3 hover:bg-gray-50 transition-all cursor-pointer border-r border-gray-100 h-full flex flex-col justify-center"
+      class="flex-1 min-w-[200px] bg-white rounded-r-[1.75rem] px-8 py-4 group hover:bg-gray-50 transition-all cursor-pointer"
     >
-      <div class="flex items-center text-sm font-black text-brand-blue uppercase tracking-widest mb-1.5">
-        Rooms & Guests
-        <svg class="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{'rotate-180': isOpen}"><path d="m6 9 6 6 6-6"/></svg>
-      </div>
-      <div class="font-black text-gray-900 leading-none truncate">
-        {{ rooms }} Room{{ rooms > 1 ? 's' : '' }}, {{ adults + children }} Guest{{ (adults + children) > 1 ? 's' : '' }}
+      <p class="text-[10px] text-gray-500 font-bold tracking-wide mb-2 opacity-50 group-hover:opacity-100 transition-opacity">Travelers</p>
+      <div class="flex items-center text-sm font-black text-gray-900 leading-none truncate">
+        {{ rooms }} Room, {{ adults + children }} Travelers
       </div>
     </div>
 
     <!-- Dropdown -->
-    <Transition name="fade-up">
-      <div v-if="isOpen" class="absolute top-full left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-0 mt-3 z-[99999] bg-white rounded-2xl shadow-[0_30px_90px_-20px_rgba(13,29,173,0.2)] border border-gray-50 w-[92vw] sm:w-[320px] p-6 animate-fade-in">
+    <div v-if="isOpen" class="absolute top-full right-0 mt-4 z-[200] bg-white rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-100 w-[92vw] sm:w-[320px] p-8">
         <!-- Mobile Close Button -->
-        <button @click="isOpen = false" class="md:hidden absolute top-4 right-4 h-8 w-8 flex items-center justify-center text-gray-400 bg-gray-50 rounded-full z-10">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button @click="isOpen = false" class="md:hidden absolute top-4 right-4 h-9 w-9 flex items-center justify-center text-gray-400 bg-gray-50 rounded-full hover:text-gray-900 transition-colors">
+          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
-        <h3 class="text-sm font-black text-gray-900 mb-6 uppercase tracking-widest border-b border-gray-100 pb-3">Rooms & Guests</h3>
-        
-        <div class="space-y-6">
+
+        <div class="space-y-8">
           <!-- Rooms -->
           <div class="flex items-center justify-between">
-            <span class="text-sm font-black text-gray-700">Rooms</span>
-            <select v-model="rooms" class="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-brand-blue/20 outline-none w-24">
-              <option v-for="i in 10" :key="i" :value="i">{{ i }}</option>
-            </select>
+            <div>
+              <div class="text-[11px] font-black text-gray-900 tracking-wide">Rooms</div>
+              <div class="text-[10px] text-gray-400 font-bold tracking-wide mt-1">Total rooms</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="rooms > 1 && rooms--" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
+              </button>
+              <span class="text-sm font-black w-4 text-center">{{ rooms }}</span>
+              <button @click="rooms++" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
+              </button>
+            </div>
           </div>
 
           <!-- Adults -->
           <div class="flex items-center justify-between">
-            <span class="text-sm font-black text-gray-700">Adults</span>
-            <select v-model="adults" class="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-brand-blue/20 outline-none w-24">
-              <option v-for="i in 20" :key="i" :value="i">{{ i }}</option>
-            </select>
+            <div>
+              <div class="text-[11px] font-black text-gray-900 tracking-wide">Adults</div>
+              <div class="text-[10px] text-gray-400 font-bold tracking-wide mt-1">Age 13+</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="adults > 1 && adults--" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
+              </button>
+              <span class="text-sm font-black w-4 text-center">{{ adults }}</span>
+              <button @click="adults++" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
+              </button>
+            </div>
           </div>
 
           <!-- Children -->
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-black text-gray-700">Children</span>
-              <select v-model="children" class="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-brand-blue/20 outline-none w-24">
-                <option v-for="i in 11" :key="i-1" :value="i-1">{{ i-1 }}</option>
-              </select>
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-[11px] font-black text-gray-900 tracking-wide">Children</div>
+              <div class="text-[10px] text-gray-400 font-bold tracking-wide mt-1">Age 0-12</div>
             </div>
-            <p class="text-sm text-gray-400 font-bold uppercase tracking-tight">0y - 17y</p>
+            <div class="flex items-center gap-3">
+              <button @click="children > 0 && children--" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
+              </button>
+              <span class="text-sm font-black w-4 text-center">{{ children }}</span>
+              <button @click="children++" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
+              </button>
+            </div>
           </div>
+
+          <button 
+            @click="apply"
+            class="w-full bg-gray-900 hover:bg-gray-800 text-white font-black py-4 rounded-2xl transition-all tracking-wide text-[10px] active:scale-[0.98] mt-4"
+          >
+            Apply changes
+          </button>
         </div>
 
-        <p class="text-sm text-gray-400 font-medium leading-relaxed mt-4 italic">
-          Please provide right number of children along with their right age for best options and prices.
+        <p class="text-[10px] text-gray-400 font-bold leading-relaxed mt-8 opacity-60 tracking-wider">
+          Providing the correct age ensures you get the best room rates.
         </p>
-
-        <button 
-          @click="apply"
-          class="w-full mt-6 bg-brand-orange hover:bg-orange-600 text-white font-black py-3 rounded-xl transition-all shadow-lg shadow-orange-100 active:scale-[0.98] uppercase tracking-widest text-xs"
-        >
-          Apply
-        </button>
-      </div>
-    </Transition>
+    </div>
   </div>
 </template>
 
@@ -111,6 +129,4 @@ onUnmounted(() => window.removeEventListener('click', closePicker));
   opacity: 0;
   transform: translateY(10px);
 }
-.bg-brand-orange { background-color: #ff8a00; }
-.text-brand-blue { color: #0084ff; }
 </style>

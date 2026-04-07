@@ -16,23 +16,29 @@
 
       <!-- Body -->
       <div class="p-10 text-center">
-        <h2 class="text-3xl font-black text-gray-900 mb-4 tracking-tight">We have secured your selected hotel</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-4 tracking-tight">We have secured your selected hotel</h2>
         
+        <!-- Price summary -->
+        <div v-if="selectedRoom?.rates?.[0]?.priceWithCommission" class="mb-6">
+          <div class="text-sm text-gray-500 font-medium">Total price</div>
+          <div class="text-3xl font-bold text-gray-900">${{ Math.round(selectedRoom.rates[0].priceWithCommission) }}</div>
+        </div>
+
         <div class="flex items-center justify-center text-gray-600 mb-10 gap-2">
            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-           <span class="text-sm font-bold opacity-80 uppercase tracking-widest">Add flight to get bundle discount and earn waka points</span>
+           <span class="text-sm font-bold opacity-80 tracking-wide">Add flight to get bundle discount and earn Flybeth points</span>
         </div>
 
         <div class="space-y-4">
             <button 
               @click="handleContinueWithoutFlight" 
-              class="w-full bg-[#f27c22] hover:bg-orange-600 text-white font-black py-5 rounded-xl transition-all shadow-xl shadow-orange-100 active:scale-[0.98] uppercase tracking-[0.2em] text-sm"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 rounded-xl transition-all shadow-xl shadow-green-100 active:scale-[0.98] tracking-wide text-sm"
             >
               Continue without flight
             </button>
             <button 
               @click="handleAddFlight"
-              class="w-full text-brand-blue font-black py-4 hover:underline transition-all uppercase tracking-widest text-xs"
+              class="w-full text-gray-900 font-bold py-4 hover:underline transition-all tracking-wide text-xs"
             >
               Add flight to booking
             </button>
@@ -48,7 +54,8 @@ import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps({
   stay: { type: Object, required: true },
-  selectedRoom: { type: Object, required: true }
+  selectedRoom: { type: Object, required: true },
+  quoteData: { type: Object, default: null }
 });
 
 const emit = defineEmits(['close']);
@@ -59,19 +66,36 @@ const stayPhotos = computed(() => props.stay?.photos || []);
 
 const handleContinueWithoutFlight = () => {
     emit('close');
+    
+    // Build the checkout query with all necessary data
+    const checkoutQuery: any = {
+      type: 'stay',
+      roomId: props.selectedRoom.id || props.selectedRoom.rateId || props.selectedRoom.rates?.[0]?.rateId,
+      provider: props.stay.provider || route.query.provider,
+      id: props.stay.id || props.stay.accommodationId || route.params.id,
+      checkIn: route.query.checkIn,
+      checkOut: route.query.checkOut,
+      adults: route.query.adults,
+      children: route.query.children,
+      rooms: route.query.rooms,
+      price: Math.round(props.selectedRoom.rates?.[0]?.priceWithCommission || 0),
+      currency: props.selectedRoom.rates?.[0]?.currency || 'USD',
+      hotelName: props.stay.name
+    };
+
+    // Include the quote ID if we got one
+    if (props.quoteData?.id) {
+      checkoutQuery.quoteId = props.quoteData.id;
+    }
+
     router.push({
       path: '/checkout',
-      query: {
-        type: 'stay',
-        roomId: props.selectedRoom.id || props.selectedRoom.rateId || props.selectedRoom.rates?.[0]?.rateId,
-        provider: props.stay.provider || route.query.provider,
-        id: props.stay.id || props.stay.accommodationId || route.params.id
-      }
+      query: checkoutQuery
     });
 };
 
 const handleAddFlight = () => {
-    // Cache the stay data
+    // Cache the stay data for later checkout
     const stayData = {
         type: 'stay',
         stay: props.stay,
@@ -80,20 +104,17 @@ const handleAddFlight = () => {
         provider: props.stay.provider || route.query.provider,
         id: props.stay.id || props.stay.accommodationId || route.params.id,
         price: props.selectedRoom.rates?.[0]?.priceWithCommission || 0,
-        currency: props.selectedRoom.rates?.[0]?.currency || 'USD'
+        currency: props.selectedRoom.rates?.[0]?.currency || 'USD',
+        quoteId: props.quoteData?.id || null
     };
     sessionStorage.setItem('pendingStayBooking', JSON.stringify(stayData));
     
     emit('close');
-    // Redirect to home and activate flight widget
     router.push('/?tab=flights');
 };
 </script>
 
 <style scoped>
-.text-brand-blue {
-  color: #0084ff;
-}
 .animate-in {
   animation: modal-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }

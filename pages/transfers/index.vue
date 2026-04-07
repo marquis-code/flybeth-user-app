@@ -22,11 +22,11 @@
         <!-- Sidebar Filters (Simplified for now) -->
         <div class="hidden lg:block lg:col-span-1 space-y-6">
           <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-            <h3 class="font-black text-brand-blue mb-4">Transfer Type</h3>
+            <h3 class=" text-gray-900 mb-4">Transfer Type</h3>
             <div class="space-y-3">
               <label v-for="type in ['Private', 'Shared', 'Luxury']" :key="type" class="flex items-center gap-3 cursor-pointer group">
                 <input type="checkbox" class="custom-checkbox" />
-                <span class="text-sm font-bold text-brand-gray group-hover:text-brand-blue transition-colors">{{ type }}</span>
+                <span class="text-sm font-bold text-brand-gray group-hover:text-gray-900 transition-colors">{{ type }}</span>
               </label>
             </div>
           </div>
@@ -35,9 +35,9 @@
         <!-- Results List -->
         <div class="lg:col-span-3 space-y-4">
           <div v-if="transfers.length" class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-black text-brand-blue tracking-tighter">{{ transfers.length }} transfers available</h2>
-            <div class="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-brand-gray/40">
-              SORT BY: <span class="text-brand-blue">RECOMMENDED</span>
+            <h2 class="text-2xl  text-gray-900 tracking-tighter">{{ transfers.length }} transfers available</h2>
+            <div class="flex items-center gap-2 text-sm  uppercase tracking-widest text-brand-gray/40">
+              SORT BY: <span class="text-gray-900">RECOMMENDED</span>
             </div>
           </div>
 
@@ -82,25 +82,34 @@ const searchQuery = ref({
 })
 
 const handleSearch = () => {
-  // Construct payload expected by Amadeus transfers
-  const [lat, lng] = searchQuery.value.destination.split(',').map(s => s.trim())
-  
-  const payload: any = {
-    startLocationCode: searchQuery.value.origin.includes('(') 
-      ? (searchQuery.value.origin.split('(')[1]?.replace(')', '') || searchQuery.value.origin)
-      : searchQuery.value.origin,
-    endCityName: searchQuery.value.destination,
-    startDateTime: `${searchQuery.value.date}T${searchQuery.value.time || '10:00'}:00`,
-    passengers: Number(searchQuery.value.adults) || 1,
-    transferType: 'PRIVATE'
+  // Extract IATA codes from search string if present (e.g. "Dubai (DXB)")
+  const extractIata = (str: string) => {
+    if (!str) return '';
+    const match = str.match(/\(([^)]+)\)/);
+    return match ? match[1].toUpperCase() : str.toUpperCase();
   }
 
-  // If destination is a coord fallback
-  if (lat && lng && !isNaN(Number(lat))) {
-    payload.endGeoCode = `${lat},${lng}`
-    // If we only have coordinates, fake a city name so API has something printable
-    payload.endCityName = 'Destination'
+  const fromCode = extractIata(searchQuery.value.origin);
+  const toCode = extractIata(searchQuery.value.destination);
+  
+  const payload: any = {
+    // Standardized fields for backend proxy
+    fromCode,
+    fromType: fromCode.length === 3 ? 'IATA' : 'ATLAS',
+    toCode,
+    toType: toCode.length === 3 ? 'IATA' : 'ATLAS',
+    outbound: `${searchQuery.value.date}T${searchQuery.value.time || '10:00'}:00`,
+    adults: Number(searchQuery.value.adults) || 2,
+    children: 0,
+    infants: 0,
+    language: 'en'
   }
+
+  // Fallback for legacy backend mapping if needed
+  payload.startLocationCode = fromCode;
+  payload.endCityName = searchQuery.value.destination;
+  payload.startDateTime = payload.outbound;
+  payload.passengers = payload.adults;
 
   searchTransfers(payload)
 }

@@ -9,7 +9,7 @@
       <!-- Icon container -->
       <div class="absolute inset-8 rounded-full bg-gradient-to-br from-brand-blue/10 to-brand-green/10 flex items-center justify-center animate-float">
         <div class="relative">
-          <component :is="computedIcon" class="h-16 w-16 text-brand-blue/30" />
+          <component :is="computedIcon" class="h-16 w-16 text-gray-900" />
           <!-- Sparkle accents -->
           <div class="absolute -top-2 -right-2 h-3 w-3 bg-brand-green rounded-full animate-sparkle"></div>
           <div class="absolute -bottom-1 -left-3 h-2 w-2 bg-brand-blue/40 rounded-full animate-sparkle-delayed"></div>
@@ -24,7 +24,7 @@
 
     <!-- Text Content -->
     <div class="space-y-4 max-w-md animate-fade-in-up">
-      <h3 class="text-2xl font-black text-brand-blue tracking-tight font-header">
+      <h3 class="text-2xl  text-gray-900 tracking-tight font-header">
         {{ title || 'Nothing here yet' }}
       </h3>
       <p class="text-brand-gray/50 font-bold text-sm leading-relaxed">
@@ -36,7 +36,7 @@
     <div v-if="actionLabel" class="mt-10 animate-fade-in-up" style="animation-delay: 0.3s;">
       <button 
         @click="$emit('action')" 
-        class="group relative px-10 py-4 bg-brand-blue text-white rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-brand-blue/20 hover:shadow-2xl hover:shadow-brand-blue/30 hover:scale-105 active:scale-95 transition-all duration-500 overflow-hidden"
+        class="group relative px-10 py-4 bg-brand-blue text-white rounded-full text-xs  uppercase tracking-[0.2em] shadow-xl shadow-brand-blue/20 hover:shadow-2xl hover:shadow-brand-blue/30 hover:scale-105 active:scale-95 transition-all duration-500 overflow-hidden"
       >
         <span class="relative z-10">{{ actionLabel }}</span>
         <div class="absolute inset-0 bg-brand-green translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>

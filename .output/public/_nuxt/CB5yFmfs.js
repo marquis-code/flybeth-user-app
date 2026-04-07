@@ -1,0 +1,1 @@
+import{ah as i,al as s,ai as r}from"./Dp5N4pcl.js";const m=i({cast(e){return typeof e=="string"&&(e={name:e}),e},defaults:{"@type":"ListItem"},resolve(e,t){return typeof e.item=="string"?e.item=s(t.meta.host,e.item):typeof e.item=="object"&&(e.item=r(e.item,t)),e}});export{m as listItemResolver};

@@ -5,10 +5,10 @@ export const useFetchLiveDeals = () => {
     const loadingDeals = ref(false);
     const liveDeals = ref<any[]>([]);
 
-    const fetchLiveDeals = async (origin = 'LOS') => {
+    const fetchLiveDeals = async (origin = 'LOS', tripType = 'round-trip') => {
         loadingDeals.value = true;
         try {
-            const { data: res } = await flightsApi.getLiveDeals(origin);
+            const { data: res } = await flightsApi.getLiveDeals(origin, tripType);
             liveDeals.value = Array.isArray(res.data) ? res.data : (Array.isArray(res) ? res : []);
             return liveDeals.value;
         } catch (error) {

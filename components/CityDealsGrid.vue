@@ -1,85 +1,83 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-gray-100">
-    <div class="flex flex-col gap-2 mb-12">
-      <h2 class="text-3xl font-black text-brand-blue">Find Great Deals by City</h2>
-      <p class="text-sm font-bold text-gray-400">Expand a city to see top flights, hotels, and car rentals.</p>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+      <div class="flex flex-col gap-3">
+        <h2 class="text-4xl font-header text-gray-900 tracking-tight">Find Great Deals by City</h2>
+        <p class="text-sm font-bold text-gray-400 max-w-lg leading-relaxed">
+          Explore curated savings across top destinations. Select a city to discover the best flights, premier stays, and car rentals.
+        </p>
+      </div>
+      <div class="flex gap-2">
+         <button @click="scroll('left')" class="p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all">
+            <ChevronLeftIcon class="h-5 w-5 text-gray-400" />
+         </button>
+         <button @click="scroll('right')" class="p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all">
+            <ChevronRightIcon class="h-5 w-5 text-gray-400" />
+         </button>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div ref="scrollContainer" class="flex gap-8 overflow-x-auto pb-12 hide-scrollbar snap-x snap-mandatory scroll-smooth">
       <div 
         v-for="city in cities" 
         :key="city.name" 
-        class="bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden"
-        :class="{ 'ring-2 ring-brand-blue shadow-2xl': openCity === city.name }"
+        class="flex-shrink-0 w-[400px] snap-start"
       >
-        <!-- Header -->
-        <button 
-          @click="toggleCity(city.name)"
-          class="w-full p-8 flex items-center justify-between text-left group"
-        >
-          <span class="text-2xl font-black text-brand-blue group-hover:translate-x-1 transition-transform">{{ city.name }}</span>
-          <ChevronDownIcon 
-            class="h-6 w-6 text-brand-blue/30 transition-transform duration-500"
-            :class="{ 'rotate-180 text-brand-blue': openCity === city.name }"
-          />
-        </button>
-
-        <!-- Dynamic Content -->
-        <div 
-          v-show="openCity === city.name"
-          class="px-8 pb-8 space-y-6 animate-fade-in"
-        >
-          <!-- Tabs -->
-          <div class="flex gap-4 border-b border-gray-50">
-            <button 
-              v-for="tab in ['Flights', 'Cars', 'Hotels']" 
-              :key="tab"
-              @click="activeTabs[city.name] = tab"
-              class="pb-3 text-xs font-black uppercase tracking-widest transition-all relative"
-              :class="activeTabs[city.name] === tab ? 'text-brand-blue' : 'text-brand-gray/40 hover:text-brand-blue'"
-            >
-              {{ tab }}
-              <div v-if="activeTabs[city.name] === tab" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full"></div>
-            </button>
+        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden group h-[520px] flex flex-col">
+          <!-- City Image Header -->
+          <div class="h-48 relative overflow-hidden flex-shrink-0">
+            <img :src="city.image" :alt="city.name" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-6 left-8">
+              <h3 class="text-2xl font-header text-white leading-none">{{ city.name }}</h3>
+              <p class="text-[10px] text-white/70 uppercase tracking-widest mt-1 font-bold">Starting from ${{ Math.min(...Object.values(city.deals).flat().map((d: any) => d.price)) }}</p>
+            </div>
           </div>
 
-          <!-- Deal List -->
-          <div class="space-y-4">
-            <template v-if="activeTabs[city.name] === 'Flights'">
-              <div 
-                v-for="deal in city.deals.flights" 
-                :key="deal.label"
-                @click="selectDeal('Flights', deal, city.name)"
-                class="flex items-center justify-between group cursor-pointer"
+          <!-- Internal Tabs -->
+          <div class="flex-1 p-8 flex flex-col">
+            <div class="flex gap-6 mb-8 border-b border-gray-50">
+              <button 
+                v-for="tab in ['Flights', 'Hotels', 'Cars']" 
+                :key="tab"
+                @click="activeTabs[city.name] = tab"
+                class="pb-4 text-[10px] font-bold uppercase tracking-widest transition-all relative"
+                :class="activeTabs[city.name] === tab ? 'text-brand-blue' : 'text-gray-400 hover:text-gray-900'"
               >
-                <span class="text-xs font-bold text-brand-gray group-hover:text-brand-blue transition-colors">{{ deal.label }}</span>
-                <span class="text-xs font-black text-brand-blue">${{ deal.price }}</span>
-              </div>
-            </template>
-            <template v-if="activeTabs[city.name] === 'Cars'">
-              <div 
-                v-for="deal in city.deals.cars" 
-                :key="deal.label"
-                @click="selectDeal('Cars', deal, city.name)"
-                class="flex items-center justify-between group cursor-pointer"
-              >
-                <span class="text-xs font-bold text-brand-gray group-hover:text-brand-blue transition-colors">{{ deal.label }}</span>
-                <span class="text-xs font-black text-brand-blue">${{ deal.price }}</span>
-              </div>
-            </template>
-            <template v-if="activeTabs[city.name] === 'Hotels'">
-              <div 
-                v-for="deal in city.deals.hotels" 
-                :key="deal.label"
-                @click="selectDeal('Hotels', deal, city.name)"
-                class="flex items-center justify-between group cursor-pointer"
-              >
-                <span class="text-xs font-bold text-brand-gray group-hover:text-brand-blue transition-colors line-clamp-1">{{ deal.label }}</span>
-                <div class="flex items-center gap-2 flex-shrink-0">
-                  <span class="text-xs font-black text-brand-blue">${{ deal.price }}</span>
+                {{ tab }}
+                <div v-show="activeTabs[city.name] === tab" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full animate-grow"></div>
+              </button>
+            </div>
+
+            <!-- List Content -->
+            <div class="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
+              <TransitionGroup v-if="activeTabs[city.name]" name="list" tag="div" class="space-y-3">
+                <div 
+                  v-for="deal in ((city.deals as any)[(activeTabs[city.name] as string).toLowerCase()] || [])" 
+                  :key="deal.label"
+                  @click="selectDeal(activeTabs[city.name] as string, deal, city.name)"
+                  class="flex items-center justify-between p-4 rounded-2xl bg-gray-50/50 hover:bg-brand-blue/5 border border-transparent hover:border-brand-blue/10 transition-all cursor-pointer group/item"
+                >
+                  <div class="flex flex-col gap-0.5">
+                    <span class="text-xs font-bold text-gray-900 group-hover/item:text-brand-blue transition-colors">{{ deal.label }}</span>
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ activeTabs[city.name] === 'Flights' ? 'One Way' : 'Per Night' }}</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-sm font-header text-gray-900">${{ deal.price }}</span>
+                    <div class="h-6 w-6 rounded-full bg-white border border-gray-100 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <ChevronRightIcon class="h-3 w-3 text-brand-blue" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </template>
+              </TransitionGroup>
+            </div>
+            
+            <button 
+              @click="toggleAllDeals(city.name)"
+              class="mt-6 w-full py-4 text-[10px] flex items-center justify-center gap-2 border border-brand-blue/10 rounded-xl font-bold uppercase tracking-widest text-brand-blue hover:bg-brand-blue hover:text-white transition-all active:scale-95"
+            >
+              See all {{ city.name }} deals
+            </button>
           </div>
         </div>
       </div>
@@ -88,21 +86,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { ref, reactive, onMounted } from 'vue'
+import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/vue/24/outline'
 
 const emit = defineEmits(['select-deal'])
+const scrollContainer = ref<HTMLElement | null>(null)
 
-const openCity = ref<string | null>(null)
 const activeTabs = reactive<Record<string, string>>({})
 
-const toggleCity = (name: string) => {
-  if (openCity.value === name) {
-    openCity.value = null
-  } else {
-    openCity.value = name
-    if (!activeTabs[name]) activeTabs[name] = 'Flights'
-  }
+const scroll = (direction: 'left' | 'right') => {
+  if (!scrollContainer.value) return
+  const offset = 432 // Card width + gap
+  scrollContainer.value.scrollBy({ left: direction === 'left' ? -offset : offset, behavior: 'smooth' })
 }
 
 const selectDeal = (type: string, deal: any, destination: string) => {
@@ -114,194 +109,141 @@ const selectDeal = (type: string, deal: any, destination: string) => {
   })
 }
 
-const cities = [
+const toggleAllDeals = (name: string) => {
+  console.log('Toggle all for', name)
+}
+
+const cities: any = [
   {
     name: 'Miami',
+    image: 'https://images.unsplash.com/photo-1514214246283-d427a95c5d2f?auto=format&fit=crop&q=80&w=800',
     deals: {
       flights: [
-        { label: 'Flights from Denver to Miami', price: 44, from: 'Denver' },
-        { label: 'Flights from Atlanta to Miami', price: 64, from: 'Atlanta' },
-        { label: 'Flights from Los Angeles to Miami', price: 93, from: 'Los Angeles' },
-        { label: 'Flights from Dallas to Miami', price: 118, from: 'Dallas' }
+        { label: 'From Dallas to Miami', price: 118, from: 'Dallas' },
+        { label: 'From Atlanta to Miami', price: 64, from: 'Atlanta' },
+        { label: 'From Denver to Miami', price: 44, from: 'Denver' }
       ],
       hotels: [
-        { label: 'Hilton Miami Airport Blue Lagoon', price: 237 },
-        { label: 'La Quinta Inn & Suites Miami Airport', price: 130 },
-        { label: 'North Miami Beach Gardens Inn', price: 59 },
-        { label: 'Holiday Inn Express Miami-Bird Road', price: 124 }
+        { label: 'Hilton Miami Airport', price: 237 },
+        { label: 'North Miami Beach Inn', price: 59 },
+        { label: 'Holiday Inn Express', price: 124 }
       ],
       cars: [
-        { label: 'Economy Car Rental Miami', price: 28 },
-        { label: 'SUV Rental Miami Airport', price: 54 }
-      ]
-    }
-  },
-  {
-    name: 'Tampa',
-    deals: {
-      flights: [
-        { label: 'Flights from Atlanta to Tampa', price: 55, from: 'Atlanta' },
-        { label: 'Flights from Los Angeles to Tampa', price: 97, from: 'Los Angeles' },
-        { label: 'Flights from Denver to Tampa', price: 101, from: 'Denver' }
-      ],
-      hotels: [
-        { label: 'Ramada by Wyndham Temple Terrace', price: 83 },
-        { label: 'Holiday Inn Express Tampa-Westshore', price: 154 }
-      ],
-      cars: [
-        { label: 'Standard Car Rental Tampa', price: 32 }
-      ]
-    }
-  },
-  {
-    name: 'San Diego',
-    deals: {
-      flights: [
-        { label: 'Flights from Denver to San Diego', price: 175, from: 'Denver' },
-        { label: 'Flights from Los Angeles to San Diego', price: 58, from: 'Los Angeles' }
-      ],
-      hotels: [
-        { label: 'Best Western Seven Seas', price: 127 },
-        { label: 'Heritage Inn San Diego', price: 89 }
-      ],
-      cars: [
-        { label: 'Convertible Rental San Diego', price: 89 }
-      ]
-    }
-  },
-  {
-    name: 'Austin',
-    deals: {
-      flights: [
-        { label: 'Flights from Denver to Austin', price: 151, from: 'Denver' },
-        { label: 'Flights from Dallas to Austin', price: 210, from: 'Dallas' }
-      ],
-      hotels: [
-        { label: 'Holiday Inn Austin-Town Lake', price: 152 },
-        { label: 'Super 8 by Wyndham Austin', price: 111 }
-      ],
-      cars: [
-        { label: 'Compact Car Rental Austin', price: 41 }
-      ]
-    }
-  },
-  {
-    name: 'Los Angeles',
-    deals: {
-      flights: [
-        { label: 'Flights from Denver to Los Angeles', price: 326, from: 'Denver' },
-        { label: 'Flights from Dallas to Los Angeles', price: 248, from: 'Dallas' }
-      ],
-      hotels: [
-        { label: 'Hilton Los Angeles Airport', price: 187 },
-        { label: 'Sheraton Gateway Los Angeles', price: 149 }
-      ],
-      cars: [
-        { label: 'Luxury Car Rental LAX', price: 120 }
-      ]
-    }
-  },
-  {
-    name: 'Atlanta',
-    deals: {
-      flights: [
-        { label: 'Flights from Detroit to Atlanta', price: 236, from: 'Detroit' },
-        { label: 'Flights from Dallas to Atlanta', price: 106, from: 'Dallas' }
-      ],
-      hotels: [
-        { label: 'Hilton Atlanta', price: 134 },
-        { label: 'Sonesta Atlanta Airport North', price: 94 }
-      ],
-      cars: [
-        { label: 'Full Size Car Rental Atlanta', price: 48 }
+        { label: 'Economy Car Rental', price: 28 },
+        { label: 'SUV Rental Airport', price: 54 }
       ]
     }
   },
   {
     name: 'New York',
+    image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=800',
     deals: {
       flights: [
-        { label: 'Flights from Denver to New York City', price: 366, from: 'Denver' },
-        { label: 'Flights from Dallas to New York City', price: 218, from: 'Dallas' }
+        { label: 'From Dallas to NYC', price: 218, from: 'Dallas' },
+        { label: 'From Denver to NYC', price: 366, from: 'Denver' }
       ],
       hotels: [
-        { label: 'DoubleTree by Hilton NYC', price: 320 },
-        { label: 'Holiday Inn Manhattan 6th Ave', price: 251 }
+        { label: 'DoubleTree by Hilton', price: 320 },
+        { label: 'Holiday Inn Manhattan', price: 251 }
       ],
       cars: [
-        { label: 'Premium Car Rental Newark', price: 75 }
-      ]
-    }
-  },
-  {
-    name: 'Chicago',
-    deals: {
-      flights: [
-        { label: 'Flights from Detroit to Chicago', price: 312, from: 'Detroit' },
-        { label: 'Flights from Dallas to Chicago', price: 251, from: 'Dallas' }
-      ],
-      hotels: [
-        { label: 'Congress Plaza Hotel', price: 160 },
-        { label: 'Embassy Suites by Hilton Chicago', price: 179 }
-      ],
-      cars: [
-        { label: 'Economy Car Rental O\'Hare', price: 35 }
-      ]
-    }
-  },
-  {
-    name: 'Dallas',
-    deals: {
-      flights: [
-        { label: 'Flights from Los Angeles to Dallas', price: 174, from: 'Los Angeles' },
-        { label: 'Flights from Atlanta to Dallas', price: 129, from: 'Atlanta' }
-      ],
-      hotels: [
-        { label: 'The Westin Galleria Dallas', price: 153 },
-        { label: 'Embassy Suites by Hilton Dallas', price: 111 }
-      ],
-      cars: [
-        { label: 'Pickup Truck Rental Dallas', price: 65 }
+        { label: 'Premium Rental Newark', price: 75 }
       ]
     }
   },
   {
     name: 'Las Vegas',
+    image: 'https://images.unsplash.com/photo-1605833559746-6d16fd329c32?auto=format&fit=crop&q=80&w=800',
     deals: {
       flights: [
-        { label: 'Flights from Dallas to Las Vegas', price: 421, from: 'Dallas' },
-        { label: 'Flights from Atlanta to Las Vegas', price: 163, from: 'Atlanta' }
+        { label: 'From Atlanta to Vegas', price: 163, from: 'Atlanta' },
+        { label: 'From Dallas to Vegas', price: 421, from: 'Dallas' }
       ],
       hotels: [
-        { label: 'The STRAT Hotel, Casino & Tower', price: 50 },
-        { label: 'Flamingo Las Vegas', price: 78 }
+        { label: 'Flamingo Las Vegas', price: 78 },
+        { label: 'The STRAT Hotel', price: 50 }
       ],
       cars: [
-        { label: 'Minivan Rental Las Vegas', price: 82 }
+        { label: 'Minivan Rental', price: 82 }
+      ]
+    }
+  },
+  {
+    name: 'Chicago',
+    image: 'https://images.unsplash.com/photo-1494522855154-9297ac14b55f?auto=format&fit=crop&q=80&w=800',
+    deals: {
+      flights: [
+        { label: 'From Detroit to Chicago', price: 312, from: 'Detroit' },
+        { label: 'From Dallas to Chicago', price: 251, from: 'Dallas' }
+      ],
+      hotels: [
+        { label: 'Congress Plaza Hotel', price: 160 },
+        { label: 'Embassy Suites Hilton', price: 179 }
+      ],
+      cars: [
+        { label: 'Economy Rental O\'Hare', price: 35 }
+      ]
+    }
+  },
+  {
+    name: 'Los Angeles',
+    image: 'https://images.unsplash.com/photo-1534067783520-218023f14db1?auto=format&fit=crop&q=80&w=800',
+    deals: {
+      flights: [
+        { label: 'From Dallas to LA', price: 248, from: 'Dallas' },
+        { label: 'From Denver to LA', price: 326, from: 'Denver' }
+      ],
+      hotels: [
+        { label: 'Sheraton Gateway LA', price: 149 },
+        { label: 'Hilton LA Airport', price: 187 }
+      ],
+      cars: [
+        { label: 'Luxury Car Rental', price: 120 }
       ]
     }
   }
 ]
 
-// Note: Additional cities can be added from the mockup image as needed. 
-// For this implementation, we map the most prominent ones to ensure high quality and fast loading.
+onMounted(() => {
+  cities.forEach((city: any) => {
+    activeTabs[city.name] = 'Flights'
+  })
+})
 </script>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out;
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }
 
-.line-clamp-1 {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;  
-  overflow: hidden;
+.animate-grow {
+  animation: grow 0.3s ease-out;
+}
+
+@keyframes grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(10px);
 }
 </style>

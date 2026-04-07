@@ -1,144 +1,190 @@
 <template>
-  <main class="min-h-screen bg-gray-50/50">
-    <!-- Header Map / Search -->
-    <div class="bg-brand-blue sticky top-0 z-40 transition-all duration-300">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div class="flex flex-col sm:flex-row gap-4 items-center">
-          <NuxtLink to="/" class="shrink-0 text-white/60 hover:text-white transition-colors p-2 -ml-2 self-start sm:self-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </NuxtLink>
-          <div class="flex-1 w-full bg-white/10 rounded-2xl p-2 sm:p-3 backdrop-blur-md border border-white/20">
-            <div class="flex flex-col sm:flex-row gap-3">
-              <div class="flex-1 min-w-0">
-                <CityPicker v-model="searchQuery.destinationIata" :label="'Destination'" />
+  <main class="min-h-screen bg-[#F8FAFC]">
+    <!-- ── Premium Floating Header ─────────────────────────────────────────── -->
+    <div class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-sm transition-all duration-500">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+        <div class="flex flex-col md:flex-row items-center gap-4">
+          <!-- Back Button & Title -->
+          <div class="flex items-center gap-4 w-full md:w-auto">
+            <NuxtLink to="/" class="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-all border border-gray-100 shrink-0">
+              <ChevronLeftIcon class="h-5 w-5" />
+            </NuxtLink>
+            <div class="md:hidden flex-1">
+              <h1 class="text-lg font-bold text-gray-900 truncate">Things to do</h1>
+            </div>
+          </div>
+
+          <!-- Glass Search Bar -->
+          <div class="flex-1 w-full bg-white rounded-2xl p-1.5 shadow-lg shadow-gray-200/50 border border-gray-100/50">
+            <div class="flex flex-col sm:flex-row items-center divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+              <div class="w-full sm:flex-1">
+                <CityPicker v-model="searchQuery.destinationIata" label="Destination" placeholder="Where to go?" class="!bg-transparent" />
               </div>
-              <div class="w-full sm:w-64 shrink-0">
-                <FlightDateRangePicker :departure="searchQuery.date" mode="oneway" @update:departure="(v) => searchQuery.date = v" />
+              <div class="w-full sm:w-64">
+                <FlightDateRangePicker :departure="searchQuery.date" mode="oneway" label="Date" @update:departure="(v) => searchQuery.date = v" />
               </div>
-              <button
-                @click="handleSearch"
-                :disabled="loading"
-                class="w-full sm:w-auto px-8 py-3 bg-white text-brand-blue rounded-xl font-black text-sm uppercase tracking-wider hover:bg-gray-50 flex items-center justify-center gap-2 transition-all disabled:opacity-80"
-              >
-                <div v-if="loading" class="animate-spin h-4 w-4 border-2 border-brand-blue/30 border-t-brand-blue rounded-full"></div>
-                <span>{{ loading ? 'Searching...' : 'Search' }}</span>
-              </button>
+              <div class="w-full sm:w-auto p-1.5">
+                <button
+                  @click="handleSearch"
+                  :disabled="loading"
+                  class="w-full sm:px-8 py-3.5 bg-brand-blue text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand-blue/90 flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-70"
+                >
+                  <div v-if="loading" class="animate-spin h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full"></div>
+                  <MagnifyingGlassIcon v-else class="h-4 w-4" />
+                  <span>Search</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col lg:flex-row gap-8">
-      
-      <!-- Filters Sidebar (Placeholder for future) -->
-      <div class="lg:w-72 shrink-0 hidden lg:block">
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm sticky top-[140px]">
-           <h3 class="font-black text-brand-blue uppercase tracking-widest mb-6 text-sm flex items-center gap-2">
-             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-blue/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-             </svg>
-             Filters
-           </h3>
-           <p class="text-xs text-brand-gray/60 font-medium">Coming soon</p>
-        </div>
-      </div>
-
-      <!-- Main Results Column -->
-      <div class="flex-1 min-w-0">
+    <!-- ── Main Content Area ──────────────────────────────────────────────── -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col lg:flex-row gap-10">
         
-        <div v-if="!loading && activitiesList.length > 0" class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-black text-brand-blue">Things to do</h2>
-            <p class="text-sm font-medium text-brand-gray/60 mt-1">Found {{ activitiesList.length }} activities</p>
-          </div>
-        </div>
+        <!-- Sidebar: Functional Filters -->
+        <aside class="lg:w-80 shrink-0 space-y-8">
+           <!-- Filters Header -->
+           <div class="flex items-center justify-between">
+              <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <AdjustmentsHorizontalIcon class="h-4 w-4" />
+                Filter by
+              </h2>
+              <button @click="resetFilters" class="text-[11px] font-bold text-brand-blue hover:text-brand-blue/80 uppercase tracking-wider transition-colors">Reset all</button>
+           </div>
 
-        <!-- Layout for Results -->
-        <div class="space-y-4">
-          
-          <template v-if="loading">
-             <div v-for="i in 4" :key="i" class="bg-white rounded-2xl border border-gray-100 p-4 h-[200px] animate-pulse">
-               <div class="flex flex-col sm:flex-row gap-6 h-full">
-                 <div class="w-full sm:w-[240px] h-48 sm:h-full bg-gray-100 rounded-xl shrink-0" />
-                 <div class="flex-1 py-2 flex flex-col justify-between">
-                    <div class="space-y-3">
-                       <div class="h-6 w-3/4 bg-gray-100 rounded-lg" />
-                       <div class="h-4 w-1/4 bg-gray-100 rounded-lg" />
-                       <div class="h-3 w-1/2 bg-gray-100 rounded-lg" />
+           <!-- Category Filter -->
+           <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+              <h3 class="text-sm font-bold text-gray-900 mb-5">Categories</h3>
+              <div class="space-y-3.5">
+                 <label v-for="cat in availableCategories" :key="cat" class="flex items-center justify-between cursor-pointer group">
+                    <div class="flex items-center gap-3">
+                       <div class="relative flex items-center justify-center">
+                          <input type="checkbox" v-model="filters.categories" :value="cat" class="peer h-5 w-5 rounded-md border-gray-200 text-brand-blue focus:ring-brand-blue/20 transition-all cursor-pointer" />
+                       </div>
+                       <span class="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{{ cat }}</span>
                     </div>
-                 </div>
-               </div>
-             </div>
-          </template>
+                 </label>
+              </div>
+           </div>
 
-          <template v-else-if="activitiesList.length > 0">
-             <div v-for="(activity, idx) in activitiesList" :key="activity.experienceId || idx" 
-                  class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row group">
-                
-                <!-- Activity Image -->
-                <div class="sm:w-[280px] h-[200px] sm:h-auto shrink-0 relative overflow-hidden bg-gray-100">
-                  <div class="absolute inset-0 bg-brand-blue/5 animate-pulse" v-if="!activity.photos?.[0]"></div>
-                  <img v-if="activity.photos?.[0]" :src="activity.photos[0]" alt="" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
-                  
-                  <div v-if="activity.rating" class="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    <span class="text-xs font-black text-brand-blue">{{ activity.rating }}</span>
+           <!-- Price Filter -->
+           <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+              <div class="flex items-center justify-between mb-5">
+                 <h3 class="text-sm font-bold text-gray-900">Price range</h3>
+                 <span class="text-xs font-bold text-brand-blue">${{ filters.priceRange[0] }} - ${{ filters.priceRange[1] }}</span>
+              </div>
+              <input type="range" min="0" max="1000" v-model.number="filters.priceRange[1]" class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-blue" />
+              <div class="flex justify-between mt-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                 <span>$0</span>
+                 <span>$1000+</span>
+              </div>
+           </div>
+
+           <!-- Rating Filter -->
+           <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+              <h3 class="text-sm font-bold text-gray-900 mb-5">Minimum Rating</h3>
+              <div class="space-y-3.5">
+                 <label v-for="rate in [4, 3, 2]" :key="rate" class="flex items-center gap-3 cursor-pointer group">
+                    <input type="radio" v-model="filters.rating" :value="rate" class="h-4 w-4 text-brand-blue border-gray-200 focus:ring-brand-blue/20" />
+                    <div class="flex items-center gap-1">
+                       <StarIcon v-for="i in rate" :key="i" class="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
+                       <StarIcon v-for="i in (5 - rate)" :key="i" class="h-3.5 w-3.5 text-gray-200 fill-gray-200" />
+                       <span class="text-xs font-bold text-gray-600 ml-1 mt-0.5">{{ rate }}+ Stars</span>
+                    </div>
+                 </label>
+              </div>
+           </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 min-w-0">
+          <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 tracking-tight leading-none mb-3">Things to do in <span class="text-brand-blue">{{ currentCityName || 'the area' }}</span></h1>
+            <p class="text-sm font-medium text-gray-400">Discover and book curated experiences, tours, and activities.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+            <TransitionGroup name="activity-list">
+              <!-- Loading Skeleton -->
+              <template v-if="loading">
+                <div v-for="i in 4" :key="`skeleton-${i}`" class="bg-white rounded-3xl p-5 border border-gray-100 h-[420px] animate-pulse">
+                  <div class="w-full h-56 bg-gray-50 rounded-2xl mb-5" />
+                  <div class="space-y-3">
+                     <div class="h-6 w-3/4 bg-gray-50 rounded-lg" />
+                     <div class="h-4 w-1/4 bg-gray-50 rounded-lg" />
+                     <div class="h-10 w-full bg-gray-50 rounded-xl mt-6" />
                   </div>
                 </div>
+              </template>
 
-                <!-- Activity Details -->
-                <div class="flex-1 p-5 sm:p-6 flex flex-col justify-between min-w-0">
-                   <div>
-                     <p class="text-sm font-black uppercase tracking-widest text-brand-gray/40 mb-2">Amadeus Activity</p>
-                     <h3 class="text-lg sm:text-xl font-black text-brand-blue leading-tight mb-2 group-hover:text-brand-blue/80 transition-colors">
-                        {{ activity.name }}
-                     </h3>
-                     <p class="text-sm font-medium text-brand-gray/70 leading-relaxed line-clamp-2">
-                        {{ activity.shortDescription || activity.description || 'No description available for this activity.' }}
-                     </p>
-                   </div>
-                   
-                   <div class="mt-6 pt-5 border-t border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                     <div>
-                       <p class="text-sm font-black uppercase tracking-widest text-brand-gray/40">From</p>
-                       <div class="flex items-baseline gap-1">
-                         <span class="text-xs font-bold text-brand-blue/60">{{ activity.currency || 'USD' }}</span>
-                         <span class="text-2xl font-black text-brand-blue">{{ formatPrice(activity.price) }}</span>
+              <!-- Results -->
+              <template v-else-if="filteredActivitiesList.length > 0">
+                <div v-for="activity in filteredActivitiesList" :key="activity.experienceId" 
+                     class="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group cursor-pointer flex flex-col"
+                     @click="goToDetail(activity)">
+                  
+                  <!-- Image & Badges -->
+                  <div class="relative h-56 rounded-2xl overflow-hidden mb-5 shrink-0 bg-gray-100">
+                    <img v-if="activity.photos?.[0]" :src="activity.photos[0]" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" />
+                    
+                    <!-- Top Badges -->
+                    <div class="absolute top-4 left-4 flex gap-2">
+                      <div v-if="activity.rating" class="bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-md">
+                        <StarIcon class="h-3 w-3 text-orange-400 fill-orange-400" />
+                        <span class="text-[11px] font-bold text-gray-900">{{ activity.rating }}</span>
+                      </div>
+                      <div class="bg-brand-blue text-white px-2.5 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-md">
+                         {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : 'Amadeus' }}
+                      </div>
+                    </div>
+
+                    <!-- Duration Badge -->
+                    <div v-if="activity.minimumDuration" class="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-1.5">
+                       <ClockIcon class="h-3 w-3 text-white" />
+                       <span class="text-[10px] font-bold text-white uppercase tracking-wider">{{ activity.minimumDuration }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Details -->
+                  <div class="flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 class="text-xl font-bold text-gray-900 leading-tight group-hover:text-brand-blue transition-colors line-clamp-1 mb-2">{{ activity.name }}</h3>
+                      <p class="text-sm font-medium text-gray-400 line-clamp-2 leading-relaxed">{{ stripHtml(activity.description) }}</p>
+                    </div>
+
+                    <div class="mt-8 pt-5 border-t border-gray-50 flex items-center justify-between">
+                       <div>
+                         <p class="text-[10px] font-bold uppercase tracking-widest text-gray-300 mb-0.5">Starting from</p>
+                         <p class="text-2xl font-bold text-gray-900 tracking-tighter">
+                            <span class="text-sm font-medium text-gray-400 mr-1">{{ activity.currency || 'EUR' }}</span>
+                            {{ formatPrice(activity.price) }}
+                         </p>
                        </div>
-                     </div>
-                     <a v-if="activity.bookingLink" :href="activity.bookingLink" target="_blank" class="px-8 py-3.5 bg-brand-blue text-white rounded-xl font-black text-sm uppercase tracking-wider hover:bg-brand-blue/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all text-center">
-                       Book Now
-                     </a>
-                     <button v-else disabled class="px-8 py-3.5 bg-gray-100 text-gray-400 rounded-xl font-black text-sm uppercase tracking-wider cursor-not-allowed">
-                       Unavailable
-                     </button>
-                   </div>
+                       <button class="h-12 px-6 bg-brand-blue text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/20 transition-all flex items-center gap-2">
+                          View details
+                          <ArrowRightIcon class="h-3.5 w-3.5" />
+                       </button>
+                    </div>
+                  </div>
                 </div>
+              </template>
 
-             </div>
-          </template>
-
-          <template v-else>
-             <div class="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
-                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-brand-blue/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-black text-brand-blue mb-2">No things to do found</h3>
-                <p class="text-sm font-medium text-brand-gray/60 max-w-sm mx-auto">
-                  We couldn't find any activities or tours for this destination. Try searching for a different city or removing filters.
-                </p>
-             </div>
-          </template>
-
+              <!-- Empty State -->
+              <template v-else>
+                 <div class="col-span-full py-24 text-center">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
+                       <FaceFrownIcon class="h-12 w-12" />
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">No activities found</h2>
+                    <p class="text-sm font-medium text-gray-400 max-w-sm mx-auto">Try adjusting your filters or search for another destination to find exciting things to do.</p>
+                    <button @click="resetFilters" class="mt-8 px-8 py-3 bg-white text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest border border-gray-100 shadow-sm hover:bg-gray-50 transition-all">Clear all filters</button>
+                 </div>
+              </template>
+            </TransitionGroup>
+          </div>
         </div>
       </div>
     </div>
@@ -146,21 +192,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, watch } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { useRoute } from '#app'
+import { 
+  ChevronLeftIcon, 
+  MagnifyingGlassIcon, 
+  MapPinIcon, 
+  AdjustmentsHorizontalIcon,
+  StarIcon,
+  ClockIcon,
+  FaceFrownIcon,
+  ArrowRightIcon
+} from '@heroicons/vue/24/solid'
 import { useSearchActivities } from '@/composables/modules/experiences/useSearchActivities'
-import { useCitySearch } from '@/composables/modules/experiences/useCitySearch'
-import { GATEWAY_ENDPOINT } from '@/api_factory/axios.config'
+import { flightsApi } from '@/api_factory/modules/flights'
 
 const route = useRoute()
-const { loading, activitiesList, searchActivities } = useSearchActivities()
+const { loading, filteredActivitiesList, filters, searchActivities, activitiesList } = useSearchActivities()
 
-const rawRouteDest = (route.query.destination as string) || ''
 const searchQuery = reactive({
-  destinationIata: rawRouteDest,
+  destinationIata: (route.query.destination as string) || '',
   date: (route.query.date as string) || '',
-  // Default parsing for city lookup happens in setup
 })
+
+const currentCityName = ref('')
+const availableCategories = ['Sightseeing', 'Culture', 'Museums', 'Nature', 'Adventure', 'Food', 'Nightlife']
 
 const formatPrice = (p: any) => {
   const num = parseFloat(p)
@@ -168,23 +224,37 @@ const formatPrice = (p: any) => {
   return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+const stripHtml = (html: string) => {
+  if (!html) return ''
+  return html.replace(/<[^>]*>/g, '').slice(0, 120)
+}
+
+const resetFilters = () => {
+  filters.value.categories = []
+  filters.value.priceRange = [0, 1000]
+  filters.value.rating = 0
+}
+
+const goToDetail = (activity: any) => {
+  sessionStorage.setItem('selectedActivity', JSON.stringify(activity))
+  navigateTo({
+    path: `/things-to-do/${activity.experienceId}`,
+    query: { provider: activity.provider }
+  })
+}
+
 const handleSearch = async () => {
-    // If we have an IATA/Keyword from CityPicker but need coordinates:
-    // the backend requires latitude/longitude.
-    // If the widget passes "PAR" we must query /cities/search, get lat/lon, and then proxy to activities
     if (!searchQuery.destinationIata) return
     
     loading.value = true
     try {
-        const { data } = await GATEWAY_ENDPOINT.get('/airports/cities/search', {
-            params: {
-                q: searchQuery.destinationIata,
-                limit: 1
-            }
-        })
+        // Fix 404: Use flightsApi.searchAirports which is robust
+        const response = await flightsApi.searchAirports(searchQuery.destinationIata)
+        const data = response.data?.data || response.data || []
         
         if (data?.length > 0) {
            const topHit = data[0]
+           currentCityName.value = topHit.name || topHit.address?.cityName
            const lat = topHit.geoCode?.latitude
            const lon = topHit.geoCode?.longitude
            if (lat && lon) {
@@ -192,20 +262,48 @@ const handleSearch = async () => {
              return
            }
         }
-        
-        // Fallback or empty if not found
         activitiesList.value = []
     } catch (err) {
-        console.error('Search failed mapping city to coordinates:', err)
+        console.error('Search failed:', err)
         activitiesList.value = []
     } finally {
         loading.value = false
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (searchQuery.destinationIata) {
     handleSearch()
+  } else {
+    // Default fetch for Paris
+    currentCityName.value = 'Paris'
+    await searchActivities({ latitude: 48.8566, longitude: 2.3522, radius: 30 })
   }
 })
 </script>
+
+<style scoped>
+.activity-list-enter-active,
+.activity-list-leave-active {
+  transition: all 0.5s ease;
+}
+.activity-list-enter-from,
+.activity-list-leave-to {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+}
+.activity-list-move {
+  transition: transform 0.5s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border: 4px solid #0D1DAD;
+  @apply transition-all active:scale-110;
+}
+</style>
