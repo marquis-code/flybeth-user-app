@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/qhch72hhp8lo/public_html
+    - export DEPLOYPATH=/home/flybiofa/public_html
     - /bin/cp -R .output/public/* $DEPLOYPATH/
     - /bin/cp .htaccess $DEPLOYPATH/ 2>/dev/null || true
     - /bin/cp .env $DEPLOYPATH/ 2>/dev/null || true
