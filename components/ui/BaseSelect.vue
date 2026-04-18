@@ -2,7 +2,7 @@
   <div class="relative w-full font-body" ref="selectRef">
     <label 
       v-if="label" 
-      class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70 font-header block"
+      class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70  block"
     >
       {{ label }}
     </label>

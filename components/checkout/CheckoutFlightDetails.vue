@@ -192,7 +192,7 @@ const calcLayover = (seg1: any, seg2: any) => {
 }
 
 .itinerary-route {
-  font-family: 'Spectral', serif;
+  
   font-size: 1.5rem;
   font-weight: 800;
   color: #1a2332;

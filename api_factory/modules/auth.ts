@@ -19,6 +19,9 @@ export const authApiFactory = {
     verifyOtp(payload: any) {
         return GATEWAY_ENDPOINT.post("/auth/verify-otp", payload);
     },
+    resendOtp(payload: any) {
+        return GATEWAY_ENDPOINT.post("/auth/resend-otp", payload);
+    },
     logout() {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/auth/logout");
     },

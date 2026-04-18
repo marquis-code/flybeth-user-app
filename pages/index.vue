@@ -1,32 +1,30 @@
 <template>
   <div class="min-h-screen bg-white overflow-x-hidden relative">
-    <!-- Premium Hero Section with Split Background -->
-    <div class="relative w-full pt-20 pb-16 lg:pt-32 lg:pb-32 overflow-hidden">
-      <!-- Top Image Background -->
-      <div class="absolute top-0 left-0 w-full h-[65%] lg:h-[75%] z-0">
-        <img src="@/assets/img/happy-trips.jpg" class="w-full h-full object-cover object-center" alt="Hero Background" />
-        <div class="absolute inset-0 bg-black/70"></div>
+    <!-- Hero Section — Clean & Professional -->
+    <div class="relative w-full pt-20 pb-8 lg:pt-28 lg:pb-20 overflow-hidden">
+      <!-- Background with elegant gradient overlay -->
+      <div class="absolute inset-0 z-0 text-3xl tracking-tight text-white leading-snug">
+        <img src="@/assets/img/happy-trips.jpg" class="w-full h-full object-cover object-top" alt="Hero Background" />
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a]/80 via-[#0f172a]/60 to-[#f8fafc]"></div>
       </div>
       
-      <!-- Bottom Blue Background -->
-      <div class="absolute bottom-0 left-0 w-full h-[35%] lg:h-[25%] bg-brand-blue z-0"></div>
-      
-      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center mt-4">
-        <!-- Title centered -->
-        <div class="mb-10 flex justify-center w-full max-w-5xl mx-auto">
-           <h1 class="text-3xl  tracking-tight text-white drop-shadow-2xl text-center mb-2">
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
+        <!-- Minimal title -->
+        <div class="mb-8 lg:mb-10 flex flex-col items-center w-full max-w-3xl mx-auto text-center">
+           <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50 mb-3">Search · Compare · Book</p>
+           <h1 class="text-2xl lg:text-4xl  tracking-tight text-white leading-snug">
              {{ heroTitle }}
            </h1>
         </div>
         
-        <!-- Search Widget Full Width -->
-        <div class="w-full max-w-6xl mx-auto">
+        <!-- Search Widget -->
+        <div class="w-full max-w-5xl mx-auto">
           <div ref="widgetContainer" class="relative">
             <div 
               :class="[
                 isWidgetSticky 
-                  ? 'fixed top-[65px] left-0 right-0 z-[9999] bg-white shadow-2xl py-0 px-0 rounded-b-[2.5rem]' 
-                  : 'relative rounded-[2.5rem] shadow-2xl'
+                  ? 'fixed top-[65px] left-0 right-0 z-[9999] bg-white shadow-xl py-0 px-0 rounded-b-[2rem]' 
+                  : 'relative rounded-[2rem] shadow-xl'
               ]"
               class="transition-all duration-700 ease-in-out"
             >
@@ -44,59 +42,46 @@
       </div>
     </div>
 
-    <!-- Book with Confidence Section (Premium Marketing Grid) -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-0">
-      <div class="flex flex-col gap-12">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-           <div class="flex flex-col gap-3">
-             <h2 class="text-3xl font-header text-gray-900 tracking-tight">Travel with the Experts who Care</h2>
-             <div class="flex items-center gap-2 text-xs font-bold text-gray-400 tracking-widest uppercase">
-               <span>40M+ Travelers</span>
-               <span class="h-1 w-1 rounded-full bg-gray-300"></span>
-               <span>20+ Years Excellence</span>
-             </div>
-           </div>
+    <!-- Trust Bar — Compact & Clean -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-0">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div class="flex items-start gap-4 group">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
+             <CurrencyDollarIcon class="h-5 w-5" />
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-gray-900 leading-tight">Lowest Fares</h4>
+            <p class="text-[11px] text-gray-400 mt-0.5">Exclusive private rates</p>
+          </div>
         </div>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div class="flex flex-col gap-4 group cursor-default">
-            <div class="h-14 w-14 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-xl group-hover:-translate-y-1">
-               <CurrencyDollarIcon class="h-7 w-7" />
-            </div>
-            <div>
-              <h4 class="text-lg font-bold text-gray-900 leading-tight">Guaranteed Lowest Fares</h4>
-              <p class="text-[11px] font-bold text-gray-400 mt-1 uppercase tracking-wider">Access exclusive private rates</p>
-            </div>
+        <div class="flex items-start gap-4 group">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
+             <TrophyIcon class="h-5 w-5" />
           </div>
-          
-          <div class="flex flex-col gap-4 group cursor-default">
-            <div class="h-14 w-14 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-xl group-hover:-translate-y-1">
-               <TrophyIcon class="h-7 w-7" />
-            </div>
-            <div>
-              <h4 class="text-lg font-bold text-gray-900 leading-tight">Elite Travel Rewards</h4>
-              <p class="text-[11px] font-bold text-gray-400 mt-1 uppercase tracking-wider">Fly more, pay less on every trip</p>
-            </div>
+          <div>
+            <h4 class="text-sm font-bold text-gray-900 leading-tight">Travel Rewards</h4>
+            <p class="text-[11px] text-gray-400 mt-0.5">Earn on every booking</p>
           </div>
+        </div>
 
-          <div class="flex flex-col gap-4 group cursor-default">
-            <div class="h-14 w-14 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-xl group-hover:-translate-y-1">
-               <SparklesIcon class="h-7 w-7" />
-            </div>
-            <div>
-              <h4 class="text-lg font-bold text-gray-900 leading-tight">Seamless Booking Flow</h4>
-              <p class="text-[11px] font-bold text-gray-400 mt-1 uppercase tracking-wider">Simplified expert experiences</p>
-            </div>
+        <div class="flex items-start gap-4 group">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
+             <SparklesIcon class="h-5 w-5" />
           </div>
+          <div>
+            <h4 class="text-sm font-bold text-gray-900 leading-tight">Seamless Booking</h4>
+            <p class="text-[11px] text-gray-400 mt-0.5">Simple, expert experiences</p>
+          </div>
+        </div>
 
-          <div class="flex flex-col gap-4 group cursor-default">
-            <div class="h-14 w-14 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue group-hover:bg-brand-blue group-hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-xl group-hover:-translate-y-1">
-               <PhoneIcon class="h-7 w-7" />
-            </div>
-            <div>
-              <h4 class="text-lg font-bold text-gray-900 leading-tight">24/7 Expert Support</h4>
-              <p class="text-[11px] font-bold text-gray-400 mt-1 uppercase tracking-wider">Always here to assist you live</p>
-            </div>
+        <div class="flex items-start gap-4 group">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
+             <PhoneIcon class="h-5 w-5" />
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-gray-900 leading-tight">24/7 Support</h4>
+            <p class="text-[11px] text-gray-400 mt-0.5">Always here to help</p>
           </div>
         </div>
       </div>
@@ -107,42 +92,42 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         
         <!-- Rewards Card -->
-        <div class="bg-[#F8FAFC] border border-brand-blue/5 rounded-3xl p-8 md:p-10 flex flex-col justify-between group overflow-hidden relative shadow-sm hover:shadow-xl transition-all duration-500 min-h-[320px]">
+        <div class="bg-[#F8FAFC] border border-gray-100 rounded-3xl p-8 md:p-10 flex flex-col justify-between group overflow-hidden relative shadow-sm hover:shadow-xl transition-all duration-500 min-h-[320px]">
           <div class="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
-             <TrophyIcon class="w-64 h-64 text-brand-blue" />
+             <TrophyIcon class="w-64 h-64 text-gray-900" />
           </div>
           <div class="relative z-10 w-full max-w-sm flex flex-col h-full">
-             <h3 class="text-3xl font-header text-gray-900 leading-tight mb-4 tracking-tight">Flybeth Rewards</h3>
+             <h3 class="text-3xl text-gray-900 leading-tight mb-4 tracking-tight">Flybeth Rewards</h3>
              <p class="text-sm font-medium text-gray-500 leading-relaxed mb-auto pr-4">
                Earn points on every flight, hotel, and car rental. Redeem instantly to cover service fees or unlock exclusive discounts globally.
              </p>
-             <button class="bg-brand-blue text-white font-bold text-xs mt-8 px-6 py-3.5 rounded-xl shadow-md hover:bg-[#0a168a] transition-all tracking-widest uppercase self-start">
+             <button class="bg-gray-900 text-white font-bold text-xs mt-8 px-6 py-3 rounded-xl hover:bg-gray-800 transition-all tracking-widest uppercase self-start">
                Join for Free
              </button>
           </div>
         </div>
 
         <!-- App Promo Card -->
-        <div class="bg-[#003580] rounded-3xl p-8 md:p-10 flex flex-col sm:flex-row justify-between items-center gap-8 relative overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500 min-h-[320px]">
-           <div class="absolute -right-16 -top-16 opacity-10 group-hover:rotate-12 transition-transform duration-700">
+        <div class="bg-gray-900 rounded-3xl p-8 md:p-10 flex flex-col sm:flex-row justify-between items-center gap-8 relative overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500 min-h-[320px]">
+           <div class="absolute -right-16 -top-16 opacity-5 group-hover:rotate-12 transition-transform duration-700">
              <DevicePhoneMobileIcon class="w-80 h-80 text-white" />
            </div>
            
            <div class="relative z-10 w-full max-w-sm text-center sm:text-left flex flex-col h-full justify-center">
-             <h3 class="text-3xl font-header text-white leading-tight mb-4 tracking-tight">Get the App, <br class="hidden sm:block" /><span class="text-[#F48221]">Save $100</span></h3>
-             <p class="text-sm font-medium text-white/80 leading-relaxed mb-6 pr-4">
+             <h3 class="text-3xl text-white leading-tight mb-4 tracking-tight">Get the App, <br class="hidden sm:block" /><span class="text-white/70">Save $100</span></h3>
+             <p class="text-sm font-medium text-white/50 leading-relaxed mb-6 pr-4">
                Scan the code to download our app. First-time mobile users get up to $100 off their first confirmed flight booking.
              </p>
-             <div class="flex items-center justify-center sm:justify-start gap-2">
-                 <StarIcon class="w-4 h-4 text-[#F48221]" v-for="i in 5" :key="i" />
-                 <span class="text-white/90 text-[10px] font-bold tracking-widest ml-2 uppercase">4.8 App Rating</span>
+             <div class="flex items-center justify-center sm:justify-start gap-1.5">
+                 <StarIcon class="w-3.5 h-3.5 text-amber-400" v-for="i in 5" :key="i" />
+                 <span class="text-white/50 text-[10px] font-bold tracking-widest ml-2 uppercase">4.8 Rating</span>
              </div>
            </div>
 
            <div class="relative z-10 shrink-0 self-center">
-             <div class="bg-white p-3 rounded-[1.5rem] shadow-2xl transform group-hover:scale-105 transition-transform duration-500 flex flex-col items-center">
-               <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" class="w-24 h-24 object-contain" alt="QR Code" />
-               <p class="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-widest text-center px-1">Scan to Install</p>
+             <div class="bg-white p-3 rounded-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-500 flex flex-col items-center">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" class="w-20 h-20 object-contain" alt="QR Code" />
+               <p class="text-[9px] font-bold text-gray-400 mt-1.5 uppercase tracking-widest text-center">Scan to Install</p>
              </div>
            </div>
         </div>
@@ -155,7 +140,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div class="flex flex-col gap-3">
-            <h2 class="text-4xl font-header text-gray-900 tracking-tight">Exclusive Flight Deals</h2>
+            <h2 class="text-4xl  text-gray-900 tracking-tight">Exclusive Flight Deals</h2>
             <p class="text-sm font-bold text-gray-400 max-w-lg leading-relaxed">
               Handpicked {{ fareTab.toLowerCase() }} offers from {{ userLocation?.city || 'your location' }}. Updated in real-time for your next adventure.
             </p>
@@ -166,18 +151,18 @@
             <button 
               @click="fareTab = 'Round Trip'"
               class="pb-4 text-[10px] font-bold tracking-widest transition-all relative"
-              :class="fareTab === 'Round Trip' ? 'text-brand-blue' : 'text-gray-400 hover:text-gray-900'"
+              :class="fareTab === 'Round Trip' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-900'"
             >
               Round trip
-              <div v-if="fareTab === 'Round Trip'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full"></div>
+              <div v-if="fareTab === 'Round Trip'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900 rounded-full"></div>
             </button>
             <button 
               @click="fareTab = 'One Way'"
               class="pb-4 text-[10px] font-bold tracking-widest transition-all relative"
-              :class="fareTab === 'One Way' ? 'text-brand-blue' : 'text-gray-400 hover:text-gray-900'"
+              :class="fareTab === 'One Way' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-900'"
             >
               One way
-              <div v-if="fareTab === 'One Way'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full"></div>
+              <div v-if="fareTab === 'One Way'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900 rounded-full"></div>
             </button>
           </div>
         </div>
@@ -188,7 +173,7 @@
 
         <div v-else-if="!currentFareDeals.length" class="text-center py-24 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
            <TicketIcon class="h-16 w-16 text-gray-300 mx-auto mb-4" />
-           <p class="text-gray-900 font-header text-xl">No {{ fareTab.toLowerCase() }} deals available</p>
+           <p class="text-gray-900  text-xl">No {{ fareTab.toLowerCase() }} deals available</p>
            <p class="text-gray-400 font-bold text-sm mt-1">Check back soon for latest flight offers from {{ userLocation?.city || 'your location' }}</p>
         </div>
 
@@ -203,12 +188,12 @@
                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                <div class="absolute bottom-3 left-5 right-5 flex justify-between items-end">
                   <div>
-                    <h3 class="text-base font-header text-white leading-tight font-bold">{{ deal.destCity || deal.destCode }}</h3>
+                    <h3 class="text-base  text-white leading-tight font-bold">{{ deal.destCity || deal.destCode }}</h3>
                     <p class="text-[9px] text-white/80 tracking-wide font-medium">{{ deal.originCity || deal.originCode }} ➔ {{ deal.destCity || deal.destCode }}</p>
                   </div>
                   <div class="text-right">
                     <p class="text-white/60 text-[8px] font-bold tracking-widest leading-none mb-1">Starting from</p>
-                    <p class="text-lg font-header text-white leading-none">${{ deal.price }}</p>
+                    <p class="text-lg  text-white leading-none">${{ deal.price }}</p>
                   </div>
                </div>
             </div>
@@ -225,7 +210,7 @@
               <div class="space-y-2">
                  <div class="flex items-center gap-4 text-xs font-bold text-gray-500">
                     <div class="flex items-center gap-2">
-                       <div class="h-2 w-2 rounded-full bg-brand-green"></div>
+                       <div class="h-2 w-2 rounded-full bg-gray-900"></div>
                        {{ fareTab }}
                     </div>
                     <span>•</span>
@@ -233,16 +218,16 @@
                  </div>
                  <p class="text-[13px] font-bold text-gray-900 leading-snug">
                    Experience {{ deal.destCity || deal.destCode }} with Flybeth's exclusive negotiated rates. 
-                   <span class="text-brand-blue">{{ deal.dates }}</span>
+                   <span class="text-gray-500">{{ deal.dates }}</span>
                  </p>
               </div>
 
               <div class="flex items-center justify-between pt-3 border-t border-gray-50">
-                <div @click.stop="handleShare(deal)" class="flex items-center gap-2 text-[10px] font-bold tracking-wide text-gray-400 hover:text-brand-blue transition-colors group/share">
+                <div @click.stop="handleShare(deal)" class="flex items-center gap-2 text-[10px] font-bold tracking-wide text-gray-400 hover:text-gray-900 transition-colors group/share">
                   <ShareIcon class="h-4 w-4" />
                   <span class="group-hover/share:underline">Share deal</span>
                 </div>
-                <button @click.stop="handleBookNow(deal)" class="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-[10px] font-bold tracking-widest hover:bg-[#0a168a] transition-all transform active:scale-95 shadow-md shadow-brand-blue/10">
+                <button @click.stop="handleBookNow(deal)" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-[10px] font-bold tracking-widest hover:bg-black transition-all transform active:scale-95 shadow-sm">
                   Book now
                 </button>
               </div>
@@ -288,7 +273,7 @@
               <div class="mt-auto">
                 <div class="flex justify-between text-[10px]  uppercase tracking-[0.15em] text-gray-400 border-t border-gray-50 pt-4">
                   <span>{{ deal.route }}</span>
-                  <span class="text-brand-blue">{{ deal.isRoundTrip ? 'Round Trip' : 'One Way' }}</span>
+                  <span class="text-gray-900">{{ deal.isRoundTrip ? 'Round Trip' : 'One Way' }}</span>
                 </div>
                 <p class="text-xs font-bold text-gray-300 mt-2">{{ deal.dates }}</p>
               </div>
@@ -332,7 +317,7 @@
             <img :src="dest.image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
             <div class="absolute top-4 right-4 transition-premium group-hover:scale-110">
-               <div class="px-3 py-1 bg-brand-green text-white text-[8px] uppercase tracking-widest rounded-full shadow-lg">{{ dest.isLive ? 'Trending' : 'Popular' }}</div>
+               <div class="px-3 py-1 bg-gray-900 text-white text-[8px] uppercase tracking-widest rounded-full shadow-lg">{{ dest.isLive ? 'Trending' : 'Popular' }}</div>
             </div>
             <div class="absolute bottom-4 left-4 right-4">
               <h4 class="text-white text-sm mb-1 uppercase tracking-tight line-clamp-1">{{ dest.name }}</h4>
@@ -355,12 +340,12 @@
 
         <div v-if="currentTab === 'Flights' || currentTab === 'Hotels' || showAllSections" class="mt-12 p-8 bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white/20 shadow-2xl flex flex-col items-center justify-between gap-12 relative overflow-hidden group">
            <!-- Animated background elements -->
-           <div class="absolute -right-20 -top-20 w-80 h-80 bg-brand-green/10 rounded-full blur-3xl group-hover:bg-brand-green/20 transition-all duration-1000"></div>
-           <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-brand-blue/10 rounded-full blur-3xl group-hover:bg-brand-blue/20 transition-all duration-1000"></div>
+           <div class="absolute -right-20 -top-20 w-80 h-80 bg-gray-200 rounded-full blur-3xl group-hover:bg-gray-300 transition-all duration-1000"></div>
+           <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-gray-100 rounded-full blur-3xl group-hover:bg-gray-200 transition-all duration-1000"></div>
            
            <div class="flex flex-col md:flex-row items-center gap-10 relative z-10 w-full">
               <div class="flex-shrink-0 relative">
-                 <div class="h-24 w-24 bg-gradient-to-br from-brand-blue to-brand-green rounded-[2rem] flex items-center justify-center shadow-2xl transform group-hover:rotate-6 transition-transform duration-500">
+                 <div class="h-24 w-24 bg-gradient-to-br from-gray-900 to-gray-700 rounded-[2rem] flex items-center justify-center shadow-2xl transform group-hover:rotate-6 transition-transform duration-500">
                     <SparklesIcon class="h-12 w-12 text-white animate-pulse" />
                  </div>
                  <div class="absolute -bottom-2 -right-2 bg-white h-10 w-10 rounded-full flex items-center justify-center shadow-lg border border-gray-50 scale-0 group-hover:scale-110 transition-transform delay-200">
@@ -369,42 +354,42 @@
               </div>
               <div class="text-center md:text-left">
                  <h4 class="text-3xl  text-gray-900 mb-2 tracking-tight">Traveler Intelligence</h4>
-                 <p class="text-sm font-bold text-brand-gray/60 leading-relaxed max-w-xl">
-                    Our AI has crunched the numbers for <span class="text-brand-green  underline decoration-brand-green/30 decoration-4 underline-offset-4">{{ userLocation?.city || 'your location' }}</span>. Explore the data to find your perfect getaway.
+                 <p class="text-sm font-bold text-gray-400 leading-relaxed max-w-xl">
+                    Our AI has crunched the numbers for <span class="text-gray-900 underline decoration-gray-900/20 decoration-4 underline-offset-4">{{ userLocation?.city || 'your location' }}</span>. Explore the data to find your perfect getaway.
                  </p>
               </div>
            </div>
 
            <!-- Statistics Dashboard -->
            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full relative z-10">
-              <div v-if="busiestPeriods.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-brand-green/30 hover:shadow-xl transition-all group/stat">
+              <div v-if="busiestPeriods.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-gray-900/30 hover:shadow-xl transition-all group/stat">
                  <div class="flex items-center justify-between mb-4">
                     <p class="text-sm  text-gray-900 uppercase tracking-[0.25em]">Peak Season</p>
                     <SunIcon class="h-5 w-5 text-[#FFC107]" />
                  </div>
                  <p class="text-2xl  text-gray-900 mb-1">{{ formatPeriod(busiestPeriods[0].period) }}</p>
                  <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mt-4">
-                    <div class="bg-brand-green h-full rounded-full transition-all duration-1000 w-[90%]"></div>
+                    <div class="bg-gray-900 h-full rounded-full transition-all duration-1000 w-[90%]"></div>
                  </div>
                  <p class="text-[9px] font-bold text-gray-400 mt-2">Highest traveler score recorded</p>
               </div>
 
-              <div v-if="mostBooked.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-brand-blue/30 hover:shadow-xl transition-all group/stat">
+              <div v-if="mostBooked.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-gray-900/30 hover:shadow-xl transition-all group/stat">
                  <div class="flex items-center justify-between mb-4">
                     <p class="text-sm  text-gray-900 uppercase tracking-[0.25em]">Trending Now</p>
                     <div class="h-2 w-2 rounded-full bg-red-500 animate-ping"></div>
                  </div>
                  <p class="text-2xl  text-gray-900 mb-1">{{ mostBooked[0].destination }}</p>
-                 <p class="text-[9px]  text-[#F48221] uppercase tracking-widest">+45% Booking Velocity</p>
+                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">+45% Booking Velocity</p>
                  <div class="flex gap-1 mt-4">
-                    <div v-for="i in 5" :key="i" class="h-4 w-2 rounded-sm bg-brand-blue" :style="{ opacity: 0.2 + (i * 0.15) }"></div>
+                    <div v-for="i in 5" :key="i" class="h-4 w-2 rounded-sm bg-gray-900" :style="{ opacity: 0.2 + (i * 0.15) }"></div>
                  </div>
               </div>
 
-              <div v-if="mostTraveled.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-brand-green/30 hover:shadow-xl transition-all group/stat">
+              <div v-if="mostTraveled.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-gray-900/30 hover:shadow-xl transition-all group/stat">
                  <div class="flex items-center justify-between mb-4">
                     <p class="text-sm  text-gray-900 uppercase tracking-[0.25em]">Verified Favs</p>
-                    <ShieldCheckIcon class="h-5 w-5 text-brand-green" />
+                    <ShieldCheckIcon class="h-5 w-5 text-gray-900" />
                  </div>
                  <p class="text-2xl  text-gray-900 mb-1">{{ mostTraveled[0].destination }}</p>
                  <div class="flex items-center gap-2 mt-4">
@@ -419,13 +404,13 @@
            </div>
 
            <!-- Interactive Location Scores -->
-           <div v-if="locationScore" class="w-full bg-brand-blue/90 backdrop-blur-md p-8 rounded-[2.5rem] relative overflow-hidden group/score">
-              <div class="absolute inset-0 bg-gradient-to-r from-brand-blue/0 via-white/5 to-brand-blue/0 -translate-x-full group-hover/score:translate-x-full transition-transform duration-1000"></div>
+           <div v-if="locationScore" class="w-full bg-gray-900 p-8 rounded-[2.5rem] relative overflow-hidden group/score">
+              <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-full group-hover/score:translate-x-full transition-transform duration-1000"></div>
               <div class="flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
                  <div class="text-center lg:text-left">
-                    <p class="text-sm  text-brand-green uppercase tracking-[0.3em] mb-2">Live Destination Analysis</p>
+                    <p class="text-sm text-gray-400 uppercase tracking-[0.3em] mb-2">Live Destination Analysis</p>
                     <h5 class="text-2xl  text-white mb-2">Why visit {{ topDestinationName }}?</h5>
-                    <p class="text-xs font-bold text-white/60">Real-time lifestyle scores for your next destination.</p>
+                    <p class="text-xs font-bold text-white/40">Real-time lifestyle scores for your next destination.</p>
                  </div>
                  
                  <div class="flex flex-wrap justify-center gap-8">
@@ -433,13 +418,13 @@
                        <div class="relative h-16 w-16">
                           <svg class="h-full w-full transform -rotate-90">
                              <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" class="text-white/10" />
-                             <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" :stroke-dasharray="175.9" :stroke-dashoffset="175.9 * (1 - score.overallMaxScore / 100)" class="text-brand-green transition-all duration-1000 delay-500" />
+                             <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="4" fill="transparent" :stroke-dasharray="175.9" :stroke-dashoffset="175.9 * (1 - score.overallMaxScore / 100)" class="text-white transition-all duration-1000 delay-500" />
                           </svg>
                           <div class="absolute inset-0 flex items-center justify-center">
-                             <span class="text-sm  text-white">{{ score.overallMaxScore }}</span>
+                             <span class="text-sm font-bold text-white">{{ score.overallMaxScore }}</span>
                           </div>
                        </div>
-                       <span class="text-[9px]  text-white/50 uppercase tracking-widest">{{ score.categoryName }}</span>
+                       <span class="text-[9px] font-bold text-white/50 uppercase tracking-widest">{{ score.categoryName }}</span>
                     </div>
                  </div>
               </div>
@@ -461,8 +446,8 @@
     <MarketingModal :show="showMarketingModal" @close="dismissMarketingModal" />
     <!-- Background Accents moved inside relative container to prevent overflow -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      <div class="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-brand-blue/5 rounded-full blur-3xl opacity-50"></div>
-      <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] bg-brand-green/5 rounded-full blur-3xl opacity-30"></div>
+      <div class="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-gray-900/5 rounded-full blur-3xl opacity-50"></div>
+      <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-[400px] h-[400px] bg-gray-400/5 rounded-full blur-3xl opacity-30"></div>
     </div>
 
     <!-- Matchday/Promo Banner -->
@@ -496,7 +481,7 @@
              <div class="h-12 w-12 bg-brand-blue/5 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-500">
                <TicketIcon class="h-6 w-6" />
              </div>
-             <h4 class="text-xl font-header text-gray-900 mb-3 tracking-tight">Stay in the loop</h4>
+             <h4 class="text-xl  text-gray-900 mb-3 tracking-tight">Stay in the loop</h4>
              <p class="text-xs font-bold text-gray-400 mb-6 leading-relaxed uppercase tracking-widest">Get exclusive deals & travel hacks</p>
              <div class="relative">
                <input 
@@ -515,11 +500,11 @@
              <div class="h-12 w-12 bg-brand-green/5 rounded-2xl flex items-center justify-center text-brand-green mb-6 group-hover:bg-brand-green group-hover:text-white transition-colors duration-500">
                <GlobeAltIcon class="h-6 w-6" />
              </div>
-             <h4 class="text-xl font-header text-gray-900 mb-3 tracking-tight">Follow our journey</h4>
+             <h4 class="text-xl  text-gray-900 mb-3 tracking-tight">Follow our journey</h4>
              <p class="text-xs font-bold text-gray-400 mb-8 leading-relaxed uppercase tracking-widest">Connect with Flybeth globally</p>
              <div class="flex gap-4">
                 <a v-for="i in 4" :key="i" href="#" class="h-10 w-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 hover:bg-brand-blue hover:text-white hover:shadow-lg transition-all transform hover:-translate-y-1">
-                  <component :is="i === 1 ? 'div' : (i === 2 ? 'div' : (i === 3 ? 'div' : 'div'))" class="text-xs font-bold font-header">{{ i === 1 ? 'fb' : (i === 2 ? 'ig' : (i === 3 ? 'tw' : 'li')) }}</component>
+                  <component :is="i === 1 ? 'div' : (i === 2 ? 'div' : (i === 3 ? 'div' : 'div'))" class="text-xs font-bold ">{{ i === 1 ? 'fb' : (i === 2 ? 'ig' : (i === 3 ? 'tw' : 'li')) }}</component>
                 </a>
              </div>
           </div>
@@ -530,7 +515,7 @@
                 <SparklesIcon class="w-40 h-40" />
              </div>
              <div class="relative z-10 flex flex-col h-full">
-               <h4 class="text-2xl font-header mb-2 tracking-tight">Get Inspired</h4>
+               <h4 class="text-2xl  mb-2 tracking-tight">Get Inspired</h4>
                <p class="text-[11px] font-bold text-white/70 mb-8 leading-relaxed uppercase tracking-widest">Discover your next destination</p>
                <button class="mt-auto bg-brand-green text-white font-bold text-[10px] px-6 py-3.5 rounded-xl shadow-lg hover:bg-[#289003] transition-all tracking-widest uppercase self-start">
                  Dreamguides
@@ -541,7 +526,7 @@
 
         <!-- Section Heading: Flybeth Directory -->
         <div class="flex flex-col items-center text-center mb-16">
-          <h2 class="text-3xl font-header text-gray-900 mb-4 tracking-tight">Travel Directory</h2>
+          <h2 class="text-3xl  text-gray-900 mb-4 tracking-tight">Travel Directory</h2>
           <div class="h-1 w-12 bg-brand-green rounded-full"></div>
         </div>
 
@@ -628,56 +613,22 @@
             </div>
             <span class="text-[10px] font-black text-brand-blue uppercase tracking-[0.4em]">Global Connectivity Hub</span>
           </div>
-          <h2 class="text-3xl md:text-5xl lg:text-6xl font-header text-gray-950 mb-7 tracking-tighter leading-[1.05]">Partnerships that <span class="text-brand-blue underline decoration-brand-blue/20 decoration-8 underline-offset-4">Connect</span> the World.</h2>
+          <h2 class="text-3xl md:text-5xl lg:text-6xl  text-gray-950 mb-7 tracking-tighter leading-[1.05]">Partnerships that <span class="text-brand-blue underline decoration-brand-blue/20 decoration-8 underline-offset-4">Connect</span> the World.</h2>
           <p class="text-base sm:text-lg font-bold text-gray-500 leading-relaxed max-w-2xl">Access over 500+ airlines, 1.2M premium stays, and thousands of curated experiences across the globe, all at your fingertips.</p>
-        </div>
-        
-        <!-- Interactive Continuous Marquees -->
+        </        <!-- Interactive Continuous Marquees -->
         <div class="space-y-12 lg:space-y-20 [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
           <!-- Row 1: Airline Hub (Interactive) -->
           <div class="relative flex overflow-x-hidden group/m">
             <div class="animate-marquee whitespace-nowrap flex items-center py-4">
-              <div v-for="(p, i) in [...partnerAirlines, ...partnerAirlines]" :key="`air-${i}`" 
+              <div v-for="(p, i) in [...partnerAirlines, ...partnerAirlines, ...partnerAirlines, ...partnerAirlines]" :key="`air-${i}`" 
                    @click="navigateToCategory('airline', p)"
                    class="mx-4 sm:mx-8 px-10 py-8 bg-white rounded-3xl shadow-lg border border-gray-100 hover:shadow-2xl hover:scale-105 transition-all duration-500 cursor-pointer group/logo shrink-0">
-                <img :src="p.logo" :alt="p.name" class="h-12 sm:h-14 w-28 sm:w-36 object-contain grayscale group-hover/logo:grayscale-0 transition-all opacity-80 group-hover:opacity-100" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 2: Resorts & Exotic Activities (Interactive Redirects) -->
-          <div class="relative flex overflow-x-hidden group/m">
-            <div class="animate-marquee-reverse whitespace-nowrap flex items-center">
-              <div v-for="(p, i) in [...resortPlaces, ...activityPlaces, ...resortPlaces, ...activityPlaces]" :key="`place-${i}`" 
-                   @click="navigateToCategory('experience', p)"
-                   class="mx-4 shrink-0 relative group/item cursor-pointer">
-                 <div class="w-72 sm:w-[500px] h-48 sm:h-64 rounded-[3rem] overflow-hidden border border-gray-200 shadow-2xl relative">
-                   <img :src="p.image" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-[2000ms] ease-out" />
-                   <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/20 to-transparent flex flex-col justify-end p-8 sm:p-10">
-                      <span v-if="p.type" class="text-[9px] font-black text-brand-green uppercase tracking-widest mb-2 px-3 py-1 bg-brand-green/20 backdrop-blur-md w-fit rounded-full">{{ p.type }}</span>
-                      <div class="flex items-center justify-between">
-                         <h4 class="text-xl sm:text-2xl font-bold text-white tracking-tighter">{{ p.name }}</h4>
-                         <div class="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all transform translate-y-4 group-hover/item:translate-y-0">
-                            <ArrowRightIcon class="h-5 v-5 text-white" />
-                         </div>
-                      </div>
-                   </div>
-                 </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Row 3: Hotel Brands & Car Hire (Interactive) -->
-          <div class="relative flex overflow-x-hidden group/m">
-            <div class="animate-marquee whitespace-nowrap flex items-center py-4">
-              <div v-for="(p, i) in [...partnerHotels, ...partnerCars, ...partnerHotels, ...partnerCars]" :key="`brand-${i}`" 
-                   @click="navigateToCategory(partnerHotels.some(h => h.name === p.name) ? 'hotel' : 'car', p)"
-                   class="mx-4 sm:mx-8 px-8 py-6 bg-white rounded-3xl shadow-lg border border-gray-100 hover:shadow-2xl hover:scale-105 transition-all duration-500 cursor-pointer group/logo shrink-0">
-                <img :src="p.logo" :alt="p.name" class="h-10 sm:h-12 w-24 sm:w-32 object-contain grayscale group-hover/logo:grayscale-0 transition-all opacity-60 group-hover:opacity-100" />
+                <img :src="p.logo" :alt="p.name" class="h-12 sm:h-14 w-28 sm:w-36 object-contain transition-all opacity-90 group-hover:opacity-100" />
               </div>
             </div>
           </div>
         </div>
+       </div>
       </div>
     </section>\n
     <section class="py-24 bg-white relative z-0 overflow-hidden">
@@ -686,7 +637,7 @@
         <!-- SEO Content Article: Styled & Collapsible -->
         <article class="relative bg-white rounded-[3rem] p-10 lg:p-16 border border-gray-100 shadow-sm overflow-hidden group/article transition-all duration-700" :class="showLongSeo ? 'max-h-[2000px]' : 'max-h-[480px]'">
           <div class="relative z-10">
-            <h2 class="text-2xl font-header text-gray-900 mb-8 tracking-tight border-b-2 border-brand-green w-fit pb-2">The Flybeth Experience</h2>
+            <h2 class="text-2xl  text-gray-900 mb-8 tracking-tight border-b-2 border-brand-green w-fit pb-2">The Flybeth Experience</h2>
             
             <div class="prose prose-sm max-w-none text-gray-500 font-bold leading-relaxed space-y-6">
               <p class="text-base text-gray-900">Book the Cheapest Flights, Hotels and Vacation Packages with Flybeth</p>
@@ -694,11 +645,11 @@
               
               <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10">
                 <div class="p-8 bg-gray-50 rounded-[2.5rem] hover:bg-white hover:shadow-xl transition-all duration-500">
-                  <h3 class="text-sm font-header text-gray-900 mb-4 tracking-tight">Why Choose Flybeth for Your Flight Booking?</h3>
+                  <h3 class="text-sm  text-gray-900 mb-4 tracking-tight">Why Choose Flybeth for Your Flight Booking?</h3>
                   <p class="text-[12px] leading-relaxed">Founded with a reputation for providing the cheap and affordable flight booking service for every Nigerian. Besides our years of experience in providing the best flight booking service, we also provide you with several other services that you would enjoy.</p>
                 </div>
                 <div class="p-8 bg-gray-50 rounded-[2.5rem] hover:bg-white hover:shadow-xl transition-all duration-500">
-                  <h3 class="text-sm font-header text-gray-900 mb-4 tracking-tight">Simplified Tech, Human Touch</h3>
+                  <h3 class="text-sm  text-gray-900 mb-4 tracking-tight">Simplified Tech, Human Touch</h3>
                   <p class="text-[12px] leading-relaxed">We combine state-of-the-art travel technology with the local expertise of our Nigerian team. Whether you're booking an international getaway or a local shuttle, we ensure the process is seamless and secure.</p>
                 </div>
               </div>
@@ -1000,51 +951,13 @@ import turkish from '@/assets/img/turkish-airlines.png'
 const partnerAirlines = [
   { name: 'Air Peace', logo: airPeace },
   { name: 'Arik Air', logo: arikAir },
-  { name: 'Emirates', logo: emirates },
-  { name: 'Qatar Airways', logo: qatar },
-  { name: 'Turkish Airlines', logo: turkish },
-  { name: 'British Airways', logo: 'https://logo.clearbit.com/britishairways.com' },
-  { name: 'Lufthansa', logo: 'https://logo.clearbit.com/lufthansa.com' },
-  { name: 'Delta', logo: 'https://logo.clearbit.com/delta.com' },
-  { name: 'United', logo: 'https://logo.clearbit.com/united.com' }
+  { name: 'Emirates', logo: emirates }
 ];
 
-const partnerHotels = [
-  { name: 'Marriott', logo: 'https://logo.clearbit.com/marriott.com' },
-  { name: 'Hilton', logo: 'https://logo.clearbit.com/hilton.com' },
-  { name: 'Hyatt', logo: 'https://logo.clearbit.com/hyatt.com' },
-  { name: 'IHG', logo: 'https://logo.clearbit.com/ihg.com' },
-  { name: 'Radisson', logo: 'https://logo.clearbit.com/radissonhotels.com' },
-  { name: 'Accor', logo: 'https://logo.clearbit.com/all.accor.com' },
-  { name: 'Four Seasons', logo: 'https://logo.clearbit.com/fourseasons.com' }
-];
 
-const partnerCars = [
-  { name: 'Hertz', logo: 'https://logo.clearbit.com/hertz.com' },
-  { name: 'Avis', logo: 'https://logo.clearbit.com/avis.com' },
-  { name: 'Enterprise', logo: 'https://logo.clearbit.com/enterprise.com' },
-  { name: 'Sixt', logo: 'https://logo.clearbit.com/sixt.com' },
-  { name: 'Budget', logo: 'https://logo.clearbit.com/budget.com' },
-  { name: 'Alamo', logo: 'https://logo.clearbit.com/alamo.com' }
-];
 
-const resortPlaces = [
-  { name: 'Maldives', type: 'Tropical', icon: '', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Santorini', type: 'Island', icon: '', image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Bali', type: 'Exotic', icon: '', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Bora Bora', type: 'Luxury', icon: '', image: 'https://images.unsplash.com/photo-1505881502353-a1986add3762?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Seychelles', type: 'Remote', icon: '', image: 'https://images.unsplash.com/photo-1473679408190-0693dd22fe6a?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Swiss Alps', type: 'Mountain', icon: '', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=600' }
-];
-
-const activityPlaces = [
-  { name: 'Snorkeling', type: '', icon: '🤿', image: 'https://images.unsplash.com/photo-1544551763-47a0159fd93b?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Safari', type: '', icon: '🦁', image: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Paragliding', type: '', icon: '🪂', image: 'https://images.unsplash.com/photo-1524660988544-2749c7f5aa01?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Skydiving', type: '', icon: '✈️', image: 'https://images.unsplash.com/photo-1521655010112-42a0e5869429?auto=format&fit=crop&q=80&w=600' },
-  { name: 'Wine Tasting', type: '', icon: '🍷', image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&q=80&w=600' },
-  { name: 'City Tours', type: '', icon: '🏙️', image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&q=80&w=600' }
-];
+const resortPlaces = []
+const activityPlaces = []
 
 const navigateToCategory = (category: string, item?: any) => {
   switch (category) {
@@ -1316,8 +1229,8 @@ onUnmounted(() => {
 </script>
 
 <style>
-.font-header {
-  font-family: 'Spectral', serif;
+. {
+  
 }
 .font-body {
   font-family: 'Roboto', sans-serif;

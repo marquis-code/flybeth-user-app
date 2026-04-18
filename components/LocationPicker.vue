@@ -55,29 +55,27 @@
           <!-- Card — z-[10011], sibling of backdrop so blur cannot reach it -->
           <div
             :style="cardStyle"
-            class="fixed z-[10011] bg-white rounded-2xl"
-            style="
-              width: 480px;
-              max-width: calc(100vw - 24px);
-              box-shadow: 0 4px 6px -2px rgba(0,0,0,0.08), 0 16px 48px -8px rgba(0,0,0,0.22);
-            "
+            class="fixed z-[10011] bg-white rounded-2xl border border-gray-100 shadow-2xl transition-all"
+            :class="[
+              isMobile ? 'inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[480px]'
+            ]"
             @click.stop
           >
 
             <!-- Search input -->
             <div class="p-4 pb-3">
-              <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 border-2 border-brand-blue">
+              <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 border-2 border-gray-900">
                 <MagnifyingGlassIcon class="h-[18px] w-[18px] text-gray-900 shrink-0" />
                 <input
                   ref="searchInputRef"
                   v-model="searchQuery"
                   :placeholder="placeholder || 'Search city or airport...'"
-                  class="flex-1 bg-transparent outline-none text-sm font-semibold text-gray-800 placeholder:text-gray-400 placeholder:font-normal"
+                  class="flex-1 bg-transparent outline-none text-sm font-bold text-gray-900 placeholder:text-gray-400 placeholder:font-normal"
                   @input="onSearchInput"
                   @keydown.escape="closeDropdown"
                 />
                 <div v-if="isLoading" class="shrink-0">
-                  <div class="animate-spin h-4 w-4 border-2 border-brand-blue/20 border-t-brand-blue rounded-full" />
+                  <div class="animate-spin h-4 w-4 border-2 border-gray-200 border-t-gray-900 rounded-full" />
                 </div>
                 <button
                   v-else-if="searchQuery"
@@ -92,19 +90,19 @@
             <!-- Detect location -->
             <div
               @click="detectLocation"
-              class="flex items-center gap-3 mx-4 mb-3 px-4 py-3 rounded-xl hover:bg-green-50 cursor-pointer transition-colors group/detect border border-gray-100 hover:border-green-200"
+              class="flex items-center gap-3 mx-4 mb-3 px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors group/detect border border-gray-100 hover:border-gray-300"
             >
-              <div class="h-8 w-8 rounded-lg bg-green-50 group-hover/detect:bg-green-500 flex items-center justify-center shrink-0 transition-colors">
-                <svg class="h-4 w-4 text-green-500 group-hover/detect:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <div class="h-8 w-8 rounded-lg bg-gray-100 group-hover/detect:bg-gray-900 flex items-center justify-center shrink-0 transition-colors">
+                <svg class="h-4 w-4 text-gray-900 group-hover/detect:text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="3"/>
                   <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
                 </svg>
               </div>
               <div class="min-w-0">
-                <p class="text-sm font-bold text-gray-800 group-hover/detect:text-green-700 transition-colors">
+                <p class="text-sm font-bold text-gray-900 transition-colors">
                   Detect my location
                 </p>
-                <p class="text-sm text-gray-400 font-medium">Find nearby airports automatically</p>
+                <p class="text-xs text-gray-400 font-medium">Find nearby airports automatically</p>
               </div>
             </div>
 
@@ -122,21 +120,21 @@
                 @click="selectAmadeusResult(res)"
                 class="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 cursor-pointer transition-colors group/item border-b border-gray-50 last:border-0"
               >
-                <div class="h-9 w-9 rounded-xl bg-gray-50 group-hover/item:bg-brand-blue/10 flex items-center justify-center shrink-0 transition-colors">
+                <div class="h-9 w-9 rounded-xl bg-gray-50 group-hover/item:bg-gray-100 flex items-center justify-center shrink-0 transition-colors">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                     class="text-gray-400 group-hover/item:text-gray-900 transition-colors">
                     <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="currentColor"/>
                   </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-bold text-gray-800 group-hover/item:text-gray-900 transition-colors truncate">
+                  <p class="text-sm font-bold text-gray-900 transition-colors truncate">
                     {{ res.address?.cityName || res.name }}, {{ res.address?.countryName || res.address?.countryCode }}
                   </p>
                   <p class="text-xs text-gray-400 font-medium truncate mt-0.5">
                     {{ res.name }}{{ res.subType === 'AIRPORT' ? ' Airport' : '' }}
                   </p>
                 </div>
-                <span class="text-xs  text-gray-300 group-hover/item:text-gray-900 transition-colors shrink-0 ml-2">
+                <span class="text-xs font-bold text-gray-300 group-hover/item:text-gray-900 transition-colors shrink-0 ml-2">
                   {{ res.iataCode }}
                 </span>
               </div>
@@ -144,8 +142,8 @@
 
             <!-- Loading -->
             <div v-else-if="isLoading" class="py-10 text-center rounded-b-2xl">
-              <div class="animate-spin h-6 w-6 border-2 border-brand-blue/20 border-t-brand-blue rounded-full mx-auto mb-3" />
-              <p class="text-sm text-gray-400 font-medium">Searching airports &amp; cities...</p>
+              <div class="animate-spin h-6 w-6 border-2 border-gray-200 border-t-gray-900 rounded-full mx-auto mb-3" />
+              <p class="text-sm text-gray-400 font-medium font-bold">Searching airports &amp; cities...</p>
             </div>
 
             <!-- No results -->
@@ -216,6 +214,13 @@ const pickerRef       = ref<HTMLElement | null>(null)
 const searchInputRef  = ref<HTMLInputElement | null>(null)
 const showDropdown    = ref(false)
 const cardStyle       = ref<Record<string, string>>({})
+const isMobile        = ref(false)
+
+const checkMobile = () => {
+  if (typeof window !== 'undefined') {
+    isMobile.value = window.innerWidth < 768
+  }
+}
 
 const searchQuery          = ref('')
 const selectedLocationName = ref('')
@@ -256,6 +261,7 @@ const clearSearch = () => {
 
 // ── Card positioning ──────────────────────────────────────────────────────────
 const updateCardPosition = () => {
+  if (isMobile.value) return
   if (!pickerRef.value) return
   const rect      = pickerRef.value.getBoundingClientRect()
   const cardWidth = 480
@@ -270,6 +276,7 @@ const updateCardPosition = () => {
 
 // ── Open / Close ──────────────────────────────────────────────────────────────
 const openDropdown = () => {
+  checkMobile()
   updateCardPosition()
   showDropdown.value = true
   emit('focus')
@@ -354,13 +361,14 @@ watch(
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
 onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
   window.addEventListener('scroll', updateCardPosition, true)
-  window.addEventListener('resize', updateCardPosition)
 })
 
 onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
   window.removeEventListener('scroll', updateCardPosition, true)
-  window.removeEventListener('resize', updateCardPosition)
   if (debounceTimer) clearTimeout(debounceTimer)
 })
 </script>

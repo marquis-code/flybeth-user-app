@@ -40,12 +40,12 @@ defineEmits(['go-back'])
 
 <style scoped>
 .checkout-stepper-bar {
-  background: linear-gradient(135deg, #1a2332 0%, #0f1722 100%);
-  padding: 1rem 0;
+  background: #ffffff;
+  padding: 1.25rem 0;
   position: sticky;
   top: 0;
   z-index: 50;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .stepper-inner {
@@ -60,32 +60,30 @@ defineEmits(['go-back'])
 .go-back-btn {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
+  gap: 0.5rem;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  color: #64748b;
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   cursor: pointer;
   transition: all 0.3s;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .go-back-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
 .stepper-title {
-  color: white;
+  color: #0f172a;
   font-size: 1.15rem;
   font-weight: 900;
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .steps-container {
@@ -93,14 +91,12 @@ defineEmits(['go-back'])
   align-items: center;
   gap: 0;
   margin-left: auto;
-  flex-shrink: 0;
 }
 
 .step-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.3rem 0.5rem;
 }
 
 .step-circle {
@@ -112,23 +108,21 @@ defineEmits(['go-back'])
   justify-content: center;
   font-size: 0.65rem;
   font-weight: 900;
-  flex-shrink: 0;
   transition: all 0.3s;
 }
 
 .step-item.upcoming .step-circle {
-  background: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.5);
+  background: #f1f5f9;
+  color: #94a3b8;
 }
 
 .step-item.active .step-circle {
   background: #32B404;
   color: white;
-  box-shadow: 0 0 12px rgba(50, 180, 4, 0.5);
 }
 
 .step-item.completed .step-circle {
-  background: #32B404;
+  background: #1e293b;
   color: white;
 }
 
@@ -141,22 +135,21 @@ defineEmits(['go-back'])
 }
 
 .step-item.upcoming .step-label {
-  color: rgba(255, 255, 255, 0.4);
+  color: #94a3b8;
 }
 
 .step-item.active .step-label {
-  color: white;
+  color: #0f172a;
 }
 
 .step-item.completed .step-label {
-  color: #32B404;
+  color: #64748b;
 }
 
 .step-connector {
   width: 30px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.15);
-  flex-shrink: 0;
+  height: 1px;
+  background: #f1f5f9;
 }
 
 .step-connector.completed {

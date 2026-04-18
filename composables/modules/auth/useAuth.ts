@@ -7,7 +7,7 @@ const isAuthModalVisible = ref(false);
 
 export const useAuth = () => {
     const loading = ref(false);
-    const { token, user, setToken, setUser, setRefreshToken, logOut } = useUser();
+    const { user, setUser, logOut, isLoggedIn } = useUser();
     const { showToast } = useCustomToast();
 
     const openAuthModal = () => {
@@ -22,17 +22,18 @@ export const useAuth = () => {
         loading.value = true;
         try {
             const res = await authApiFactory.login(payload);
+            const authData = res.data?.data || res.data;
+            
+            if (authData.requiresOtp) {
+                showToast({
+                    title: "Verification Required",
+                    message: "Please enter the OTP sent to your email.",
+                    toastType: "info",
+                });
+                return { requiresOtp: true, email: authData.email || payload.email };
+            }
+
             if (res.status === 200 || res.status === 201) {
-                // The data is nested inside a 'data' property
-                const authData = res.data?.data || res.data;
-                const tokenResponse = authData.tokens || authData;
-                
-                if (tokenResponse.accessToken) {
-                    setToken(tokenResponse.accessToken);
-                }
-                if (tokenResponse.refreshToken) {
-                    setRefreshToken(tokenResponse.refreshToken);
-                }
                 if (authData.user) {
                     setUser(authData.user);
                 }
@@ -45,6 +46,11 @@ export const useAuth = () => {
             }
         } catch (error: any) {
             console.error(error);
+            showToast({
+                title: "Error",
+                message: error?.response?.data?.message || "Login failed",
+                toastType: "error",
+            });
         } finally {
             loading.value = false;
         }
@@ -54,16 +60,18 @@ export const useAuth = () => {
         loading.value = true;
         try {
             const res = await authApiFactory.register(payload);
+            const authData = res.data?.data || res.data;
+
+            if (authData.requiresOtp) {
+                showToast({
+                    title: "Account Created",
+                    message: "Registration successful. Please verify your email with the OTP sent.",
+                    toastType: "success",
+                });
+                return { requiresOtp: true, email: authData.email || payload.email };
+            }
+
             if (res.status === 200 || res.status === 201) {
-                const authData = res.data?.data || res.data;
-                const tokenResponse = authData.tokens || authData;
-                
-                if (tokenResponse.accessToken) {
-                    setToken(tokenResponse.accessToken);
-                }
-                if (tokenResponse.refreshToken) {
-                    setRefreshToken(tokenResponse.refreshToken);
-                }
                 if (authData.user) {
                     setUser(authData.user);
                 }
@@ -76,6 +84,11 @@ export const useAuth = () => {
             }
         } catch (error: any) {
             console.error(error);
+            showToast({
+                title: "Error",
+                message: error?.response?.data?.message || "Registration failed",
+                toastType: "error",
+            });
         } finally {
             loading.value = false;
         }
@@ -119,11 +132,40 @@ export const useAuth = () => {
         }
     };
 
+    const resendOtp = async (payload: any) => {
+        loading.value = true;
+        try {
+            const res = await authApiFactory.resendOtp(payload);
+            if (res.status === 200 || res.status === 201) {
+                showToast({
+                    title: "Success",
+                    message: "New OTP sent to your email",
+                    toastType: "success",
+                });
+                return res;
+            }
+        } catch (error: any) {
+            console.error(error);
+            showToast({
+                title: "Error",
+                message: error?.response?.data?.message || "Failed to resend OTP",
+                toastType: "error",
+            });
+        } finally {
+            loading.value = false;
+        }
+    };
+
     const verifyOtp = async (payload: any) => {
         loading.value = true;
         try {
             const res = await authApiFactory.verifyOtp(payload);
             if (res.status === 200 || res.status === 201) {
+                const authData = res.data?.data || res.data;
+                if (authData.user) {
+                    setUser(authData.user);
+                }
+
                 showToast({
                     title: "Success",
                     message: "Email verified successfully",
@@ -133,6 +175,11 @@ export const useAuth = () => {
             }
         } catch (error: any) {
             console.error(error);
+            showToast({
+                title: "Error",
+                message: error?.response?.data?.message || "Verification failed",
+                toastType: "error",
+            });
         } finally {
             loading.value = false;
         }
@@ -159,8 +206,6 @@ export const useAuth = () => {
         const frontendCallbackUrl = `${window.location.origin}/auth/callback`;
         const googleAuthUrl = `${authApiFactory.googleLoginUrl()}?redirect_uri=${encodeURIComponent(frontendCallbackUrl)}`;
 
-        // AGGRESSIVE FIX: If the user is on a mobile device or if they prefer, 
-        // we can use a direct redirect instead of a popup.
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
         if (isMobile) {
@@ -175,19 +220,14 @@ export const useAuth = () => {
         );
 
         const handleMessage = (event: MessageEvent) => {
-            // SECURITY: Always verify the origin matches your backend URL
             const expectedOrigin = import.meta.env.VITE_BASE_URL;
             if (event.origin !== expectedOrigin) return;
 
             if (event.data.type === 'AUTH_SUCCESS') {
-                // The data is nested inside a 'data' property in the backend response
-                // Based on the user's provided JSON structure
                 const authData = event.data.data;
-                const { accessToken, refreshToken, user } = authData;
+                const { user } = authData;
 
-                // Store tokens and update state
-                setToken(accessToken);
-                setRefreshToken(refreshToken);
+                // Sync user state
                 setUser(user);
 
                 showToast({
@@ -206,7 +246,6 @@ export const useAuth = () => {
 
         window.addEventListener('message', handleMessage);
 
-        // Fallback: If the popup is closed manually or navigating away, clean up
         const checkPopup = setInterval(() => {
             if (!popup || popup.closed) {
                 clearInterval(checkPopup);
@@ -222,12 +261,13 @@ export const useAuth = () => {
         forgotPassword,
         resetPassword,
         verifyOtp,
+        resendOtp,
         logout: logoutUser,
         loginWithGoogle,
         isAuthModalVisible,
         openAuthModal,
         closeAuthModal,
-        token,
         user,
+        isLoggedIn
     };
 };

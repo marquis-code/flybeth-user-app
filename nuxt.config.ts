@@ -33,7 +33,7 @@ export default defineNuxtConfig({
 
   devServer: {
     port: 3001,
-    host: '0.0.0.0'
+    host: 'localhost'
   },
 
   vite: {
@@ -177,6 +177,15 @@ export default defineNuxtConfig({
   site: {
     url: 'https://flybeth.com',
     name: 'Flybeth',
+  },
+
+  googleFonts: {
+    families: {
+      Onest: [100, 300, 400, 500, 700, 800, 900],
+    },
+    display: 'swap',
+    prefetch: true,
+    preconnect: true,
   },
 
   compatibilityDate: "2025-11-01"

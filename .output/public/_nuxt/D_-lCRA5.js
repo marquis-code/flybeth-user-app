@@ -1,0 +1,1 @@
+import{u as r}from"./CLhdbINJ.js";import{a1 as a,D as o}from"./CypWfRfR.js";const s=a(e=>{const{token:t}=r();if(!t.value)return o({path:"/",query:{redirect:e.fullPath,requireLogin:"1"}})});export{s as default};

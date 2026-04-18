@@ -1,19 +1,19 @@
 <template>
-  <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-6 transition-all duration-500 hover:shadow-xl hover:border-brand-blue/10">
+  <div class="bg-white rounded-2xl overflow-hidden mb-4 border border-gray-100 transition-all duration-500 hover:border-gray-900">
     <!-- Group Header (Airline Info) -->
-    <div class="bg-gray-50/50 px-8 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div class="bg-gray-50/30 px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <div class="h-10 w-10 rounded-xl bg-white p-2 shadow-sm border border-gray-100">
+        <div class="h-9 w-9 rounded-lg bg-white p-1.5 border border-gray-100">
           <img v-if="airlineLogo" :src="airlineLogo" :alt="airlineName" class="h-full w-full object-contain" />
-          <div v-else class="h-full w-full flex items-center justify-center bg-brand-blue/5 rounded-lg">
-             <span class="text-gray-900  text-xs uppercase">{{ airlineName.slice(0, 2) }}</span>
+          <div v-else class="h-full w-full flex items-center justify-center bg-gray-50 rounded-lg">
+             <span class="text-gray-900 font-bold text-xs uppercase">{{ airlineName.slice(0, 2) }}</span>
           </div>
         </div>
-        <h3 class=" text-gray-900 uppercase tracking-widest text-sm">{{ airlineName }}</h3>
+        <h3 class="font-bold text-gray-900 uppercase tracking-widest text-[10px]">{{ airlineName }}</h3>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="text-sm  text-brand-gray/40 uppercase tracking-widest">Starting from</span>
-        <span class="text-lg  text-gray-900">${{ cheapestPrice }}</span>
+      <div class="flex items-center gap-3">
+        <span class="text-[10px] font-bold text-brand-gray/30 uppercase tracking-widest">Starting from</span>
+        <span class="text-xl font-black text-gray-900">${{ cheapestPrice }}</span>
       </div>
     </div>
 
@@ -21,7 +21,7 @@
     <div class="p-2">
       <FlightCard 
         :flight="bestOffer" 
-        class="!shadow-none !border-none !rounded-2xl"
+        class=" !border-none !rounded-2xl"
         @select="$emit('select', $event)"
       />
     </div>
@@ -30,7 +30,7 @@
     <button 
       v-if="otherOffers.length > 0"
       @click="isExpanded = !isExpanded"
-      class="w-full py-4 bg-gray-50/30 hover:bg-gray-50/80 transition-colors border-t border-gray-50 flex items-center justify-center gap-3 group"
+      class="w-full py-3.5 bg-gray-50/40 hover:bg-gray-50/80 transition-colors flex items-center justify-center gap-3 group"
     >
       <div class="flex -space-x-2">
          <div v-for="i in Math.min(3, otherOffers.length)" :key="i" class="w-6 h-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -40,7 +40,7 @@
       <span class="text-sm  text-brand-gray/60 uppercase tracking-widest group-hover:text-gray-900 transition-colors">
         {{ isExpanded ? 'Hide' : `+${otherOffers.length}` }} {{ airlineName }} flights
       </span>
-      <ChevronDownIcon 
+      <ChevronDown 
         class="h-4 w-4 text-brand-gray/40 transition-transform duration-500"
         :class="isExpanded ? 'rotate-180' : ''"
       />
@@ -56,10 +56,10 @@
       leave-to-class="max-h-0 opacity-0"
     >
       <div v-if="isExpanded" class="px-4 pb-4 space-y-2 overflow-hidden">
-        <div v-for="offer in otherOffers" :key="offer.offerId" class="border-t border-gray-50 pt-2">
+       <div v-for="offer in otherOffers" :key="offer.offerId" class="pt-2">
           <FlightCard 
             :flight="offer" 
-            class="!shadow-none !border-none !rounded-xl !p-4"
+            class=" !border-none !rounded-xl !p-4"
             @select="$emit('select', $event)"
           />
         </div>
@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { ChevronDown } from 'lucide-vue-next'
 
 const props = defineProps({
   airlineName: { type: String, required: true },

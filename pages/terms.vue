@@ -7,7 +7,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" /></svg>
           Back to home
         </NuxtLink>
-        <h1 class="text-5xl md:text-6xl font-header text-white mb-6 tracking-tight">Terms & conditions</h1>
+        <h1 class="text-5xl md:text-6xl  text-white mb-6 tracking-tight">Terms & conditions</h1>
         <p class="text-sm font-bold text-white/40 tracking-widest italic">Last updated: April 2026</p>
       </div>
       <!-- Abstract Background -->
@@ -21,7 +21,7 @@
           <section>
             <div class="flex items-center gap-4 mb-6">
               <span class="h-10 w-10 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue font-bold">01</span>
-              <h2 class="text-2xl font-header text-gray-900">Introduction</h2>
+              <h2 class="text-2xl  text-gray-900">Introduction</h2>
             </div>
             <p class="text-gray-600 leading-relaxed pl-14">
               Welcome to Flybeth. By accessing our website and using our services, you agree to comply with and be bound by the following terms and conditions. Please read them carefully before making any bookings. Our mission is to provide you with a seamless and transparent booking experience.
@@ -31,7 +31,7 @@
           <section>
             <div class="flex items-center gap-4 mb-6">
               <span class="h-10 w-10 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue font-bold">02</span>
-              <h2 class="text-2xl font-header text-gray-900">Booking policy</h2>
+              <h2 class="text-2xl  text-gray-900">Booking policy</h2>
             </div>
             <p class="text-gray-600 leading-relaxed pl-14">
               All bookings made through Flybeth are subject to availability and the specific terms of the airline or accommodation provider. Prices are dynamic and may change until the booking is confirmed and paid in full. We act as an intermediary between you and the travel service providers.
@@ -41,7 +41,7 @@
           <section>
             <div class="flex items-center gap-4 mb-6">
               <span class="h-10 w-10 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue font-bold">03</span>
-              <h2 class="text-2xl font-header text-gray-900">Cancellation & refunds</h2>
+              <h2 class="text-2xl  text-gray-900">Cancellation & refunds</h2>
             </div>
             <p class="text-gray-600 leading-relaxed pl-14">
               Cancellation policies vary by provider. Flybeth acts as an intermediary, and as such, any refund requests are subject to the policies of the respective airlines or hotels. Service charges paid to Flybeth are generally non-refundable unless otherwise stated.
@@ -51,7 +51,7 @@
           <section>
             <div class="flex items-center gap-4 mb-6">
               <span class="h-10 w-10 rounded-2xl bg-brand-blue/5 flex items-center justify-center text-brand-blue font-bold">04</span>
-              <h2 class="text-2xl font-header text-gray-900">Liability</h2>
+              <h2 class="text-2xl  text-gray-900">Liability</h2>
             </div>
             <p class="text-gray-600 leading-relaxed pl-14">
               Flybeth is not liable for any delays, cancellations, or disruptions caused by the travel providers. We strongly recommend that all travellers obtain comprehensive travel insurance to cover unexpected changes to their itinerary.
@@ -87,7 +87,7 @@
 </script>
 
 <style scoped>
-.font-header {
-  font-family: 'Spectral', serif;
+. {
+  
 }
 </style>

@@ -24,7 +24,7 @@
               </div>
 
               <!-- Title -->
-              <h3 class="text-2xl  text-gray-900 font-header tracking-tight mb-3 animate-text-up">
+              <h3 class="text-2xl  text-gray-900  tracking-tight mb-3 animate-text-up">
                 {{ title }}
               </h3>
 
@@ -36,6 +36,7 @@
               <!-- Actions -->
               <div class="flex gap-4 animate-buttons-up">
                 <button 
+                  v-if="cancelText !== ''"
                   @click="onCancel" 
                   class="flex-1 py-4 px-6 rounded-2xl border-2 border-gray-100 text-gray-900 text-xs  uppercase tracking-[0.15em] hover:bg-gray-50 hover:border-gray-200 active:scale-95 transition-all duration-300"
                 >

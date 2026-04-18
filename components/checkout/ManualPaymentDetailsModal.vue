@@ -86,7 +86,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useConfirmation } from '@/composables/core/useConfirmation'
+
+const { confirm } = useConfirmation()
 
 const props = defineProps({
   visible: Boolean,
@@ -115,11 +118,17 @@ const formatAmount = (val?: number) => {
   }).format(val || 0)
 }
 
-const handleConfirm = () => {
+const handleConfirm = async () => {
   if (selectedAccount.value) {
     emit('confirm', selectedAccount.value)
   } else {
-    alert('Please select a bank account.')
+    await confirm({
+      title: 'Action Required',
+      message: 'Please select a preferred bank account to continue with your secure transmission.',
+      confirmText: 'Understood',
+      cancelText: '',
+      variant: 'info'
+    })
   }
 }
 

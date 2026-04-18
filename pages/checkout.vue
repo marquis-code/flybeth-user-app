@@ -5,6 +5,20 @@
     subtitle="Please wait while we prepare your booking"
   />
 
+  <CurrencySelectorModal
+    v-model="isCurrencyModalVisible"
+    @select="handleCurrencySelect"
+  />
+
+  <CurrencyConversionLoader :visible="isConversionLoading" />
+
+  <ManualPaymentDetailsModal
+    v-model="isManualDetailsVisible"
+    :accounts="bankAccounts"
+    @confirm="handleManualConfirm"
+  />
+
+
   <div v-if="!showBrandedLoader" class="checkout-page">
     <CheckoutStepper 
       :currentStep="currentStep" 
@@ -15,9 +29,9 @@
       <div class="checkout-grid">
         <div class="checkout-content space-y-6">
           <!-- Step 0: Flight/Stay/Transfer Details -->
-          <div v-if="currentStep === 0" class="bg-white rounded-3xl border border-gray-100 overflow-hidden animate-slide-up">
-            <div class="p-8 border-b border-gray-50 flex items-center justify-between">
-               <h2 class="text-xl font-header text-gray-900">Review your trip</h2>
+          <div v-if="currentStep === 0" class="bg-white rounded-3xl border border-gray-300 overflow-hidden animate-slide-up">
+            <div class="p-8 border-b border-gray-300 flex items-center justify-between">
+               <h2 class="text-xl text-gray-900">Review your trip</h2>
                <div class="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] uppercase tracking-widest rounded-full font-bold">Secure Booking</div>
             </div>
             
@@ -104,6 +118,7 @@
             :showPayButton="currentStep === 3"
             :bundledStay="bundledStay"
             @pay-now="handlePayNow"
+            @hold-now="handleHold"
             @apply-promo="handleApplyPromo"
           />
         </div>
@@ -134,11 +149,20 @@ import { flightsApi } from '@/api_factory/modules/flights'
 import { transfersApi } from '@/api_factory/modules/transfers'
 import { bookingsApi } from '@/api_factory/modules/bookings'
 
+import { useDuffelIdentity } from '@/composables/modules/integrations/useDuffelIdentity'
+import { useTracking } from '@/composables/core/useTracking'
+
 import { useAuth } from '@/composables/modules/auth/useAuth'
 import { useCustomToast } from '@/composables/core/useCustomToast'
 
-const { token, openAuthModal } = useAuth()
+const { token, isLoggedIn, openAuthModal } = useAuth()
 const { showToast } = useCustomToast()
+const { ensureDuffelIdentity } = useDuffelIdentity()
+
+definePageMeta({
+  layout: 'no-footer'
+})
+const { trackAction } = useTracking()
 const route = useRoute()
 const router = useRouter()
 
@@ -365,6 +389,13 @@ const normalizeFlightData = (rawFlight: any) => {
 const goToStep = (step: number) => {
   currentStep.value = step
   window.scrollTo({ top: 0, behavior: 'smooth' })
+  
+  const steps = ['review', 'passengers', 'customization', 'payment']
+  trackAction(`booking_step_${steps[step]}`, { 
+    type: bookingDetails.value.type,
+    item: bookingDetails.value.name,
+    price: displayPrices.value.total
+  })
 }
 
 const handleGoBack = () => {
@@ -376,8 +407,8 @@ const handleGoBack = () => {
   }
 }
 
-const handleTravellerContinue = () => {
-  if (!token.value) {
+const handleTravellerContinue = async () => {
+  if (!isLoggedIn.value) {
     showToast({
       title: "Authentication Required",
       message: "Please sign in or create an account to complete your booking.",
@@ -386,6 +417,28 @@ const handleTravellerContinue = () => {
     openAuthModal();
     return
   }
+
+  // Ensure Duffel Identity if using Duffel
+  if (bookingDetails.value.provider === 'duffel') {
+    showBrandedLoader.value = true
+    loaderStatus.value = 'Setting up your secure travel identity...'
+    try {
+      await ensureDuffelIdentity()
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        showToast({
+          title: "Session Expired",
+          message: "Please sign in again to continue with your booking.",
+          toastType: "info",
+        });
+        openAuthModal();
+        showBrandedLoader.value = false
+        return
+      }
+    }
+    showBrandedLoader.value = false
+  }
+
   goToStep(2)
 }
 
@@ -437,7 +490,7 @@ const handleEmailBlur = async (email: string) => {
   }
 }
 
-const handlePayment = async (paymentInfo: { provider: string; channel: string }) => {
+const handlePayment = async (paymentInfo: { provider: string; channel: string; cardData?: any }) => {
   paymentProcessing.value = true
   showBrandedLoader.value = true
   loaderStatus.value = 'Preparing for payment...'
@@ -560,14 +613,44 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
       return
     }
 
+    let paymentPayload: any = null
+
+    // Specialized Duffel Card Flow
+    if (paymentInfo.provider === 'duffel' && paymentInfo.cardData) {
+      loaderStatus.value = 'Securing your card details...'
+      try {
+        const cardResponse = await flightsApi.createDuffelCard({
+          provider: 'duffel',
+          cardData: {
+            number: paymentInfo.cardData.number.replace(/\s/g, ''),
+            expiry_month: paymentInfo.cardData.expiry_month,
+            expiry_year: paymentInfo.cardData.expiry_year,
+            cvc: paymentInfo.cardData.cvv,
+            name: paymentInfo.cardData.name,
+          }
+        })
+        
+        const card = cardResponse.data?.data || cardResponse.data
+        if (!card?.id) throw new Error('Failed to secure card details')
+
+        paymentPayload = {
+          type: 'card',
+          cardId: card.id
+        }
+      } catch (err: any) {
+        throw new Error(`Payment security failed: ${err.response?.data?.message || err.message}`)
+      }
+    }
+
     const flightOffer = priceDetailed.value
     const bookPayload = {
       offerId: bookingDetails.value.id,
       provider: bookingDetails.value.provider,
       offer: flightOffer,
-      ipAddress: 'detect-on-backend', // Simplification or use a service
+      payment: paymentPayload,
+      ipAddress: 'detect-on-backend',
       userAgent: navigator.userAgent,
-      deviceFingerprint: btoa(navigator.userAgent + screen.width + screen.height), // Basic fingerprint
+      deviceFingerprint: btoa(navigator.userAgent + screen.width + screen.height),
       passengers: [{
         title: travellerData.value.title,
         firstName: travellerData.value.firstName,
@@ -584,8 +667,6 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
       }]
     }
 
-    loaderStatus.value = 'Booking your flight with the airline...'
-    
     // Validate DOB - must be in the past
     const dob = travellerData.value.dateOfBirth
     if (!dob || new Date(dob) >= new Date()) {
@@ -598,14 +679,28 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
       });
       return
     }
-    
+
+    loaderStatus.value = 'Booking your flight with the airline...'
     const bookResponse = await flightsApi.book(bookPayload)
     const bookData = bookResponse.data?.data || bookResponse.data
     
     if (bookData?.bookingId || bookData?.orderId) {
-      loaderStatus.value = 'Initializing secure payment...'
-      
       const bookingId = bookData.bookingId || bookData.orderId
+      
+      // If payment was already handled by Duffel card, we don't need to initialize another payment
+      if (paymentPayload?.cardId) {
+        navigateTo({
+          path: '/confirmation',
+          query: {
+            pnr: bookData.pnr || bookData.reference,
+            orderId: bookingId,
+            status: 'confirmed'
+          }
+        })
+        return
+      }
+
+      loaderStatus.value = 'Initializing secure payment...'
       const callbackUrl = `${window.location.origin}/confirmation?type=flight&provider=${bookingDetails.value.provider}&orderId=${bookingId}`
       
       try {
@@ -616,17 +711,15 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
         })
         
         const paymentData = paymentResponse.data?.data || paymentResponse.data
-        
         if (paymentData?.url || paymentData?.authorization_url) {
           window.location.href = paymentData.url || paymentData.authorization_url
           return
         }
       } catch (paymentErr: any) {
         console.warn('Payment initialization failed:', paymentErr)
-        // Aggressive feedback as requested
         showToast({
           title: "Payment Error",
-          message: `Payment initialization failed: ${paymentErr.response?.data?.message || paymentErr.message}. You can still view your booking details below.`,
+          message: `Payment initialization failed: ${paymentErr.response?.data?.message || paymentErr.message}.`,
           toastType: "error",
         });
       }
@@ -635,7 +728,7 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
         path: '/confirmation',
         query: {
           pnr: bookData.pnr || bookData.reference,
-          orderId: bookData.orderId || bookData.bookingId,
+          orderId: bookingId,
           status: 'pending_payment'
         }
       })
@@ -655,9 +748,61 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string })
   }
 }
 
+const handleHold = async () => {
+  paymentProcessing.value = true
+  showBrandedLoader.value = true
+  loaderStatus.value = 'Reserving your seats without payment...'
+  
+  try {
+    const bookPayload = {
+      offerId: bookingDetails.value.id,
+      provider: bookingDetails.value.provider,
+      passengers: [{
+        title: travellerData.value.title,
+        firstName: travellerData.value.firstName,
+        lastName: travellerData.value.lastName,
+        email: travellerData.value.email,
+        phone: travellerData.value.phone,
+        phoneCountryCode: travellerData.value.phoneCountryCode.replace('+', ''),
+        gender: travellerData.value.gender,
+        dateOfBirth: travellerData.value.dateOfBirth,
+        passportNumber: travellerData.value.passportNumber || undefined,
+        passportExpiry: travellerData.value.passportExpiry || undefined,
+        passportCountry: travellerData.value.passportCountry || undefined,
+        nationality: travellerData.value.nationality || undefined,
+      }]
+    }
+
+    const response = await flightsApi.hold(bookPayload)
+    const data = response.data?.data || response.data
+    
+    if (data?.bookingId || data?.id) {
+       navigateTo({
+         path: '/confirmation',
+         query: {
+           pnr: data.pnr || data.reference,
+           orderId: data.bookingId || data.id,
+           status: 'held'
+         }
+       })
+    }
+  } catch (error: any) {
+    console.error('Hold failed:', error)
+    showBrandedLoader.value = false
+    const msg = error.response?.data?.message || error.message || 'An unexpected error occurred'
+    showToast({
+       title: "Reservation Failed",
+       message: msg,
+       toastType: "error",
+    })
+  } finally {
+    paymentProcessing.value = false
+  }
+}
 const handlePayNow = () => {
   if (currentStep.value === 3) {
-    handlePayment({ provider: 'stripe', channel: 'card' })
+    const p = bookingDetails.value.provider === 'duffel' ? 'duffel' : 'stripe'
+    handlePayment({ provider: p, channel: 'card' })
   } else {
     goToStep(3)
   }
@@ -668,6 +813,12 @@ const handleApplyPromo = (code: string) => {
 }
 
 onMounted(async () => {
+  // Initial tracking for landing on checkout
+  trackAction('booking_step_review', { 
+    type: bookingDetails.value.type,
+    item: bookingDetails.value.name 
+  })
+
   if (bookingDetails.value.type === 'flight') {
     const saved = sessionStorage.getItem('selectedFlight')
     if (saved) {
@@ -799,12 +950,11 @@ const handleManualConfirm = async (account: any) => {
 <style scoped>
 .checkout-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #ffffff, #f9fafb);
-  font-family: 'Roboto', sans-serif;
+  background: #f8fafc;
 }
 
 .checkout-body {
-  max-width: 85rem;
+  max-width: 80rem;
   margin: 0 auto;
   padding: 3rem 1.5rem 6rem;
 }
@@ -812,7 +962,7 @@ const handleManualConfirm = async (account: any) => {
 .checkout-grid {
   display: grid;
   grid-template-columns: 1fr 380px;
-  gap: 3rem;
+  gap: 2.5rem;
   align-items: start;
 }
 
@@ -828,6 +978,7 @@ const handleManualConfirm = async (account: any) => {
 @media (max-width: 1024px) {
   .checkout-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 </style>

@@ -9,7 +9,7 @@
           </svg>
         </NuxtLink>
         <div>
-          <h1 class="text-xl font-header text-white">Booking details</h1>
+          <h1 class="text-xl  text-white">Booking details</h1>
           <p class="text-white/60 text-xs font-bold italic">View your flight booking information</p>
         </div>
       </div>
@@ -191,7 +191,9 @@ import { useRoute, navigateTo } from '#app'
 import { bookingsApi } from '@/api_factory/modules/bookings'
 import { transfersApi } from '@/api_factory/modules/transfers'
 import { useCustomToast } from '@/composables/core/useCustomToast'
+import { useConfirmation } from '@/composables/core/useConfirmation'
 
+const { confirm } = useConfirmation()
 const { showToast } = useCustomToast()
 const route = useRoute()
 
@@ -238,7 +240,13 @@ const handleCancelTransfer = async (bkg: any) => {
   // For now I'll use the showToast to inform the user it's processing if they click. 
   // Actually, I'll assume they want to proceed if they clicked the red button, but usually confirmation is good.
   // The user didn't specify a new modal for this specific case, but I'll stick to Toast for feedback.
-  if (!window.confirm('Are you sure you want to cancel this transfer booking? This action cannot be undone.')) return
+  const confirmed = await confirm({
+    title: 'Cancel Booking',
+    message: 'Are you sure you want to permanently cancel this transfer booking? This action is irreversible and may be subject to cancellation fees.',
+    confirmText: 'Yes, Cancel Booking',
+    variant: 'danger'
+  })
+  if (!confirmed) return
   
   cancelling.value = true
   try {

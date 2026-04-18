@@ -26,118 +26,86 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       </div>
-    </div>
-
-    <!-- Calendar Overlay -->
+    </div>    <!-- Calendar Overlay -->
     <Teleport to="body">
       <Transition name="picker-drop">
         <div
           v-if="open"
-          class="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/10"
+          class="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
           @click.self="open = false"
         >
-          <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-full max-w-[640px]" @click.stop>
+          <div class="bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden w-full max-w-[340px]" @click.stop>
             <!-- Header -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-50 bg-gray-50/50">
-            <div class="flex items-center gap-4">
-                <button type="button" @click="viewMode = 'calendar'" class="flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all" :class="viewMode === 'calendar' ? 'bg-brand-blue/5 border-2 border-brand-blue/10' : 'hover:bg-gray-100'">
-                  <span class="text-brand-blue font-bold tracking-tight text-lg">{{ monthLabels[leftMonth] }}</span>
-                  <span class="w-1.5 h-1.5 rounded-full bg-brand-blue/30 mx-1"></span>
-                  <span class="text-brand-blue font-header text-2xl tracking-tighter" @click.stop="viewMode = 'year'">{{ leftYear }}</span>
-                </button>
-                <div class="ml-auto flex items-center gap-3">
-                  <button type="button" @click="toggleYearView" class="px-4 py-2 rounded-xl text-[10px] font-bold tracking-widest transition-all shadow-sm border" :class="viewMode === 'year' ? 'bg-brand-blue text-white border-brand-blue' : 'bg-white text-gray-500 hover:text-gray-900 border-gray-100'">
-                    {{ viewMode === 'year' ? 'Back to calendar' : 'Jump to year' }}
-                  </button>
-                </div>
-              </div>
-
-              <div class="flex gap-2">
-                <button v-if="viewMode === 'calendar'" type="button" @click="prevMonth" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-all shadow-sm border border-gray-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button v-if="viewMode === 'calendar'" type="button" @click="nextMonth" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white transition-all shadow-sm border border-gray-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7 7 7" />
-                  </svg>
-                </button>
-              </div>
+            <div class="p-6 bg-gray-900 text-white text-center">
+              <h3 class="text-[9px] font-black uppercase tracking-[0.3em] opacity-60 mb-1">{{ label }}</h3>
+              <p class="text-lg font-black tracking-tight" @click="viewMode = viewMode === 'year' ? 'calendar' : 'year'">
+                {{ months[leftMonth] }} {{ leftYear }}
+              </p>
             </div>
 
             <!-- View Modes -->
-            <div class="min-h-[340px]">
+            <div class="p-6">
               <!-- Year Selection Grid -->
-              <div v-if="viewMode === 'year'" class="p-6 text-center">
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 italic">Select Year</h4>
-                <div class="grid grid-cols-4 gap-3 max-h-[280px] overflow-y-auto pr-2 custom-scrollbar">
+              <div v-if="viewMode === 'year'" class="space-y-4">
+                <div class="grid grid-cols-3 gap-2 max-h-[240px] overflow-y-auto pr-2 custom-scrollbar">
                    <button 
                     v-for="year in years" 
                     :key="year"
                     type="button"
                     @click="selectYear(year)"
-                    class="py-3 text-sm font-bold rounded-xl transition-all border"
-                    :class="year === leftYear ? 'bg-brand-blue text-white border-brand-blue shadow-lg' : 'bg-white text-gray-600 border-gray-100 hover:border-brand-blue/30'"
+                    class="py-3 text-[11px] font-bold rounded-xl transition-all border"
+                    :class="year === leftYear ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-100 hover:border-gray-900'"
                    >
                      {{ year }}
                    </button>
                 </div>
               </div>
 
-              <!-- Two-month calendar grid -->
-              <div v-else class="grid grid-cols-2 divide-x divide-gray-50 p-4">
-                <!-- Left month -->
-                <div class="px-4">
-                  <div class="grid grid-cols-7 mb-2">
-                    <div v-for="d in weekdays" :key="d" class="text-center text-[10px] uppercase font-bold text-gray-400 py-3">{{ d }}</div>
-                  </div>
-                  <div class="grid grid-cols-7 gap-1">
-                    <button
-                      v-for="(day, i) in leftDays"
-                      :key="'l'+i"
-                      type="button"
-                      :disabled="!day.inMonth || (maxDate && day.dateObj > maxDate) || (minDate && day.dateObj < minDate)"
-                      @click="day.inMonth && selectDay(day)"
-                      :class="getDayClass(day)"
-                    >
-                      <span v-if="day.isSelected && day.inMonth" class="absolute -top-1.5 left-1/2 -translate-x-1/2 text-[8px]  text-brand-blue/50 whitespace-nowrap">{{ label }}</span>
-                      {{ day.date || '' }}
-                    </button>
-                  </div>
+              <!-- Single month calendar (Compact) -->
+              <div v-else>
+                <div class="flex items-center justify-between mb-4">
+                  <button type="button" @click="prevMonth" class="p-2 hover:bg-gray-50 rounded-xl transition-all">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
+                  </button>
+                   <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">Select Date</span>
+                  <button type="button" @click="nextMonth" class="p-2 hover:bg-gray-50 rounded-xl transition-all">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
+                  </button>
                 </div>
 
-                <!-- Right month -->
-                <div class="px-4">
-                  <div class="grid grid-cols-7 mb-2">
-                    <div v-for="d in weekdays" :key="d" class="text-center text-[10px] uppercase font-bold text-gray-400 py-3">{{ d }}</div>
-                  </div>
-                  <div class="grid grid-cols-7 gap-1">
-                    <button
-                      v-for="(day, i) in rightDays"
-                      :key="'r'+i"
-                      type="button"
-                      :disabled="!day.inMonth || (maxDate && day.dateObj > maxDate) || (minDate && day.dateObj < minDate)"
-                      @click="day.inMonth && selectDay(day)"
-                      :class="getDayClass(day)"
-                    >
-                      <span v-if="day.isSelected && day.inMonth" class="absolute -top-1.5 left-1/2 -translate-x-1/2 text-[8px]  text-brand-blue/50 whitespace-nowrap">{{ label }}</span>
-                      {{ day.date || '' }}
-                    </button>
-                  </div>
+                <div class="grid grid-cols-7 mb-2">
+                  <div v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="text-center text-[9px] uppercase font-black text-gray-300 py-1">{{ d }}</div>
+                </div>
+                <div class="grid grid-cols-7 gap-1">
+                  <button
+                    v-for="(day, i) in leftDays"
+                    :key="'l'+i"
+                    type="button"
+                    :disabled="!day.inMonth || (maxDate && day.dateObj > maxDate) || (minDate && day.dateObj < minDate)"
+                    @click="day.inMonth && selectDay(day)"
+                    class="aspect-square flex items-center justify-center text-[11px] font-bold rounded-xl transition-all relative"
+                    :class="[
+                      !day.inMonth ? 'invisible' : '',
+                      day.isSelected ? 'bg-gray-900 text-white shadow-lg' : 'text-gray-900 hover:bg-gray-900 hover:text-white',
+                      day.isToday && !day.isSelected ? 'border border-gray-900' : ''
+                    ]"
+                  >
+                    {{ day.date || '' }}
+                  </button>
                 </div>
               </div>
             </div>
 
             <!-- Footer -->
-            <div class="flex items-center justify-between border-t border-gray-100 px-6 py-4 bg-gray-50/30">
-              <button type="button" @click="clearValue" class="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors">Clear</button>
-              <button type="button" @click="open = false" class="px-6 py-2.5 bg-brand-blue text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#0a168a] transition-colors shadow-lg shadow-brand-blue/10">Done</button>
+            <div class="px-6 pb-6 flex items-center gap-3">
+              <button type="button" @click="clearValue" class="flex-1 py-3 text-[9px] font-black uppercase tracking-widest border border-gray-100 hover:bg-gray-50 rounded-xl transition-all">Clear</button>
+              <button type="button" @click="open = false" class="flex-1 py-3 bg-gray-900 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-black transition-all shadow-lg shadow-gray-200">Done</button>
             </div>
           </div>
         </div>
       </Transition>
     </Teleport>
+>
   </div>
 </template>
 

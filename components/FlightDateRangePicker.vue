@@ -47,17 +47,15 @@
           <!-- Calendar card — z-[10011], sibling of backdrop so blur cannot reach it -->
           <div
             :style="panelStyle"
-            class="fixed z-[10011] bg-white rounded-2xl overflow-hidden select-none"
-            style="
-              min-width: 660px;
-              max-width: calc(100vw - 32px);
-              box-shadow: 0 8px 48px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08);
-            "
+            class="fixed z-[10011] bg-white rounded-2xl overflow-hidden select-none transition-all duration-300 shadow-2xl"
+            :class="[
+              isMobile ? 'inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[660px]'
+            ]"
             @click.stop
           >
 
             <!-- ── Month nav header ──────────────────────────────────────── -->
-            <div class="flex items-center justify-between px-6 pt-5 pb-3">
+            <div class="flex items-center justify-between px-4 sm:px-6 pt-5 pb-3">
               <button
                 @click="prevMonth"
                 :disabled="isAtMinMonth"
@@ -67,9 +65,9 @@
                 <ChevronLeftIcon class="h-4 w-4 text-gray-500" />
               </button>
 
-              <div class="flex-1 grid grid-cols-2 text-center gap-4">
-                <p class="text-base  text-gray-800">{{ monthName(currentYear, currentMonth) }}</p>
-                <p class="text-base  text-gray-800">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
+              <div class="flex-1 grid gap-4 text-center" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
+                <p class="text-base font-bold text-gray-900">{{ monthName(currentYear, currentMonth) }}</p>
+                <p v-if="!isMobile" class="text-base font-bold text-gray-900">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
               </div>
 
               <button
@@ -81,32 +79,32 @@
             </div>
 
             <!-- ── Two-month grid ────────────────────────────────────────── -->
-            <div class="grid grid-cols-2 px-4 pb-4 gap-0">
+            <div class="grid gap-0 px-4 pb-4" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
 
               <!-- Left month -->
-              <div class="pr-4 border-r border-gray-100">
+              <div :class="!isMobile ? 'pr-4 border-r border-gray-100' : ''">
                 <div class="grid grid-cols-7 mb-2">
                   <div
                     v-for="d in dayHeaders" :key="`lh-${d}`"
-                    class="text-center text-[11px]  text-gray-400 py-1"
+                    class="text-center text-[11px] font-bold text-gray-400 py-1"
                   >{{ d }}</div>
                 </div>
                 <div class="grid grid-cols-7">
                   <template v-for="(cell, i) in leftCells" :key="`l-${i}`">
                     <!-- Empty filler for offset -->
-                    <div v-if="cell === null" class="h-9" />
+                    <div v-if="cell === null" class="h-9 sm:h-10" />
 
                     <!-- Day wrapper (carries the range-strip bg) -->
                     <div
                       v-else
-                      class="flex items-center justify-center h-9"
+                      class="flex items-center justify-center h-9 sm:h-10"
                       :class="rangeWrapClass(cell)"
                       @mouseover="!isPast(cell) && (hoverDate = cell)"
                       @mouseleave="hoverDate = null"
                       @click="selectDate(cell)"
                     >
                       <span
-                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm transition-all duration-100"
+                        class="h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
                         :class="dayClass(cell)"
                       >{{ cellDay(cell) }}</span>
                     </div>
@@ -114,28 +112,28 @@
                 </div>
               </div>
 
-              <!-- Right month -->
-              <div class="pl-4">
+              <!-- Right month (Hidden on mobile) -->
+              <div v-if="!isMobile" class="pl-4">
                 <div class="grid grid-cols-7 mb-2">
                   <div
                     v-for="d in dayHeaders" :key="`rh-${d}`"
-                    class="text-center text-[11px]  text-gray-400 py-1"
+                    class="text-center text-[11px] font-bold text-gray-400 py-1"
                   >{{ d }}</div>
                 </div>
                 <div class="grid grid-cols-7">
                   <template v-for="(cell, i) in rightCells" :key="`r-${i}`">
-                    <div v-if="cell === null" class="h-9" />
+                    <div v-if="cell === null" class="h-10" />
 
                     <div
                       v-else
-                      class="flex items-center justify-center h-9"
+                      class="flex items-center justify-center h-10"
                       :class="rangeWrapClass(cell)"
                       @mouseover="!isPast(cell) && (hoverDate = cell)"
                       @mouseleave="hoverDate = null"
                       @click="selectDate(cell)"
                     >
                       <span
-                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm transition-all duration-100"
+                        class="h-10 w-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
                         :class="dayClass(cell)"
                       >{{ cellDay(cell) }}</span>
                     </div>
@@ -146,39 +144,36 @@
             </div>
 
             <!-- ── Footer ────────────────────────────────────────────────── -->
-            <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/60">
-              <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
-                <InformationCircleIcon class="h-4 w-4 shrink-0" />
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-gray-100 bg-gray-50/60">
+              <div class="flex items-center gap-2 text-sm text-gray-500 font-medium text-center sm:text-left">
+                <InformationCircleIcon class="h-4 w-4 shrink-0 hidden sm:block" />
                 <span v-if="!startDate">
-                  Select {{ mode === 'oneway' ? 'a departure date' : 'a check-in date' }}
+                  Select {{ mode === 'oneway' ? 'departure' : 'check-in' }}
                 </span>
                 <span v-else-if="mode !== 'oneway' && !endDate">
-                  Now select your check-out date
+                  Select check-out
                 </span>
-                <span v-else class=" text-gray-900">
+                <span v-else class="text-gray-900 text-xs sm:text-sm">
                   {{ mode === 'oneway' ? formatDisplay(startDate) : `${formatDisplay(startDate)} – ${formatDisplay(endDate!)}` }}
-                  <template v-if="mode !== 'oneway' && nightCount > 0">
-                    &nbsp;·&nbsp;{{ nightCount }} night{{ nightCount !== 1 ? 's' : '' }}
-                  </template>
                 </span>
               </div>
 
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3 w-full sm:w-auto">
                 <button
                   v-if="startDate"
                   @click="clearDates"
-                  class="text-sm font-semibold text-gray-500 hover:text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  class="flex-1 sm:flex-none text-xs sm:text-sm font-bold text-gray-500 hover:text-gray-700 px-3 py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
                 >
                   Clear
                 </button>
                 <button
                   @click="done"
                   :disabled="!startDate || (mode !== 'oneway' && !endDate)"
-                  class="px-8 py-2.5 bg-brand-blue text-white rounded-full  text-sm
+                  class="flex-1 sm:flex-none px-6 sm:px-8 py-2.5 bg-gray-900 text-white rounded-xl text-xs sm:text-sm font-bold
                          disabled:opacity-40 disabled:cursor-not-allowed
-                         hover:bg-blue-700 transition-colors active:scale-95"
+                         hover:bg-black transition-colors active:scale-95 shadow-sm"
                 >
-                  Done
+                  Confirm {{ mode === 'roundtrip' && startDate && endDate ? nightCount + ' nights' : '' }}
                 </button>
               </div>
             </div>
@@ -220,6 +215,13 @@ const pickerRef    = ref<HTMLElement | null>(null)
 const showCalendar = ref(false)
 const panelStyle   = ref<Record<string, string>>({})
 const hoverDate    = ref<string | null>(null)
+const isMobile     = ref(false)
+
+const checkMobile = () => {
+  if (typeof window !== 'undefined') {
+    isMobile.value = window.innerWidth < 768
+  }
+}
 
 // Today as ISO string 'YYYY-MM-DD'
 const _today = new Date()
@@ -338,13 +340,13 @@ function rangeWrapClass(iso: string): string {
   const inR = inRange(iso)
 
   if (s && end && iso < end) {
-    return 'bg-blue-50 rounded-l-full cursor-pointer'
+    return 'bg-gray-100 rounded-l-full cursor-pointer'
   }
   if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) {
-    return 'bg-blue-50 rounded-r-full cursor-pointer'
+    return 'bg-gray-100 rounded-r-full cursor-pointer'
   }
   if (inR) {
-    return 'bg-blue-50 cursor-pointer'
+    return 'bg-gray-100 cursor-pointer'
   }
   return 'cursor-pointer'
 }
@@ -356,13 +358,13 @@ function dayClass(iso: string): string {
   if (isPast(iso)) return 'text-gray-200 cursor-not-allowed'
 
   if (isStartDay(iso) || isEndDay(iso)) {
-    return 'bg-brand-blue text-white  shadow-md'
+    return 'bg-gray-900 text-white shadow-md'
   }
   if (inRange(iso)) {
-    return 'text-gray-900 font-semibold hover:bg-brand-blue/10'
+    return 'text-gray-900 font-semibold hover:bg-gray-200'
   }
   if (iso === todayStr) {
-    return ' text-gray-900 border-2 border-brand-blue/30 hover:bg-brand-blue hover:text-white'
+    return 'text-gray-900 border-2 border-gray-900/30 hover:bg-gray-900 hover:text-white'
   }
   return 'text-gray-700 font-semibold hover:bg-gray-100 hover:text-gray-900'
 }
@@ -421,6 +423,7 @@ function nextMonth() {
 
 // ── Open / Close ──────────────────────────────────────────────────────────────
 function updatePosition() {
+  if (isMobile.value) return
   const el = pickerRef.value
   if (!el) return
   const rect       = el.getBoundingClientRect()
@@ -434,6 +437,7 @@ function updatePosition() {
 }
 
 function openCalendar() {
+  checkMobile()
   updatePosition()
   showCalendar.value = true
   emit('focus')
@@ -464,14 +468,21 @@ watch(() => props.departure, v => { startDate.value = v || null })
 watch(() => props.return,    v => { endDate.value   = v || null })
 
 // ── Lifecycle ─────────────────────────────────────────────────────────────────
-onMounted(()  => window.addEventListener('scroll', updatePosition, true))
-onUnmounted(() => window.removeEventListener('scroll', updatePosition, true))
+onMounted(()  => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+  window.addEventListener('scroll', updatePosition, true)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+  window.removeEventListener('scroll', updatePosition, true)
+})
 </script>
 
 <style scoped>
 /*
   Transition targets the wrapper <div v-if="showCalendar">.
-  Backdrop (z-[9990]) and card (z-[9991]) are siblings — backdrop-blur
+  Backdrop (z-[10010]) and card (z-[10011]) are siblings — backdrop-blur
   is isolated to the backdrop element and cannot bleed into the card.
 */
 .fade-overlay-enter-active {
@@ -486,10 +497,10 @@ onUnmounted(() => window.removeEventListener('scroll', updatePosition, true))
 }
 
 /* Card pops up on entry */
-.fade-overlay-enter-active .fixed.z-\[9991\] {
+.fade-overlay-enter-active .fixed.z-\[10011\] {
   transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
-.fade-overlay-enter-from .fixed.z-\[9991\] {
+.fade-overlay-enter-from .fixed.z-\[10011\] {
   transform: translateY(-10px) scale(0.97);
   opacity: 0;
 }

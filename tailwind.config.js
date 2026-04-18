@@ -20,9 +20,8 @@ module.exports = {
         secondary: '#32B404',
       },
       fontFamily: {
-        header: ['Spectral', 'serif'],
-        body: ['Roboto', 'sans-serif'],
-        sans: ['Roboto', 'sans-serif'],
+        Onest: ['Onest', 'sans-serif'],
+        sans: ['Onest', 'sans-serif'],
       },
       boxShadow: {
         sm: 'none',

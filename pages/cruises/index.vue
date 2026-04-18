@@ -24,7 +24,7 @@
                   class="w-full h-14 pl-12 pr-6 flex flex-col justify-center text-left hover:bg-gray-50 transition-all rounded-xl"
                 >
                    <MagnifyingGlassIcon class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                   <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Destination</span>
+                   <span class="text-[10px] font-bold text-gray-400  tracking-widest leading-none mb-1">Destination</span>
                    <span class="text-sm font-bold text-gray-900 truncate">{{ searchQuery.destinationLabel || 'Select Destination' }}</span>
                 </button>
                 <!-- destination Dropdown -->
@@ -45,7 +45,7 @@
                   class="w-full h-14 pl-12 pr-6 flex flex-col justify-center text-left hover:bg-gray-50 transition-all"
                 >
                    <CalendarIcon class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                   <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Departing</span>
+                   <span class="text-[10px] font-bold text-gray-400  tracking-widest leading-none mb-1">Departing</span>
                    <span class="text-sm font-bold text-gray-900">{{ searchQuery.departingLabel || 'Any Month' }}</span>
                 </button>
                 <!-- Month Dropdown -->
@@ -63,7 +63,7 @@
                 <button
                   @click="handleSearch"
                   :disabled="loading"
-                  class="w-full sm:px-10 py-3.5 bg-brand-blue text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand-blue/90 flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-70"
+                  class="w-full sm:px-10 py-3.5 bg-brand-blue text-white rounded-xl font-bold text-xs  tracking-widest hover:bg-brand-blue/90 flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-70"
                 >
                   <div v-if="loading" class="animate-spin h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full"></div>
                   <MagnifyingGlassIcon v-else class="h-4 w-4" />
@@ -84,11 +84,11 @@
         <aside class="lg:w-80 shrink-0 space-y-8">
            <!-- Filters Header -->
            <div class="flex items-center justify-between">
-              <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+              <h2 class="text-xs font-bold text-gray-400  tracking-widest flex items-center gap-2">
                 <AdjustmentsHorizontalIcon class="h-4 w-4" />
                 Filter results
               </h2>
-              <button @click="resetFilters" class="text-[11px] font-bold text-brand-blue hover:text-brand-blue/80 uppercase tracking-wider transition-colors">Reset all</button>
+              <button @click="resetFilters" class="text-[11px] font-bold text-brand-blue hover:text-brand-blue/80  tracking-wider transition-colors">Reset all</button>
            </div>
 
            <!-- Duration Filter -->
@@ -120,7 +120,7 @@
                  <span class="text-xs font-bold text-brand-blue">${{ filters.priceRange[1] }}</span>
               </div>
               <input type="range" min="0" max="8000" step="100" v-model.number="filters.priceRange[1]" class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-blue" />
-              <div class="flex justify-between mt-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              <div class="flex justify-between mt-3 text-[10px] font-bold text-gray-400  tracking-widest">
                  <span>$0</span>
                  <span>$8000+</span>
               </div>
@@ -136,7 +136,7 @@
               <p class="text-sm font-medium text-gray-400">Showing <span class="text-gray-900 font-bold">{{ filteredCruises.length }}</span> luxury cruises for your selection.</p>
             </div>
             <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-gray-100 shadow-sm">
-               <button class="px-4 py-2 bg-gray-50 text-gray-900 rounded-lg text-xs font-bold uppercase tracking-widest">Sort: Lowest Price</button>
+               <button class="px-4 py-2 bg-gray-50 text-gray-900 rounded-lg text-xs font-bold  tracking-widest">Sort: Lowest Price</button>
             </div>
           </div>
 
@@ -177,7 +177,7 @@
                     </div>
                     <h2 class="text-2xl font-bold text-gray-900 mb-2">No sailings found</h2>
                     <p class="text-sm font-medium text-gray-400 max-w-sm mx-auto">We couldn't find any cruises matching your criteria. Try adjusting your filters or destination.</p>
-                    <button @click="resetFilters" class="mt-8 px-8 py-3 bg-white text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest border border-gray-100 shadow-sm hover:bg-gray-50 transition-all">Clear all filters</button>
+                    <button @click="resetFilters" class="mt-8 px-8 py-3 bg-white text-gray-900 rounded-xl font-bold text-xs  tracking-widest border border-gray-100 shadow-sm hover:bg-gray-50 transition-all">Clear all filters</button>
                  </div>
               </template>
             </TransitionGroup>

@@ -1,6 +1,6 @@
 <template>
   <div class="relative" ref="phoneRef">
-    <label v-if="label" class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70 font-header block">
+    <label v-if="label" class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70  block">
       {{ label }}
     </label>
 
@@ -9,7 +9,7 @@
       <button 
         type="button" 
         @click="showDropdown = !showDropdown"
-        class="flex items-center gap-2 px-4 bg-white border border-gray-100 border-r-0 rounded-l-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:bg-gray-50 transition-all text-sm font-bold text-gray-900 min-w-[100px] justify-center"
+        class="flex items-center gap-2 px-4 bg-white border border-gray-300 border-r-0 rounded-l-2xl hover:bg-gray-50 transition-all text-sm font-bold text-gray-900 min-w-[100px] justify-center"
       >
         <span class="text-lg">{{ selectedCountry.flag }}</span>
         <span class="text-xs  text-gray-900">{{ selectedCountry.dialCode }}</span>
@@ -24,7 +24,7 @@
         :placeholder="placeholder || '812 345 6789'"
         :value="phoneNumber"
         @input="onPhoneInput"
-        class="flex-grow px-5 py-4 bg-white border border-gray-100 border-l-0 rounded-r-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue focus:shadow-xl transition-all duration-500 font-bold text-gray-900 placeholder-brand-gray/30"
+        class="flex-grow px-5 py-4 bg-white border border-gray-300 border-l-0 rounded-r-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue transition-all duration-500 font-bold text-gray-900 placeholder-brand-gray/30"
       />
     </div>
 

@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
       <div class="flex flex-col gap-3">
-        <h2 class="text-4xl font-header text-gray-900 tracking-tight">Find Great Deals by City</h2>
+        <h2 class="text-4xl  text-gray-900 tracking-tight">Find Great Deals by City</h2>
         <p class="text-sm font-bold text-gray-400 max-w-lg leading-relaxed">
           Explore curated savings across top destinations. Select a city to discover the best flights, premier stays, and car rentals.
         </p>
@@ -29,7 +29,7 @@
             <img :src="city.image" :alt="city.name" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <div class="absolute bottom-6 left-8">
-              <h3 class="text-2xl font-header text-white leading-none">{{ city.name }}</h3>
+              <h3 class="text-2xl  text-white leading-none">{{ city.name }}</h3>
               <p class="text-[10px] text-white/70 uppercase tracking-widest mt-1 font-bold">Starting from ${{ Math.min(...Object.values(city.deals).flat().map((d: any) => d.price)) }}</p>
             </div>
           </div>
@@ -63,7 +63,7 @@
                     <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ activeTabs[city.name] === 'Flights' ? 'One Way' : 'Per Night' }}</span>
                   </div>
                   <div class="flex items-center gap-3">
-                    <span class="text-sm font-header text-gray-900">${{ deal.price }}</span>
+                    <span class="text-sm  text-gray-900">${{ deal.price }}</span>
                     <div class="h-6 w-6 rounded-full bg-white border border-gray-100 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity">
                       <ChevronRightIcon class="h-3 w-3 text-brand-blue" />
                     </div>

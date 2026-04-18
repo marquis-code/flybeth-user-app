@@ -10,7 +10,7 @@
         </div>
       </div>
       <div>
-        <h2 class="text-2xl  text-gray-900 font-header tracking-tighter">Authenticating</h2>
+        <h2 class="text-2xl  text-gray-900  tracking-tighter">Authenticating</h2>
         <p class="text-brand-gray/60 font-bold mt-2">Completing your secure sign-in...</p>
       </div>
     </div>
@@ -73,7 +73,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.font-header {
-  font-family: 'Spectral', serif;
+. {
+  
 }
 </style>

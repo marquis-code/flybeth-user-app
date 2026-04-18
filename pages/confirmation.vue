@@ -52,13 +52,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useTracking } from '@/composables/core/useTracking'
 
 const route = useRoute()
+const { trackAction } = useTracking()
 
 const bookingRef = computed(() => (route.query.pnr as string) || '')
 const orderId = computed(() => (route.query.orderId as string) || '')
 const paymentStatus = computed(() => (route.query.status as string) || 'booked')
+
+onMounted(() => {
+  trackAction('booking_completed', {
+    pnr: bookingRef.value,
+    orderId: orderId.value,
+    status: paymentStatus.value
+  })
+})
 
 const statusTitle = computed(() => {
   switch (paymentStatus.value) {

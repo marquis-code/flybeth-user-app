@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <div>
       <h2 class="text-sm  text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.getStarted') }}</h2>
-      <h3 class="text-4xl  text-gray-900 font-header tracking-tighter">{{ $t('auth.createAccount') }}</h3>
+      <h3 class="text-4xl  text-gray-900  tracking-tighter">{{ $t('auth.createAccount') }}</h3>
       <p class="mt-3 text-sm text-brand-gray/60 font-bold">
         {{ $t('auth.alreadyHaveAccount') }}
         <NuxtLink to="/auth/login" class="text-brand-green hover:underline ">{{ $t('auth.loginHere') }}</NuxtLink>
@@ -111,7 +111,14 @@ const onCountryChange = (info: { code: string; currency: string; dialCode: strin
 };
 
 const handleRegister = async () => {
-  const res = await register(registerData);
+  const res: any = await register(registerData);
+  if (res?.requiresOtp) {
+    router.push({
+      path: '/auth/verify-otp',
+      query: { email: res.email }
+    });
+    return;
+  }
   if (res && (res.status === 200 || res.status === 201)) {
     router.push('/');
   }

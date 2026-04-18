@@ -32,7 +32,9 @@
           v-if="showPicker"
           :style="panelStyle"
           class="fixed z-[10011] bg-white rounded-2xl shadow-[0_8px_48px_rgba(0,0,0,0.2)] border border-gray-100 overflow-hidden"
-          style="width: 360px; max-width: calc(100vw - 32px);"
+          :class="[
+            isMobile ? 'inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[360px]'
+          ]"
           @click.stop
         >
           <div class="px-6 py-5 space-y-5">
@@ -57,14 +59,14 @@
                 >
                   −
                 </button>
-                <span class="w-5 text-center text-base  text-gray-800">{{ local[row.key] }}</span>
+                <span class="w-5 text-center text-base font-bold text-gray-800">{{ local[row.key] }}</span>
                 <button
                   @click="increment(row.key)"
                   :disabled="local[row.key] >= row.max"
                   class="h-9 w-9 rounded-full border-2 flex items-center justify-center text-lg font-bold transition-all"
                   :class="local[row.key] >= row.max
                     ? 'border-gray-200 text-gray-300 cursor-not-allowed'
-                    : 'border-brand-blue text-gray-900 hover:bg-blue-50'"
+                    : 'border-gray-900 text-gray-900 hover:bg-gray-100'"
                 >
                   +
                 </button>
@@ -79,9 +81,9 @@
             <!-- Done Button -->
             <button
               @click="done"
-              class="w-full bg-brand-blue text-white py-3 rounded-full  text-sm hover:bg-blue-700 transition-colors"
+              class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition-colors"
             >
-              Done
+              Confirm
             </button>
           </div>
         </div>
@@ -179,8 +181,16 @@ const decrement = (key: string) => {
 const pickerRef  = ref<HTMLElement | null>(null)
 const showPicker = ref(false)
 const panelStyle = ref<Record<string, string>>({})
+const isMobile   = ref(false)
+
+const checkMobile = () => {
+  if (typeof window !== 'undefined') {
+    isMobile.value = window.innerWidth < 768
+  }
+}
 
 const updatePosition = () => {
+  if (isMobile.value) return
   const el = pickerRef.value
   if (!el) return
   const rect = el.getBoundingClientRect()
@@ -193,6 +203,7 @@ const updatePosition = () => {
 }
 
 const openPicker = () => {
+  checkMobile()
   updatePosition()
   showPicker.value = true
   emit('focus')
@@ -221,9 +232,26 @@ watch(() => props.children,      v => { local.children      = v })
 watch(() => props.infantsOnLap,  v => { local.infantsOnLap  = v })
 watch(() => props.infantsInSeat, v => { local.infantsInSeat = v })
 
-onMounted(() => window.addEventListener('scroll', updatePosition, true))
-onUnmounted(() => window.removeEventListener('scroll', updatePosition, true))
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+  window.addEventListener('scroll', updatePosition, true)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+  window.removeEventListener('scroll', updatePosition, true)
+})
 </script>
+
+<style scoped>
+.fade-overlay-enter-active, .fade-overlay-leave-active { transition: opacity 0.2s ease; }
+.fade-overlay-enter-from, .fade-overlay-leave-to { opacity: 0; }
+
+.picker-pop-enter-active { transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+.picker-pop-leave-active { transition: all 0.15s ease; }
+.picker-pop-enter-from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+.picker-pop-leave-to   { opacity: 0; transform: translateY(-4px) scale(0.99); }
+</style>
 
 <style scoped>
 .fade-overlay-enter-active, .fade-overlay-leave-active { transition: opacity 0.2s ease; }

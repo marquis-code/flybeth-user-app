@@ -15,7 +15,7 @@
       <div class="relative z-10 h-full flex flex-col justify-end p-16">
         <div class="space-y-6">
           <span class="text-brand-green  uppercase tracking-[0.3em] text-sm">{{ $t('authLayout.journeyStarts') }}</span>
-          <h2 class="text-5xl  text-white font-header tracking-tighter leading-tight">
+          <h2 class="text-5xl  text-white  tracking-tighter leading-tight">
             {{ $t('authLayout.discover') }}<br/>{{ $t('authLayout.worldsMost') }}<br/>
             <span class="text-brand-green/80">{{ $t('authLayout.breathtaking') }}</span><br/>{{ $t('authLayout.layoutDestinations') }}
           </h2>

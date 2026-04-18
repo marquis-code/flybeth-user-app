@@ -1,6 +1,6 @@
 <template>
   <div class="mb-12">
-    <h3 class="text-2xl font-bold text-gray-900 mb-6 font-header tracking-tight">Top hotel deals in {{ destinationName }}</h3>
+    <h3 class="text-2xl font-bold text-gray-900 mb-6  tracking-tight">Top hotel deals in {{ destinationName }}</h3>
     
     <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <div v-for="i in 4" :key="i" class="h-[400px] bg-gray-100 animate-pulse rounded-2xl"></div>

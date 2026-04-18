@@ -1,7 +1,7 @@
 <template>
   <div class="stay-details-step animate-in fade-in slide-in-from-bottom-4 duration-500">
     <!-- Stay Summary Card -->
-    <div v-if="stay" class="stay-card bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-xl shadow-gray-200/50">
+    <div v-if="stay" class="stay-card bg-white rounded-3xl border border-gray-300">
       <div class="bg-brand-blue p-6 flex justify-between items-center">
          <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white border border-white/20">
@@ -12,7 +12,7 @@
                <div class="text-[9px]  text-blue-100 uppercase tracking-widest opacity-80 italic">Verified Premium Property</div>
             </div>
          </div>
-         <div v-if="stay.starRating || stay.rating" class="bg-brand-orange text-white px-3 py-1.5 rounded-lg text-xs  italic shadow-lg shadow-orange-900/20">
+         <div v-if="stay.starRating || stay.rating" class="bg-brand-orange text-white px-3 py-1.5 rounded-lg text-xs font-bold">
            {{ (stay.starRating || stay.rating).toFixed(1) }} ★
          </div>
       </div>
@@ -58,7 +58,7 @@
 
     <!-- Continue Button (Hidden if bundle and step 0) -->
     <div v-if="!isBundle" class="flex justify-end mt-4">
-      <button @click="$emit('continue')" class="bg-brand-orange hover:bg-orange-600 text-white  px-12 py-4 rounded-xl shadow-xl shadow-orange-100 transition-all uppercase tracking-widest text-sm active:scale-[0.98]">
+      <button @click="$emit('continue')" class="bg-brand-orange hover:bg-orange-600 text-white  px-12 py-4 rounded-xl transition-all uppercase tracking-widest text-sm active:scale-[0.98]">
         Continue to Traveller Details
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
       </button>

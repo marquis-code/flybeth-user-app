@@ -82,7 +82,7 @@
            </p>
            <button 
              @click="$emit('close')" 
-             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all font-header"
+             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all "
            >
               {{ $t('settings.applyChanges') }}
            </button>

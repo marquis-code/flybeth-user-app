@@ -16,7 +16,7 @@
         <div
           @click="toggleDropdown"
           :class="[
-            'w-full py-4 pt-6 px-3 bg-gray-50 border-[0.5px] border-transparent flex justify-between items-center cursor-pointer',
+            'w-full py-4 pt-6 px-3 bg-white border border-gray-300 flex justify-between items-center cursor-pointer',
             'focus:outline-none focus:ring-1 focus:ring-[#3BAB22] focus:border-[#3BAB22] transition-all duration-300',
             roundedClasses,
             disabled ? 'opacity-50 cursor-not-allowed' : '',
@@ -46,7 +46,7 @@
   
         <div
           v-if="showDropdown"
-          class="absolute z-[10000000] mt-1 w-full bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl overflow-hidden border border-gray-100"
+          class="absolute z-[10000000] mt-1 w-full bg-white rounded-2xl border border-gray-300 overflow-hidden"
         >
           <!-- Search Input -->
           <div class="p-2 border-b-[0.5px] border-gray-50 sticky top-0 bg-white">

@@ -38,7 +38,7 @@
       <div class="fare-rows space-y-4">
         <!-- Flight Breakdown -->
         <div v-if="flight" class="space-y-1">
-           <div class="text-[9px] font-bold text-gray-400 tracking-widest mb-2 italic">Flight</div>
+           <div class="text-[9px] font-bold text-gray-400 tracking-widest mb-2">Flight</div>
            <div class="fare-row">
              <span>Flights × {{ passengerCount }} Traveller{{ passengerCount > 1 ? 's' : '' }}</span>
              <span>{{ currency }}{{ formatPrice(flightBasePrice) }}</span>
@@ -47,7 +47,7 @@
 
         <!-- Stay Breakdown -->
         <div v-if="currentStay" class="space-y-1">
-           <div class="text-[9px] font-bold text-gray-400 tracking-widest mb-2 italic">Hotel</div>
+           <div class="text-[9px] font-bold text-gray-400 tracking-widest mb-2">Hotel</div>
            <div class="fare-row">
              <span>Accommodation</span>
              <span>{{ currency }}{{ formatPrice(stayPrice) }}</span>
@@ -72,7 +72,7 @@
         </div>
       </div>
       <button @click="showBreakdown = !showBreakdown" class="breakdown-link mt-4 flex items-center gap-1.5 text-brand-blue hover:text-brand-blue/80 transition-colors">
-        <span class="text-[10px] font-bold tracking-widest italic">{{ showBreakdown ? 'Hide' : 'View' }} breakdown</span>
+        <span class="text-[10px] font-bold tracking-widest">{{ showBreakdown ? 'Hide' : 'View' }} breakdown</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transition-transform duration-300" :class="{ 'rotate-180': showBreakdown }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
       </button>
     </div>
@@ -95,14 +95,24 @@
     <div class="sidebar-section total-section border-t-2 border-dashed border-gray-100 pt-6 mt-6">
       <div class="total-row flex justify-between items-center px-1">
         <span class="total-label text-base font-bold text-gray-900">Trip total</span>
-        <span class="total-amount text-2xl font-header text-gray-900 tracking-tight">{{ currency }}{{ formatPrice(tripTotal) }}</span>
+        <span class="total-amount text-2xl  text-gray-900 tracking-tight">{{ currency }}{{ formatPrice(tripTotal) }}</span>
       </div>
     </div>
 
     <!-- Pay Now Button (only at payment step) -->
-    <button v-if="showPayButton" @click="$emit('pay-now')" class="pay-now-btn w-full mt-6 bg-brand-blue hover:bg-brand-blue/90 text-white font-bold py-3.5 rounded-2xl transition-all tracking-widest text-[11px] active:scale-[0.98] shadow-lg shadow-brand-blue/20">
-      Complete payment
-    </button>
+    <div v-if="showPayButton" class="space-y-3">
+        <button @click="$emit('pay-now')" class="pay-now-btn w-full mt-6 bg-brand-blue hover:bg-brand-blue/90 text-white font-bold py-3.5 rounded-2xl transition-all tracking-widest text-[11px] active:scale-[0.98]">
+          Complete payment
+        </button>
+
+        <button 
+          v-if="flight?.rawOffer?.provider === 'duffel' || $route.query.provider === 'duffel'" 
+          @click="$emit('hold-now')" 
+          class="w-full bg-orange-50 hover:bg-orange-100 text-orange-600 font-bold py-3 rounded-2xl transition-all tracking-widest text-[10px] uppercase border border-orange-100"
+        >
+          Hold for Later (Reserve)
+        </button>
+    </div>
   </div>
 </template>
 
@@ -123,7 +133,7 @@ const props = defineProps({
   showPayButton: { type: Boolean, default: false },
 })
 
-defineEmits(['apply-promo', 'pay-now'])
+defineEmits(['apply-promo', 'pay-now', 'hold-now'])
 
 const showBreakdown = ref(false)
 
@@ -159,15 +169,14 @@ const formatPrice = (price: number) => {
 .checkout-sidebar {
   background: white;
   border-radius: 1.5rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid #cbd5e1;
   padding: 1.5rem;
   position: sticky;
   top: 6rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
 }
 
 .sidebar-title {
-  font-family: 'Spectral', serif;
+  
   font-size: 1.5rem;
   font-weight: 800;
   color: #1a2332;
@@ -201,7 +210,7 @@ const formatPrice = (price: number) => {
   background: #f8fafc;
   padding: 1rem;
   border-radius: 1rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid #cbd5e1;
 }
 
 .route-icon {

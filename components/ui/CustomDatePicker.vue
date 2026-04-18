@@ -23,51 +23,51 @@
     <Transition name="calendar-pop">
       <div 
         v-if="isOpen"
-        class="absolute z-[100] mt-4 bg-white rounded-[2.5rem] shadow-[0_30px_90px_-20px_rgba(13,29,173,0.2)] border border-gray-50 p-10 min-w-[340px] lg:min-w-[820px] transform origin-top-left"
+        class="absolute z-[100] mt-4 bg-white rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-100 p-8 min-w-[320px] lg:min-w-[700px] transform origin-top-left"
         :class="popoverPosition"
       >
-        <div class="flex flex-col lg:flex-row gap-16">
-          <!-- Left/Main Month -->
+        <div class="flex flex-col lg:flex-row gap-12">
+          <!-- Calendar Month -->
           <div class="flex-1">
-             <div class="flex items-center justify-between mb-10">
-                <button @click="prevMonth" class="p-3 hover:bg-brand-blue/5 rounded-full transition-all text-brand-gray/40 hover:text-gray-900">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+             <div class="flex items-center justify-between mb-8">
+                <button @click="prevMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h3 class="text-2xl  text-gray-900 font-header tracking-tighter">{{ formatMonthYear(currentMonth) }}</h3>
-                <div class="w-12 lg:hidden"></div> <!-- Spacer -->
-                <button v-if="!isDesktop" @click="nextMonth" class="p-3 hover:bg-brand-blue/5 rounded-full transition-all text-brand-gray/40 hover:text-gray-900 lg:hidden">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">{{ formatMonthYear(currentMonth) }}</h3>
+                <button v-if="!isDesktop" @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
+                <div v-else class="w-8"></div>
              </div>
 
-             <div class="grid grid-cols-7 mb-6">
-                <span v-for="day in weekDays" :key="day" class="text-[11px]  text-brand-green uppercase tracking-[0.2em] text-center opacity-60">{{ day }}</span>
+             <div class="grid grid-cols-7 mb-4">
+                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px] font-black text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
              </div>
 
-             <div class="grid grid-cols-7 gap-y-2 relative">
-                <div v-for="empty in firstDayOfMonth(currentMonth)" :key="'empty-'+empty" class="h-12"></div>
+             <div class="grid grid-cols-7 gap-1 relative">
+                <div v-for="empty in firstDayOfMonth(currentMonth)" :key="'empty-'+empty" class="aspect-square"></div>
                 
                 <div 
                   v-for="day in daysInMonth(currentMonth)" 
                   :key="day"
-                  class="relative group h-12 flex items-center justify-center cursor-pointer z-10"
+                  class="relative group aspect-square flex items-center justify-center cursor-pointer z-10"
                   @mouseenter="onDateMouseEnter(getDateObj(currentMonth, day))"
                   @click="onDateClick(getDateObj(currentMonth, day))"
                 >
                   <!-- Range Background -->
                   <div 
                     v-if="isInRange(getDateObj(currentMonth, day))"
-                    class="absolute inset-y-0.5 bg-brand-blue"
+                    class="absolute inset-y-1 bg-gray-100"
                     :class="getRangeBgClasses(getDateObj(currentMonth, day))"
                   ></div>
 
-                  <!-- Day Text/Circle -->
+                  <!-- Day Text -->
                   <div 
-                    class="relative z-10 w-11 h-11 flex items-center justify-center rounded-full text-[15px]  transition-all duration-300 transform group-hover:scale-110"
+                    class="relative z-10 w-full h-full flex items-center justify-center rounded-xl text-[11px] font-bold transition-all duration-300 transform group-hover:scale-110"
                     :class="getDayClasses(getDateObj(currentMonth, day))"
                   >
                     {{ day }}
@@ -76,42 +76,42 @@
              </div>
           </div>
 
-          <!-- Right Month (Desktop Only) -->
+          <!-- Second Month (Desktop Only) -->
           <div v-if="isDesktop" class="flex-1">
-             <div class="flex items-center justify-between mb-10">
-                <div class="w-12"></div> <!-- Spacer -->
-                <h3 class="text-2xl  text-gray-900 font-header tracking-tighter">{{ formatMonthYear(nextMonthDate) }}</h3>
-                <button @click="nextMonth" class="p-3 hover:bg-brand-blue/5 rounded-full transition-all text-brand-gray/40 hover:text-gray-900">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+             <div class="flex items-center justify-between mb-8">
+                <div class="w-8"></div>
+                <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">{{ formatMonthYear(nextMonthDate) }}</h3>
+                <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
              </div>
 
-             <div class="grid grid-cols-7 mb-6">
-                <span v-for="day in weekDays" :key="day" class="text-[11px]  text-brand-green uppercase tracking-[0.2em] text-center opacity-60">{{ day }}</span>
+             <div class="grid grid-cols-7 mb-4">
+                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px] font-black text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
              </div>
 
-             <div class="grid grid-cols-7 gap-y-2 relative">
-                <div v-for="empty in firstDayOfMonth(nextMonthDate)" :key="'empty-next-'+empty" class="h-12"></div>
+             <div class="grid grid-cols-7 gap-1 relative">
+                <div v-for="empty in firstDayOfMonth(nextMonthDate)" :key="'empty-next-'+empty" class="aspect-square"></div>
                 
                 <div 
                   v-for="day in daysInMonth(nextMonthDate)" 
                   :key="day"
-                  class="relative group h-12 flex items-center justify-center cursor-pointer z-10"
+                  class="relative group aspect-square flex items-center justify-center cursor-pointer z-10"
                   @mouseenter="onDateMouseEnter(getDateObj(nextMonthDate, day))"
                   @click="onDateClick(getDateObj(nextMonthDate, day))"
                 >
                   <!-- Range Background -->
                   <div 
                     v-if="isInRange(getDateObj(nextMonthDate, day))"
-                    class="absolute inset-y-0.5 bg-brand-blue"
+                    class="absolute inset-y-1 bg-gray-100"
                     :class="getRangeBgClasses(getDateObj(nextMonthDate, day))"
                   ></div>
 
-                  <!-- Day Text/Circle -->
+                  <!-- Day Text -->
                   <div 
-                    class="relative z-10 w-11 h-11 flex items-center justify-center rounded-full text-[15px]  transition-all duration-300 transform group-hover:scale-110"
+                    class="relative z-10 w-full h-full flex items-center justify-center rounded-xl text-[11px] font-bold transition-all duration-300 transform group-hover:scale-110"
                     :class="getDayClasses(getDateObj(nextMonthDate, day))"
                   >
                     {{ day }}
@@ -121,18 +121,13 @@
           </div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-12 pt-8 border-t border-gray-50 flex items-center justify-between">
-          <div class="p-3 bg-gray-50 rounded-full text-brand-gray/40 hover:text-brand-green transition-all cursor-help hover:scale-110 transform">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
+        <!-- Compact Footer -->
+        <div class="mt-10 pt-6 border-t border-gray-100 flex items-center justify-end gap-4">
           <button 
             @click="isOpen = false"
-            class="px-12 py-4 bg-brand-green text-white text-sm  rounded-full hover:bg-brand-green/90 transition-all duration-500 transform hover:scale-105 shadow-[0_10px_30px_-5px_rgba(50,180,4,0.4)] active:scale-95 uppercase tracking-widest"
+            class="px-8 py-3 bg-gray-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
           >
-            Apply Dates
+            Apply Selection
           </button>
         </div>
       </div>
@@ -276,11 +271,11 @@ const getDayClasses = (date: Date) => {
   const isSelectedSingle = props.mode === 'single' && isSameDate(date, props.modelValue as Date)
 
   if (isStart || isEnd || isSelectedSingle) {
-    classes.push('bg-brand-blue text-white shadow-xl shadow-brand-blue/30 scale-105')
+    classes.push('bg-gray-900 text-white shadow-lg scale-105')
   } else if (isInRange(date)) {
-    classes.push('text-white')
+    classes.push('text-gray-900')
   } else {
-    classes.push('text-gray-900 lg:text-brand-gray/60 hover:bg-brand-blue/5 hover:text-gray-900')
+    classes.push('text-gray-900 hover:bg-gray-50')
   }
 
   const today = new Date()
@@ -369,8 +364,8 @@ const nextMonth = () => {
   transform: translateY(20px) scale(0.95);
 }
 
-.grid-cols-7 > div > .bg-brand-blue {
-  height: 2.75rem;
+.grid-cols-7 > div > .bg-gray-100 {
+  height: 2.25rem;
   top: 50%;
   transform: translateY(-50%);
 }

@@ -1,175 +1,170 @@
 <template>
   <nav 
     :class="[
-      isScrolled ? 'bg-white/90 backdrop-blur-xl py-3 border-b border-gray-100' : 'bg-white/95 backdrop-blur-sm py-3 lg:py-5',
-      'fixed w-full top-0 z-[100] transition-all duration-500 font-body'
+      'fixed top-6 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 w-[calc(100%-32px)] max-w-7xl',
+      isScrolled 
+        ? 'bg-white/70 backdrop-blur-2xl border border-white/20 py-3 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-[24px]' 
+        : 'bg-white/40 backdrop-blur-md border border-white/10 py-4 lg:py-5 rounded-[28px]'
     ]"
   >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center transition-all duration-500">
+    <div class="px-6 lg:px-8">
+      <div class="flex justify-between items-center">
         <!-- Logo Area & Mobile Toggle -->
-        <div class="flex items-center gap-2 sm:gap-3">
-          <button @click="isMobileMenuOpen = true" class="lg:hidden p-2 -ml-2 text-gray-900 rounded-md hover:bg-brand-blue/5">
-            <Bars3Icon class="h-6 w-6" />
+        <div class="flex items-center gap-4">
+          <button @click="isMobileMenuOpen = true" class="lg:hidden p-3 bg-white/50 backdrop-blur-sm rounded-full border border-black/5 active:scale-90 transition-all">
+            <Bars3Icon class="h-6 w-6 text-gray-900" />
           </button>
           
-          <NuxtLink to="/" class="flex items-center group">
-            <img src="@/assets/img/logo.png" class="h-8 lg:h-10 w-auto mr-1 lg:mr-3 group-hover:scale-105 transition-transform duration-500" alt="Flybeth Logo" />
+          <NuxtLink to="/" class="flex items-center group transition-all duration-500 hover:scale-105 active:scale-95">
+            <div class="relative">
+              <img src="@/assets/img/logo.png" class="h-8 lg:h-10 w-auto relative z-10" alt="Flybeth Logo" />
+              <div class="absolute -inset-2 bg-secondary/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
           </NuxtLink>
         </div>
 
-        <!-- Desktop Navigation Hidden on Mobile -->
-        <div class="hidden lg:flex items-center gap-6">
+        <!-- Desktop Navigation -->
+        <div class="hidden lg:flex items-center bg-neutral-900/5 px-2 py-1.5 rounded-full border border-black/5">
+          <!-- Explore Travel Dropdown -->
           <div class="relative group">
-            <button class="flex items-center gap-1.5 px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide text-gray-900 bg-white border border-brand-blue/10 hover:border-brand-blue/40 transition-all group">
+            <button class="px-6 py-2.5 text-[14px] font-bold text-primary-dark tracking-tight hover:text-white hover:bg-neutral-900 rounded-full transition-all duration-500 flex items-center gap-2">
               Explore travel
               <ChevronDownIcon class="h-3 w-3 transition-transform group-hover:rotate-180" />
             </button>
-            <div class="absolute left-0 top-full mt-2 flex invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 z-[200]">
-              <div class="bg-white border border-gray-100 rounded-2xl p-2 py-3 w-56 overflow-visible relative shadow-2xl">
-                <NuxtLink v-for="item in exploreLinks" :key="item.name" :to="item.path" class="flex items-center gap-3 px-4 py-3 hover:bg-brand-blue/5 rounded-xl transition-colors group/item relative">
-                  <component :is="item.icon" class="h-4 w-4 text-gray-900 group-hover/item:text-brand-blue" />
-                  <span class="text-xs font-medium text-gray-900 group-hover/item:text-brand-blue">{{ item.name }}</span>
-                  <ChevronRightIcon v-if="item.hasArrow" class="h-3 w-3 ml-auto text-gray-300" />
-                  
-                  <div v-if="item.name === 'Deals'" class="absolute left-full top-[-12px] h-fit w-[640px] bg-white border border-gray-100 border-l-0 rounded-r-2xl p-8 flex gap-8 invisible group-hover/item:visible opacity-0 group-hover/item:opacity-100 transition-all duration-300 z-[210] ml-[-1px] shadow-2xl">
-                    <div v-for="col in megaDeals" :key="col.title" class="flex-1">
-                      <h4 class="text-xs font-bold tracking-widest text-gray-400 mb-6 border-b border-gray-50 pb-2 italic">{{ col.title }}</h4>
-                      <ul class="space-y-4">
-                        <li v-for="link in col.links" :key="link">
-                          <NuxtLink to="/explore" class="text-xs font-semibold text-brand-gray/60 hover:text-brand-blue transition-colors block">{{ link }}</NuxtLink>
-                        </li>
-                      </ul>
-                    </div>
+            <div class="absolute left-0 top-[calc(100%+12px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0 z-[200]">
+              <div class="bg-white/90 backdrop-blur-2xl border border-white/20 rounded-[28px] p-3 w-64 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.1)]">
+                <NuxtLink v-for="item in exploreLinks" :key="item.name" :to="item.path" class="flex items-center gap-4 px-4 py-3 hover:bg-neutral-900 hover:text-white rounded-[20px] transition-all group/item">
+                  <div class="w-8 h-8 rounded-xl bg-gray-50 group-hover/item:bg-white/10 flex items-center justify-center transition-colors">
+                    <component :is="item.icon" class="h-4 w-4" />
                   </div>
+                  <span class="text-[13px] font-bold">{{ item.name }}</span>
+                  <ChevronRightIcon v-if="item.hasArrow" class="h-3 w-3 ml-auto opacity-40" />
                 </NuxtLink>
               </div>
             </div>
           </div>
           
-          <NuxtLink to="/help" class="flex items-center gap-1.5 px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide text-gray-900 bg-white border border-brand-blue/10 hover:border-brand-blue/40 transition-all">
-             <QuestionMarkCircleIcon class="h-4 w-4 text-brand-blue/60" />
+          <NuxtLink to="/help" class="px-6 py-2.5 text-[14px] font-bold text-primary-dark tracking-tight hover:text-white hover:bg-neutral-900 rounded-full transition-all duration-500 flex items-center gap-2">
+             <QuestionMarkCircleIcon class="h-4 w-4 opacity-60" />
              Help center
           </NuxtLink>
         </div>
 
-        <!-- Desktop User Actions-->
-        <div class="hidden lg:flex items-center space-x-6">
-          <button @click="showSettings = true" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-100 hover:border-brand-blue/40 hover:bg-brand-blue/5 transition-all group">
-            <img :src="getFlag(locale)" class="h-3 w-5 object-cover rounded shadow-sm" />
-            <span class="text-xs font-bold tracking-wider text-gray-900 uppercase">{{ locale }} | {{ currentCurrency.code }}</span>
-            <ChevronDownIcon class="h-3 w-3 text-brand-gray group-hover:text-gray-900 transition-colors" />
+        <!-- Desktop Actions -->
+        <div class="hidden lg:flex items-center space-x-3">
+          <!-- Regional Settings -->
+          <button @click="showSettings = true" class="flex items-center gap-3 px-4 py-2 bg-white/50 border border-white rounded-full hover:bg-white transition-all group shadow-sm">
+            <img :src="getFlag(locale)" class="h-3 w-5 object-cover rounded-sm shadow-sm" />
+            <span class="text-[11px] font-black tracking-widest text-gray-900 uppercase opacity-80">{{ locale }} | {{ currentCurrency.code }}</span>
           </button>
 
+          <!-- Call Support -->
           <div class="relative group">
-            <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-brand-blue/10 hover:border-brand-blue/30 bg-white hover:bg-brand-blue/5 transition-all group-hover:scale-105 shadow-sm">
-              <PhoneIcon class="h-3 w-3 text-brand-blue" />
-              <span class="text-sm font-semibold text-gray-900">Call us</span>
+            <button class="w-10 h-10 flex items-center justify-center bg-white/50 border border-white rounded-full hover:bg-primary hover:text-white transition-all group shadow-sm overflow-hidden">
+              <PhoneIcon class="h-4 w-4" />
             </button>
-            <div class="absolute right-0 top-full mt-3 w-72 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-[110]">
-              <div class="bg-white border border-gray-100 p-6 rounded-3xl shadow-2xl relative">
-                <div class="flex items-center gap-3 mb-5">
-                  <div class="w-10 h-10 rounded-2xl bg-brand-blue/5 flex items-center justify-center">
-                    <PhoneIcon class="h-5 w-5 text-brand-blue" />
+            <div class="absolute right-0 top-[calc(100%+12px)] w-72 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 z-[110]">
+              <div class="bg-white/90 backdrop-blur-2xl border border-white/20 p-8 rounded-[32px] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.1)]">
+                <div class="flex items-center gap-4 mb-6">
+                  <div class="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center">
+                    <PhoneIcon class="h-6 w-6 text-secondary" />
                   </div>
                   <div>
-                    <p class="text-sm font-bold text-gray-900 leading-tight">24/7 Support</p>
-                    <p class="text-[11px] font-bold text-brand-blue/60 italic leading-tight">Exclusive rates</p>
+                    <p class="text-sm font-bold text-gray-900 leading-tight">24/7 Priority Support</p>
+                    <p class="text-[10px] font-black text-secondary tracking-widest uppercase mt-1">Global Concierge</p>
                   </div>
                 </div>
-                <a href="tel:+16462376851" class="block w-full text-center bg-brand-blue text-white py-3.5 rounded-2xl font-bold text-lg hover:scale-[1.02] transition-all mb-2 shadow-lg shadow-brand-blue/20">+1-646-237-6851</a>
-                <p class="text-center text-[10px] font-bold text-gray-400 mb-5 tracking-widest italic uppercase">Mention "DIAL10"</p>
+                <a href="tel:+16462376851" class="block w-full text-center bg-gradient-to-r from-primary to-primary-dark text-white py-4 rounded-2xl font-bold text-lg hover:shadow-xl hover:-translate-y-0.5 transition-all mb-4 shadow-lg shadow-primary/20">+1-646-237-6851</a>
+                <div class="text-center p-3 bg-secondary/5 rounded-xl">
+                    <p class="text-[10px] font-black text-secondary tracking-[0.2em] italic uppercase">PROMO: "DIAL10"</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <button type="button" :class="[isScrolled ? 'text-gray-900' : 'text-gray-900', 'p-2 rounded-full hover:bg-brand-blue/5 transition-colors relative']">
-            <BellIcon class="h-6 w-6" />
-            <span class="absolute top-2 right-2 h-2.5 w-2.5 bg-brand-green rounded-full ring-2 ring-white"></span>
-          </button>
-          
-          <template v-if="token">
-             <div class="flex items-center gap-4">
-               <div class="flex flex-col items-end">
-                 <span class="text-gray-900 text-sm font-bold">{{ user?.firstName }} {{ user?.lastName }}</span>
-                 <span class="text-brand-blue/60 text-[10px] font-bold tracking-widest italic uppercase">Explorer</span>
-               </div>
-               <div @click="showLogoutModal = true" class="h-10 w-10 rounded-xl bg-gray-50 flex items-center justify-center cursor-pointer hover:bg-red-50 hover:text-red-500 group transition-all duration-500 border border-gray-100 p-1">
-                 <ArrowRightOnRectangleIcon class="h-5 w-5 group-hover:rotate-12 transition-transform" />
-               </div>
+          <!-- Divider -->
+          <div class="h-6 w-px bg-black/5 mx-2"></div>
+
+          <!-- User Section -->
+          <template v-if="user">
+             <div class="flex items-center bg-white/50 border border-white p-1 rounded-full shadow-sm pl-4">
+                <div class="flex flex-col items-end mr-3">
+                   <span class="text-[13px] font-bold text-primary-dark leading-tight">{{ user?.firstName }} {{ user?.lastName }}</span>
+                   <span class="text-[9px] font-black text-secondary tracking-[0.2em] uppercase opacity-70 italic">{{ user?.role?.name || 'Explorer' }}</span>
+                </div>
+                <div @click="showLogoutModal = true" class="h-8 w-8 rounded-full bg-white border border-black/5 flex items-center justify-center cursor-pointer hover:bg-red-50 hover:text-red-500 transition-all group">
+                  <ArrowRightOnRectangleIcon class="h-4 w-4 group-hover:rotate-12 transition-transform" />
+                </div>
              </div>
           </template>
           <template v-else>
-            <button @click="openAuthModal" class="relative bg-brand-green px-8 py-3 rounded-full text-white text-xs font-bold tracking-widest transition-all hover:scale-105 active:scale-95 shadow-lg shadow-brand-green/20 overflow-hidden group">
-               <span class="relative z-10">Sign in</span>
-               <div class="absolute inset-0 bg-brand-blue translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+            <button @click="openAuthModal" class="bg-gradient-to-r from-primary to-primary-dark px-8 py-3 rounded-full text-white text-[12px] font-bold tracking-tight transition-all hover:shadow-[0_10px_20px_-5px_rgba(25,33,81,0.3)] hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-primary/20">
+               Join Flybeth
             </button>
           </template>
         </div>
         
         <!-- Mobile Right Actions -->
         <div class="flex lg:hidden items-center space-x-3">
-          <button type="button" class="p-1.5 text-gray-900 rounded-full relative hover:bg-brand-blue/5">
-            <BellIcon class="h-6 w-6" />
-            <span class="absolute top-2 right-2 h-2 w-2 bg-brand-green rounded-full ring-2 ring-white"></span>
+          <button type="button" class="w-10 h-10 flex items-center justify-center bg-white border border-black/5 rounded-full relative active:scale-90 transition-all">
+            <BellIcon class="h-5 w-5 text-gray-900" />
+            <span class="absolute top-2 right-2 h-2.5 w-2.5 bg-secondary border-2 border-white rounded-full"></span>
           </button>
-          <button v-if="!token" @click="openAuthModal" class="bg-brand-green px-5 py-2 rounded-full text-white text-[10px] font-bold tracking-widest whitespace-nowrap shadow-md">
+          <button v-if="!user" @click="openAuthModal" class="bg-primary px-6 py-2.5 rounded-full text-white text-[11px] font-bold tracking-tight shadow-lg shadow-primary/20 active:scale-95 transition-all">
             Sign in
           </button>
-          <div v-else @click="showLogoutModal = true" class="h-9 w-9 rounded-full bg-brand-blue/10 flex items-center justify-center cursor-pointer text-gray-900 border border-brand-blue/10">
-            <ArrowRightOnRectangleIcon class="h-4 w-4" />
+          <div v-else @click="showLogoutModal = true" class="h-10 w-10 rounded-full bg-white border border-black/5 flex items-center justify-center cursor-pointer active:scale-90 transition-all">
+            <ArrowRightOnRectangleIcon class="h-4 w-4 text-red-500" />
           </div>
         </div>
       </div>
-      
     </div>
   </nav>
 
   <Teleport to="body">
-      <!-- Mobile Slideout Overlay (End-to-End Fix) -->
+      <!-- Mobile Slideout Overlay -->
       <div :class="['fixed inset-0 z-[999] lg:hidden transition-all duration-300', isMobileMenuOpen ? 'visible' : 'invisible']">
-          <!-- Dark Backdrop -->
-          <div :class="['absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300', isMobileMenuOpen ? 'opacity-100' : 'opacity-0']" @click="isMobileMenuOpen = false"></div>
+          <!-- Backdrop -->
+          <div :class="['absolute inset-0 bg-neutral-900/20 backdrop-blur-sm transition-opacity duration-500', isMobileMenuOpen ? 'opacity-100' : 'opacity-0']" @click="isMobileMenuOpen = false"></div>
           
-          <!-- Side Drawer -->
-          <div :class="['absolute inset-y-0 left-0 w-[85%] max-w-[340px] bg-white flex flex-col transition-transform duration-300 shadow-2xl', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
+          <!-- Drawer -->
+          <div :class="['absolute inset-y-4 left-4 w-[calc(100%-32px)] max-w-[360px] bg-white border border-white/20 flex flex-col transition-all duration-500 rounded-[32px] shadow-2xl', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-[110%]']">
              <!-- Header -->
-             <div class="p-6 flex justify-between items-center border-b border-gray-50">
-                <img src="@/assets/img/logo.png" class="h-8 object-contain" alt="Flybeth Logo" />
-                <button @click="isMobileMenuOpen = false" class="p-2 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors">
+             <div class="p-8 flex justify-between items-center bg-white border-b border-black/5 rounded-t-[32px]">
+                <img src="@/assets/img/logo.png" class="h-7 object-contain" alt="Flybeth Logo" />
+                <button @click="isMobileMenuOpen = false" class="p-3 rounded-full bg-white border border-black/5 text-gray-400 hover:text-gray-900 transition-all active:scale-90">
                    <XMarkIcon class="h-5 w-5" />
                 </button>
              </div>
              
-             <!-- Body Links -->
-             <div class="flex-1 overflow-y-auto px-6 py-8 space-y-8">
-                <!-- Main Nav -->
-                <div class="space-y-1">
-                   <h3 class="text-[10px] font-bold uppercase text-gray-400 tracking-widest pl-3 mb-4 italic">Explore</h3>
+             <!-- Body -->
+             <div class="flex-1 overflow-y-auto px-6 py-8 space-y-8 scrollbar-hide">
+                <div class="space-y-2">
+                   <p class="text-[10px] font-black uppercase text-secondary tracking-[0.3em] pl-4 mb-4 opacity-60">Adventure awaits</p>
                    <NuxtLink 
-                     v-for="item in exploreLinks" 
+                     v-for="(item, idx) in exploreLinks" 
                      :key="item.name" 
                      :to="item.path" 
                      @click="isMobileMenuOpen = false" 
-                     class="flex items-center gap-4 p-3 rounded-2xl hover:bg-brand-blue/5 transition-colors group/link"
+                     class="flex items-center gap-5 p-4 rounded-[24px] hover:bg-secondary/5 transition-all group"
+                     :style="{ transitionDelay: `${idx * 50}ms`, transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(-20px)', opacity: isMobileMenuOpen ? 1 : 0 }"
                    >
-                      <div class="w-11 h-11 rounded-xl bg-gray-50 flex items-center justify-center group-hover/link:bg-brand-blue/10 group-hover/link:text-brand-blue transition-all">
-                        <component :is="item.icon" class="h-5 w-5" />
+                      <div class="w-12 h-12 rounded-2xl bg-white border border-black/5 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                        <component :is="item.icon" class="h-5 w-5 text-primary" />
                       </div>
-                      <span class="text-[15px] font-bold text-gray-900">{{ item.name }}</span>
+                      <span class="text-base font-bold text-primary-dark group-hover:translate-x-1 transition-transform">{{ item.name }}</span>
+                      <ChevronRightIcon class="h-4 w-4 ml-auto opacity-20" />
                    </NuxtLink>
                 </div>
                 
-                <!-- Utilities -->
-                <div class="border-t border-gray-50 pt-8 space-y-1">
-                   <h3 class="text-[10px] font-bold uppercase text-gray-400 tracking-widest pl-3 mb-4 italic">Support</h3>
-                   <button @click="[showSettings = true, isMobileMenuOpen = false]" class="flex items-center gap-4 w-full p-3 rounded-2xl hover:bg-brand-blue/5 transition-colors group/util">
-                      <div class="w-11 h-11 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 group-hover/util:border-brand-blue/20">
-                        <img :src="getFlag(locale)" class="h-4 w-6 rounded shadow-sm object-cover" />
+                <div class="pt-8 border-t border-black/5 space-y-3">
+                   <button @click="[showSettings = true, isMobileMenuOpen = false]" class="flex items-center gap-5 w-full p-4 rounded-[24px] bg-neutral-50/50 border border-black/5 active:scale-95 transition-all">
+                      <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center border border-black/5 shadow-sm overflow-hidden">
+                        <img :src="getFlag(locale)" class="h-full w-full object-cover" />
                       </div>
                       <div class="text-left">
-                        <p class="text-[15px] font-bold text-gray-900 leading-tight">{{ locale }} | {{ currentCurrency.code }}</p>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Region settings</p>
+                        <p class="text-[15px] font-bold text-primary-dark leading-tight">{{ locale }} | {{ currentCurrency.code }}</p>
+                        <p class="text-[10px] font-black text-secondary uppercase tracking-widest mt-1 opacity-60">Preferences</p>
                       </div>
                    </button>
                    
@@ -185,20 +180,24 @@
                 </div>
              </div>
              
-             <!-- Footer Auth Panel -->
-             <div class="p-6 border-t border-gray-100 bg-gray-50/50">
-                <div v-if="token" class="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                   <div>
-                     <p class="text-sm font-bold text-gray-900">{{ user?.firstName }} {{ user?.lastName }}</p>
-                     <p class="text-[10px] font-bold text-brand-blue uppercase tracking-widest italic">Explorer</p>
+             <!-- Footer -->
+             <div class="p-8 border-t border-black/5 bg-white rounded-b-[32px]">
+                <div v-if="user" class="flex items-center justify-between p-5 bg-white rounded-[24px] border border-black/5 shadow-sm">
+                   <div class="flex items-center gap-4">
+                      <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-secondary/10 to-primary/10 flex items-center justify-center border border-black/5 font-bold text-secondary text-sm">
+                        {{ user?.firstName?.charAt(0) }}
+                      </div>
+                      <div>
+                        <p class="text-sm font-bold text-primary-dark">{{ user?.firstName }} {{ user?.lastName }}</p>
+                        <p class="text-[10px] font-black text-secondary uppercase tracking-widest opacity-60 italic">{{ user?.role?.name || 'Explorer' }}</p>
+                      </div>
                    </div>
-                   <button @click="[showLogoutModal = true, isMobileMenuOpen = false]" class="p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                   <button @click="[showLogoutModal = true, isMobileMenuOpen = false]" class="p-3 text-red-500 bg-red-50/50 rounded-xl transition-all active:scale-90">
                       <ArrowRightOnRectangleIcon class="h-5 w-5" />
                    </button>
                 </div>
-                <button v-else @click="[openAuthModal(), isMobileMenuOpen = false]" class="w-full bg-brand-blue text-white py-4 rounded-2xl font-bold text-sm tracking-widest transition-all shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-3">
-                   <ArrowRightOnRectangleIcon class="h-5 w-5" />
-                   Sign in / Register
+                <button v-else @click="[openAuthModal(), isMobileMenuOpen = false]" class="w-full bg-gradient-to-r from-primary to-primary-dark text-white py-5 rounded-[24px] font-bold text-sm tracking-widest transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-95">
+                   Get Started Now
                 </button>
              </div>
           </div>
@@ -278,7 +277,7 @@ const megaDeals = [
 import { useSettings } from '@/composables/useSettings'
 import { useI18n } from 'vue-i18n'
 
-const { token, user, logout, openAuthModal } = useAuth();
+const { user, logout, openAuthModal } = useAuth();
 const { locale } = useI18n();
 const { currentCurrency } = useSettings();
 const showSettings = inject('showSettings') as Ref<boolean>;
@@ -312,14 +311,34 @@ const handleScroll = () => {
 }
 
 const handleLogout = () => {
+  // Aggressively clear session cookies manually
+  const userProfile = useCookie('user_profile')
+  const accessToken = useCookie('accessToken')
+  const refreshToken = useCookie('refreshToken')
+  
+  userProfile.value = null
+  accessToken.value = null
+  refreshToken.value = null
+
+  // Even more aggressive: Clear all cookies for the current domain
+  if (import.meta.client) {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+       const cookie = cookies[i];
+       const eqPos = cookie.indexOf("=");
+       const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+       document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+  }
+
   logout();
   showLogoutModal.value = false;
-  router.push('/');
+  window.location.href = '/';
 }
 
 // Exit app confirmation (beforeunload)
 const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-  if (token.value) {
+  if (user.value) {
     e.preventDefault();
     e.returnValue = 'You have an active session. Are you sure you want to leave?';
     return e.returnValue;
@@ -347,7 +366,20 @@ const cancelExit = () => {
 </script>
 
 <style scoped>
-.font-body {
-  font-family: 'Inter', sans-serif;
+/* Override shadow removal */
+nav {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
+}
+
+.isScrolled {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05) !important;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

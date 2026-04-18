@@ -23,6 +23,22 @@ export const flightsApi = {
     getLiveDeals(origin: string, tripType: string = 'round-trip') {
         return GATEWAY_ENDPOINT.get("/flights/deals/live", { params: { origin, tripType } });
     },
+    // Duffel Specific Flows
+    setupDuffelIdentity() {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/integrations/duffel/identity/setup");
+    },
+    hold(data: any) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/hold", data);
+    },
+    payHold(data: any) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/pay-hold", data);
+    },
+    createDuffelCard(data: any) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/payments/cards", data);
+    },
+    createDuffel3DSSession(data: any) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/payments/3ds", data);
+    },
 
     // Legacy/Individual Provider Endpoints (Keep for compatibility if needed, but mark as deprecated)
     /** @deprecated Use searchLive */

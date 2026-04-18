@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <div>
       <h2 class="text-sm  text-brand-green uppercase tracking-[0.3em] mb-4">Account Recovery</h2>
-      <h3 class="text-4xl  text-gray-900 font-header tracking-tighter">Reset Password</h3>
+      <h3 class="text-4xl  text-gray-900  tracking-tighter">Reset Password</h3>
       <p class="mt-3 text-sm text-brand-gray/60 font-bold">
         Enter your new password below.
       </p>

@@ -29,46 +29,46 @@
     </div>
 
     <!-- Dropdown Calendar -->
-    <div v-if="isOpen" class="absolute top-full left-1/2 -translate-x-1/2 mt-4 z-[200] bg-white rounded-[2.5rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-100 p-6 md:p-10 w-[92vw] sm:w-[420px] md:min-w-[800px] flex flex-col gap-6 md:gap-8">
+    <div v-if="isOpen" class="absolute top-full left-1/2 -translate-x-1/2 mt-4 z-[200] bg-white rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-100 p-8 w-[92vw] sm:w-[340px] md:min-w-[700px] flex flex-col gap-8 transform origin-top">
         
         <!-- Mobile Close Button -->
-        <button @click="isOpen = false" class="md:hidden absolute top-4 right-4 h-9 w-9 flex items-center justify-center text-gray-400 bg-gray-50 rounded-full z-20 hover:text-gray-900 transition-colors">
-          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button @click="isOpen = false" class="md:hidden absolute top-4 right-4 h-8 w-8 flex items-center justify-center text-gray-400 bg-gray-50 rounded-full z-20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
         <!-- Controls -->
         <div class="flex justify-between items-center px-2">
-           <button @click.stop="previousMonth" class="h-11 w-11 rounded-2xl bg-gray-50 flex items-center justify-center hover:bg-gray-900 hover:text-white transition-all group">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+           <button @click.stop="previousMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-100">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
            </button>
-           <div class="flex gap-4 md:gap-48 text-gray-900 font-black tracking-wide text-[11px]">
+           <div class="flex gap-4 md:gap-40 text-gray-900 font-black tracking-widest text-[10px] uppercase">
              <span>{{ getMonthName(currentDateLeft) }} {{ currentDateLeft.getFullYear() }}</span>
              <span class="hidden md:inline">{{ getMonthName(currentDateRight) }} {{ currentDateRight.getFullYear() }}</span>
            </div>
-           <button @click.stop="nextMonth" class="h-11 w-11 rounded-2xl bg-gray-50 flex items-center justify-center hover:bg-gray-900 hover:text-white transition-all group">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+           <button @click.stop="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-100">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
            </button>
         </div>
 
-        <div class="flex flex-col md:flex-row gap-10 md:gap-14">
+        <div class="flex flex-col md:flex-row gap-10">
           <!-- Left Month -->
           <div class="flex-1">
-             <div class="grid grid-cols-7 gap-y-3 text-center text-[10px] font-black text-gray-400 tracking-widest mb-6 opacity-30">
-                <div v-for="d in ['Mo','Tu','We','Th','Fr','Sa','Su']" :key="d">{{ d }}</div>
+             <div class="grid grid-cols-7 text-center text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                <div v-for="d in ['S','M','T','W','T','F','S']" :key="d">{{ d }}</div>
              </div>
-             <div class="grid grid-cols-7 gap-y-1.5 relative">
+             <div class="grid grid-cols-7 gap-1 relative">
                 <div 
                    v-for="(day, idx) in leftMonthDays" 
                    :key="idx" 
                    @click.stop="day.date && handleDateClick(day.fullDate)"
                    @mouseenter="day.date && handleDateHover(day.fullDate)"
-                   class="h-12 flex items-center justify-center relative z-10 text-[13px] font-black cursor-pointer transition-all w-full"
+                   class="aspect-square flex items-center justify-center relative z-10 text-[11px] font-bold cursor-pointer transition-all w-full"
                    :class="getDayCellClass(day)"
                 >
-                    <div v-if="day.date" class="h-11 w-11 rounded-2xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
+                    <div v-if="day.date" class="h-full w-full rounded-xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
                        {{ day.date }}
-                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[7px] font-black px-2 py-0.5 rounded-full tracking-wide shadow-xl shadow-black/10 z-30 whitespace-nowrap">Check-in</div>
-                       <div v-if="isEndDate(day.fullDate) || (isHoverEndDate(day.fullDate) && !checkOutDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900/40 text-white text-[7px] font-black px-2 py-0.5 rounded-full tracking-wide shadow-xl shadow-black/10 z-30 whitespace-nowrap">Check-out</div>
+                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
+                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
                     </div>
                  </div>
               </div>
@@ -76,22 +76,22 @@
 
            <!-- Right Month (Desktop Only) -->
            <div class="hidden md:block flex-1">
-              <div class="grid grid-cols-7 gap-y-3 text-center text-[10px] font-black text-gray-400 tracking-widest mb-6 opacity-30">
-                 <div v-for="d in ['Mo','Tu','We','Th','Fr','Sa','Su']" :key="d">{{ d }}</div>
+              <div class="grid grid-cols-7 text-center text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">
+                <div v-for="d in ['S','M','T','W','T','F','S']" :key="d">{{ d }}</div>
               </div>
-              <div class="grid grid-cols-7 gap-y-1.5 relative">
+              <div class="grid grid-cols-7 gap-1 relative">
                  <div 
                     v-for="(day, idx) in rightMonthDays" 
                     :key="idx" 
                     @click.stop="day.date && handleDateClick(day.fullDate)"
                     @mouseenter="day.date && handleDateHover(day.fullDate)"
-                    class="h-12 flex items-center justify-center relative z-10 text-[13px] font-black cursor-pointer transition-all w-full"
+                    class="aspect-square flex items-center justify-center relative z-10 text-[11px] font-bold cursor-pointer transition-all w-full"
                     :class="getDayCellClass(day)"
                  >
-                    <div v-if="day.date" class="h-11 w-11 rounded-2xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
+                    <div v-if="day.date" class="h-full w-full rounded-xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
                        {{ day.date }}
-                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[7px] font-black px-2 py-0.5 rounded-full tracking-wide shadow-xl shadow-black/10 z-30 whitespace-nowrap">Check-in</div>
-                       <div v-if="isEndDate(day.fullDate) || (isHoverEndDate(day.fullDate) && !checkOutDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900/40 text-white text-[7px] font-black px-2 py-0.5 rounded-full tracking-wide shadow-xl shadow-black/10 z-30 whitespace-nowrap">Check-out</div>
+                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
+                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
                     </div>
                  </div>
               </div>

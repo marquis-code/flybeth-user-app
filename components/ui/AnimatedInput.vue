@@ -22,10 +22,10 @@
         :readonly="readonly"
         :rows="rows"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-[#1A1A1B09] border-[0.5px] border-transparent focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300 resize-none',
+          'w-full py-3 pt-6 px-3 bg-white border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300 resize-none',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
-          (hasError || (errorMessage && showError)) ? 'border-[0.5px] ring-red-500 border-red-500' : ''
+          (hasError || (errorMessage && showError)) ? 'border ring-red-500 border-red-500' : ''
         ]"
         @input="handleInput"
         @focus="handleFocus"
@@ -43,11 +43,11 @@
         :readonly="readonly || type === 'date' || type === 'time' || type === 'datetime-local'"
         :autocomplete="autocomplete"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-[#1A1A1B09] border-[0.5px] border-transparent focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
+          'w-full py-3 pt-6 px-3 bg-white border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
           (type === 'date' || type === 'time' || type === 'datetime-local') ? 'cursor-pointer' : '',
-          (hasError || (errorMessage && showError)) ? 'border-[0.5px] ring-red-500 border-red-500' : ''
+          (hasError || (errorMessage && showError)) ? 'border ring-red-500 border-red-500' : ''
         ]"
         @input="handleInput"
         @focus="handleFocus"
@@ -91,83 +91,68 @@
     <Transition name="picker-fade">
       <div 
         v-if="showDatePicker"
-        class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+        class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
         @click="closeDatePicker"
       >
         <div 
-          class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform"
+          class="bg-white rounded-[2rem] shadow-2xl w-full max-w-[340px] overflow-hidden transform border border-gray-100"
           @click.stop
         >
-          <div class="bg-gradient-to-br from-[#033958] to-[#055a8c] p-6 text-white">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="text-xl font-bold">Select Date</h3>
-              <button 
-                type="button" 
-                @click.stop="closeDatePicker"
-                class="p-2 hover:bg-white/20 rounded-full transition-all"
-              >
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                  <path d="M18 6L6 18M6 6l12 12"/>
-                </svg>
-              </button>
-            </div>
-            <p class="text-white/80 text-sm">
-              {{ selectedDate ? formatDateDisplay(selectedDate) : 'No date selected' }}
+          <!-- Compact Header -->
+          <div class="bg-gray-900 p-6 text-white text-center">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-1">Select Schedule</h3>
+            <p class="text-lg font-black tracking-tight">
+              {{ selectedDate ? formatDateDisplay(selectedDate) : 'Availability Calendar' }}
             </p>
           </div>
           
           <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
+            <!-- Navigation -->
+            <div class="flex items-center justify-between mb-8">
               <button 
                 type="button" 
                 @click.stop="prevMonth" 
-                class="p-3 hover:bg-gray-100 rounded-xl transition-all group"
+                class="p-2.5 hover:bg-gray-50 rounded-xl transition-all border border-transparent hover:border-gray-100"
               >
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="group-hover:scale-110 transition-transform">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                   <path d="M15 18l-6-6 6-6"/>
                 </svg>
               </button>
               
-              <div class="flex gap-3">
-                <select 
-                  v-model="currentMonth" 
-                  @click.stop
-                  class="px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border-2 border-transparent hover:border-[#033958] rounded-xl font-bold focus:outline-none focus:border-[#033958] transition-all"
-                >
-                  <option v-for="(m, i) in months" :key="i" :value="i">{{ m }}</option>
-                </select>
-                
-                <select 
-                  v-model="currentYear" 
-                  @click.stop
-                  class="px-4 py-2.5 bg-gray-50 hover:bg-gray-100 border-2 border-transparent hover:border-[#033958] rounded-xl font-bold focus:outline-none focus:border-[#033958] transition-all"
-                >
-                  <option v-for="y in yearRange" :key="y" :value="y">{{ y }}</option>
-                </select>
+              <div class="flex gap-2">
+                <span class="text-[11px] font-black uppercase tracking-widest text-gray-900">
+                  {{ months[currentMonth] }} {{ currentYear }}
+                </span>
               </div>
               
               <button 
                 type="button" 
                 @click.stop="nextMonth" 
-                class="p-3 hover:bg-gray-100 rounded-xl transition-all group"
+                class="p-2.5 hover:bg-gray-50 rounded-xl transition-all border border-transparent hover:border-gray-100"
               >
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="group-hover:scale-110 transition-transform">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                   <path d="M9 18l6-6-6-6"/>
                 </svg>
               </button>
             </div>
             
-            <div class="grid grid-cols-7 gap-2 mb-3">
-              <div v-for="d in weekDays" :key="d" class="text-center text-sm font-bold text-gray-500 py-2">{{ d }}</div>
+            <!-- Calendar Grid -->
+            <div class="grid grid-cols-7 gap-1 mb-2">
+              <div v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="text-center text-[9px] font-black text-gray-400 py-1">{{ d }}</div>
             </div>
             
-            <div class="grid grid-cols-7 gap-2">
+            <div class="grid grid-cols-7 gap-1">
               <button 
                 v-for="(day, i) in calendarDays" 
                 :key="i" 
                 type="button" 
                 :disabled="!day.isCurrentMonth"
-                :class="getDayClass(day)"
+                :class="[
+                  'aspect-square flex items-center justify-center text-[11px] font-bold rounded-xl transition-all',
+                  day.isCurrentMonth ? 'hover:bg-gray-900 hover:text-white cursor-pointer' : 'text-gray-100 pointer-events-none',
+                  day.isToday && !day.isSelected ? 'text-gray-900 border border-gray-900' : '',
+                  day.isSelected ? 'bg-gray-900 text-white shadow-lg' : ''
+                ]"
                 @click.stop="selectDay(day)"
               >
                 {{ day.date }}
@@ -175,18 +160,19 @@
             </div>
           </div>
           
-          <div class="px-6 pb-6 pt-2 flex justify-between border-t">
-            <button 
+          <!-- Footer Actions -->
+          <div class="px-6 pb-6 pt-2 flex items-center gap-3">
+             <button 
               type="button" 
               @click.stop="setToday" 
-              class="px-5 py-2.5 text-sm text-[#033958] hover:text-white hover:bg-[#033958] font-bold rounded-xl transition-all border-2 border-[#033958]"
+              class="flex-1 py-3 text-[9px] font-black uppercase tracking-widest border border-gray-100 hover:bg-gray-50 rounded-xl transition-all"
             >
               Today
             </button>
             <button 
               type="button" 
               @click.stop="clearDateValue" 
-              class="px-5 py-2.5 text-sm text-gray-600 hover:text-gray-800 font-semibold hover:bg-gray-100 rounded-xl transition-all"
+              class="flex-1 py-3 text-[9px] font-black uppercase tracking-widest bg-gray-900 text-white rounded-xl transition-all hover:bg-black shadow-lg shadow-gray-200"
             >
               Clear
             </button>

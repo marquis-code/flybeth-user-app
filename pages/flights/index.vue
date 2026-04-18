@@ -1,19 +1,21 @@
 <template>
-  <div class="bg-gray-50 min-h-screen pb-12">
-    <!-- Search Bar Compact -->
-    <div class="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 py-6 sticky top-0 z-30 transition-all duration-300">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-6 items-end">
-        <div class="flex-grow grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
-            <LocationPicker v-model="searchQuery.origin" placeholder="From where?" id="flights-origin" class="text-sm" />
-            <LocationPicker v-model="searchQuery.destination" placeholder="To where?" id="flights-dest" class="text-sm" />
-            <div class="space-y-2">
-              <UiAnimatedInput v-model="searchQuery.departureDate" type="date" label="Departure Date" placeholder="Select Date" class="!py-0" />
-            </div>
-            <div class="space-y-2">
-              <UiAnimatedInput v-model="searchQuery.passengers" type="number" label="Travelers" placeholder="1 traveler" class="!py-0" />
-            </div>
+  <div class="bg-[#F8FAFC] min-h-screen pb-12">
+    <!-- Search Bar - Scrolls with page (not sticky) -->
+    <div class="bg-white py-6 ">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row gap-4 items-end">
+          <div class="flex-grow grid grid-cols-1 md:grid-cols-4 gap-3 w-full">
+              <LocationPicker v-model="searchQuery.origin" placeholder="From where?" id="flights-origin" class="text-xs font-medium rounded-xl border border-gray-100 bg-gray-50/50" />
+              <LocationPicker v-model="searchQuery.destination" placeholder="To where?" id="flights-dest" class="text-xs font-medium rounded-xl border border-gray-100 bg-gray-50/50" />
+              <div>
+                <UiAnimatedInput v-model="searchQuery.departureDate" type="date" label="Departure" placeholder="Select Date" class="!py-0 border border-gray-100 bg-gray-50/50 rounded-xl" />
+              </div>
+              <div>
+                <UiAnimatedInput v-model="searchQuery.passengers" type="number" label="Travelers" placeholder="1 traveler" class="!py-0 border border-gray-100 bg-gray-50/50 rounded-xl" />
+              </div>
+          </div>
+          <UiBaseButton variant="primary" size="lg" :loading="loading" @click="handleSearch" class="px-10 mb-0.5 font-bold rounded-xl tracking-widest text-[10px]  whitespace-nowrap bg-gray-900 hover:bg-black">Search</UiBaseButton>
         </div>
-        <UiBaseButton variant="primary" size="lg" :loading="loading" @click="handleSearch" class="px-10 mb-1">Search</UiBaseButton>
       </div>
     </div>
 
@@ -21,52 +23,70 @@
       
       <!-- Trip Purpose Prediction Badge -->
       <transition enter-active-class="transition duration-500 ease-out" enter-from-class="opacity-0 translateY(-10px)" enter-to-class="opacity-100 translateY(0)" leave-active-class="transition duration-300 ease-in" leave-from-class="opacity-100 translateY(0)" leave-to-class="opacity-0 translateY(-10px)">
-        <div v-if="prediction && !purposeLoading" class="mb-6 rounded-2xl p-4 flex items-center justify-between shadow-sm border" :class="prediction.result === 'BUSINESS' ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100' : 'bg-gradient-to-r from-orange-50 to-amber-50 border-orange-100'">
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-md" :class="prediction.result === 'BUSINESS' ? 'bg-indigo-500' : 'bg-orange-500'">
+        <div v-if="prediction && !purposeLoading" class="mb-8 rounded-2xl p-5 flex items-center justify-between bg-gray-100/60">
+          <div class="flex items-center gap-5">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white bg-gray-900">
                <BriefcaseIcon v-if="prediction.result === 'BUSINESS'" class="w-5 h-5" />
                <SunIcon v-else class="w-5 h-5" />
             </div>
             <div>
-              <p class="text-sm font-bold" :class="prediction.result === 'BUSINESS' ? 'text-indigo-900' : 'text-orange-900'">
-                 {{ prediction.result === 'BUSINESS' ? 'Looks like a Business Trip!' : 'Planning a Leisure Getaway?' }}
+              <p class="text-[11px] font-bold mt-4  tracking-[0.2em] text-gray-500">
+                {{ prediction.result === 'BUSINESS' ? 'Business Intelligence' : 'Leisure Mode' }}
               </p>
-              <p class="text-xs mt-0.5 opacity-80" :class="prediction.result === 'BUSINESS' ? 'text-indigo-800' : 'text-orange-800'">
-                 {{ prediction.result === 'BUSINESS' ? 'Check out our Premium and Business class fares for maximum comfort.' : 'Don\'t forget to book some unforgettable Activities and Experiences!' }}
+              <p class="text-[11px] font-bold mt-0.5 opacity-60 text-gray-800">
+                 {{ prediction.result === 'BUSINESS' ? 'Optimizing results for corporate efficiency and comfort.' : 'Discovering the best vacation routes and local experiences.' }}
               </p>
             </div>
           </div>
           <div class="hidden sm:block">
-             <NuxtLink v-if="prediction.result !== 'BUSINESS'" to="/things-to-do" class="text-xs font-bold px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow transition-all" :class="'text-orange-600'">
-               Explore Activities
+             <NuxtLink v-if="prediction.result !== 'BUSINESS'" to="/things-to-do" class="text-[10px] font-black  tracking-widest px-5 py-2.5 bg-white rounded-xl hover:bg-gray-50 transition-all text-gray-600 ">
+               Explore Experiences
              </NuxtLink>
-             <span v-else class="text-sm  tracking-widest uppercase text-indigo-400 opacity-60 px-2 py-1 bg-white/50 rounded-md">Smart Prediction</span>
+             <span v-else class="text-[10px] font-black tracking-widest  text-gray-400 opacity-60 px-4 py-2 rounded-xl bg-white ">Smart Match</span>
           </div>
         </div>
       </transition>
 
+      <!-- Best Fares Quick View -->
+      <div v-if="displayedFlights.length" class="mb-10 overflow-x-auto pb-2">
+        <div class="flex gap-4 min-w-max">
+          <div v-for="type in ['Cheapest', 'Fastest', 'Recommended']" :key="type" 
+            class="flex-1 bg-white p-6 rounded-2xl border border-gray-100 hover:border-gray-900 transition-all duration-500 min-w-[240px] cursor-pointer group">
+            <p class="text-[10px] font-bold text-gray-400  tracking-widest">{{ type }} Fare</p>
+            <div class="flex items-end justify-between mt-2">
+              <span class="text-2xl font-black text-gray-900 tracking-tighter">${{ getMatrixPrice(type) }}</span>
+              <div :class="getMatrixColor(type)" class="w-9 h-9 rounded-xl flex items-center justify-center border border-gray-100 group-hover:bg-gray-900 group-hover:text-white transition-all">
+                 <component :is="getMatrixIcon(type)" class="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Airline vs Stops Matrix -->
-      <div v-if="displayedFlights.length && airlineMeta.length" class="mb-10 bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto custom-scrollbar">
+      <div v-if="displayedFlights.length && airlineMeta.length" class="mb-10 bg-white rounded-2xl  overflow-hidden">
+        <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-gray-50/50">
-                <th class="p-6 border-b border-gray-100 min-w-[140px]"></th>
-                <th v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-100 min-w-[160px] text-center">
-                  <div class="flex flex-col items-center gap-2">
-                    <img v-if="airline.logo" :src="airline.logo" :alt="airline.name" class="h-8 w-8 object-contain" />
-                    <span class="text-sm  text-gray-900 uppercase tracking-widest">{{ airline.name }}</span>
+              <tr class="bg-gray-50/60">
+                <th class="p-5 min-w-[120px]"></th>
+                <th v-for="airline in airlineMeta" :key="airline.name" class="p-5 min-w-[150px] text-center">
+                  <div class="h-9 w-9 rounded-lg bg-white p-1.5 ">
+                    <img v-if="airline.logo" :src="airline.logo" :alt="airline.name" class="h-full w-full object-contain" />
+                    <div v-else class="h-full w-full flex items-center justify-center bg-gray-50 rounded-lg">
+                       <span class="text-gray-900 font-bold text-xs ">{{ airline.name.slice(0, 2) }}</span>
+                    </div>
                   </div>
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="stopLabel in ['Non stop', '1 Stop', '1+ Stops']" :key="stopLabel">
-                <td class="p-6 border-b border-gray-50  text-gray-900 uppercase tracking-widest text-sm bg-gray-50/20">
+              <tr v-for="stopLabel in ['Non stop', '1 Stop', '1+ Stops']" :key="stopLabel" class="hover:bg-gray-50/40 transition-colors">
+                <td class="p-5 font-black text-gray-400  tracking-widest text-[10px]">
                   {{ stopLabel }}
                 </td>
-                <td v-for="airline in airlineMeta" :key="airline.name" class="p-6 border-b border-gray-50 text-center group cursor-pointer hover:bg-brand-blue/5 transition-colors" @click="filterByMatrix(airline.name, stopLabel)">
-                  <span v-if="getMatrixPriceFor(airline.name, stopLabel)" class="text-sm  text-brand-gray/60 group-hover:text-gray-900 transition-colors">
+                <td v-for="airline in airlineMeta" :key="airline.name" class="p-5 text-center cursor-pointer hover:bg-gray-100 transition-colors rounded-lg" @click="filterByMatrix(airline.name, stopLabel)">
+                  <span v-if="getMatrixPriceFor(airline.name, stopLabel)" class="text-xs font-black text-gray-900 tracking-wider">
                     ${{ getMatrixPriceFor(airline.name, stopLabel) }}
                   </span>
                   <span v-else class="text-gray-200">—</span>
@@ -77,62 +97,34 @@
         </div>
       </div>
 
-      <!-- Best Fares Matrix (Quick view) -->
-      <div v-if="displayedFlights.length" class="mb-10 overflow-x-auto pb-4">
-        <div class="flex gap-4 min-w-max">
-          <div v-for="type in ['Cheapest', 'Fastest', 'Recommended']" :key="type" 
-            class="flex-1 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 min-w-[240px]">
-            <p class="text-sm  text-brand-gray/40 uppercase tracking-widest mb-1">{{ type }} Fare</p>
-            <div class="flex items-end justify-between">
-              <span class="text-2xl  text-gray-900">${{ getMatrixPrice(type) }}</span>
-              <div :class="getMatrixColor(type)" class="w-8 h-8 rounded-full flex items-center justify-center">
-                 <component :is="getMatrixIcon(type)" class="w-4 h-4 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <!-- Filters Sidebar -->
         <div class="hidden lg:block lg:col-span-1 space-y-6">
-          <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-32 lg:h-[calc(100vh-10rem)] overflow-y-auto custom-scrollbar">
-            <h3 class=" text-gray-900 uppercase tracking-widest text-xs mb-8">Filter Results</h3>
+             <div class="bg-white p-8 rounded-2xl border border-gray-100 sticky top-24 lg:h-[calc(100vh-10rem)] overflow-y-auto custom-scrollbar">
+            <h3 class="font-bold text-gray-900  tracking-widest text-[10px] mb-8 pb-3 border-b border-gray-100">Filter Results</h3>
             
             <!-- Stops -->
-            <div class="mb-6">
-              <h4 class="font-medium text-sm text-gray-700 mb-2">Stops</h4>
-              <div class="space-y-2">
-                <label class="flex items-center">
-                  <input type="checkbox" class="custom-checkbox">
-                  <span class="ml-2 text-sm text-gray-600">Nonstop</span>
-                </label>
-                <label class="flex items-center">
-                   <input type="checkbox" class="custom-checkbox">
-                  <span class="ml-2 text-sm text-gray-600">1 Stop</span>
-                </label>
-                <label class="flex items-center">
-                   <input type="checkbox" class="custom-checkbox">
-                  <span class="ml-2 text-sm text-gray-600">2+ Stops</span>
+            <div class="mb-8">
+              <h4 class="font-bold text-sm text-gray-400  tracking-widest mb-5 ">Stops</h4>
+              <div class="space-y-3.5">
+                <label v-for="stop in ['Nonstop', '1 Stop', '2+ Stops']" :key="stop" class="flex items-center group cursor-pointer">
+                  <div class="w-4.5 h-4.5 rounded-md border border-gray-200 group-hover:border-gray-900 transition-all flex items-center justify-center">
+                     <div class="w-2 h-2 bg-gray-900 rounded-sm scale-0 transition-transform"></div>
+                  </div>
+                  <span class="ml-3 text-[11px] font-bold text-gray-500 group-hover:text-gray-900 transition-colors  tracking-wider">{{ stop }}</span>
                 </label>
               </div>
             </div>
 
             <!-- Airlines -->
             <div>
-              <h4 class="font-medium text-sm text-gray-700 mb-2">Airlines</h4>
-                <div class="space-y-2">
-                <label class="flex items-center">
-                  <input type="checkbox" class="custom-checkbox">
-                  <span class="ml-2 text-sm text-gray-600">Emirates</span>
-                </label>
-                <label class="flex items-center">
-                   <input type="checkbox" class="custom-checkbox">
-                  <span class="ml-2 text-sm text-gray-600">British Airways</span>
-                </label>
-                 <label class="flex items-center">
-                   <input type="checkbox" class="custom-checkbox">
-                  <span class="ml-2 text-sm text-gray-600">Qatar Airways</span>
+              <h4 class="font-bold text-sm text-gray-400  tracking-widest mb-5 ">Airlines</h4>
+                <div class="space-y-3.5">
+                <label v-for="airline in ['Emirates', 'British Airways', 'Qatar Airways', 'Turkish Airlines']" :key="airline" class="flex items-center group cursor-pointer">
+                  <div class="w-4.5 h-4.5 rounded-md border border-gray-200 group-hover:border-gray-900 transition-all flex items-center justify-center">
+                     <div class="w-2 h-2 bg-gray-900 rounded-sm scale-0 transition-transform"></div>
+                  </div>
+                  <span class="ml-3 text-[11px] font-bold text-gray-500 group-hover:text-gray-900 transition-colors  tracking-wider">{{ airline }}</span>
                 </label>
               </div>
             </div>
@@ -141,10 +133,19 @@
 
         <!-- Results List -->
         <div class="lg:col-span-3 space-y-4">
-           <h2 v-if="flights.length" class="text-xl font-bold text-gray-900 mb-4">{{ flights.length }} flights found</h2>
+           <div class="flex items-center justify-between mb-6 px-1">
+             <h2 v-if="flights.length" class="text-[10px] font-bold text-gray-400  tracking-[0.2em] ">{{ flights.length }} flights found</h2>
+             <div class="flex items-center gap-3">
+                <span class="text-[10px] font-bold text-gray-400  tracking-widest ">Sort by:</span>
+                <select class="bg-gray-50/50 rounded-xl px-4 py-2 text-[10px] font-bold text-gray-600 focus:ring-1 focus:ring-gray-900 border border-gray-100">
+                  <option>Price (Low to High)</option>
+                  <option>Duration (Shortest)</option>
+                </select>
+             </div>
+           </div>
            
-           <div v-if="loading" class="space-y-4">
-             <div v-for="i in 3" :key="i" class="h-40 bg-gray-200 animate-pulse rounded-lg"></div>
+           <div v-if="loading" class="py-12">
+             <LoadingState />
            </div>
 
            <EmptyState 
@@ -156,7 +157,7 @@
              @action="searchQuery.origin = 'LHR'; searchQuery.destination = 'DXB'; handleSearch();"
            />
 
-           <div v-if="Object.keys(groupedFlights).length" class="space-y-6">
+           <div v-if="Object.keys(groupedFlights).length" class="space-y-5">
              <FlightGroup 
                v-for="(group, airlineName) in groupedFlights" 
                :key="airlineName"
@@ -174,11 +175,14 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: 'no-footer'
+})
 import { ref, onMounted, computed } from 'vue';
 import { useSearchFlights } from '@/composables/modules/flights/useSearchFlights';
 import { useFetchPopularFlights } from '@/composables/modules/flights/useFetchPopularFlights';
 import { useTripPurpose } from '@/composables/modules/flights/useTripPurpose';
-import { BanknotesIcon, BoltIcon, StarIcon, BriefcaseIcon, SunIcon } from '@heroicons/vue/24/solid';
+import { Banknote as BanknotesIcon, Zap as BoltIcon, Star as StarIcon, Briefcase as BriefcaseIcon, Sun as SunIcon } from 'lucide-vue-next';
 import FlightGroup from '@/components/FlightGroup.vue';
 
 const { loading, flights, searchFlights } = useSearchFlights();
@@ -224,9 +228,9 @@ const getMatrixIcon = (type: string) => {
 }
 
 const getMatrixColor = (type: string) => {
-  if (type === 'Cheapest') return 'bg-brand-green'
-  if (type === 'Fastest') return 'bg-brand-orange'
-  return 'bg-brand-blue'
+  if (type === 'Cheapest') return 'bg-gray-400'
+  if (type === 'Fastest') return 'bg-gray-600'
+  return 'bg-gray-900'
 }
 
 const airlineMeta = computed(() => {
@@ -249,10 +253,9 @@ const getMatrixPriceFor = (airline: string, stopsLabel: string) => {
 }
 
 const filterByMatrix = (airline: string, stopsLabel: string) => {
-  // Logic to filter the list or scroll to the group
   const element = document.getElementById(`group-${airline}`)
   if (element) {
-    window.scrollTo({ top: element.offsetTop - 150, behavior: 'smooth' })
+    window.scrollTo({ top: element.offsetTop - 100, behavior: 'smooth' })
   }
 }
 
@@ -273,17 +276,26 @@ const handleSearch = () => {
 };
 
 const selectFlight = (flight: any) => {
-  // Save the full offer for the pricing step
-  sessionStorage.setItem('selectedFlight', JSON.stringify(flight));
-  
+  if (!flight) return;
+
+  // Safely store the flight offer for the checkout pricing step
+  try {
+    sessionStorage.setItem('selectedFlight', JSON.stringify(flight));
+  } catch (e) {
+    console.warn('Could not store flight in session:', e);
+  }
+
+  // Determine provider: check the flight object, fallback to 'duffel'
+  const provider = flight.provider || flight.source || (flight.slices ? 'duffel' : (flight.itineraries ? 'amadeus' : 'duffel'));
+
   navigateTo({
     path: '/checkout',
     query: {
       type: 'flight',
-      id: flight.offerId || flight._id || flight.id,
-      name: (flight.flightNumbers && flight.flightNumbers[0]) || flight.flightNumber || `${flight.airline || 'Unknown'} flight`,
-      price: flight.priceWithCommission || flight.price,
-      provider: flight.provider
+      id: String(flight.offerId || flight._id || flight.id || 'unknown'),
+      name: String((flight.flightNumbers && flight.flightNumbers[0]) || flight.flightNumber || `${flight.airline || 'Unknown'} flight`),
+      price: String(flight.priceWithCommission || flight.price || 0),
+      provider: provider
     }
   });
 }
