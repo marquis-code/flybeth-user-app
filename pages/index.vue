@@ -1,14 +1,14 @@
 <template>
   <div class="min-h-screen bg-white overflow-x-hidden relative">
     <!-- Hero Section — Clean & Professional -->
-    <div class="relative w-full pt-20 pb-8 lg:pt-28 lg:pb-20 overflow-hidden">
+    <div class="relative w-full pb-8 lg:pb-20 overflow-hidden">
       <!-- Background with elegant gradient overlay -->
       <div class="absolute inset-0 z-0 text-3xl tracking-tight text-white leading-snug">
         <img src="@/assets/img/happy-trips.jpg" class="w-full h-full object-cover object-top" alt="Hero Background" />
         <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a]/80 via-[#0f172a]/60 to-[#f8fafc]"></div>
       </div>
       
-      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
+      <div class="relative z-10 pt-32 lg:pt-48 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
         <!-- Minimal title -->
         <div class="mb-8 lg:mb-10 flex flex-col items-center w-full max-w-3xl mx-auto text-center">
            <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50 mb-3">Search · Compare · Book</p>
@@ -468,7 +468,7 @@
     </div>
 
     <!-- Premium Travel Directory & Engagement Section -->
-    <section class="py-24 bg-[#F8FAFC] border-t border-gray-100 relative z-0 overflow-hidden">
+    <section class="pt-20 bg-[#F8FAFC] border-t border-gray-100 relative z-0 overflow-hidden">
       <!-- Animated Background Accents -->
       <div class="absolute top-0 right-0 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
       <div class="absolute bottom-0 left-0 w-96 h-96 bg-brand-green/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
@@ -525,10 +525,10 @@
         </div>
 
         <!-- Section Heading: Flybeth Directory -->
-        <div class="flex flex-col items-center text-center mb-16">
+        <!-- <div class="flex flex-col items-center text-center mb-16">
           <h2 class="text-3xl  text-gray-900 mb-4 tracking-tight">Travel Directory</h2>
           <div class="h-1 w-12 bg-brand-green rounded-full"></div>
-        </div>
+        </div> -->
 
         <!-- Directory Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
@@ -598,6 +598,8 @@
       </div>
     </section>
 
+    <!-- <PartnerCarousel /> -->
+
     <!-- Global Connectivity Hub: (Professional Light Theme) -->
     <section class="relative w-full overflow-hidden mb-20 bg-gray-50 border-y border-gray-100">
       <!-- Animated Focal Points (Light Theme) -->
@@ -606,7 +608,7 @@
       </div>
 
       <div class="max-w-[1920px] mx-auto py-20 lg:py-32 relative z-10 px-4 sm:px-6 lg:px-24">
-        <div class="max-w-4xl mb-16 text-center lg:text-left">
+        <div class="mb-16 text-center lg:text-left">
           <div class="flex items-center justify-center lg:justify-start gap-4 mb-6">
             <div class="h-10 w-10 bg-brand-blue/5 rounded-xl flex items-center justify-center border border-brand-blue/10">
               <GlobeAltIcon class="h-5 v-5 text-brand-blue" />
@@ -615,9 +617,10 @@
           </div>
           <h2 class="text-3xl md:text-5xl lg:text-6xl  text-gray-950 mb-7 tracking-tighter leading-[1.05]">Partnerships that <span class="text-brand-blue underline decoration-brand-blue/20 decoration-8 underline-offset-4">Connect</span> the World.</h2>
           <p class="text-base sm:text-lg font-bold text-gray-500 leading-relaxed max-w-2xl">Access over 500+ airlines, 1.2M premium stays, and thousands of curated experiences across the globe, all at your fingertips.</p>
-        </        <!-- Interactive Continuous Marquees -->
-        <div class="space-y-12 lg:space-y-20 [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
-          <!-- Row 1: Airline Hub (Interactive) -->
+            <div class="mt-32">
+               <PartnerCarousel />
+            </div>
+        <!-- <div class="space-y-12 lg:space-y-20 [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
           <div class="relative flex overflow-x-hidden group/m">
             <div class="animate-marquee whitespace-nowrap flex items-center py-4">
               <div v-for="(p, i) in [...partnerAirlines, ...partnerAirlines, ...partnerAirlines, ...partnerAirlines]" :key="`air-${i}`" 
@@ -627,10 +630,10 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
        </div>
       </div>
-    </section>\n
+    </section>
     <section class="py-24 bg-white relative z-0 overflow-hidden">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 

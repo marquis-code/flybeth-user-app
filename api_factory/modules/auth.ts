@@ -25,6 +25,9 @@ export const authApiFactory = {
     logout() {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/auth/logout");
     },
+    socialLogin(payload: { token: string }) {
+        return GATEWAY_ENDPOINT.post("/auth/social-login", payload);
+    },
     googleLoginUrl() {
         return `${import.meta.env.VITE_BASE_URL}/api/v1/auth/google`;
     }

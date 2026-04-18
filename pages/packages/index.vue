@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-50 min-h-screen pb-12">
+  <div class="bg-gray-50  min-h-screen py-12">
     <!-- Header Section -->
     <div class="bg-brand-blue text-white py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

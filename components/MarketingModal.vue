@@ -1,8 +1,6 @@
 <template>
   <Transition name="modal-scale">
-    <div v-if="show" class="fixed inset-0 z-[200] flex items-center justify-center p-4" @click.self="$emit('close')">
-      <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/50 backdrop-blur-md"></div>
+    <div v-if="show" class="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" @click.self="$emit('close')">
 
       <!-- Modal Card -->
       <div class="relative w-full max-w-[820px] rounded-[2rem] overflow-hidden shadow-[0_40px_120px_-20px_rgba(0,53,128,0.4)] animate-modal-enter">
@@ -10,9 +8,10 @@
         <!-- Close Button -->
         <button 
           @click="$emit('close')" 
-          class="absolute top-5 right-5 z-30 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all duration-300 group"
+          class="absolute top-6 right-6 z-[10002] h-11 w-11 flex items-center justify-center rounded-full bg-white shadow-2xl hover:bg-gray-50 active:scale-95 transition-all group scale-100 ring-4 ring-black/10"
+          aria-label="Close modal"
         >
-          <XMarkIcon class="h-5 w-5 text-white group-hover:rotate-90 transition-transform duration-300" />
+          <X class="h-6 w-6 text-gray-900 transition-transform duration-300 group-hover:rotate-90" />
         </button>
 
         <div class="flex flex-col md:flex-row min-h-[420px]">
@@ -45,13 +44,17 @@
             <!-- Trust indicators -->
             <div class="relative z-10 flex items-center gap-4 mt-8">
               <div class="flex -space-x-2">
-                <div v-for="i in 3" :key="i" class="h-8 w-8 rounded-full border-2 border-[#003580] overflow-hidden bg-white/20">
-                  <img :src="`https://i.pravatar.cc/80?img=${i + 20}`" class="w-full h-full object-cover" :alt="`Agent ${i}`" />
+                <div v-for="(img, i) in [
+                  'https://images.unsplash.com/photo-1531384441138-2736e62e0919?q=80&w=100&auto=format&fit=crop',
+                  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop',
+                  'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=100&auto=format&fit=crop'
+                ]" :key="i" class="h-8 w-8 rounded-full border-2 border-[#003580] overflow-hidden bg-white/20 shadow-sm">
+                  <img :src="img" class="w-full h-full object-cover" :alt="`Traveler ${i}`" />
                 </div>
               </div>
               <div>
                 <p class="text-[10px] font-bold text-white/80 uppercase tracking-wider">Trusted by</p>
-                <p class="text-xs font-bold text-white">40,000+ travelers</p>
+                <p class="text-xs font-bold text-white">40,000+ African travelers</p>
               </div>
             </div>
           </div>
@@ -85,7 +88,7 @@
             <div class="mt-8 space-y-3">
               <!-- Call Button -->
               <a 
-                href="tel:1-845-848-0154" 
+                href="tel:+18443592384" 
                 class="w-full flex items-center justify-between bg-gradient-to-r from-[#003580] to-[#0046a8] rounded-2xl px-5 py-4 group hover:shadow-xl hover:shadow-brand-blue/20 transition-all duration-500 active:scale-[0.98]"
               >
                 <div class="flex items-center gap-4">
@@ -94,7 +97,7 @@
                   </div>
                   <div>
                     <p class="text-[9px] font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Call us now</p>
-                    <p class="text-lg font-bold text-white tabular-nums tracking-wide">1-845-848-0154</p>
+                    <p class="text-base font-bold text-white tabular-nums tracking-wide">+1 844 FLYBETH (359-2384)</p>
                   </div>
                 </div>
                 <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center group-hover:translate-x-1 transition-transform">
@@ -103,13 +106,23 @@
               </a>
 
               <!-- Secondary Chat CTA -->
-              <button 
-                @click="$emit('close')"
-                class="w-full flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 rounded-2xl px-5 py-3.5 transition-all duration-300 group"
-              >
-                <ChatBubbleLeftEllipsisIcon class="h-4 w-4 text-gray-400 group-hover:text-[#003580] transition-colors" />
-                <span class="text-xs font-bold text-gray-500 group-hover:text-gray-900 transition-colors">Or chat with us online</span>
-              </button>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button 
+                  @click="$emit('close')"
+                  class="flex-1 flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 rounded-2xl px-5 py-3.5 transition-all duration-300 group"
+                >
+                  <ChatBubbleLeftEllipsisIcon class="h-4 w-4 text-gray-400 group-hover:text-[#003580] transition-colors" />
+                  <span class="text-xs font-bold text-gray-500 group-hover:text-gray-900 transition-colors">Chat online</span>
+                </button>
+                
+                <a 
+                  href="mailto:Hello@flybeth.com"
+                  class="flex-1 flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 rounded-2xl px-5 py-3.5 transition-all duration-300 group"
+                >
+                  <!-- <Envelope class="h-4 w-4 text-gray-400 group-hover:text-[#003580] transition-colors" /> -->
+                  <span class="text-xs font-bold text-gray-500 group-hover:text-gray-900 transition-colors">Hello@flybeth.com</span>
+                </a>
+              </div>
 
               <p class="text-center text-[9px] text-gray-300 font-bold uppercase tracking-[0.15em] pt-1">
                 Available 24/7 · No booking fees · Price match guarantee
@@ -123,7 +136,8 @@
 </template>
 
 <script setup lang="ts">
-import { XMarkIcon, PhoneIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/solid'
+import { PhoneIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/solid'
+import { X } from 'lucide-vue-next'
 import { 
   TicketIcon, 
   UserGroupIcon, 

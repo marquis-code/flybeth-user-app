@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-[#F8FAFC]">
+  <main class="min-h-screen py-16 bg-[#F8FAFC]">
     <!-- ── Premium Floating Header ─────────────────────────────────────────── -->
     <div class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-sm transition-all duration-500">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">

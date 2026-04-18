@@ -17,6 +17,7 @@
     "@nuxtjs/seo": "^3.4.0",
     "@nuxtjs/sitemap": "^7.6.0",
     "axios": "^1.13.5",
+    "firebase": "^10.14.1",
     "lucide-vue-next": "^0.471.0",
     "nuxt": "^4.3.1",
     "socket.io-client": "^4.8.3",

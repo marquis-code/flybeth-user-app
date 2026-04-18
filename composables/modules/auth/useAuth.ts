@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { authApiFactory } from "@/api_factory/modules/auth";
 import { useUser } from "./user";
 import { useCustomToast } from "@/composables/core/useCustomToast";
+import { auth, googleProvider, signInWithPopup } from "@/utils/firebase";
 
 const isAuthModalVisible = ref(false);
 
@@ -197,61 +198,42 @@ export const useAuth = () => {
         }
     };
 
-    const loginWithGoogle = () => {
-        const width = 500;
-        const height = 600;
-        const left = window.screen.width / 2 - width / 2;
-        const top = window.screen.height / 2 - height / 2;
+    const loginWithGoogle = async () => {
+        loading.value = true;
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const idToken = await result.user.getIdToken();
+            
+            const res = await authApiFactory.socialLogin({ token: idToken });
+            const authData = res.data?.data || res.data;
 
-        const frontendCallbackUrl = `${window.location.origin}/auth/callback`;
-        const googleAuthUrl = `${authApiFactory.googleLoginUrl()}?redirect_uri=${encodeURIComponent(frontendCallbackUrl)}`;
-
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        if (isMobile) {
-            window.location.href = googleAuthUrl;
-            return;
-        }
-
-        const popup = window.open(
-            googleAuthUrl,
-            'google-login',
-            `width=${width},height=${height},left=${left},top=${top}`
-        );
-
-        const handleMessage = (event: MessageEvent) => {
-            const expectedOrigin = import.meta.env.VITE_BASE_URL;
-            if (event.origin !== expectedOrigin) return;
-
-            if (event.data.type === 'AUTH_SUCCESS') {
-                const authData = event.data.data;
-                const { user } = authData;
-
-                // Sync user state
-                setUser(user);
-
+            if (res.status === 200 || res.status === 201) {
+                if (authData.user) {
+                    setUser(authData.user);
+                }
                 showToast({
                     title: "Success",
                     message: "Login successful",
                     toastType: "success",
                 });
-
-                if (popup) popup.close();
-                window.removeEventListener('message', handleMessage);
-
-                // Redirect to home
-                window.location.href = '/';
+                
+                // Redirect if in auth page
+                if (window.location.pathname.startsWith('/auth')) {
+                    window.location.href = '/';
+                }
+                
+                return res;
             }
-        };
-
-        window.addEventListener('message', handleMessage);
-
-        const checkPopup = setInterval(() => {
-            if (!popup || popup.closed) {
-                clearInterval(checkPopup);
-                window.removeEventListener('message', handleMessage);
-            }
-        }, 1000);
+        } catch (error: any) {
+            console.error("Firebase Auth Error:", error);
+            showToast({
+                title: "Authentication Failed",
+                message: error?.response?.data?.message || error.message || "Social login failed",
+                toastType: "error",
+            });
+        } finally {
+            loading.value = false;
+        }
     };
 
     return {

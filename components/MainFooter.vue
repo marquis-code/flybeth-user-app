@@ -61,11 +61,11 @@
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
           © 2026 FLYBETH LLC. All rights reserved.
         </p>
-        <div class="flex gap-8">
+        <!-- <div class="flex gap-8">
           <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-4 w-auto grayscale opacity-40" />
           <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-6 w-auto grayscale opacity-40" />
           <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="h-4 w-auto grayscale opacity-40" />
-        </div>
+        </div> -->
       </div>
     </div>
   </footer>
