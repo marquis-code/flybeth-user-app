@@ -1,1 +1,0 @@
-import{G as t}from"./DTij6VP1.js";const o={subscribeNewsletter(r,s="footer"){return t.post("/support/newsletter/subscribe",{email:r,source:s})},submitInquiry(r){return t.post("/support/contact/submit",r)},getInquiries(){return t.get("/support/contact")},getSubscriptions(){return t.get("/support/newsletter")}};export{o as s};
