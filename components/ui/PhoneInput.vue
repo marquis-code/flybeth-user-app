@@ -76,46 +76,53 @@ const showDropdown = ref(false)
 const searchQuery = ref('')
 
 const countries = [
-  { code: 'NG', name: 'Nigeria', dialCode: '+234', flag: '🇳🇬', currency: 'NGN' },
-  { code: 'US', name: 'United States', dialCode: '+1', flag: '🇺🇸', currency: 'USD' },
-  { code: 'GB', name: 'United Kingdom', dialCode: '+44', flag: '🇬🇧', currency: 'GBP' },
-  { code: 'AE', name: 'UAE', dialCode: '+971', flag: '🇦🇪', currency: 'AED' },
-  { code: 'CA', name: 'Canada', dialCode: '+1', flag: '🇨🇦', currency: 'CAD' },
-  { code: 'AU', name: 'Australia', dialCode: '+61', flag: '🇦🇺', currency: 'AUD' },
-  { code: 'DE', name: 'Germany', dialCode: '+49', flag: '🇩🇪', currency: 'EUR' },
-  { code: 'FR', name: 'France', dialCode: '+33', flag: '🇫🇷', currency: 'EUR' },
-  { code: 'IN', name: 'India', dialCode: '+91', flag: '🇮🇳', currency: 'INR' },
-  { code: 'CN', name: 'China', dialCode: '+86', flag: '🇨🇳', currency: 'CNY' },
-  { code: 'JP', name: 'Japan', dialCode: '+81', flag: '🇯🇵', currency: 'JPY' },
-  { code: 'ZA', name: 'South Africa', dialCode: '+27', flag: '🇿🇦', currency: 'ZAR' },
-  { code: 'BR', name: 'Brazil', dialCode: '+55', flag: '🇧🇷', currency: 'BRL' },
-  { code: 'KE', name: 'Kenya', dialCode: '+254', flag: '🇰🇪', currency: 'KES' },
-  { code: 'GH', name: 'Ghana', dialCode: '+233', flag: '🇬🇭', currency: 'GHS' },
-  { code: 'EG', name: 'Egypt', dialCode: '+20', flag: '🇪🇬', currency: 'EGP' },
-  { code: 'SA', name: 'Saudi Arabia', dialCode: '+966', flag: '🇸🇦', currency: 'SAR' },
-  { code: 'SG', name: 'Singapore', dialCode: '+65', flag: '🇸🇬', currency: 'SGD' },
-  { code: 'IT', name: 'Italy', dialCode: '+39', flag: '🇮🇹', currency: 'EUR' },
-  { code: 'ES', name: 'Spain', dialCode: '+34', flag: '🇪🇸', currency: 'EUR' },
-  { code: 'MX', name: 'Mexico', dialCode: '+52', flag: '🇲🇽', currency: 'MXN' },
-  { code: 'TR', name: 'Turkey', dialCode: '+90', flag: '🇹🇷', currency: 'TRY' },
-  { code: 'TH', name: 'Thailand', dialCode: '+66', flag: '🇹🇭', currency: 'THB' },
-  { code: 'MY', name: 'Malaysia', dialCode: '+60', flag: '🇲🇾', currency: 'MYR' },
-  { code: 'PH', name: 'Philippines', dialCode: '+63', flag: '🇵🇭', currency: 'PHP' },
+  { code: 'NG', name: 'Nigeria', dialCode: '+234', flag: '🇳🇬', currency: 'NGN', maxLength: 10 },
+  { code: 'US', name: 'United States', dialCode: '+1', flag: '🇺🇸', currency: 'USD', maxLength: 10 },
+  { code: 'GB', name: 'United Kingdom', dialCode: '+44', flag: '🇬🇧', currency: 'GBP', maxLength: 10 },
+  { code: 'AE', name: 'UAE', dialCode: '+971', flag: '🇦🇪', currency: 'AED', maxLength: 9 },
+  { code: 'CA', name: 'Canada', dialCode: '+1', flag: '🇨🇦', currency: 'CAD', maxLength: 10 },
+  { code: 'AU', name: 'Australia', dialCode: '+61', flag: '🇦🇺', currency: 'AUD', maxLength: 9 },
+  { code: 'DE', name: 'Germany', dialCode: '+49', flag: '🇩🇪', currency: 'EUR', maxLength: 11 },
+  { code: 'FR', name: 'France', dialCode: '+33', flag: '🇫🇷', currency: 'EUR', maxLength: 9 },
+  { code: 'IN', name: 'India', dialCode: '+91', flag: '🇮🇳', currency: 'INR', maxLength: 10 },
+  { code: 'CN', name: 'China', dialCode: '+86', flag: '🇨🇳', currency: 'CNY', maxLength: 11 },
+  { code: 'JP', name: 'Japan', dialCode: '+81', flag: '🇯🇵', currency: 'JPY', maxLength: 10 },
+  { code: 'ZA', name: 'South Africa', dialCode: '+27', flag: '🇿🇦', currency: 'ZAR', maxLength: 9 },
+  { code: 'BR', name: 'Brazil', dialCode: '+55', flag: '🇧🇷', currency: 'BRL', maxLength: 11 },
+  { code: 'KE', name: 'Kenya', dialCode: '+254', flag: '🇰🇪', currency: 'KES', maxLength: 9 },
+  { code: 'GH', name: 'Ghana', dialCode: '+233', flag: '🇬🇭', currency: 'GHS', maxLength: 9 },
+  { code: 'EG', name: 'Egypt', dialCode: '+20', flag: '🇪🇬', currency: 'EGP', maxLength: 10 },
+  { code: 'SA', name: 'Saudi Arabia', dialCode: '+966', flag: '🇸🇦', currency: 'SAR', maxLength: 9 },
+  { code: 'SG', name: 'Singapore', dialCode: '+65', flag: '🇸🇬', currency: 'SGD', maxLength: 8 },
+  { code: 'IT', name: 'Italy', dialCode: '+39', flag: '🇮🇹', currency: 'EUR', maxLength: 10 },
+  { code: 'ES', name: 'Spain', dialCode: '+34', flag: '🇪🇸', currency: 'EUR', maxLength: 9 },
+  { code: 'MX', name: 'Mexico', dialCode: '+52', flag: '🇲🇽', currency: 'MXN', maxLength: 10 },
+  { code: 'TR', name: 'Turkey', dialCode: '+90', flag: '🇹🇷', currency: 'TRY', maxLength: 10 },
+  { code: 'TH', name: 'Thailand', dialCode: '+66', flag: '🇹🇭', currency: 'THB', maxLength: 9 },
+  { code: 'MY', name: 'Malaysia', dialCode: '+60', flag: '🇲🇾', currency: 'MYR', maxLength: 9 },
+  { code: 'PH', name: 'Philippines', dialCode: '+63', flag: '🇵🇭', currency: 'PHP', maxLength: 10 },
 ]
 
 const selectedCountry = ref(countries[0]) // Default to Nigeria
 const phoneNumber = ref('')
 
-// Parse initial value
-if (props.modelValue) {
-  const match = countries.find(c => props.modelValue.startsWith(c.dialCode))
+// Update internal phoneNumber when props change
+watch(() => props.modelValue, (newVal) => {
+  if (!newVal) {
+    phoneNumber.value = ''
+    return
+  }
+  
+  // Update state without infinite loop
+  const match = countries.find(c => newVal.startsWith(c.dialCode))
   if (match) {
     selectedCountry.value = match
-    phoneNumber.value = props.modelValue.slice(match.dialCode.length)
-  } else {
-    phoneNumber.value = props.modelValue
+    const cleanNum = newVal.slice(match.dialCode.length).replace(/\D/g, '')
+    if (cleanNum !== phoneNumber.value) {
+      phoneNumber.value = cleanNum.slice(0, match.maxLength)
+    }
   }
-}
+}, { immediate: true })
 
 const filteredCountries = computed(() => {
   if (!searchQuery.value) return countries
@@ -131,6 +138,8 @@ const selectCountry = (country: typeof countries[0]) => {
   selectedCountry.value = country
   showDropdown.value = false
   searchQuery.value = ''
+  // Truncate existing number if it exceeds new country's limit
+  phoneNumber.value = phoneNumber.value.slice(0, country.maxLength)
   emitValue()
   emit('country-change', { 
     code: country.code, 
@@ -141,12 +150,20 @@ const selectCountry = (country: typeof countries[0]) => {
 }
 
 const onPhoneInput = (e: Event) => {
-  phoneNumber.value = (e.target as HTMLInputElement).value
+  const input = e.target as HTMLInputElement
+  // Remove non-digits and leading zeros (E.164 usually doesn't want leading zeros)
+  let val = input.value.replace(/\D/g, '')
+  if (val.startsWith('0')) val = val.substring(1)
+  
+  // Truncate to country max length
+  phoneNumber.value = val.slice(0, selectedCountry.value.maxLength)
+  input.value = phoneNumber.value // Update UI immediately
   emitValue()
 }
 
 const emitValue = () => {
-  emit('update:modelValue', `${selectedCountry.value.dialCode}${phoneNumber.value}`)
+  const fullNumber = `${selectedCountry.value.dialCode}${phoneNumber.value}`
+  emit('update:modelValue', fullNumber)
 }
 
 // Click outside to close

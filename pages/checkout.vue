@@ -5,11 +5,6 @@
     subtitle="Please wait while we prepare your booking"
   />
 
-  <CurrencySelectorModal
-    v-model="isCurrencyModalVisible"
-    @select="handleCurrencySelect"
-  />
-
   <CurrencyConversionLoader :visible="isConversionLoading" />
 
   <ManualPaymentDetailsModal
@@ -19,141 +14,187 @@
   />
 
 
-  <div v-if="!showBrandedLoader" class="checkout-page">
-    <CheckoutStepper 
-      :currentStep="currentStep" 
-      @go-back="handleGoBack" 
-    />
+  <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-gray-50/30">
+    
+    <!-- Premium Header -->
+    <header class="bg-neutral-900 border-b border-white/5 py-8 relative overflow-hidden">
+      <!-- Orbs -->
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[300px] h-[300px] bg-primary/10 blur-[80px] rounded-full"></div>
+        <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-sky-500/5 blur-[60px] rounded-full"></div>
+      </div>
 
-    <div class="checkout-body">
-      <div class="checkout-grid">
-        <div class="checkout-content space-y-6">
-          <!-- Step 0: Flight/Stay/Transfer Details -->
-          <div v-if="currentStep === 0" class="bg-white rounded-3xl border border-gray-300 overflow-hidden animate-slide-up">
-            <div class="p-8 border-b border-gray-300 flex items-center justify-between">
-               <h2 class="text-xl text-gray-900">Review your trip</h2>
-               <div class="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] uppercase tracking-widest rounded-full font-bold">Secure Booking</div>
-            </div>
-            
-            <CheckoutFlightDetails
-              v-if="bookingDetails.type === 'flight'"
-              :flightOffer="priceDetailed"
-              @continue="goToStep(1)"
-            />
-
-            <CheckoutTransferDetails
-              v-if="bookingDetails.type === 'transfer'"
-              :name="bookingDetails.name"
-              :provider="bookingDetails.provider"
-              @continue="goToStep(1)"
-            />
-
-            <CheckoutStayDetails
-              v-if="bookingDetails.type === 'stay'"
-              :stay="priceDetailed"
-              :currency-symbol="currencySymbol"
-              @continue="goToStep(1)"
-            />
+      <div class="ck-wrap relative z-10 flex items-center justify-between">
+        <button @click="handleGoBack" class="flex items-center gap-2 group text-white/40 hover:text-white transition-all text-sm font-bold">
+          <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <ChevronLeft class="h-4 w-4" />
           </div>
+          <span>Back</span>
+        </button>
 
-          <!-- Step 1: Traveller Info -->
-          <div v-if="currentStep === 1" class="animate-slide-up">
-            <CheckoutTravellerForm 
-              v-model="travellerData" 
-              @continue="handleTravellerContinue" 
-              @email-blur="handleEmailBlur"
-            />
+        <div class="flex flex-col items-center">
+          <span class="text-2xl font-black text-white tracking-widest">Flybeth</span>
+          <div class="flex items-center gap-1.5 mt-1">
+            <Lock class="h-3 w-3 text-primary" />
+            <span class="text-[9px] font-black tracking-[0.2em] text-white/30">AES-256 Encrypted</span>
           </div>
-
-          <!-- Step 2: Trip Customization -->
-          <div v-if="currentStep === 2" class="animate-slide-up">
-            <CheckoutTripCustomization
-              :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
-              :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
-              :traveller="travellerData"
-              :totalPrice="displayPrices.total"
-              v-model:selectedAddOns="selectedAddOns"
-              @continue="goToStep(3)"
-            />
-          </div>
-
-          <!-- Step 3: Overview & Payment -->
-            <div v-if="currentStep === 3" class="animate-slide-up space-y-6">
-              <!-- Security Disclaimer -->
-              <div class="bg-brand-blue/5 border border-brand-blue/10 rounded-2xl p-6 flex gap-4">
-                <div class="w-10 h-10 rounded-full bg-brand-blue flex-shrink-0 flex items-center justify-center text-white">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <div class="space-y-1">
-                  <h4 class="text-sm font-bold text-brand-blue uppercase tracking-wider">Itinerary Verification Required</h4>
-                  <p class="text-sm text-gray-600 leading-relaxed">
-                    We recommend <span class="font-bold text-gray-900 underline">double-checking your route and itinerary</span> before continuing. This helps avoid any issues, as Flybeth cannot be held responsible for errors resulting from an incorrect route selection.
-                  </p>
-                </div>
-              </div>
-
-              <CheckoutPayment 
-                :total-amount="priceDetailed?.priceWithCommission" 
-                :currency-symbol="currencySymbol"
-                :currency="priceDetailed?.currency"
-                :processing="paymentProcessing"
-                @complete-payment="handlePayment"
-                @change-currency="isCurrencyModalVisible = true"
-              />
-            </div>
         </div>
 
-        <!-- Right Sidebar -->
-        <div class="checkout-sidebar-col sticky top-8">
-          <CheckoutSidebar
-            :flight="bookingDetails.type === 'flight' ? priceDetailed : null"
-            :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
-            :passengerCount="1"
-            :baseFare="displayPrices.base"
-            :taxes="displayPrices.tax"
-            :discount="0"
-            :serviceCharge="displayPrices.serviceCharge"
-            :addOns="selectedAddOns"
-            :currency="currencySymbol"
-            :showPayButton="currentStep === 3"
-            :bundledStay="bundledStay"
-            @pay-now="handlePayNow"
-            @hold-now="handleHold"
-            @apply-promo="handleApplyPromo"
-          />
+        <div class="flex items-center gap-3">
+          <div v-if="currentStep < 3" class="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
+            <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+            <span class="text-[10px] font-black text-white/50 tracking-widest whitespace-nowrap">Held for 14:59</span>
+          </div>
+          <div class="hidden md:flex flex-col items-end">
+             <span class="text-[10px] font-black text-white/20 tracking-widest">Support</span>
+             <span class="text-sm font-bold text-white/50">+1 800 FLYBETH</span>
+          </div>
         </div>
       </div>
+    </header>
+
+    <!-- Refined Stepper -->
+    <div class="bg-white border-b border-gray-100 py-6">
+       <div class="ck-wrap">
+          <CheckoutStepper :currentStep="currentStep" />
+       </div>
     </div>
-  </div>
+
+    <main class="ck-main py-12 md:py-20">
+      <div class="ck-wrap">
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
+          
+          <div class="flex-grow w-full space-y-8">
+            <!-- Step 0: Review -->
+            <div v-if="currentStep === 0" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
+              <div class="p-3 md:p-12 border-b border-gray-50 bg-gray-50/30">
+                 <h2 class="text-2xl font-black text-gray-900 tracking-tight">Review selection</h2>
+                 <p class="text-gray-400 font-medium text-sm mt-1">Confirm your trip specifics before adding traveler data.</p>
+              </div>
+              <div class="p-3 md:p-12">
+                <CheckoutFlightDetails
+                  v-if="bookingDetails.type === 'flight'"
+                  :flightOffer="priceDetailed"
+                  @continue="goToStep(1)"
+                />
+                <CheckoutTransferDetails
+                  v-if="bookingDetails.type === 'transfer'"
+                  :name="bookingDetails.name"
+                  :provider="bookingDetails.provider"
+                  @continue="goToStep(1)"
+                />
+                <CheckoutStayDetails
+                  v-if="bookingDetails.type === 'stay'"
+                  :stay="priceDetailed"
+                  :currency-symbol="currencySymbol"
+                  @continue="goToStep(1)"
+                />
+              </div>
+            </div>
+
+            <!-- Step 1: Traveler -->
+            <div v-if="currentStep === 1" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
+              <CheckoutTravellerForm 
+                v-model="travellerData" 
+                @continue="handleTravellerContinue" 
+                @email-blur="handleEmailBlur"
+              />
+            </div>
+
+            <!-- Step 2: Extras -->
+            <div v-if="currentStep === 2" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
+              <CheckoutTripCustomization
+                :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
+                :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
+                :traveller="travellerData"
+                :totalPrice="displayPrices.total"
+                v-model:selectedAddOns="selectedAddOns"
+                @continue="goToStep(3)"
+              />
+            </div>
+
+            <!-- Step 3: Payment -->
+            <div v-if="currentStep === 3" class="animate-in space-y-8">
+              <div class="flex gap-6 p-6 bg-sky-50 border border-sky-100 rounded-[2rem] items-start">
+                  <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-sky-500 shadow-sm flex-shrink-0">
+                    <ShieldCheck class="h-7 w-7" />
+                  </div>
+                  <div class="space-y-1 py-1">
+                     <p class="text-xl font-black text-sky-900">Document Verification</p>
+                     <p class="text-sky-700/60 font-medium text-sm leading-relaxed">Ensure names match passports exactly. Flybeth is not responsible for corrections after airline issuance.</p>
+                  </div>
+              </div>
+
+              <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden p-4 md:p-12">
+                <CheckoutPayment 
+                  :total-amount="priceDetailed?.priceWithCommission" 
+                  :currency-symbol="currencySymbol"
+                  :currency="priceDetailed?.currency"
+                  :processing="paymentProcessing"
+                  @complete-payment="handlePayment"
+                  @change-currency="handleCurrencySelect"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="w-full lg:w-[400px] flex-shrink-0">
+            <div class="sticky top-12">
+              <CheckoutSidebar
+                :flight="bookingDetails.type === 'flight' ? priceDetailed : null"
+                :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
+                :passengerCount="1"
+                :baseFare="displayPrices.base"
+                :taxes="displayPrices.tax"
+                :discount="0"
+                :serviceCharge="displayPrices.serviceCharge"
+                :addOns="selectedAddOns"
+                :currency="currencySymbol"
+                :showPayButton="currentStep === 3"
+                :bundledStay="bundledStay"
+                @pay-now="handlePayNow"
+                @hold-now="handleHold"
+                @apply-promo="handleApplyPromo"
+              />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer removed as per request -->
+</div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { ChevronLeft, Lock, ShieldCheck } from 'lucide-vue-next'
 import { useRoute, useRouter, navigateTo, useRuntimeConfig } from '#app'
-import { staysApi } from '@/api_factory/modules/stays'
-import { paymentsApi } from '@/api_factory/modules/payments'
-import { useFlightCheckout } from '@/composables/modules/flights/useFlightCheckout'
+import { staysApi } from '~/api_factory/modules/stays'
+import { paymentsApi } from '~/api_factory/modules/payments'
+import { useFlightCheckout } from '~/composables/modules/flights/useFlightCheckout'
 import BrandedLoader from '~/components/BrandedLoader.vue'
-import CheckoutStepper from '@/components/checkout/CheckoutStepper.vue'
-import CheckoutFlightDetails from '@/components/checkout/CheckoutFlightDetails.vue'
-import CheckoutTransferDetails from '@/components/checkout/CheckoutTransferDetails.vue'
-import CheckoutTravellerForm from '@/components/checkout/CheckoutTravellerForm.vue'
+import CheckoutStepper from '~/components/checkout/CheckoutStepper.vue'
+import CheckoutFlightDetails from '~/components/checkout/CheckoutFlightDetails.vue'
+import CheckoutTransferDetails from '~/components/checkout/CheckoutTransferDetails.vue'
+import CheckoutTravellerForm from '~/components/checkout/CheckoutTravellerForm.vue'
 import CheckoutTripCustomization from '~/components/checkout/CheckoutTripCustomization.vue'
 import CheckoutPayment from '~/components/checkout/CheckoutPayment.vue'
 import CurrencySelectorModal from '~/components/checkout/CurrencySelectorModal.vue'
 import CurrencyConversionLoader from '~/components/checkout/CurrencyConversionLoader.vue'
 import ManualPaymentDetailsModal from '~/components/checkout/ManualPaymentDetailsModal.vue'
-import CheckoutSidebar from '@/components/checkout/CheckoutSidebar.vue'
-import CheckoutStayDetails from '@/components/checkout/CheckoutStayDetails.vue'
-import { flightsApi } from '@/api_factory/modules/flights'
-import { transfersApi } from '@/api_factory/modules/transfers'
-import { bookingsApi } from '@/api_factory/modules/bookings'
+import CheckoutSidebar from '~/components/checkout/CheckoutSidebar.vue'
+import CheckoutStayDetails from '~/components/checkout/CheckoutStayDetails.vue'
+import { flightsApi } from '~/api_factory/modules/flights'
+import { transfersApi } from '~/api_factory/modules/transfers'
+import { bookingsApi } from '~/api_factory/modules/bookings'
 
-import { useDuffelIdentity } from '@/composables/modules/integrations/useDuffelIdentity'
-import { useTracking } from '@/composables/core/useTracking'
-
-import { useAuth } from '@/composables/modules/auth/useAuth'
-import { useCustomToast } from '@/composables/core/useCustomToast'
+import { useDuffelIdentity } from '~/composables/modules/integrations/useDuffelIdentity'
+import { useTracking } from '~/composables/core/useTracking'
+import { useAuth } from '~/composables/modules/auth/useAuth'
+import { useCustomToast } from '~/composables/core/useCustomToast'
 
 const { token, isLoggedIn, openAuthModal } = useAuth()
 const { showToast } = useCustomToast()
@@ -423,7 +464,7 @@ const handleTravellerContinue = async () => {
     showBrandedLoader.value = true
     loaderStatus.value = 'Setting up your secure travel identity...'
     try {
-      await ensureDuffelIdentity()
+      await ensureDuffelIdentity(travellerData.value)
     } catch (err: any) {
       if (err?.response?.status === 401) {
         showToast({
@@ -627,6 +668,13 @@ const handlePayment = async (paymentInfo: { provider: string; channel: string; c
             expiry_year: paymentInfo.cardData.expiry_year,
             cvc: paymentInfo.cardData.cvv,
             name: paymentInfo.cardData.name,
+            multi_use: paymentInfo.cardData.multi_use,
+            address_line_1: paymentInfo.cardData.address_line_1,
+            address_line_2: paymentInfo.cardData.address_line_2,
+            address_city: paymentInfo.cardData.address_city,
+            address_region: paymentInfo.cardData.address_region,
+            address_country_code: paymentInfo.cardData.address_country_code,
+            address_postal_code: paymentInfo.cardData.address_postal_code,
           }
         })
         
@@ -948,37 +996,32 @@ const handleManualConfirm = async (account: any) => {
 </script>
 
 <style scoped>
-.checkout-page {
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap');
+
+.ck-root {
   min-height: 100vh;
-  background: #f8fafc;
+  background: #fbfbf9;
+  font-family: 'Sora', sans-serif;
+  color: #111;
+  display: flex;
+  flex-direction: column;
 }
 
-.checkout-body {
-  max-width: 80rem;
+.ck-wrap {
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 3rem 1.5rem 6rem;
+  padding: 0 40px;
 }
 
-.checkout-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 2.5rem;
-  align-items: start;
+.animate-in {
+  animation: ckIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-
-.animate-slide-up {
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideUp {
+@keyframes ckIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 1024px) {
-  .checkout-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
+@media (max-width: 640px) {
+  .ck-wrap { padding: 0 20px; }
 }
 </style>

@@ -7,53 +7,79 @@
     >
       <label
         :class="[
-          'absolute transition-all duration-300 ease-in-out pointer-events-none z-10 text-gray-500',
-          open || modelValue ? 'text-xs left-3 top-2' : 'text-base left-3 top-1/2 -translate-y-1/2'
+          'absolute transition-all duration-300 ease-in-out pointer-events-none z-10 text-brand-gray/40 font-bold tracking-widest',
+          open || modelValue ? 'text-[10px] left-4 top-2' : 'text-sm left-4 top-1/2 -translate-y-1/2'
         ]"
       >{{ label }}</label>
       <div
         :class="[
-          'w-full py-3 pt-6 px-3 bg-[#1A1A1B09] border-[0.5px] border-transparent rounded-2xl cursor-pointer transition-all duration-300 min-h-[58px] flex items-end',
-          open ? 'ring-1 ring-[#0D1DAD] border-[#0D1DAD]' : '',
+          'w-full py-4 pt-7 px-4 bg-white border border-gray-100 rounded-2xl cursor-pointer transition-all duration-300 min-h-[68px] flex items-end',
+          open ? 'ring-2 ring-gray-900 border-gray-900' : 'hover:border-gray-300',
           hasError ? 'ring-red-500 border-red-500' : ''
         ]"
       >
-        <span v-if="modelValue" class="font-medium text-gray-800 text-sm">{{ displayDate }}</span>
-        <span v-else class="text-transparent select-none text-sm">–</span>
+        <div class="flex items-center gap-2">
+           <Calendar class="h-4 w-4 text-brand-blue/60 shrink-0" />
+           <span v-if="modelValue" class="font-semibold text-gray-900 text-sm tracking-tight">{{ displayDate }}</span>
+           <span v-else class="text-gray-400 text-sm font-semibold tracking-tight">Select date</span>
+        </div>
       </div>
-      <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      </div>
-    </div>    <!-- Calendar Overlay -->
+    </div>
+
+    <!-- Calendar Overlay (Matching FlightDateRangePicker) -->
     <Teleport to="body">
-      <Transition name="picker-drop">
-        <div
-          v-if="open"
-          class="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
-          @click.self="open = false"
-        >
-          <div class="bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden w-full max-w-[340px]" @click.stop>
+      <Transition name="fade-overlay">
+        <div v-if="open">
+          
+          <!-- Dark backdrop -->
+          <div
+            class="fixed inset-0 z-[10010] bg-black/50 backdrop-blur-[3px]"
+            @click="open = false"
+          />
+
+          <!-- Calendar card -->
+          <div
+            class="fixed z-[10011] bg-white rounded-2xl overflow-hidden select-none transition-all duration-300 shadow-2xl inset-x-4 top-1/2 -translate-y-1/2 w-auto sm:max-w-[400px] sm:left-1/2 sm:-translate-x-1/2"
+            @click.stop
+          >
             <!-- Header -->
-            <div class="p-6 bg-gray-900 text-white text-center">
-              <h3 class="text-[9px] font-black uppercase tracking-[0.3em] opacity-60 mb-1">{{ label }}</h3>
-              <p class="text-lg font-black tracking-tight" @click="viewMode = viewMode === 'year' ? 'calendar' : 'year'">
-                {{ months[leftMonth] }} {{ leftYear }}
-              </p>
+            <div class="flex items-center justify-between px-6 pt-5 pb-3">
+              <button
+                @click="prevMonth"
+                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <ChevronLeft class="h-4 w-4 text-gray-500" />
+              </button>
+
+              <div class="flex-1 text-center">
+                <button 
+                  @click="viewMode = viewMode === 'year' ? 'calendar' : 'year'"
+                  class="text-base font-bold text-gray-900 hover:text-brand-blue transition-colors flex items-center justify-center gap-1 mx-auto"
+                >
+                  {{ monthLabels[leftMonth] }} {{ leftYear }}
+                  <ChevronDown class="h-4 w-4" :class="{ 'rotate-180': viewMode === 'year' }" />
+                </button>
+              </div>
+
+              <button
+                @click="nextMonth"
+                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <ChevronRight class="h-4 w-4 text-gray-500" />
+              </button>
             </div>
 
             <!-- View Modes -->
-            <div class="p-6">
+            <div class="px-6 pb-4">
               <!-- Year Selection Grid -->
-              <div v-if="viewMode === 'year'" class="space-y-4">
-                <div class="grid grid-cols-3 gap-2 max-h-[240px] overflow-y-auto pr-2 custom-scrollbar">
+              <div v-if="viewMode === 'year'">
+                <div class="grid grid-cols-3 gap-2 h-[280px] overflow-y-auto pr-2 custom-scrollbar">
                    <button 
                     v-for="year in years" 
                     :key="year"
                     type="button"
                     @click="selectYear(year)"
-                    class="py-3 text-[11px] font-bold rounded-xl transition-all border"
+                    class="py-3 text-[13px] font-bold rounded-xl transition-all border"
                     :class="year === leftYear ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-100 hover:border-gray-900'"
                    >
                      {{ year }}
@@ -61,56 +87,63 @@
                 </div>
               </div>
 
-              <!-- Single month calendar (Compact) -->
+              <!-- Days Grid -->
               <div v-else>
-                <div class="flex items-center justify-between mb-4">
-                  <button type="button" @click="prevMonth" class="p-2 hover:bg-gray-50 rounded-xl transition-all">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
-                  </button>
-                   <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">Select Date</span>
-                  <button type="button" @click="nextMonth" class="p-2 hover:bg-gray-50 rounded-xl transition-all">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
-                  </button>
-                </div>
-
                 <div class="grid grid-cols-7 mb-2">
-                  <div v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="text-center text-[9px] uppercase font-black text-gray-300 py-1">{{ d }}</div>
+                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="text-center text-[11px] font-bold text-gray-400 py-1">{{ d }}</div>
                 </div>
-                <div class="grid grid-cols-7 gap-1">
-                  <button
-                    v-for="(day, i) in leftDays"
-                    :key="'l'+i"
-                    type="button"
-                    :disabled="!day.inMonth || (maxDate && day.dateObj > maxDate) || (minDate && day.dateObj < minDate)"
-                    @click="day.inMonth && selectDay(day)"
-                    class="aspect-square flex items-center justify-center text-[11px] font-bold rounded-xl transition-all relative"
-                    :class="[
-                      !day.inMonth ? 'invisible' : '',
-                      day.isSelected ? 'bg-gray-900 text-white shadow-lg' : 'text-gray-900 hover:bg-gray-900 hover:text-white',
-                      day.isToday && !day.isSelected ? 'border border-gray-900' : ''
-                    ]"
-                  >
-                    {{ day.date || '' }}
-                  </button>
+                <div class="grid grid-cols-7">
+                  <template v-for="(day, i) in leftDays" :key="i">
+                    <div v-if="!day.inMonth" class="h-10" />
+                    <div
+                      v-else
+                      class="flex items-center justify-center h-10"
+                      @click="selectDay(day)"
+                    >
+                      <span
+                        class="h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100 cursor-pointer"
+                        :class="[
+                          day.isSelected ? 'bg-gray-900 text-white shadow-md' : 
+                          day.isToday ? 'text-gray-900 border-2 border-gray-900/10 hover:bg-gray-100' : 
+                          'text-gray-700 hover:bg-gray-100'
+                        ]"
+                      >
+                        {{ day.date }}
+                      </span>
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
 
             <!-- Footer -->
-            <div class="px-6 pb-6 flex items-center gap-3">
-              <button type="button" @click="clearValue" class="flex-1 py-3 text-[9px] font-black uppercase tracking-widest border border-gray-100 hover:bg-gray-50 rounded-xl transition-all">Clear</button>
-              <button type="button" @click="open = false" class="flex-1 py-3 bg-gray-900 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-black transition-all shadow-lg shadow-gray-200">Done</button>
+            <div class="flex items-center justify-between gap-4 px-6 py-4 border-t border-gray-100 bg-gray-50/60">
+               <button
+                  v-if="modelValue"
+                  @click="clearValue"
+                  class="text-sm font-bold text-gray-500 hover:text-gray-700 px-3 py-2 rounded-xl transition-colors"
+                >
+                  Clear
+                </button>
+                <div v-else />
+
+                <button
+                  @click="open = false"
+                  class="px-8 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-bold hover:bg-black transition-colors active:scale-95 shadow-sm"
+                >
+                  Done
+                </button>
             </div>
           </div>
         </div>
       </Transition>
     </Teleport>
->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { Calendar, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-vue-next'
 
 defineOptions({ inheritAttrs: false })
 
@@ -133,8 +166,8 @@ const open = ref(false)
 const today = new Date()
 today.setHours(0, 0, 0, 0)
 
-const leftYear = ref(today.getFullYear())
-const leftMonth = ref(today.getMonth())
+const leftYear = ref(props.modelValue ? new Date(props.modelValue).getFullYear() : today.getFullYear())
+const leftMonth = ref(props.modelValue ? new Date(props.modelValue).getMonth() : today.getMonth())
 const viewMode = ref<'calendar' | 'year'>('calendar')
 
 const years = computed(() => {
@@ -153,21 +186,14 @@ function selectYear(year: number) {
   viewMode.value = 'calendar'
 }
 
-function toggleYearView() {
-  viewMode.value = viewMode.value === 'year' ? 'calendar' : 'year'
-}
-
-const rightMonth = computed(() => (leftMonth.value + 1) % 12)
-const rightYear = computed(() => leftMonth.value === 11 ? leftYear.value + 1 : leftYear.value)
-
-const weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 const monthLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-const selectedDate = computed(() => props.modelValue ? new Date(props.modelValue + 'T12:00:00') : null)
+const selectedDateStr = computed(() => props.modelValue || '')
 
 const displayDate = computed(() => {
-  if (!selectedDate.value) return ''
-  return selectedDate.value.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+  if (!props.modelValue) return ''
+  const d = new Date(props.modelValue + 'T12:00:00')
+  return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
 })
 
 interface CalDay {
@@ -181,7 +207,6 @@ interface CalDay {
 function buildMonthDays(year: number, month: number): CalDay[] {
   const first = new Date(year, month, 1)
   let startDow = first.getDay() // 0=Sun
-  startDow = startDow === 0 ? 6 : startDow - 1 // convert to Mon-start
 
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const cells: CalDay[] = []
@@ -192,11 +217,12 @@ function buildMonthDays(year: number, month: number): CalDay[] {
   for (let d = 1; d <= daysInMonth; d++) {
     const dt = new Date(year, month, d)
     dt.setHours(0, 0, 0, 0)
+    const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
     cells.push({
       date: d,
       inMonth: true,
       isToday: dt.getTime() === today.getTime(),
-      isSelected: selectedDate.value ? dt.getTime() === selectedDate.value.setHours(0,0,0,0) : false,
+      isSelected: selectedDateStr.value === iso,
       dateObj: dt,
     })
   }
@@ -204,21 +230,12 @@ function buildMonthDays(year: number, month: number): CalDay[] {
 }
 
 const leftDays = computed(() => buildMonthDays(leftYear.value, leftMonth.value))
-const rightDays = computed(() => buildMonthDays(rightYear.value, rightMonth.value))
-
-function getDayClass(day: CalDay) {
-  const base = 'relative w-9 h-9 mx-auto flex items-center justify-center text-xs font-bold rounded-xl transition-all duration-150'
-  if (!day.inMonth) return base + ' invisible'
-  if (day.isSelected) return base + ' bg-brand-blue text-white shadow-lg'
-  if (day.isToday) return base + ' border-2 border-brand-blue text-brand-blue'
-  return base + ' text-gray-700 hover:bg-gray-50 cursor-pointer'
-}
 
 function selectDay(day: CalDay) {
   if (!day.inMonth) return
   const iso = `${day.dateObj.getFullYear()}-${String(day.dateObj.getMonth() + 1).padStart(2, '0')}-${String(day.dateObj.getDate()).padStart(2, '0')}`
   emit('update:modelValue', iso)
-  open.value = false
+  setTimeout(() => { open.value = false }, 150)
 }
 
 function clearValue() {
@@ -245,16 +262,19 @@ function nextMonth() {
 </script>
 
 <style scoped>
-.picker-drop-enter-active, .picker-drop-leave-active {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+.fade-overlay-enter-active, .fade-overlay-leave-active {
+  transition: opacity 0.2s ease;
 }
-.picker-drop-enter-from, .picker-drop-leave-to {
+.fade-overlay-enter-from, .fade-overlay-leave-to {
   opacity: 0;
-  transform: translateY(10px) scale(0.98);
 }
-button:disabled {
-  opacity: 0.1;
-  cursor: not-allowed;
+
+.fade-overlay-enter-active .fixed.z-\[10011\] {
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+.fade-overlay-enter-from .fixed.z-\[10011\] {
+  transform: translateY(-10px) scale(0.97);
+  opacity: 0;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -268,3 +288,5 @@ button:disabled {
   border-radius: 10px;
 }
 </style>
+
+

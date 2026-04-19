@@ -25,9 +25,9 @@
       <div v-else class="flex items-center gap-2">
         <MapPinIcon
           class="h-5 w-5 shrink-0 transition-colors"
-          :class="showDropdown ? 'text-gray-900' : 'text-gray-300'"
+          :class="showDropdown ? 'text-gray-900' : 'text-gray-500'"
         />
-        <span class="text-base  text-gray-300">
+        <span class="text-base  text-gray-500">
           {{ placeholder || 'Search city or airport...' }}
         </span>
       </div>
@@ -114,7 +114,7 @@
                     {{ res.name }}
                   </p>
                 </div>
-                <span class="text-xs  text-gray-300 group-hover/item:text-gray-900 transition-colors shrink-0 ml-2">
+                <span class="text-xs  text-gray-500 group-hover/item:text-gray-900 transition-colors shrink-0 ml-2">
                   {{ res.iataCode }}
                 </span>
               </div>
@@ -152,7 +152,7 @@
                     <p class="text-sm font-bold text-gray-700 group-hover/sug:text-gray-900 transition-colors truncate leading-tight">
                       {{ dest.city }}
                     </p>
-                    <p class="text-sm  text-gray-300 uppercase tracking-wide">{{ dest.iataCode }}</p>
+                    <p class="text-sm  text-gray-500 uppercase tracking-wide">{{ dest.iataCode }}</p>
                   </div>
                 </div>
               </div>

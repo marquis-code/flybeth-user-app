@@ -1,38 +1,41 @@
 <template>
   <transition
-    enter-active-class="transition-opacity duration-500"
-    leave-active-class="transition-opacity duration-500"
+    enter-active-class="transition-opacity duration-700"
+    leave-active-class="transition-opacity duration-700"
     enter-from-class="opacity-0"
     enter-to-class="opacity-100"
     leave-from-class="opacity-100"
     leave-to-class="opacity-0"
   >
     <div v-if="visible" class="branded-loader-overlay">
-      <div class="branded-loader-content">
-        <!-- Animated rings -->
-        <div class="loader-rings">
-          <div class="ring ring-outer"></div>
-          <div class="ring ring-middle"></div>
-          <div class="ring ring-inner"></div>
-          <!-- Logo -->
-          <div class="logo-container">
-            <img src="@/assets/img/logo.png" alt="Flybeth" class="logo-img" />
+      <div class="loader-content animate-in">
+        <!-- Minimalist Pulse -->
+        <div class="loader-visual">
+          <div class="visual-pulse pulse-primary"></div>
+          <div class="visual-pulse pulse-secondary"></div>
+          <div class="logo-wrapper">
+             <img src="@/assets/img/logo.png" alt="Flybeth" class="brand-logo" />
           </div>
+          <!-- Orbiting ring -->
+          <svg class="orbit-svg" viewBox="0 0 100 100">
+            <circle class="orbit-path" cx="50" cy="50" r="48" fill="none" />
+            <circle class="orbit-dot" cx="50" cy="50" r="48" fill="none" />
+          </svg>
         </div>
 
-        <!-- Status text -->
-        <div class="loader-text-area">
-          <p class="loader-status">{{ statusText }}</p>
-          <div class="loader-dots">
-            <span class="dot dot-1"></span>
-            <span class="dot dot-2"></span>
-            <span class="dot dot-3"></span>
+        <!-- Professional Text -->
+        <div class="status-container">
+          <h2 class="status-title">{{ statusText }}</h2>
+          <p v-if="subtitle" class="status-subtitle">{{ subtitle }}</p>
+          <div class="loading-bar">
+            <div class="bar-progress"></div>
           </div>
         </div>
-
-        <!-- Optional subtitle -->
-        <p v-if="subtitle" class="loader-subtitle">{{ subtitle }}</p>
       </div>
+
+      <!-- Corner Accents -->
+      <div class="accent accent-top"></div>
+      <div class="accent accent-bottom"></div>
     </div>
   </transition>
 </template>
@@ -41,7 +44,7 @@
 defineProps({
   visible: { type: Boolean, default: true },
   statusText: { type: String, default: 'Confirming best fare with airline...' },
-  subtitle: { type: String, default: '' }
+  subtitle: { type: String, default: 'One moment while we secure your journey' }
 })
 </script>
 
@@ -49,134 +52,159 @@ defineProps({
 .branded-loader-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 100000;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0D1DAD 0%, #0a1488 40%, #060d5c 100%);
-  backdrop-filter: blur(20px);
+  background: white;
+  overflow: hidden;
 }
 
-.branded-loader-content {
+.loader-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.5rem;
+  text-align: center;
+  gap: 3rem;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
 }
 
-.loader-rings {
+.loader-visual {
   position: relative;
-  width: 180px;
-  height: 180px;
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 3px solid transparent;
-}
-
-.ring-outer {
-  width: 180px;
-  height: 180px;
-  border-top-color: #32B404;
-  border-right-color: rgba(50, 180, 4, 0.3);
-  animation: spin-clockwise 2s linear infinite;
-}
-
-.ring-middle {
-  width: 140px;
-  height: 140px;
-  border-bottom-color: #fff;
-  border-left-color: rgba(255, 255, 255, 0.3);
-  animation: spin-counter 1.5s linear infinite;
-}
-
-.ring-inner {
-  width: 110px;
-  height: 110px;
-  border-top-color: #32B404;
-  border-right-color: rgba(50, 180, 4, 0.2);
-  animation: spin-clockwise 2.5s linear infinite;
-}
-
-.logo-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+.logo-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 70px;
+  height: 70px;
   background: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 40px rgba(50, 180, 4, 0.3), 0 0 80px rgba(13, 29, 173, 0.2);
-  animation: logo-pulse 2s ease-in-out infinite;
-  z-index: 2;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
 }
 
-.logo-img {
-  width: 55px;
-  height: 55px;
+.brand-logo {
+  width: 45px;
+  height: 45px;
   object-fit: contain;
+  animation: logo-float 3s ease-in-out infinite;
 }
 
-.loader-text-area {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.loader-status {
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-}
-
-.loader-dots {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-
-.dot {
-  width: 5px;
-  height: 5px;
+.visual-pulse {
+  position: absolute;
+  inset: 5px;
   border-radius: 50%;
   background: #32B404;
-  animation: dot-bounce 1.4s ease-in-out infinite both;
+  opacity: 0.1;
 }
 
-.dot-1 { animation-delay: 0s; }
-.dot-2 { animation-delay: 0.16s; }
-.dot-3 { animation-delay: 0.32s; }
+.pulse-primary { animation: pulse-wave 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+.pulse-secondary { animation: pulse-wave 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite 1.25s; }
 
-.loader-subtitle {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
+.orbit-svg {
+  position: absolute;
+  inset: -15px;
+  width: 150px;
+  height: 150px;
+  transform: rotate(-90deg);
 }
 
-@keyframes spin-clockwise {
-  to { transform: rotate(360deg); }
+.orbit-path {
+  stroke: #f3f3f3;
+  stroke-width: 0.5px;
 }
 
-@keyframes spin-counter {
-  to { transform: rotate(-360deg); }
+.orbit-dot {
+  stroke: #32B404;
+  stroke-width: 2px;
+  stroke-dasharray: 1, 300;
+  stroke-linecap: round;
+  animation: orbit-rotation 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-@keyframes logo-pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(50, 180, 4, 0.3), 0 0 80px rgba(13, 29, 173, 0.2); }
-  50% { transform: scale(1.08); box-shadow: 0 0 60px rgba(50, 180, 4, 0.5), 0 0 100px rgba(13, 29, 173, 0.3); }
+.status-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-@keyframes dot-bounce {
-  0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
-  40% { transform: scale(1); opacity: 1; }
+.status-title {
+  color: #1a1a1b;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.status-subtitle {
+  color: #a1a1a5;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.loading-bar {
+  width: 60px;
+  height: 2px;
+  background: #f0f0f2;
+  border-radius: 10px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.bar-progress {
+  width: 40%;
+  height: 100%;
+  background: #32B404;
+  border-radius: 10px;
+  animation: bar-slide 1.5s ease-in-out infinite;
+}
+
+.accent {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(50, 180, 4, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+}
+.accent-top { top: -200px; left: -100px; }
+.accent-bottom { bottom: -200px; right: -100px; }
+
+@keyframes orbit-rotation {
+  0% { stroke-dasharray: 1, 300; stroke-dashoffset: 0; }
+  50% { stroke-dasharray: 120, 300; stroke-dashoffset: -40; }
+  100% { stroke-dasharray: 1, 300; stroke-dashoffset: -300; }
+}
+
+@keyframes pulse-wave {
+  0% { transform: scale(1); opacity: 0.15; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes bar-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+.animate-in {
+  animation: content-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes content-in {
+  from { opacity: 0; transform: scale(0.98) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 </style>

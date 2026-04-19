@@ -1,794 +1,1065 @@
 <template>
-  <div 
-    class="bg-white/95 backdrop-blur-xl shadow-xl shadow-brand-blue/8 border-b border-gray-100 font-body relative z-10 transition-all duration-700 ease-in-out"
-    :class="[isSticky ? 'rounded-b-[2rem] border-x-0 border-t-0 py-1' : 'rounded-[2rem] border border-gray-100 py-0']"
-  >
-    <!-- Redesigned Tabs — Desktop Horizontal / Mobile Grid -->
-    <div class="bg-white rounded-t-[2rem] border-b border-gray-100 overflow-hidden">
-      <!-- Mobile Grid Selector (Hidden on Desktop) -->
-      <div class="md:hidden grid grid-cols-4 gap-2 p-3 bg-gray-50/50">
+  <div class="sw-root" :class="isSticky ? 'sw-root--sticky' : ''">
+
+    <!-- ─── Tab Bar ─── -->
+    <div class="sw-tabs">
+      <!-- Mobile pill scroll -->
+      <div class="sw-tabs-mobile">
         <button
           v-for="tab in tabs"
           :key="tab.name"
           @click="currentTab = tab.name"
-          :class="[
-            currentTab === tab.name
-              ? 'bg-gray-900 text-white shadow-lg scale-95'
-              : 'bg-white text-gray-400 hover:text-gray-900 border-gray-100',
-            'flex flex-col items-center justify-center gap-1.5 py-3 rounded-2xl transition-all duration-300 border shadow-sm',
-          ]"
+          class="sw-tab-pill"
+          :class="currentTab === tab.name ? 'sw-tab-pill--on' : ''"
         >
-          <div class="flex items-center justify-center h-5">
-            <img v-if="tab.customIcon" :src="tab.customIcon" class="h-4 w-4 object-contain transition-all" :class="currentTab === tab.name ? 'brightness-0 invert' : 'opacity-60'" />
-            <component v-else :is="tab.icon" class="h-4 w-4 stroke-[2.5]" />
-          </div>
-          <span class="text-[9px] font-bold uppercase tracking-widest">{{ tab.label || tab.name }}</span>
+          <component :is="tab.icon" class="sw-tab-ico" />
+          {{ tab.label }}
         </button>
       </div>
-
-      <!-- Desktop Nav (Hidden on Mobile) -->
-      <nav class="hidden md:flex justify-center px-6 gap-3 min-w-max w-full mx-auto" aria-label="Tabs">
+      <!-- Desktop underline nav -->
+      <nav class="sw-tabs-desk" aria-label="Search tabs">
         <button
           v-for="tab in tabs"
           :key="tab.name"
           @click="currentTab = tab.name"
-          :class="[
-            currentTab === tab.name
-              ? 'text-gray-900 border-gray-900'
-              : 'text-gray-400 hover:text-gray-900 border-transparent',
-            'flex flex-col items-center justify-center gap-1 transition-all border-b-[3px] pt-3 pb-2.5 relative z-10 whitespace-nowrap px-4',
-          ]"
+          class="sw-tab-btn"
+          :class="currentTab === tab.name ? 'sw-tab-btn--on' : ''"
         >
-          <div class="flex items-center justify-center h-8">
-            <img v-if="tab.customIcon" :src="tab.customIcon" class="h-5 w-5 object-contain transition-all" :class="currentTab === tab.name ? 'opacity-100' : 'opacity-40 grayscale'" />
-            <component v-else :is="tab.icon" class="h-5 w-5 stroke-[2]" />
-          </div>
-          <span class="text-xs tracking-widest font-bold uppercase">{{ tab.label || tab.name }}</span>
+          <component :is="tab.icon" class="sw-tab-ico" />
+          {{ tab.label }}
         </button>
       </nav>
     </div>
 
-    <!-- Backdrop Overlay -->
+    <!-- Global backdrop -->
     <Teleport to="body">
-      <Transition name="fade">
-        <div v-if="isFocused || activeCruiseField" class="fixed inset-0 bg-black/5 backdrop-blur-[2px] z-[9]" @click="isFocused = false; activeCruiseField = null"></div>
-        <!-- <div v-if="isFocused || activeCruiseField" class="fixed inset-0 bg-black/5 backdrop-blur-[2px] z-[9998]" @click="isFocused = false; activeCruiseField = null"></div> -->
+      <Transition name="sw-fade">
+        <div
+          v-if="isFocused || activeCruiseField"
+          class="sw-backdrop"
+          @click="isFocused = false; activeCruiseField = null"
+        />
       </Transition>
     </Teleport>
 
-    <!-- Content Area -->
-    <div 
-      class="bg-white transition-all duration-700 ease-in-out relative z-[10000]"
-      :class="[isSticky ? 'p-2 md:p-3 !space-y-3' : 'p-4 md:p-5 space-y-4', isFocused ? '!rounded-b-[2rem]' : '']"
-    >
-       <!-- Stays (Hotels) Panel -->
-       <div v-if="currentTab === 'Hotels'" class="space-y-6">
-         <!-- <h3 class="text-xl  text-gray-900 mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
-         <!-- Stay Mode Toggle -->
-         <div class="flex items-center space-x-8 pb-2">
-           <label 
-             v-for="mode in [{label: 'Single Hotel', value: 'single'}, {label: 'Multi Hotel', value: 'multi'}]" 
-             :key="mode.value"
-             class="flex items-center space-x-3 cursor-pointer group"
-           >
-             <div class="relative flex items-center">
-               <input type="radio" :value="mode.value" v-model="stayMode" class="sr-only" />
-               <div 
-                 class="w-5 h-5 rounded-full border-2 transition-all duration-300 flex items-center justify-center"
-                 :class="stayMode === mode.value ? 'border-gray-900' : 'border-gray-200 group-hover:border-gray-400'"
-               >
-                 <div 
-                   class="w-2.5 h-2.5 rounded-full bg-gray-900 transition-all duration-300"
-                   :class="stayMode === mode.value ? 'scale-100 opacity-100' : 'scale-0 opacity-0'"
-                 ></div>
-               </div>
-             </div>
-             <span class="text-xs  uppercase tracking-widest text-gray-500 transition-colors" :class="stayMode === mode.value ? 'text-gray-900' : 'opacity-60 group-hover:opacity-100'">{{ mode.label }}</span>
-           </label>
-         </div>
- 
-         <!-- Single Hotel Layout -->
-         <div v-if="stayMode === 'single'" class="space-y-6">
-           <div 
-             class="flex flex-col md:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm overflow-visible transition-all duration-300"
-             :class="isFocused ? 'ring-4 ring-gray-900/5 border-gray-900' : ''"
-           >
-             <div class="flex-[1.5] relative border-b md:border-b-0 md:border-r border-gray-100">
-               <LocationPicker 
-                 v-model="searchState.location" 
-                 label="Going to"
-                 placeholder="Where are you going?"
-                 @focus="isFocused = true"
-                 @close="isFocused = false"
-               />
-             </div>
-             <div class="flex-[1.8] border-b md:border-b-0 md:border-r border-gray-100">
-               <FlightDateRangePicker
-                 :departure="searchState.checkIn"
-                 :return="searchState.checkOut"
-                 mode="roundtrip"
-                 @focus="isFocused = true"
-                 @close="isFocused = false"
-                 @update:departure="(v: string) => searchState.checkIn = v"
-                 @update:return="(v: string) => searchState.checkOut = v"
-               />
-             </div>
-             <div class="flex-1 relative border-gray-100">
-                <Occupancypicker
-                  v-model:rooms="occupancy.rooms"
-                  v-model:adults="occupancy.adults"
-                  v-model:children="occupancy.children"
-                  @focus="isFocused = true"
-                  @close="isFocused = false"
-                />
-             </div>
-           </div>
-           <div class="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-gray-50">
-             <div class="flex items-center gap-6">
-               <div class="flex items-center bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mr-4">Bundle + Save</span>
-                 <label class="flex items-center text-xs font-bold text-gray-900 cursor-pointer mr-4 uppercase tracking-tighter">
-                   <input type="checkbox" v-model="bundles.bundleFlight" class="mr-2 custom-checkbox" />
-                   + Flight
-                 </label>
-                 <label class="flex items-center text-xs font-bold text-gray-900 cursor-pointer uppercase tracking-tighter">
-                   <input type="checkbox" v-model="bundles.bundleCar" class="mr-2 custom-checkbox" />
-                   + Car
-                 </label>
-               </div>
-             </div>
-             <button @click="handleSearch" class="w-full md:w-auto bg-gray-900 text-white px-10 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-black transition-all flex items-center justify-center gap-2">
-               <span>Find Your Hotel</span>
-               <ArrowRightIcon class="h-4 w-4" />
-             </button>
-           </div>
-         </div>
+    <!-- ─── Panel ─── -->
+    <div class="sw-panel" :class="isSticky ? 'sw-panel--sm' : ''">
 
-        <!-- Multi Hotel Layout -->
-        <div v-else class="space-y-6">
-          <div v-for="(hotel, index) in multiHotelLegs" :key="index" class="space-y-2">
-            <p class="text-[11px] font-bold text-gray-900 tracking-widest">Hotel {{ index + 1 }}</p>
-            <div class="flex flex-col md:flex-row items-stretch bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-              <div class="flex-1 border-b md:border-b-0 md:border-r border-gray-100">
-                <LocationPicker v-model="hotel.location" label="Where to?" />
-              </div>
-              <div class="flex-1 border-b md:border-b-0 border-gray-100">
-                <FlightDateRangePicker :departure="hotel.checkIn" :return="hotel.checkOut" mode="roundtrip" @update:departure="(v: string) => hotel.checkIn = v" @update:return="(v: string) => hotel.checkOut = v" />
-              </div>
-            </div>
-          </div>
-          <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-            <button @click="addHotelLeg" v-if="multiHotelLegs.length < 5" class="bg-gray-50 text-gray-900 px-6 py-2.5 rounded-xl text-[11px] tracking-widest transition-all font-bold uppercase border border-gray-100">Add Another Hotel</button>
-            <button @click="handleSearch" class="bg-gray-900 text-white px-10 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2">
-              <span>Find Your Hotels</span>
-              <ArrowRightIcon class="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Flights Panel -->
-      <div v-if="currentTab === 'Flights'" class="space-y-4">
-        <!-- <h3 class="text-xl  text-gray-900 mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-           <div class="flex items-center space-x-6">
-              <label v-for="mode in ['oneway', 'roundtrip', 'multicity']" :key="mode" class="flex items-center space-x-2 cursor-pointer group">
-                <input type="radio" :value="mode" v-model="flightMode" class="sr-only" />
-                <div class="w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center" :class="flightMode === mode ? 'border-gray-900' : 'border-gray-300'">
-                   <div v-if="flightMode === mode" class="w-2 h-2 rounded-full bg-gray-900"></div>
-                </div>
-                <span class="text-xs  capitalize" :class="flightMode === mode ? 'text-gray-900' : 'text-gray-500/60'">{{ mode.replace('multicity', 'Multi City').replace('oneway', 'One Way').replace('roundtrip', 'Round Trip') }}</span>
-              </label>
-           </div>
-        </div>
-        <div class="flex flex-col gap-4">
-           <div 
-             v-for="(leg, index) in flightMode === 'multicity' ? multiFlightLegs : [flightSearchState]" 
-             :key="index"
-             class="flex flex-col lg:flex-row w-full bg-white border border-gray-200 rounded-xl shadow-sm relative"
-           >
-              <div class="flex flex-col md:flex-row w-full lg:w-[60%]">
-                <div class="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-200 p-1">
-                   <LocationPicker v-model="leg.origin" label="From" />
-                </div>
-                <div class="w-full md:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200 p-1 pl-4">
-                   <LocationPicker v-model="leg.destination" label="To" />
-                </div>
-              </div>
-              <div class="flex flex-col md:flex-row w-full lg:w-[42%]">
-                <div class="flex-1 border-b md:border-b-0 md:border-r border-gray-200 min-w-max">
-                  <FlightDateRangePicker :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)" v-model:departure="leg.departureDate" v-model:return="leg.returnDate" />
-                </div>
-                <div v-if="index === 0" class="w-full md:w-[220px] pl-2 pr-4 lg:pr-6 shrink-0">
-                  <Occupancypicker label="Passengers" variant="flight" v-model:adults="flightTravelers.adults" v-model:children="flightTravelers.children" />
-                </div>
-              </div>
-           </div>
-        </div>
-        <div class="pt-4 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-gray-50">
-              <div class="flex items-center gap-6">
-                <div class="flex items-center bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-                  <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mr-4">Bundle + Save</span>
-                  <label class="flex items-center text-xs font-bold text-gray-900 cursor-pointer mr-4 uppercase tracking-tighter">
-                    <input type="checkbox" v-model="bundles.bundleHotel" class="mr-2 custom-checkbox" />
-                    + Hotel
-                  </label>
-                  <label class="flex items-center text-xs font-bold text-gray-900 cursor-pointer uppercase tracking-tighter">
-                    <input type="checkbox" v-model="bundles.bundleCar" class="mr-2 custom-checkbox" />
-                    + Car
-                  </label>
-                </div>
-              </div>
-              <button @click="handleSearch" class="w-full md:w-auto bg-gray-900 text-white px-12 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2">
-                <span>Find Your Flight</span>
-                <ArrowRightIcon class="h-4 w-4" />
-              </button>
-        </div>
-      </div>
-
-      <!-- Packages Panel -->
-      <div v-if="currentTab === 'Packages'" class="space-y-6">
-        <!-- <h3 class="text-xl  text-gray-900 mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
-        <div class="flex flex-wrap items-center gap-6 pb-2">
-          <label 
-            v-for="mode in [
-              {label: 'Hotel + Flight', value: 'Hotel+Flight'}, 
-              {label: 'Hotel + Flight + Car', value: 'Hotel+Flight+Car'},
-              {label: 'Flight + Car', value: 'Flight+Car'},
-              {label: 'Hotel + Car', value: 'Hotel+Car'}
-            ]" 
-            :key="mode.value"
-            class="flex items-center space-x-2 cursor-pointer group"
-          >
-            <input type="radio" :value="mode.value" v-model="packageType" class="sr-only" />
-            <div class="w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center" :class="packageType === mode.value ? 'border-gray-900' : 'border-gray-200'">
-              <div v-if="packageType === mode.value" class="w-2 h-2 rounded-full bg-gray-900"></div>
-            </div>
-            <span class="text-[11px] font-bold" :class="packageType === mode.value ? 'text-gray-900' : 'text-gray-500/60'">{{ mode.label }}</span>
+      <!-- ════ FLIGHTS ════ -->
+      <div v-if="currentTab === 'Flights'" class="sw-section">
+        <!-- Mode -->
+        <div class="sw-radios">
+          <label v-for="m in flightModes" :key="m.value" class="sw-radio">
+            <input type="radio" :value="m.value" v-model="flightMode" class="sr-only" />
+            <span class="sw-radio-dot" :class="flightMode === m.value ? 'sw-radio-dot--on' : ''" />
+            <span class="sw-radio-txt" :class="flightMode === m.value ? 'sw-radio-txt--on' : ''">{{ m.label }}</span>
           </label>
         </div>
 
-        <div class="flex flex-col gap-4">
-          <div class="flex flex-col md:flex-row bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden min-h-[72px]">
-            <div class="flex-1 border-b md:border-b-0 md:border-r border-gray-100">
-               <LocationPicker v-model="packageSearchState.origin" label="From" />
+        <!-- Fields -->
+        <div class="sw-rows">
+          <div
+            v-for="(leg, idx) in flightMode === 'multicity' ? multiFlightLegs : [flightSearchState]"
+            :key="idx"
+            class="sw-bar"
+          >
+            <div class="sw-field sw-field--grow" @click="isFocused = true">
+              <LocationPicker v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
             </div>
-            <div class="flex-1 border-b md:border-b-0 md:border-r border-gray-100">
-               <LocationPicker v-model="packageSearchState.destination" label="To" />
+            <div class="sw-bar-div" />
+            <div class="sw-field sw-field--grow" @click="isFocused = true">
+              <LocationPicker v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
             </div>
-            <div class="flex-1 border-b md:border-b-0 md:border-r border-gray-100">
-               <FlightDateRangePicker :departure="packageSearchState.departureDate" :return="packageSearchState.returnDate" mode="roundtrip" @update:departure="(v) => packageSearchState.departureDate = v" @update:return="(v) => packageSearchState.returnDate = v" />
+            <div class="sw-bar-div" />
+            <div class="sw-field sw-field--date" @click="isFocused = true">
+              <FlightDateRangePicker
+                :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
+                v-model:departure="leg.departureDate"
+                v-model:return="leg.returnDate"
+                @focus="isFocused = true"
+                @close="isFocused = false"
+              />
             </div>
-            <div class="flex-1 pl-2 pr-4 lg:pr-6">
-               <Occupancypicker v-model:rooms="packageOccupancy.rooms" v-model:adults="packageOccupancy.adults" />
+            <div v-if="idx === 0" class="sw-bar-div" />
+            <div v-if="idx === 0" class="sw-field sw-field--pax" @click="isFocused = true">
+              <Occupancypicker 
+                label="Passengers" 
+                variant="flight" 
+                v-model:adults="flightTravelers.adults" 
+                v-model:children="flightTravelers.children" 
+                v-model:infantsOnLap="flightTravelers.infantsOnLap"
+                v-model:infantsInSeat="flightTravelers.infantsInSeat"
+                @focus="isFocused = true" 
+                @close="isFocused = false" 
+              />
             </div>
-          </div>
-          
-          <div class="flex flex-wrap items-center gap-6 pt-2">
-            <label v-if="packageType.toLowerCase().includes('hotel') && packageType.toLowerCase().includes('flight')" class="flex items-center text-xs font-bold text-gray-900 cursor-pointer">
-              <input type="checkbox" v-model="onlyPartialHotel" class="mr-2 custom-checkbox" />
-              I only need a hotel for part of my stay
-            </label>
-            <label v-if="packageType.toLowerCase().includes('car')" class="flex items-center text-xs font-bold text-gray-900 cursor-pointer">
-              <input type="checkbox" v-model="differentCarDropoff" class="mr-2 custom-checkbox" />
-              I want to pick up my car somewhere else
-            </label>
-          </div>
-
-          <Transition name="fade">
-            <div v-if="onlyPartialHotel" class="bg-gray-50/50 p-4 rounded-xl border border-gray-100 mt-2 w-full">
-              <p class="text-sm font-bold tracking-widest text-gray-900 mb-3">Hotel Stay Dates</p>
-              <div class="max-w-md bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden h-[68px]">
-                 <FlightDateRangePicker :departure="packageSearchState.hotelCheckIn" :return="packageSearchState.hotelCheckOut" mode="roundtrip" @update:departure="(v: string) => packageSearchState.hotelCheckIn = v" @update:return="(v: string) => packageSearchState.hotelCheckOut = v" />
+            <div v-if="idx === 0" class="sw-bar-div" />
+            <div v-if="idx === 0" class="sw-field sw-field--class" @click="isFocused = true">
+              <div class="sw-field-inner">
+                <span class="sw-fld-lbl">Class</span>
+                <select v-model="flightTravelers.cabinClass" class="sw-class-select">
+                  <option value="economy">Economy</option>
+                  <option value="premium_economy">Premium</option>
+                  <option value="business">Business</option>
+                  <option value="first">First</option>
+                </select>
               </div>
             </div>
-          </Transition>
-
-          <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-             <div class="flex items-center gap-4">
-                <a href="#" class="text-[11px]  text-gray-900 underline decoration-2 underline-offset-4">Advanced Search (One-Way Flight, Multi-Hotel)</a>
-             </div>
-              <button @click="handleSearch" class="bg-gray-900 text-white px-12 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg flex items-center justify-center gap-2">
-                <span>Find Your Trip</span>
-                <ArrowRightIcon class="h-4 w-4" />
-              </button>
           </div>
+        </div>
+
+        <button
+          v-if="flightMode === 'multicity' && multiFlightLegs.length < 5"
+          @click="multiFlightLegs.push({ origin: '', destination: '', departureDate: '', returnDate: '' })"
+          class="sw-add-btn"
+        >
+          <Plus class="sw-ico-xs" /> Add flight
+        </button>
+
+        <div class="sw-footer">
+          <div class="sw-bundles">
+            <span class="sw-bundle-lbl">Bundle + Save</span>
+            <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleHotel" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleHotel ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleHotel" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Hotel</span></label>
+            <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleCar" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleCar ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleCar" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Car</span></label>
+          </div>
+          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search flights</button>
         </div>
       </div>
 
-      <!-- Cars Panel -->
-      <div v-if="currentTab === 'Cars'" class="space-y-6">
-        <!-- <h3 class="text-xl  text-gray-900 mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
-        <div class="flex rounded-xl overflow-hidden border border-gray-200 p-1 bg-gray-50">
-          <button @click="carMode = 'pickup'" class="flex-1 py-1 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all" :class="carMode === 'pickup' ? 'bg-gray-900 text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-gray-900'">Airport Pick-up</button>
-          <button @click="carMode = 'dropoff'" class="flex-1 py-1 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all" :class="carMode === 'dropoff' ? 'bg-gray-900 text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-gray-900'">Airport Drop-off</button>
+      <!-- ════ HOTELS ════ -->
+      <div v-if="currentTab === 'Hotels'" class="sw-section">
+        <div class="sw-radios">
+          <label v-for="m in stayModes" :key="m.value" class="sw-radio">
+            <input type="radio" :value="m.value" v-model="stayMode" class="sr-only" />
+            <span class="sw-radio-dot" :class="stayMode === m.value ? 'sw-radio-dot--on' : ''" />
+            <span class="sw-radio-txt" :class="stayMode === m.value ? 'sw-radio-txt--on' : ''">{{ m.label }}</span>
+          </label>
         </div>
-        <div class="flex flex-col md:flex-row bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          <div class="flex-1 border-r border-gray-100">
-            <LocationPicker v-model="carSearchState.origin" label="From" />
+
+        <div v-if="stayMode === 'single'" class="sw-bar">
+          <div class="sw-field sw-field--grow">
+            <LocationPicker v-model="searchState.location" label="Where to" placeholder="City, hotel or area" @focus="isFocused = true" @close="isFocused = false" />
           </div>
-          <div class="flex-1 border-r border-gray-100">
-            <LocationPicker v-model="carSearchState.destination" label="To" />
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--date">
+            <FlightDateRangePicker :departure="searchState.checkIn" :return="searchState.checkOut" mode="roundtrip" @focus="isFocused = true" @close="isFocused = false" @update:departure="(v: string) => searchState.checkIn = v" @update:return="(v: string) => searchState.checkOut = v" />
           </div>
-          <div class="flex-1">
-             <FlightDateRangePicker :departure="carSearchState.pickUpDate" mode="oneway" @update:departure="(v) => carSearchState.pickUpDate = v" />
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--pax">
+            <Occupancypicker v-model:rooms="occupancy.rooms" v-model:adults="occupancy.adults" v-model:children="occupancy.children" @focus="isFocused = true" @close="isFocused = false" />
           </div>
         </div>
-        <div class="flex justify-between pt-4 border-t border-gray-50">
-           <label class="flex items-center text-xs font-bold text-gray-900 cursor-pointer">
-             <input type="checkbox" v-model="differentCarDropoff" class="mr-2 custom-checkbox" />
-             Drop-off at different location
-           </label>
-           <button @click="handleSearch" class="bg-gray-900 text-white px-12 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg">Find Your Car</button>
+
+        <div v-else class="sw-rows">
+          <div v-for="(hotel, idx) in multiHotelLegs" :key="idx" class="sw-multi-leg">
+            <span class="sw-leg-lbl">Hotel {{ idx + 1 }}</span>
+            <div class="sw-bar">
+              <div class="sw-field sw-field--grow"><LocationPicker v-model="hotel.location" label="Where to" placeholder="City or area" /></div>
+              <div class="sw-bar-div" />
+              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="hotel.checkIn" :return="hotel.checkOut" mode="roundtrip" @update:departure="(v: string) => hotel.checkIn = v" @update:return="(v: string) => hotel.checkOut = v" /></div>
+            </div>
+          </div>
+          <button v-if="multiHotelLegs.length < 5" @click="addHotelLeg" class="sw-add-btn"><Plus class="sw-ico-xs" /> Add hotel</button>
+        </div>
+
+        <div class="sw-footer">
+          <div class="sw-bundles">
+            <span class="sw-bundle-lbl">Bundle + Save</span>
+            <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleFlight" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleFlight ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleFlight" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Flight</span></label>
+            <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleCar" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleCar ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleCar" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Car</span></label>
+          </div>
+          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search hotels</button>
         </div>
       </div>
 
-      <!-- Cruises Panel -->
-      <div v-if="currentTab === 'Cruises'" class="space-y-8">
-        <!-- <h3 class="text-xl  text-gray-900 mb-4 leading-tight opacity-90">{{ dynamicTitle }}</h3> -->
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-          <!-- Destination Dropdown -->
-          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'destination' }">
-            <button 
-              @click="activeCruiseField = activeCruiseField === 'destination' ? null : 'destination'"
-              class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex items-center text-left hover:border-gray-900 transition-all relative z-20"
-              :class="{ 'ring-4 ring-gray-900/5 border-gray-900': activeCruiseField === 'destination' }"
-            >
-              <div class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-900">
-                <MagnifyingGlassIcon class="h-5 w-5" />
+      <!-- ════ PACKAGES ════ -->
+      <div v-if="currentTab === 'Packages'" class="sw-section">
+        <div class="sw-radios sw-radios--wrap">
+          <label v-for="pt in packageTypes" :key="pt.value" class="sw-radio">
+            <input type="radio" :value="pt.value" v-model="packageType" class="sr-only" />
+            <span class="sw-radio-dot" :class="packageType === pt.value ? 'sw-radio-dot--on' : ''" />
+            <span class="sw-radio-txt" :class="packageType === pt.value ? 'sw-radio-txt--on' : ''">{{ pt.label }}</span>
+          </label>
+        </div>
+
+        <div class="sw-bar">
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.origin" label="From" placeholder="Origin" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.destination" label="To" placeholder="Destination" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="packageSearchState.departureDate" :return="packageSearchState.returnDate" mode="roundtrip" @update:departure="(v) => packageSearchState.departureDate = v" @update:return="(v) => packageSearchState.returnDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--pax"><Occupancypicker v-model:rooms="packageOccupancy.rooms" v-model:adults="packageOccupancy.adults" @focus="isFocused = true" @close="isFocused = false" /></div>
+        </div>
+
+        <div class="sw-checks">
+          <label v-if="packageType.includes('Hotel') && packageType.includes('Flight')" class="sw-chk">
+            <input type="checkbox" v-model="onlyPartialHotel" class="sr-only" />
+            <span class="sw-chk-box" :class="onlyPartialHotel ? 'sw-chk-box--on' : ''"><Check v-if="onlyPartialHotel" class="sw-ico-xs sw-chk-ico" /></span>
+            <span class="sw-radio-txt">Hotel for part of stay only</span>
+          </label>
+          <label v-if="packageType.includes('Car')" class="sw-chk">
+            <input type="checkbox" v-model="differentCarDropoff" class="sr-only" />
+            <span class="sw-chk-box" :class="differentCarDropoff ? 'sw-chk-box--on' : ''"><Check v-if="differentCarDropoff" class="sw-ico-xs sw-chk-ico" /></span>
+            <span class="sw-radio-txt">Pick up car elsewhere</span>
+          </label>
+        </div>
+
+        <Transition name="sw-slide">
+          <div v-if="onlyPartialHotel" class="sw-extra-dates">
+            <span class="sw-leg-lbl">Hotel dates</span>
+            <div class="sw-bar sw-bar--compact">
+              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="packageSearchState.hotelCheckIn" :return="packageSearchState.hotelCheckOut" mode="roundtrip" @update:departure="(v: string) => packageSearchState.hotelCheckIn = v" @update:return="(v: string) => packageSearchState.hotelCheckOut = v" /></div>
+            </div>
+          </div>
+        </Transition>
+
+        <div class="sw-footer">
+          <a href="#" class="sw-adv-link">Advanced search</a>
+          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search packages</button>
+        </div>
+      </div>
+
+      <!-- ════ CARS ════ -->
+      <div v-if="currentTab === 'Cars'" class="sw-section">
+        <div class="sw-seg">
+          <button v-for="m in modeModes" :key="m.value" @click="carMode = m.value" class="sw-seg-btn" :class="carMode === m.value ? 'sw-seg-btn--on' : ''">{{ m.label }}</button>
+        </div>
+        <div class="sw-bar">
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.origin" label="Pick-up" placeholder="Location or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.destination" label="Drop-off" placeholder="Same as pick-up" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="carSearchState.pickUpDate" mode="oneway" @update:departure="(v) => carSearchState.pickUpDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+        </div>
+        <div class="sw-footer">
+          <label class="sw-chk">
+            <input type="checkbox" v-model="differentCarDropoff" class="sr-only" />
+            <span class="sw-chk-box" :class="differentCarDropoff ? 'sw-chk-box--on' : ''"><Check v-if="differentCarDropoff" class="sw-ico-xs sw-chk-ico" /></span>
+            <span class="sw-radio-txt">Return at different location</span>
+          </label>
+          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search cars</button>
+        </div>
+      </div>
+
+      <!-- ════ TRANSFERS ════ -->
+      <div v-if="currentTab === 'Transfers'" class="sw-section">
+        <div class="sw-seg">
+          <button v-for="m in modeModes" :key="m.value" @click="transferMode = m.value" class="sw-seg-btn" :class="transferMode === m.value ? 'sw-seg-btn--on' : ''">{{ m.label }}</button>
+        </div>
+        <div class="sw-bar">
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.origin" label="From" placeholder="Airport or address" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.destination" label="To" placeholder="Hotel or address" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="transferSearchState.date" mode="oneway" @update:departure="(v) => transferSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--time">
+            <span class="sw-fld-lbl">Time</span>
+            <div class="sw-time-row">
+              <Clock class="sw-ico-sm sw-ico-muted" />
+              <input type="time" v-model="transferSearchState.time" class="sw-time-input" />
+            </div>
+          </div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--pax"><Occupancypicker label="Passengers" variant="flight" v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" @focus="isFocused = true" @close="isFocused = false" /></div>
+        </div>
+        <div class="sw-footer sw-footer--end">
+          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search transfers</button>
+        </div>
+      </div>
+
+      <!-- ════ ACTIVITIES ════ -->
+      <div v-if="currentTab === 'Activities'" class="sw-section">
+        <div class="sw-bar">
+          <div class="sw-field sw-field--grow"><CityPicker v-model="activitiesSearchState.destination" label="Destination" placeholder="City or region" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="activitiesSearchState.date" mode="oneway" @update:departure="(v) => activitiesSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-bar-div" />
+          <div class="sw-field sw-field--cat">
+            <span class="sw-fld-lbl">Category</span>
+            <span class="sw-fld-val">All activities</span>
+          </div>
+        </div>
+        <div class="sw-footer sw-footer--end">
+          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search activities</button>
+        </div>
+      </div>
+
+      <!-- ════ CRUISES ════ -->
+      <div v-if="currentTab === 'Cruises'" class="sw-section">
+        <div class="sw-cruise-grid sw-cruise-grid--2">
+          <!-- Destination -->
+          <div class="sw-cruise-field-wrap" ref="destRef">
+            <button @click="toggleCruiseField('destination')" class="sw-cruise-btn" :class="activeCruiseField === 'destination' ? 'sw-cruise-btn--on' : ''">
+              <MapPin class="sw-ico-sm sw-ico-muted" />
+              <div class="sw-cruise-txt">
+                <span class="sw-fld-lbl">Destination</span>
+                <span class="sw-fld-val sw-fld-val--trunc">{{ cruiseSearchState.destinationLabel || 'Any destination' }}</span>
               </div>
-              <span class="text-base  text-gray-900 line-clamp-1">{{ cruiseSearchState.destinationLabel || 'Destination (Any)' }}</span>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'destination' ? 'sw-chev--up' : ''" />
             </button>
-
-            <Transition name="fade">
-              <div v-if="activeCruiseField === 'destination'" class="absolute left-0 top-full mt-2 w-full max-h-[400px] overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-2xl z-[50] p-4 scrollbar-hide">
-                <div v-for="opt in cruiseDestinations" :key="opt.value" 
-                  @click="cruiseSearchState.destination = opt.value; cruiseSearchState.destinationLabel = opt.label; activeCruiseField = null"
-                  class="px-4 py-3 hover:bg-gray-50 rounded-xl transition-all cursor-pointer group flex items-center justify-between"
-                  :class="{ 'bg-gray-50': cruiseSearchState.destination === opt.value, 'opacity-40 pointer-events-none border-b border-gray-50 my-2': opt.disabled }"
-                >
-                  <span class="text-xs font-bold text-gray-900 group-hover:text-gray-900">{{ opt.label }}</span>
-                  <CheckIcon v-if="cruiseSearchState.destination === opt.value" class="h-4 w-4 text-gray-900" />
+            <Teleport to="body">
+              <Transition name="sw-drop">
+                <div v-if="activeCruiseField === 'destination'" class="sw-drop" :style="cruiseDropdownStyle('destination')">
+                  <div v-for="opt in cruiseDestinations" :key="opt.value + opt.label"
+                    @click="!opt.disabled && selectCruise('destination', opt)"
+                    class="sw-drop-item"
+                    :class="opt.disabled ? 'sw-drop-item--div' : cruiseSearchState.destination === opt.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'"
+                  >
+                    <span>{{ opt.label }}</span>
+                    <Check v-if="!opt.disabled && cruiseSearchState.destination === opt.value" class="sw-ico-xs" />
+                  </div>
                 </div>
-              </div>
-            </Transition>
+              </Transition>
+            </Teleport>
           </div>
 
-          <!-- Departing Dropdown -->
-          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'departing' }">
-            <button 
-              @click="activeCruiseField = activeCruiseField === 'departing' ? null : 'departing'"
-              class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex flex-col justify-center text-left hover:border-gray-900 transition-all relative z-20"
-              :class="{ 'ring-4 ring-gray-900/5 border-gray-900 shadow-xl shadow-gray-900/10': activeCruiseField === 'departing' }"
-            >
-              <div class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-900">
-                <CalendarIcon class="h-5 w-5" />
+          <!-- Departing -->
+          <div class="sw-cruise-field-wrap" ref="departRef">
+            <button @click="toggleCruiseField('departing')" class="sw-cruise-btn" :class="activeCruiseField === 'departing' ? 'sw-cruise-btn--on' : ''">
+              <CalendarDays class="sw-ico-sm sw-ico-muted" />
+              <div class="sw-cruise-txt">
+                <span class="sw-fld-lbl">Departing</span>
+                <span class="sw-fld-val">{{ cruiseSearchState.departingLabel || 'Any month' }}</span>
               </div>
-              <span class="text-[11px] font-bold text-gray-900 tracking-[0.2em] mb-0.5 leading-none italic">Departing</span>
-              <span class="text-base  text-gray-900 leading-tight">{{ cruiseSearchState.departingLabel || 'Select Month' }}</span>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'departing' ? 'sw-chev--up' : ''" />
             </button>
-
-            <Transition name="fade">
-              <div v-if="activeCruiseField === 'departing'" class="absolute left-0 top-full mt-2 w-full max-h-[300px] overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-2xl z-[50] p-4 scrollbar-hide">
-                <div v-for="month in cruiseMonths" :key="month.value" 
-                  @click="cruiseSearchState.departingMonth = month.value; cruiseSearchState.departingLabel = month.label; activeCruiseField = null"
-                  class="px-4 py-3 hover:bg-gray-50 rounded-xl transition-all cursor-pointer group flex items-center justify-between"
-                  :class="{ 'bg-gray-50': cruiseSearchState.departingMonth === month.value }"
-                >
-                  <span class="text-xs font-bold text-gray-900 group-hover:text-gray-900">{{ month.label }}</span>
-                  <CheckIcon v-if="cruiseSearchState.departingMonth === month.value" class="h-4 w-4 text-gray-900" />
+            <Teleport to="body">
+              <Transition name="sw-drop">
+                <div v-if="activeCruiseField === 'departing'" class="sw-drop" :style="cruiseDropdownStyle('departing')">
+                  <div v-for="m in cruiseMonths" :key="m.value" @click="selectCruise('departing', m)" class="sw-drop-item" :class="cruiseSearchState.departingMonth === m.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
+                    <span>{{ m.label }}</span>
+                    <Check v-if="cruiseSearchState.departingMonth === m.value" class="sw-ico-xs" />
+                  </div>
                 </div>
-              </div>
-            </Transition>
+              </Transition>
+            </Teleport>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-          <!-- Length Dropdown -->
-          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'length' }">
-            <button 
-              @click="activeCruiseField = activeCruiseField === 'length' ? null : 'length'"
-              class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex items-center text-left hover:border-gray-900 transition-all relative z-20"
-              :class="{ 'ring-4 ring-gray-900/5 border-gray-900': activeCruiseField === 'length' }"
-            >
-              <div class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-900">
-                <ClockIcon class="h-5 w-5" />
+        <div class="sw-cruise-grid sw-cruise-grid--3">
+          <!-- Length -->
+          <div class="sw-cruise-field-wrap" ref="lengthRef">
+            <button @click="toggleCruiseField('length')" class="sw-cruise-btn" :class="activeCruiseField === 'length' ? 'sw-cruise-btn--on' : ''">
+              <Timer class="sw-ico-sm sw-ico-muted" />
+              <div class="sw-cruise-txt">
+                <span class="sw-fld-lbl">Duration</span>
+                <span class="sw-fld-val">{{ cruiseSearchState.lengthLabel || 'Any length' }}</span>
               </div>
-              <span class="text-base  text-gray-900">{{ cruiseSearchState.lengthLabel || 'Cruise Length (Any)' }}</span>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'length' ? 'sw-chev--up' : ''" />
             </button>
-
-            <Transition name="fade">
-              <div v-if="activeCruiseField === 'length'" class="absolute left-0 top-full mt-2 w-full max-h-[300px] overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-2xl z-[50] p-4 scrollbar-hide">
-                <div v-for="len in cruiseLengths" :key="len.value" 
-                  @click="cruiseSearchState.length = len.value; cruiseSearchState.lengthLabel = len.label; activeCruiseField = null"
-                  class="px-4 py-3 hover:bg-gray-50 rounded-xl transition-all cursor-pointer group flex items-center justify-between"
-                  :class="{ 'bg-gray-50': cruiseSearchState.length === len.value }"
-                >
-                  <span class="text-xs font-bold text-gray-900 group-hover:text-gray-900">{{ len.label }}</span>
-                  <CheckIcon v-if="cruiseSearchState.length === len.value" class="h-4 w-4 text-gray-900" />
+            <Teleport to="body">
+              <Transition name="sw-drop">
+                <div v-if="activeCruiseField === 'length'" class="sw-drop" :style="cruiseDropdownStyle('length')">
+                  <div v-for="len in cruiseLengths" :key="len.value" @click="selectCruise('length', len)" class="sw-drop-item" :class="cruiseSearchState.length === len.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
+                    <span>{{ len.label }}</span>
+                    <Check v-if="cruiseSearchState.length === len.value" class="sw-ico-xs" />
+                  </div>
                 </div>
-              </div>
-            </Transition>
+              </Transition>
+            </Teleport>
           </div>
 
-          <!-- Cruise Line Dropdown -->
-          <div class="relative group" :class="{ 'z-[60]': activeCruiseField === 'line' }">
-            <button 
-              @click="activeCruiseField = activeCruiseField === 'line' ? null : 'line'"
-              class="w-full h-16 pl-14 pr-6 bg-white border border-gray-200 rounded-2xl flex items-center text-left hover:border-gray-900 transition-all relative z-20"
-              :class="{ 'ring-4 ring-gray-900/5 border-gray-900': activeCruiseField === 'line' }"
-            >
-              <div class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-900">
-                <SparklesIcon class="h-5 w-5" />
+          <!-- Line -->
+          <div class="sw-cruise-field-wrap" ref="lineRef">
+            <button @click="toggleCruiseField('line')" class="sw-cruise-btn" :class="activeCruiseField === 'line' ? 'sw-cruise-btn--on' : ''">
+              <Anchor class="sw-ico-sm sw-ico-muted" />
+              <div class="sw-cruise-txt">
+                <span class="sw-fld-lbl">Cruise line</span>
+                <span class="sw-fld-val sw-fld-val--trunc">{{ cruiseSearchState.lineLabel || 'Any line' }}</span>
               </div>
-              <span class="text-base  text-gray-900 line-clamp-1">{{ cruiseSearchState.lineLabel || 'Cruise Line (Any)' }}</span>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'line' ? 'sw-chev--up' : ''" />
             </button>
-
-            <Transition name="fade">
-              <div v-if="activeCruiseField === 'line'" class="absolute left-0 top-full mt-2 w-full max-h-[300px] overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-2xl z-[50] p-4 scrollbar-hide">
-                <div v-for="line in cruiseLines" :key="line.value" 
-                  @click="cruiseSearchState.line = line.value; cruiseSearchState.lineLabel = line.label; activeCruiseField = null"
-                  class="px-4 py-3 hover:bg-gray-50 rounded-xl transition-all cursor-pointer group flex items-center justify-between"
-                  :class="{ 'bg-gray-50': cruiseSearchState.line === line.value }"
-                >
-                  <span class="text-xs font-bold text-gray-900 group-hover:text-gray-900">{{ line.label }}</span>
-                  <CheckIcon v-if="cruiseSearchState.line === line.value" class="h-4 w-4 text-gray-900" />
+            <Teleport to="body">
+              <Transition name="sw-drop">
+                <div v-if="activeCruiseField === 'line'" class="sw-drop" :style="cruiseDropdownStyle('line')">
+                  <div v-for="line in cruiseLines" :key="line.value" @click="selectCruise('line', line)" class="sw-drop-item" :class="cruiseSearchState.line === line.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
+                    <span>{{ line.label }}</span>
+                    <Check v-if="cruiseSearchState.line === line.value" class="sw-ico-xs" />
+                  </div>
                 </div>
-              </div>
-            </Transition>
+              </Transition>
+            </Teleport>
           </div>
 
-          <button @click="handleSearch" class="h-16 bg-gray-900 hover:bg-black text-white rounded-2xl font-bold uppercase tracking-widest text-sm shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center">
-            Book Now!
-          </button>
-        </div>
-
-        <div class="pt-6 border-t border-gray-50 text-center">
-          <p class="text-xs font-bold text-brand-gray/60 flex items-center justify-center gap-2">
-            <span>Happy Price Cruise deals are always on:</span>
-            <a href="#" class="text-gray-900 underline decoration-2 underline-offset-4 ">Cruises under $399</a>
-          </p>
+          <button @click="handleSearch" class="sw-search-btn sw-search-btn--full"><Search class="sw-ico-sm" /> Search cruises</button>
         </div>
       </div>
 
-      <!-- Transfers Panel -->
-      <div v-if="currentTab === 'Transfers'" class="space-y-6">
-        <div class="flex rounded-xl overflow-hidden border border-gray-200 p-1 bg-gray-50">
-          <button @click="transferMode = 'pickup'" class="flex-1 py-1 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all" :class="transferMode === 'pickup' ? 'bg-gray-900 text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-gray-900'">Airport Pick-up</button>
-          <button @click="transferMode = 'dropoff'" class="flex-1 py-1 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all" :class="transferMode === 'dropoff' ? 'bg-gray-900 text-white shadow-md' : 'bg-transparent text-gray-500 hover:text-gray-900'">Airport Drop-off</button>
-        </div>
-        <div class="flex flex-col xl:flex-row bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden min-h-[72px]">
-          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
-             <LocationPicker v-model="transferSearchState.origin" label="From" />
-          </div>
-          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
-             <LocationPicker v-model="transferSearchState.destination" label="To" />
-          </div>
-          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
-             <FlightDateRangePicker :departure="transferSearchState.date" mode="oneway" @update:departure="(v) => transferSearchState.date = v" />
-          </div>
-          
-          <div class="flex-[0.5] border-b xl:border-b-0 xl:border-r border-gray-100 relative group cursor-pointer px-4 pt-3 pb-2 flex flex-col justify-center min-h-[68px]">
-            <p class="text-[11px] font-bold tracking-widest text-brand-gray/40 group-hover:text-gray-900 mb-0.5 transition-colors">Time</p>
-            <div class="flex items-center gap-2">
-              <ClockIcon class="h-5 w-5 text-gray-400 shrink-0" />
-              <input type="time" v-model="transferSearchState.time" class="bg-transparent text-base  text-gray-900 outline-none w-full cursor-pointer" />
-            </div>
-          </div>
-
-          <div class="flex-[0.8] pl-2 pr-4 lg:pr-6">
-             <Occupancypicker v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" label="Passengers" variant="flight" />
-          </div>
-        </div>
-        
-        <div class="flex justify-end pt-4 border-t border-gray-50">
-           <button @click="handleSearch" class="w-full md:w-auto bg-gray-900 text-white px-12 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-black transition-colors">Find Transfer</button>
-        </div>
-      </div>
-
-      <!-- Activities Panel -->
-      <div v-if="currentTab === 'Activities'" class="space-y-6 animate-fade-in pt-4">
-        <div class="flex flex-col xl:flex-row bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden min-h-[72px]">
-          <div class="flex-[1.5] border-b xl:border-b-0 xl:border-r border-gray-100">
-             <CityPicker v-model="activitiesSearchState.destination" label="Destination" placeholder="Search a city..." />
-          </div>
-          <div class="flex-1 border-b xl:border-b-0 xl:border-r border-gray-100">
-             <FlightDateRangePicker :departure="activitiesSearchState.date" mode="oneway" @update:departure="(v) => activitiesSearchState.date = v" />
-          </div>
-          <div class="flex-[0.8] px-4 pt-3 pb-2 flex flex-col justify-center min-h-[68px]">
-            <p class="text-[11px] font-bold tracking-widest text-brand-gray/40 mb-0.5">Type</p>
-            <p class="text-base  text-gray-900 truncate">All Activities</p>
-          </div>
-        </div>
-        
-        <div class="flex justify-end pt-4 border-t border-gray-50">
-           <button @click="handleSearch" class="w-full md:w-auto bg-gray-900 text-white px-12 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg hover:bg-black transition-colors">Find Things to Do</button>
-        </div>
-      </div>
-
-      <!-- <div v-if="!isSticky" class="border-t border-gray-50/50 py-3 bg-gray-50/30 rounded-b-[2.5rem] flex items-center justify-center mt-6">
-         <span class="text-[11px] font-bold text-gray-900">{{ currentTab === 'Activities' ? 'Tours and activities powered by Amadeus' : currentTab + ' prices now shown with fees included.' }}</span>
-      </div> -->
-    </div>
+    </div><!-- /sw-panel -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { 
-  PaperAirplaneIcon, 
-  TruckIcon, 
-  GiftIcon, 
-  ArrowRightIcon,
-  TicketIcon,
-  HomeModernIcon as HotelIcon,
-  KeyIcon as CarIcon,
-  GlobeAltIcon as CruiseIcon, // Changed to GlobeAlt as a placeholder for Cruises
-  MagnifyingGlassIcon,
-  CalendarIcon,
-  ClockIcon,
-  SparklesIcon,
-  BuildingOfficeIcon,
-  SunIcon,
-  CheckIcon
-} from '@heroicons/vue/24/outline'
-
-import { useSettings } from '@/composables/useSettings'
+import {
+  Plane, Bed, Car, Package, Anchor, Ticket, Truck,
+  Search, CalendarDays, Clock, Timer, Check, Plus,
+  ChevronDown, MapPin
+} from 'lucide-vue-next'
 import { useTracking } from '@/composables/core/useTracking'
 
 const { trackAction } = useTracking()
-const props = defineProps({
-  isSticky: { type: Boolean, default: false }
-})
+const props = defineProps({ isSticky: { type: Boolean, default: false } })
+const emit  = defineEmits(['focus-change', 'update:tab'])
 
-const emit = defineEmits(['focus-change', 'update:tab'])
-const isFocused = ref(false)
-watch(isFocused, (val) => emit('focus-change', val))
+// ─── State ──────────────────────────────────────────────────
+const isFocused           = ref(false)
+const currentTab          = ref('Flights')
+const stayMode            = ref('single')
+const flightMode          = ref('roundtrip')
+const carMode             = ref('pickup')
+const transferMode        = ref('pickup')
+const packageType         = ref('Hotel+Flight')
+const onlyPartialHotel    = ref(false)
+const differentCarDropoff = ref(false)
+const activeCruiseField   = ref<string | null>(null)
 
-import flightIcon from '@/assets/icons/light__flight.svg'
-import hotelIcon from '@/assets/icons/light__bed.svg'
-import carIcon from '@/assets/icons/light__car.svg'
-import packageIcon from '@/assets/icons/light__package.svg'
-import cruiseIcon from '@/assets/icons/light__cruise.svg'
-import activityIcon from '@/assets/icons/light__ticket.svg'
+const destRef   = ref<HTMLElement | null>(null)
+const departRef = ref<HTMLElement | null>(null)
+const lengthRef = ref<HTMLElement | null>(null)
+const lineRef   = ref<HTMLElement | null>(null)
+const cruiseRefs: Record<string, typeof destRef> = {
+  destination: destRef, departing: departRef, length: lengthRef, line: lineRef
+}
 
+// ─── Cruise dropdown positioning (Teleport to body) ─────────
+const cruiseDropdownStyle = (field: string) => {
+  const el = cruiseRefs[field]?.value as HTMLElement | null
+  if (!el) return {}
+  const rect = el.getBoundingClientRect()
+  const spaceBelow = window.innerHeight - rect.bottom
+  const w = Math.max(rect.width, 220)
+  if (spaceBelow < 280) {
+    return { position: 'fixed', left: `${rect.left}px`, bottom: `${window.innerHeight - rect.top + 6}px`, width: `${w}px` }
+  }
+  return { position: 'fixed', left: `${rect.left}px`, top: `${rect.bottom + 6}px`, width: `${w}px` }
+}
+
+const toggleCruiseField = (field: string) => {
+  activeCruiseField.value = activeCruiseField.value === field ? null : field
+}
+const selectCruise = (field: string, opt: { value: string; label: string }) => {
+  if (field === 'destination')  { cruiseSearchState.destination = opt.value; cruiseSearchState.destinationLabel = opt.label }
+  else if (field === 'departing') { cruiseSearchState.departingMonth = opt.value; cruiseSearchState.departingLabel = opt.label }
+  else if (field === 'length')  { cruiseSearchState.length = opt.value; cruiseSearchState.lengthLabel = opt.label }
+  else if (field === 'line')    { cruiseSearchState.line = opt.value; cruiseSearchState.lineLabel = opt.label }
+  activeCruiseField.value = null
+}
+
+// ─── Tabs & Options ──────────────────────────────────────────
 const tabs = [
-  { name: 'Flights', label: 'Flights', customIcon: flightIcon },
-  { name: 'Hotels', label: 'Hotels', customIcon: hotelIcon },
-  { name: 'Transfers', label: 'Transfers', icon: TruckIcon },
-  { name: 'Activities', label: 'Activities', customIcon: activityIcon },
-  { name: 'Cars', label: 'Car Rentals', customIcon: carIcon },
-  { name: 'Packages', label: 'Packages', customIcon: packageIcon },
-  { name: 'Cruises', label: 'Cruises', customIcon: cruiseIcon }
+  { name: 'Flights',    label: 'Flights',     icon: Plane },
+  { name: 'Hotels',     label: 'Hotels',      icon: Bed },
+  { name: 'Transfers',  label: 'Transfers',   icon: Truck },
+  { name: 'Activities', label: 'Activities',  icon: Ticket },
+  { name: 'Cars',       label: 'Car rentals', icon: Car },
+  { name: 'Packages',   label: 'Packages',    icon: Package },
+  { name: 'Cruises',    label: 'Cruises',     icon: Anchor },
 ]
 
-const currentTab = ref('Flights')
-watch(currentTab, (val) => emit('update:tab', val), { immediate: true })
-const stayMode   = ref('single')
-const flightMode = ref('roundtrip')
-const carMode    = ref('pickup')
+const flightModes  = [{ label: 'One way', value: 'oneway' }, { label: 'Round trip', value: 'roundtrip' }, { label: 'Multi-city', value: 'multicity' }]
+const stayModes    = [{ label: 'Single hotel', value: 'single' }, { label: 'Multi hotel', value: 'multi' }]
+const modeModes    = [{ label: 'Airport pick-up', value: 'pickup' }, { label: 'Airport drop-off', value: 'dropoff' }]
+const packageTypes = [
+  { label: 'Hotel + Flight', value: 'Hotel+Flight' },
+  { label: 'Hotel + Flight + Car', value: 'Hotel+Flight+Car' },
+  { label: 'Flight + Car', value: 'Flight+Car' },
+  { label: 'Hotel + Car', value: 'Hotel+Car' },
+]
 
-const multiHotelLegs = ref([{ location: '', checkIn: '', checkOut: '' }])
+// ─── Search state ────────────────────────────────────────────
+const occupancy             = reactive({ rooms: 1, adults: 2, children: 0 })
+const searchState           = reactive({ location: '', checkIn: '', checkOut: '' })
+const bundles               = reactive({ bundleFlight: false, bundleHotel: false, bundleCar: false })
+const flightTravelers       = reactive({ adults: 1, children: 0, infantsOnLap: 0, infantsInSeat: 0, cabinClass: 'economy' })
+const flightSearchState     = reactive({ origin: '', destination: '', departureDate: '', returnDate: '' })
+const multiFlightLegs       = ref([{ origin: '', destination: '', departureDate: '', returnDate: '' }])
+const multiHotelLegs        = ref([{ location: '', checkIn: '', checkOut: '' }])
+const carSearchState        = reactive({ origin: '', destination: '', pickUpDate: '' })
+const transferSearchState   = reactive({ origin: '', destination: '', date: '', time: '10:00' })
+const transferOccupancy     = reactive({ adults: 1, children: 0 })
+const activitiesSearchState = reactive({ destination: '', date: '' })
+const packageOccupancy      = reactive({ rooms: 1, adults: 2, children: 0 })
+const packageSearchState    = reactive({ origin: '', destination: '', departureDate: '', returnDate: '', hotelCheckIn: '', hotelCheckOut: '' })
+const cruiseSearchState     = reactive({ destination: '', destinationLabel: '', departingMonth: '04/1/2026', departingLabel: 'April 2026', length: '', lengthLabel: '', line: '', lineLabel: '' })
+
 const addHotelLeg = () => { if (multiHotelLegs.value.length < 5) multiHotelLegs.value.push({ location: '', checkIn: '', checkOut: '' }) }
 
-const occupancy = reactive({ rooms: 1, adults: 2, children: 0 })
-const searchState = reactive({ location: '', checkIn: '', checkOut: '' })
-const bundles = reactive({ bundleFlight: false, bundleHotel: false, bundleCar: false })
-
-const flightTravelers = reactive({ adults: 1, children: 0 })
-const flightSearchState = reactive({ origin: '', destination: '', departureDate: '', returnDate: '' })
-const multiFlightLegs = ref([{ origin: '', destination: '', departureDate: '', returnDate: '' }])
-
-const carSearchState = reactive({ origin: '', destination: '', pickUpDate: '' })
-const differentCarDropoff = ref(false)
-
-const transferMode = ref('pickup')
-const transferSearchState = reactive({ origin: '', destination: '', date: '', time: '10:00' })
-const transferOccupancy = reactive({ adults: 1, children: 0 })
-
-const activitiesSearchState = reactive({ destination: '', date: '' })
-
-const activeCruiseField = ref<string | null>(null)
-
+// ─── Cruise data ─────────────────────────────────────────────
 const cruiseDestinations = [
-  { value: '', label: 'Destination (Any)' },
-  { value: 'C', label: 'Caribbean' },
-  { value: 'M', label: 'Mexico' },
-  { value: 'BH', label: 'Bahamas' },
-  { value: 'A', label: 'Alaska' },
-  { value: 'E', label: 'Europe - All' },
-  { value: 'H', label: 'Hawaii' },
-  { value: 'BM', label: 'Bermuda' },
-  { value: 'NN', label: 'Canada/New England/NY' },
-  { value: '_', label: '-------------', disabled: true },
-  { value: 'ALL', label: 'All Destinations' },
-  { value: 'A', label: 'Alaska - All' },
-  { value: 'AG', label: 'Alaska - Gulf of Alaska' },
-  { value: 'AR', label: 'Alaska - Inside Passage' },
-  { value: 'AB', label: 'Antarctica' },
-  { value: 'UN', label: 'Australia/New Zealand' },
-  { value: 'BH', label: 'Bahamas' },
-  { value: 'BM', label: 'Bermuda' },
-  { value: 'NN', label: 'Canada/New England/NY' },
-  { value: 'C', label: 'Caribbean - All' },
-  { value: 'CE', label: 'Caribbean - Eastern' },
-  { value: 'CS', label: 'Caribbean - Southern' },
-  { value: 'CW', label: 'Caribbean - Western' },
-  { value: 'CN', label: 'Cruise to Nowhere' },
-  { value: 'E', label: 'Europe - All' },
-  { value: 'EE', label: 'Europe - E. Mediterranean' },
-  { value: 'R', label: 'Europe - Mediterranean - All' },
-  { value: 'N', label: 'Europe - Northern' },
-  { value: 'EW', label: 'Europe - W. Mediterranean' },
-  { value: 'W', label: 'Europe - Western' },
-  { value: 'O', label: 'Exotic - Asia/Africa/Other' },
-  { value: 'H', label: 'Hawaii' },
-  { value: 'M', label: 'Mexico' },
-  { value: 'L', label: 'Pacific Coast' },
-  { value: 'T', label: 'Panama Canal/C. America' },
-  { value: 'S', label: 'South America' },
-  { value: 'I', label: 'South Pacific - All' },
-  { value: 'TH', label: 'South Pacific - Tahiti' },
-  { value: 'ET', label: 'Transatlantic' },
-  { value: 'NA', label: 'U.S. - All' },
-  { value: 'RV', label: 'U.S. - American Rivers' },
-  { value: 'WW', label: 'World Cruise' }
+  { value: '', label: 'Any destination' }, { value: 'C', label: 'Caribbean' }, { value: 'M', label: 'Mexico' },
+  { value: 'BH', label: 'Bahamas' }, { value: 'A', label: 'Alaska' }, { value: 'E', label: 'Europe' },
+  { value: 'H', label: 'Hawaii' }, { value: 'BM', label: 'Bermuda' }, { value: 'NN', label: 'Canada / New England' },
+  { value: '_', label: '──────────', disabled: true },
+  { value: 'ALL', label: 'All destinations' }, { value: 'AG', label: 'Alaska — Gulf' }, { value: 'AR', label: 'Alaska — Inside Passage' },
+  { value: 'AB', label: 'Antarctica' }, { value: 'UN', label: 'Australia / NZ' }, { value: 'CE', label: 'Caribbean — Eastern' },
+  { value: 'CS', label: 'Caribbean — Southern' }, { value: 'CW', label: 'Caribbean — Western' },
+  { value: 'EE', label: 'Mediterranean — Eastern' }, { value: 'R', label: 'Mediterranean — All' },
+  { value: 'N', label: 'Northern Europe' }, { value: 'O', label: 'Asia / Africa / Other' },
+  { value: 'L', label: 'Pacific Coast' }, { value: 'T', label: 'Panama Canal' },
+  { value: 'S', label: 'South America' }, { value: 'ET', label: 'Transatlantic' }, { value: 'WW', label: 'World Cruise' },
 ]
 
 const cruiseMonths = [
-  { value: '03/1/2026', label: 'March 2026' },
-  { value: '04/1/2026', label: 'April 2026' },
-  { value: '05/1/2026', label: 'May 2026' },
-  { value: '06/1/2026', label: 'June 2026' },
-  { value: '07/1/2026', label: 'July 2026' },
-  { value: '08/1/2026', label: 'August 2026' },
-  { value: '09/1/2026', label: 'September 2026' },
-  { value: '10/1/2026', label: 'October 2026' },
-  { value: '11/1/2026', label: 'November 2026' },
-  { value: '12/1/2026', label: 'December 2026' },
-  { value: '01/1/2027', label: 'January 2027' },
-  { value: '02/1/2027', label: 'February 2027' },
-  { value: '03/1/2027', label: 'March 2027' },
-  { value: '04/1/2027', label: 'April 2027' },
-  { value: '05/1/2027', label: 'May 2027' },
-  { value: '06/1/2027', label: 'June 2027' },
-  { value: '07/1/2027', label: 'July 2027' },
-  { value: '08/1/2027', label: 'August 2027' },
-  { value: '09/1/2027', label: 'September 2027' },
-  { value: '10/1/2027', label: 'October 2027' },
-  { value: '11/1/2027', label: 'November 2027' },
-  { value: '12/1/2027', label: 'December 2027' },
-  { value: '01/1/2028', label: 'January 2028' },
-  { value: '02/1/2028', label: 'February 2028' },
-  { value: '03/1/2028', label: 'March 2028' },
-  { value: '04/1/2028', label: 'April 2028' },
-  { value: '05/1/2028', label: 'May 2028' },
-  { value: '06/1/2028', label: 'June 2028' },
-  { value: '07/1/2028', label: 'July 2028' },
-  { value: '08/1/2028', label: 'August 2028' },
-  { value: '09/1/2028', label: 'September 2028' },
-  { value: '10/1/2028', label: 'October 2028' },
-  { value: '11/1/2028', label: 'November 2028' },
-  { value: '12/1/2028', label: 'December 2028' },
-  { value: '01/1/2029', label: 'January 2029' },
-  { value: '02/1/2029', label: 'February 2029' }
+  { value: '04/1/2026', label: 'April 2026' }, { value: '05/1/2026', label: 'May 2026' }, { value: '06/1/2026', label: 'June 2026' },
+  { value: '07/1/2026', label: 'July 2026' }, { value: '08/1/2026', label: 'August 2026' }, { value: '09/1/2026', label: 'September 2026' },
+  { value: '10/1/2026', label: 'October 2026' }, { value: '11/1/2026', label: 'November 2026' }, { value: '12/1/2026', label: 'December 2026' },
+  { value: '01/1/2027', label: 'January 2027' }, { value: '02/1/2027', label: 'February 2027' }, { value: '03/1/2027', label: 'March 2027' },
+  { value: '04/1/2027', label: 'April 2027' }, { value: '05/1/2027', label: 'May 2027' }, { value: '06/1/2027', label: 'June 2027' },
+  { value: '07/1/2027', label: 'July 2027' }, { value: '01/1/2028', label: 'January 2028' }, { value: '02/1/2028', label: 'February 2028' },
 ]
 
 const cruiseLengths = [
-  { value: '', label: 'Cruise Length (Any)' },
-  { value: 'ALL', label: 'All' },
-  { value: '1', label: '1-2 Nights' },
-  { value: '2', label: '3-5 Nights' },
-  { value: '3', label: '6-8 Nights' },
-  { value: '4', label: '9-11 Nights' },
-  { value: '5', label: '12+ Nights' }
+  { value: '', label: 'Any length' }, { value: 'ALL', label: 'All' }, { value: '1', label: '1–2 nights' },
+  { value: '2', label: '3–5 nights' }, { value: '3', label: '6–8 nights' }, { value: '4', label: '9–11 nights' }, { value: '5', label: '12+ nights' },
 ]
 
 const cruiseLines = [
-  { value: '', label: 'Cruise Line (Any)' },
-  { value: 'ALL', label: 'All Cruise Lines' },
-  { value: '92', label: 'AmaWaterways' },
-  { value: '323', label: 'American Cruise Lines' },
-  { value: '329', label: 'Avalon Waterways' },
-  { value: '325', label: 'Azamara Cruises' },
-  { value: '1', label: 'Carnival Cruise Lines' },
-  { value: '11', label: 'Celebrity Cruises' },
-  { value: '14', label: 'Costa Cruises' },
-  { value: '369', label: 'Crystal Cruises' },
-  { value: '18', label: 'Cunard' },
-  { value: '20', label: 'Disney Cruise Line' },
-  { value: '368', label: 'Explora Journeys' },
-  { value: '24', label: 'Holland America Line' },
-  { value: '71', label: 'MSC Cruises' },
-  { value: '34', label: 'Norwegian Cruise Line' },
-  { value: '67', label: 'Oceania Cruises' },
-  { value: '344', label: 'Ponant' },
-  { value: '40', label: 'Princess Cruises' },
-  { value: '41', label: 'Regent Seven Seas Cruises' },
-  { value: '44', label: 'Royal Caribbean' },
-  { value: '375', label: 'Scenic Ocean Cruises' },
-  { value: '50', label: 'Silversea Cruises' },
-  { value: '48', label: 'The Yachts of Seabourn' },
-  { value: '66', label: 'Uniworld River Cruises' },
-  { value: '354', label: 'Viking Ocean Cruises' },
-  { value: '78', label: 'Viking River Cruises' },
-  { value: '364', label: 'Virgin Voyages' },
-  { value: '64', label: 'Windstar Cruises' }
+  { value: '', label: 'Any cruise line' }, { value: 'ALL', label: 'All cruise lines' },
+  { value: '1', label: 'Carnival Cruise Lines' }, { value: '11', label: 'Celebrity Cruises' },
+  { value: '14', label: 'Costa Cruises' }, { value: '20', label: 'Disney Cruise Line' },
+  { value: '24', label: 'Holland America Line' }, { value: '71', label: 'MSC Cruises' },
+  { value: '34', label: 'Norwegian Cruise Line' }, { value: '67', label: 'Oceania Cruises' },
+  { value: '40', label: 'Princess Cruises' }, { value: '44', label: 'Royal Caribbean' },
+  { value: '50', label: 'Silversea Cruises' }, { value: '48', label: 'Seabourn' },
+  { value: '66', label: 'Uniworld River Cruises' }, { value: '354', label: 'Viking Ocean Cruises' },
+  { value: '78', label: 'Viking River Cruises' }, { value: '364', label: 'Virgin Voyages' },
+  { value: '64', label: 'Windstar Cruises' }, { value: '41', label: 'Regent Seven Seas' },
 ]
 
-const cruiseSearchState = reactive({ 
-  destination: '', 
-  destinationLabel: '',
-  departingMonth: '03/1/2026',
-  departingLabel: 'March 2026',
-  length: '',
-  lengthLabel: '',
-  line: '',
-  lineLabel: ''
-})
-
-const dynamicTitle = computed(() => {
-  switch (currentTab.value) {
-    case 'Hotels': return 'Save big on your next stay'
-    case 'Flights': return 'Save big on your next flight'
-    case 'Packages': return 'Save big on your next package'
-    case 'Cars': return 'Save big on your next rental'
-    case 'Cruises': return 'Save big on your next cruise'
-    default: return 'Save big on your next trip'
-  }
-})
-
-const packageType = ref('Hotel+Flight')
-const onlyPartialHotel = ref(false)
-const packageOccupancy = reactive({ rooms: 1, adults: 2, children: 0 })
-const packageSearchState = reactive({ 
-  origin: '', destination: '', departureDate: '', returnDate: '', hotelCheckIn: '', hotelCheckOut: ''
-})
-
-const handleExternalDeal = (deal: any) => {
-  currentTab.value = deal.type || 'Flights'
-  if (deal.type === 'Flights') {
-    flightSearchState.origin = deal.from || 'Lagos'
-    flightSearchState.destination = deal.to || ''
-  } else if (deal.type === 'Hotels') {
-    searchState.location = deal.to || ''
-  } else if (deal.type === 'Cars') {
-    carSearchState.destination = deal.to || ''
-  }
-}
-
-defineExpose({ handleExternalDeal })
+// ─── Watchers & Search ──────────────────────────────────────
+watch(isFocused, (val) => emit('focus-change', val))
+watch(currentTab, (val) => emit('update:tab', val), { immediate: true })
 
 const handleSearch = () => {
   isFocused.value = false
   const query: any = { tab: currentTab.value }
-  
-  if (currentTab.value === 'Cruises') {
-    Object.assign(query, cruiseSearchState)
-  } else if (currentTab.value === 'Flights') {
-    Object.assign(query, flightSearchState)
-  } else if (currentTab.value === 'Transfers') {
-    Object.assign(query, transferSearchState)
-    query.mode = transferMode.value
-  } else if (currentTab.value === 'Activities') {
-    Object.assign(query, activitiesSearchState)
-  } else if (currentTab.value === 'Hotels') {
-    Object.assign(query, searchState)
-    Object.assign(query, occupancy)
+  const routes: Record<string, string> = {
+    Activities: '/things-to-do', Hotels: '/stays', Flights: '/flights',
+    Cars: '/cars', Packages: '/packages', Transfers: '/transfers', Cruises: '/cruises',
   }
-  
-  trackAction('booking_step_search', { 
-    tab: currentTab.value,
-    ...query
-  })
-
-  const routePath = currentTab.value === 'Activities' ? '/things-to-do' : currentTab.value === 'Hotels' ? '/stays' : '/' + currentTab.value.toLowerCase()
-  navigateTo({ path: routePath, query })
+  if (currentTab.value === 'Cruises')       Object.assign(query, cruiseSearchState)
+  else if (currentTab.value === 'Flights') {
+    Object.assign(query, flightSearchState);
+    Object.assign(query, flightTravelers);
+  }
+  else if (currentTab.value === 'Transfers') { Object.assign(query, transferSearchState); query.mode = transferMode.value }
+  else if (currentTab.value === 'Activities') Object.assign(query, activitiesSearchState)
+  else if (currentTab.value === 'Hotels')   { Object.assign(query, searchState); Object.assign(query, occupancy) }
+  trackAction('booking_step_search', { tab: currentTab.value, ...query })
+  navigateTo({ path: routes[currentTab.value] || '/search', query })
 }
+
+const handleExternalDeal = (deal: any) => {
+  currentTab.value = deal.type || 'Flights'
+  if (deal.type === 'Flights')     flightSearchState.origin = deal.from || ''
+  else if (deal.type === 'Hotels') searchState.location = deal.to || ''
+  else if (deal.type === 'Cars')   carSearchState.destination = deal.to || ''
+}
+defineExpose({ handleExternalDeal })
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+/* ═══════════════════════════════════════════════════
+   ROOT
+═══════════════════════════════════════════════════ */
+.sw-root {
+  background: #fff;
+  border: 0.5px solid #e0e0d8;
+  border-radius: 16px;
+  overflow: visible;
+}
+.sw-root--sticky {
+  border-radius: 0 0 14px 14px;
+  border-top: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════ */
+.sw-tabs {
+  border-bottom: 0.5px solid #ebebE3;
+}
+
+/* Mobile pills */
+.sw-tabs-mobile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sw-tabs-mobile::-webkit-scrollbar { display: none; }
+
+/* Desktop underline */
+.sw-tabs-desk {
+  display: none;
+  align-items: center;
+  padding: 0 16px;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sw-tabs-desk::-webkit-scrollbar { display: none; }
+
+@media (min-width: 768px) {
+  .sw-tabs-mobile { display: none; }
+  .sw-tabs-desk   { display: flex; }
+}
+
+.sw-tab-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 0.5px solid #e0e0d8;
+  background: #fff;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.sw-tab-pill--on { background: #111; color: #fff; border-color: #111; }
+.sw-tab-pill:not(.sw-tab-pill--on):hover { border-color: #aaa; color: #333; }
+
+.sw-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 16px;
+  font-size: 10.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  color: #aaa;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.sw-tab-btn--on  { color: #111; border-bottom-color: #111; }
+.sw-tab-btn:not(.sw-tab-btn--on):hover { color: #555; }
+
+.sw-tab-ico { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════════
+   PANEL
+═══════════════════════════════════════════════════ */
+.sw-panel { padding: 16px; }
+.sw-panel--sm { padding: 12px; }
+@media (min-width: 768px) { .sw-panel { padding: 20px; } }
+
+.sw-section { display: flex; flex-direction: column; gap: 12px; }
+
+/* ═══════════════════════════════════════════════════
+   SEARCH BAR — the horizontal field row
+   On mobile: each field becomes a FULL-WIDTH stacked block
+   On desktop: fields sit side-by-side inside the bar
+═══════════════════════════════════════════════════ */
+.sw-bar {
+  display: flex;
+  flex-direction: column;       /* MOBILE: vertical stack */
+  border: 0.5px solid #e0e0d8;
+  border-radius: 12px;
+  overflow: visible;
+  background: #e0e0d8;          /* gap color via bg trick */
+  gap: 0.5px;
+}
+
+@media (min-width: 768px) {
+  .sw-bar {
+    flex-direction: row;        /* DESKTOP: horizontal */
+    align-items: stretch;
+  }
+}
+
+/* Divider — horizontal line on mobile, vertical on desktop */
+.sw-bar-div {
+  background: #e0e0d8;
+  flex-shrink: 0;
+  /* mobile: 0.5px horizontal */
+  height: 0.5px;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .sw-bar-div {
+    height: auto;
+    width: 0.5px;
+  }
+}
+
+/* Individual field cell */
+.sw-field {
+  background: #fff;
+  overflow: visible;
+  min-height: 56px;
+}
+
+/* First cell: rounded top on mobile, left on desktop */
+.sw-bar .sw-field:first-child {
+  border-radius: 10.5px 10.5px 0 0;
+}
+@media (min-width: 768px) {
+  .sw-bar .sw-field:first-child {
+    border-radius: 10.5px 0 0 10.5px;
+  }
+}
+
+/* Last field cell */
+.sw-bar .sw-field:last-child {
+  border-radius: 0 0 10.5px 10.5px;
+}
+@media (min-width: 768px) {
+  .sw-bar .sw-field:last-child {
+    border-radius: 0 10.5px 10.5px 0;
+  }
+}
+
+/* Flex widths — only apply on desktop */
+@media (min-width: 768px) {
+  .sw-field--grow  { flex: 1; }
+  .sw-field--date  { flex: 1.3; }
+  .sw-field--pax   { flex: 0.8; min-width: 120px; }
+  .sw-field--time  { flex: 0; min-width: 110px; }
+  .sw-field--cat   { flex: 0.7; min-width: 110px; }
+}
+
+/* On mobile ALL fields are full-width naturally (flex-direction: column) */
+
+/* ── Field label/value (for non-component fields) ── */
+.sw-fld-lbl {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: #aaa;
+  
+  letter-spacing: 0.07em;
+  line-height: 1;
+}
+.sw-fld-val {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: #222;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+.sw-fld-val--trunc {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Time field interior */
+.sw-field--time { padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; }
+.sw-time-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.sw-time-input { background: transparent; border: none; outline: none; font-size: 12px; font-weight: 400; color: #222; width: 100%; }
+
+/* Category field interior */
+.sw-field--cat { padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; }
+
+/* Class field interior */
+.sw-field--class { padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; }
+.sw-class-select {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: #222;
+  width: 100%;
+  padding: 0;
+  margin-top: 4px;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.sw-field-inner { display: flex; flex-direction: column; }
+
+/* ═══════════════════════════════════════════════════
+   RADIOS & CHECKBOXES
+═══════════════════════════════════════════════════ */
+.sw-radios { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.sw-radios--wrap { gap: 12px 20px; }
+
+.sw-radio { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.sw-radio-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 0.5px solid #d1d5db;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: border-color 0.15s;
+  position: relative;
+}
+.sw-radio-dot::after {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: transparent; transition: background 0.15s;
+  position: absolute;
+}
+.sw-radio-dot--on { border-color: #111; }
+.sw-radio-dot--on::after { background: #111; }
+
+.sw-radio-txt { font-size: 10.5px; font-weight: 500; color: #888; user-select: none; }
+.sw-radio-txt--on { color: #111; }
+
+.sw-chk  { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+.sw-chk-box {
+  width: 14px; height: 14px; border-radius: 3px;
+  border: 0.5px solid #d1d5db;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.15s;
+}
+.sw-chk-box--on { background: #111; border-color: #111; }
+.sw-chk-ico { color: #fff; }
+.sw-checks { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* ═══════════════════════════════════════════════════
+   SEGMENTED CONTROL
+═══════════════════════════════════════════════════ */
+.sw-seg {
+  display: flex;
+  border: 0.5px solid #e0e0d8;
+  border-radius: 9px;
+  padding: 2px;
+  background: #f5f5f0;
+  width: fit-content;
+}
+.sw-seg-btn {
+  padding: 6px 14px;
+  font-size: 10.5px;
+  font-weight: 500;
+  border-radius: 7px;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.sw-seg-btn:hover { color: #333; }
+.sw-seg-btn--on { background: #fff; color: #111; box-shadow: 0 0.5px 4px rgba(0,0,0,0.07); }
+
+/* ═══════════════════════════════════════════════════
+   BUNDLES
+═══════════════════════════════════════════════════ */
+.sw-bundles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background: #fafaf7;
+  border: 0.5px solid #eeeee8;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.sw-bundle-lbl {
+  font-size: 9px;
+  font-weight: 600;
+  color: #bbb;
+  
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════
+   FOOTER ROW
+═══════════════════════════════════════════════════ */
+.sw-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 0.5px solid #f0f0ea;
+}
+@media (min-width: 640px) {
+  .sw-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.sw-footer--end { align-items: flex-end; }
+@media (min-width: 640px) { .sw-footer--end { justify-content: flex-end; } }
+
+/* ═══════════════════════════════════════════════════
+   SEARCH BUTTON
+═══════════════════════════════════════════════════ */
+.sw-search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 10.5px 22px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  /* On mobile: full width */
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .sw-search-btn { width: auto; }
+}
+.sw-search-btn:hover { background: #000; }
+.sw-search-btn--full { width: 100%; }
+@media (min-width: 640px) { .sw-search-btn--full { width: auto; } }
+
+/* ═══════════════════════════════════════════════════
+   ADD / MULTI-LEG
+═══════════════════════════════════════════════════ */
+.sw-rows { display: flex; flex-direction: column; gap: 10px; }
+.sw-multi-leg { display: flex; flex-direction: column; gap: 4px; }
+.sw-leg-lbl { font-size: 10px; font-weight: 500; color: #aaa;  letter-spacing: 0.07em; }
+.sw-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #aaa;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+  align-self: flex-start;
+  padding: 0;
+}
+.sw-add-btn:hover { color: #333; }
+
+/* ═══════════════════════════════════════════════════
+   EXTRA DATES (partial hotel)
+═══════════════════════════════════════════════════ */
+.sw-extra-dates {
+  background: #fafaf7;
+  border: 0.5px solid #eeeee8;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sw-bar--compact { max-width: 420px; }
+
+/* ═══════════════════════════════════════════════════
+   MISC LINKS
+═══════════════════════════════════════════════════ */
+.sw-adv-link {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #aaa;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.sw-adv-link:hover { color: #555; }
+
+/* ═══════════════════════════════════════════════════
+   CRUISE FIELDS
+═══════════════════════════════════════════════════ */
+.sw-cruise-grid { display: grid; gap: 10px; }
+.sw-cruise-grid--2 { grid-template-columns: 1fr; }
+.sw-cruise-grid--3 { grid-template-columns: 1fr; }
+
+@media (min-width: 640px) {
+  .sw-cruise-grid--2 { grid-template-columns: 1fr 1fr; }
+  .sw-cruise-grid--3 { grid-template-columns: 1fr 1fr auto; align-items: start; }
+}
+
+.sw-cruise-field-wrap { position: relative; }
+
+.sw-cruise-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #fff;
+  border: 0.5px solid #e0e0d8;
+  border-radius: 10.5px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  text-align: left;
+}
+.sw-cruise-btn:hover { border-color: #aaa; }
+.sw-cruise-btn--on { border-color: #111; box-shadow: 0 0 0 3px rgba(17,24,39,0.06); }
+
+.sw-cruise-txt { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+
+.sw-chev { transition: transform 0.2s ease; flex-shrink: 0; }
+.sw-chev--up { transform: rotate(180deg); }
+
+/* ═══════════════════════════════════════════════════
+   CRUISE DROPDOWN (Teleport'd to body, position: fixed)
+═══════════════════════════════════════════════════ */
+.sw-drop {
+  background: #fff;
+  border: 0.5px solid #e0e0d8;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.05);
+  z-index: 99999;
+  max-height: 17rem;
+  overflow-y: auto;
+  padding: 4px;
+  scrollbar-width: none;
+}
+.sw-drop::-webkit-scrollbar { display: none; }
+
+.sw-drop-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.12s;
+}
+.sw-drop-item--idle { color: #333; cursor: pointer; }
+.sw-drop-item--idle:hover { background: #f5f5f0; }
+.sw-drop-item--on { background: #111; color: #fff; cursor: pointer; }
+.sw-drop-item--div { color: #ddd; cursor: default; border-top: 0.5px solid #f0f0ea; margin: 3px 0; pointer-events: none; font-size: 10px; }
+
+/* ═══════════════════════════════════════════════════
+   GLOBAL BACKDROP
+═══════════════════════════════════════════════════ */
+.sw-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.08);
+  z-index: 9990;
+}
+
+/* ═══════════════════════════════════════════════════
+   ICON HELPERS
+═══════════════════════════════════════════════════ */
+.sw-ico-xs { width: 10px; height: 10px; flex-shrink: 0; }
+.sw-ico-sm { width: 13px; height: 13px; flex-shrink: 0; }
+.sw-ico-muted { color: #bbb; }
+
+/* ═══════════════════════════════════════════════════
+   TRANSITIONS
+═══════════════════════════════════════════════════ */
+.sw-fade-enter-active, .sw-fade-leave-active { transition: opacity 0.18s ease; }
+.sw-fade-enter-from, .sw-fade-leave-to { opacity: 0; }
+
+.sw-drop-enter-active { transition: opacity 0.15s ease, transform 0.18s cubic-bezier(0.16,1,0.3,1); }
+.sw-drop-leave-active { transition: opacity 0.1s ease; }
+.sw-drop-enter-from, .sw-drop-leave-to { opacity: 0; transform: translateY(-4px); }
+
+.sw-slide-enter-active { transition: all 0.2s ease; }
+.sw-slide-leave-active { transition: all 0.15s ease; }
+.sw-slide-enter-from, .sw-slide-leave-to { opacity: 0; transform: translateY(-6px); }
 </style>

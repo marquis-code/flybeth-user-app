@@ -93,11 +93,11 @@
               >
                 <div class="flex items-center gap-4">
                   <div class="h-12 w-12 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/25 group-hover:scale-110 transition-all duration-500">
-                    <PhoneIcon class="h-5 w-5 text-white" />
+                    <PhoneIcon class="h-4 w-4 text-white" />
                   </div>
                   <div>
                     <p class="text-[9px] font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Call us now</p>
-                    <p class="text-base font-bold text-white tabular-nums tracking-wide">+1 844 FLYBETH (359-2384)</p>
+                    <p class="text-sm font-bold text-white tabular-nums tracking-wide">+1 844 FLYBETH (359-2384)</p>
                   </div>
                 </div>
                 <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center group-hover:translate-x-1 transition-transform">
@@ -124,7 +124,7 @@
                 </a>
               </div>
 
-              <p class="text-center text-[9px] text-gray-300 font-bold uppercase tracking-[0.15em] pt-1">
+              <p class="text-center text-[9px] text-gray-500 font-bold uppercase tracking-[0.15em] pt-1">
                 Available 24/7 · No booking fees · Price match guarantee
               </p>
             </div>

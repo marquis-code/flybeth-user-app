@@ -6,23 +6,23 @@
       @click="openCalendar"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none whitespace-nowrap"
     >
-      <p class="text-[11px] font-bold text-brand-gray/40 tracking-widest mb-0.5 group-hover:text-gray-900 transition-colors italic">
+      <p class="text-[11px] font-bold text-brand-gray/40 tracking-widest mb-0.5 group-hover:text-gray-900 transition-colors ">
         {{ mode === 'oneway' ? 'Departure date' : 'Check-in – Check-out' }}
       </p>
       <div class="flex items-center gap-2">
         <CalendarDaysIcon class="h-4 w-4 text-brand-blue/60 shrink-0" />
         <span class="text-sm font-semibold tracking-tight">
           <template v-if="mode === 'oneway'">
-            <span :class="startDate ? 'text-gray-900' : 'text-gray-300'">
+            <span :class="startDate ? 'text-gray-900' : 'text-gray-500'">
               {{ startDate ? formatDisplay(startDate) : 'Select date' }}
             </span>
           </template>
           <template v-else>
-            <span :class="startDate ? 'text-gray-900' : 'text-gray-300'">
+            <span :class="startDate ? 'text-gray-900' : 'text-gray-500'">
               {{ startDate ? formatDisplay(startDate) : 'Check-in' }}
             </span>
-            <span class="text-gray-300 mx-1.5">–</span>
-            <span :class="endDate ? 'text-gray-900' : 'text-gray-300'">
+            <span class="text-gray-500 mx-1.5">–</span>
+            <span :class="endDate ? 'text-gray-900' : 'text-gray-500'">
               {{ endDate ? formatDisplay(endDate) : 'Check-out' }}
             </span>
           </template>

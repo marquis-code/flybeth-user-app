@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Support Hero Section -->
-    <section class="relative bg-brand-blue/5 pt-16 pb-32 overflow-hidden">
+    <section class="relative bg-brand-blue/5 pt-12 pb-24 overflow-hidden">
       <!-- Decorative Bubbles -->
       <div class="absolute inset-0 z-0 pointer-events-none opacity-20">
         <div class="absolute top-1/4 left-1/4 w-32 h-12 bg-brand-blue/60 rounded-full blur-xl animate-pulse"></div>
@@ -10,7 +10,7 @@
 
       <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
          <div class="max-w-3xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <h1 class="text-6xl font-black text-neutral-900 tracking-tight leading-[1.1]">
+            <h1 class="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight leading-[1.1]">
                We're here to help you<br/>
                <span class="text-brand-blue">travel with confidence.</span>
             </h1>

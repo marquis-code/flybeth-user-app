@@ -43,7 +43,7 @@
         :readonly="readonly || type === 'date' || type === 'time' || type === 'datetime-local'"
         :autocomplete="autocomplete"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-white border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
+          'w-full py-3 pt-6 px-3 bg-white border border-gray-100 focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
           (type === 'date' || type === 'time' || type === 'datetime-local') ? 'cursor-pointer' : '',
@@ -234,7 +234,7 @@
                 </button>
               </div>
               
-              <span class="text-5xl font-bold text-gray-300 select-none">:</span>
+              <span class="text-5xl font-bold text-gray-500 select-none">:</span>
               
               <div class="flex flex-col items-center">
                 <button type="button" @click.stop="incMin" class="p-3 hover:bg-gray-100 rounded-xl mb-3 transition-all group">
@@ -416,7 +416,7 @@
                     </svg>
                   </button>
                 </div>
-                <span class="text-4xl font-bold text-gray-300">:</span>
+                <span class="text-4xl font-bold text-gray-500">:</span>
                 <div class="flex flex-col items-center">
                   <button type="button" @click.stop="incMin" class="p-2 hover:bg-gray-100 rounded-lg mb-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -576,7 +576,7 @@ const displayValue = computed(() => {
 const roundedClasses = computed(() => {
   switch (props.position) {
     case 'top': return 'rounded-t-2xl rounded-b-sm'
-    case 'middle': return 'rounded-sm'
+    case 'middle': return 'rounded-2xl'
     case 'bottom': return 'rounded-b-2xl rounded-t-sm'
     default: return 'rounded-2xl'
   }
@@ -656,7 +656,7 @@ function generateCalendar(compareDate: Date | null): CalendarDay[] {
 function getDayClass(day: CalendarDay) {
   return [
     'aspect-square p-2 text-sm font-semibold rounded-xl transition-all relative',
-    day.isCurrentMonth ? 'hover:bg-gray-100 hover:scale-105 cursor-pointer' : 'text-gray-300 opacity-40 cursor-not-allowed',
+    day.isCurrentMonth ? 'hover:bg-gray-100 hover:scale-105 cursor-pointer' : 'text-gray-500 opacity-40 cursor-not-allowed',
     day.isToday && !day.isSelected ? 'bg-blue-50 text-[#033958] ring-2 ring-[#033958] ring-inset font-bold' : '',
     day.isSelected ? 'bg-[#033958] text-white shadow-lg scale-105' : ''
   ]
@@ -665,7 +665,7 @@ function getDayClass(day: CalendarDay) {
 function getDTDayClass(day: CalendarDay) {
   return [
     'aspect-square p-2 text-xs font-medium rounded-lg transition-all',
-    day.isCurrentMonth ? 'hover:bg-gray-100 cursor-pointer' : 'text-gray-300 opacity-30 cursor-not-allowed',
+    day.isCurrentMonth ? 'hover:bg-gray-100 cursor-pointer' : 'text-gray-500 opacity-30 cursor-not-allowed',
     day.isToday && !day.isSelected ? 'border-2 border-[#033958] text-[#033958] font-bold' : '',
     day.isSelected ? 'bg-[#033958] text-white shadow-md' : ''
   ]

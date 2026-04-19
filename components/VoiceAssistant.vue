@@ -28,7 +28,7 @@
             Flybeth Voice Assistant
             <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
           </h3>
-          <p class="text-xs font-bold text-white/50 tracking-tight mt-1 italic">Real-time conversational booking</p>
+          <p class="text-xs font-bold text-white/50 tracking-tight mt-1 ">Real-time conversational booking</p>
         </div>
 
         <!-- Chat History -->
@@ -44,7 +44,7 @@
           </div>
           
           <!-- Partial Transcript (Real-time feedback) -->
-          <div v-if="partialTranscript" class="flex justify-end opacity-50 italic">
+          <div v-if="partialTranscript" class="flex justify-end opacity-50 ">
             <div class="max-w-[85%] p-4 rounded-3xl text-sm font-medium bg-brand-blue/30 text-white rounded-tr-none border border-white/20">
               {{ partialTranscript }}...
             </div>

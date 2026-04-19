@@ -209,7 +209,7 @@ onMounted(() => {
   font-size: 0.7rem;
   font-weight: 800;
   color: #64748b;
-  text-transform: uppercase;
+  
   line-height: 1;
   margin-bottom: 0.15rem;
 }
@@ -314,7 +314,7 @@ onMounted(() => {
   background: #f97316;
   color: white;
   font-weight: 800;
-  text-transform: uppercase;
+  
   padding: 1rem;
   border: none;
   border-radius: 0.5rem;

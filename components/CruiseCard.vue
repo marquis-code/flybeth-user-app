@@ -4,7 +4,7 @@
     <!-- Ship Image & Quick Badges -->
     <div class="md:w-[320px] lg:w-[380px] h-60 md:h-auto shrink-0 relative flex items-center justify-center rounded-[2rem] bg-[#F8FAFC] border border-gray-100/50 overflow-hidden group-hover:bg-white transition-colors duration-500">
       <img v-if="cruise.image" :src="cruise.image" :alt="cruise.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
-      <div v-else class="w-full h-full bg-gray-100/50 flex items-center justify-center text-gray-300">
+      <div v-else class="w-full h-full bg-gray-100/50 flex items-center justify-center text-gray-500">
          <GlobeAltIcon class="h-16 w-16 opacity-20" />
       </div>
 
@@ -40,7 +40,7 @@
           </div>
           <div class="flex items-center gap-2">
              <div class="text-right hidden sm:block">
-                <p class="text-[9px] font-bold text-gray-300 uppercase tracking-widest">Ship</p>
+                <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Ship</p>
                 <p class="text-[11px] font-extrabold text-gray-500">{{ cruise.shipName || 'Luxury Vessel' }}</p>
              </div>
           </div>
@@ -51,21 +51,21 @@
           <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-gray-50 border border-gray-100/50">
             <CalendarIcon class="h-4 w-4 text-brand-blue" />
             <div class="flex flex-col">
-               <span class="text-[9px] font-bold text-gray-300 uppercase">Departure</span>
+               <span class="text-[9px] font-bold text-gray-500 uppercase">Departure</span>
                <span class="text-[11px] font-bold text-gray-600 truncate">{{ formatDate(cruise.departureDate) }}</span>
             </div>
           </div>
           <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-gray-50 border border-gray-100/50">
             <UserIcon class="h-4 w-4 text-brand-blue" />
             <div class="flex flex-col">
-               <span class="text-[9px] font-bold text-gray-300 uppercase">Guests</span>
+               <span class="text-[9px] font-bold text-gray-500 uppercase">Guests</span>
                <span class="text-[11px] font-bold text-gray-600">Up to 4</span>
             </div>
           </div>
           <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-gray-50 border border-gray-100/50">
             <SparklesIcon class="h-4 w-4 text-brand-blue" />
             <div class="flex flex-col">
-               <span class="text-[9px] font-bold text-gray-300 uppercase">Service</span>
+               <span class="text-[9px] font-bold text-gray-500 uppercase">Service</span>
                <span class="text-[11px] font-bold text-gray-600">Premium</span>
             </div>
           </div>
@@ -79,7 +79,7 @@
       <!-- Price & CTA -->
       <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
         <div class="flex flex-col">
-           <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-0.5">Starting from</span>
+           <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-0.5">Starting from</span>
            <div class="flex items-baseline gap-1.5">
               <span class="text-xs font-bold text-gray-400">USD</span>
               <span class="text-3xl font-extrabold text-gray-900 tracking-tighter">{{ formatPrice(cruise.pricing?.startingPrice || cruise.price) }}</span>

@@ -6,7 +6,7 @@
 
     <div v-if="loading" class="flex flex-col items-center justify-center py-12 space-y-4">
       <div class="w-10 h-10 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-sm font-bold text-brand-gray/60 uppercase tracking-widest italic">Loading aircraft layout...</p>
+      <p class="text-sm font-bold text-brand-gray/60 uppercase tracking-widest ">Loading aircraft layout...</p>
     </div>
 
     <div v-else-if="seatmaps && seatmaps.length" class="space-y-12">
@@ -87,7 +87,7 @@
     </div>
 
     <div v-else class="text-center py-12">
-      <p class="text-sm font-bold text-brand-gray/40 uppercase tracking-widest italic">Seatmap not available for this flight.</p>
+      <p class="text-sm font-bold text-brand-gray/40 uppercase tracking-widest ">Seatmap not available for this flight.</p>
     </div>
   </div>
 </template>

@@ -11,7 +11,7 @@
       <div class="relative z-10 pt-32 lg:pt-48 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
         <!-- Minimal title -->
         <div class="mb-8 lg:mb-10 flex flex-col items-center w-full max-w-3xl mx-auto text-center">
-           <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50 mb-3">Search · Compare · Book</p>
+           <p class="text-[10px] font-bold  tracking-[0.4em] text-white/50 mb-3">Search · Compare · Book</p>
            <h1 class="text-2xl lg:text-4xl  tracking-tight text-white leading-snug">
              {{ heroTitle }}
            </h1>
@@ -88,10 +88,10 @@
     </div>
 
     <!-- Loyalty & App Promotion Grid (Redesigned) -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 relative z-0">
+    <!-- <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 relative z-0">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         
-        <!-- Rewards Card -->
+
         <div class="bg-[#F8FAFC] border border-gray-100 rounded-3xl p-8 md:p-10 flex flex-col justify-between group overflow-hidden relative shadow-sm hover:shadow-xl transition-all duration-500 min-h-[320px]">
           <div class="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
              <TrophyIcon class="w-64 h-64 text-gray-900" />
@@ -101,13 +101,13 @@
              <p class="text-sm font-medium text-gray-500 leading-relaxed mb-auto pr-4">
                Earn points on every flight, hotel, and car rental. Redeem instantly to cover service fees or unlock exclusive discounts globally.
              </p>
-             <button class="bg-gray-900 text-white font-bold text-xs mt-8 px-6 py-3 rounded-xl hover:bg-gray-800 transition-all tracking-widest uppercase self-start">
+             <button class="bg-gray-900 text-white font-bold text-xs mt-8 px-6 py-3 rounded-xl hover:bg-gray-800 transition-all tracking-widest  self-start">
                Join for Free
              </button>
           </div>
         </div>
 
-        <!-- App Promo Card -->
+
         <div class="bg-gray-900 rounded-3xl p-8 md:p-10 flex flex-col sm:flex-row justify-between items-center gap-8 relative overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500 min-h-[320px]">
            <div class="absolute -right-16 -top-16 opacity-5 group-hover:rotate-12 transition-transform duration-700">
              <DevicePhoneMobileIcon class="w-80 h-80 text-white" />
@@ -120,20 +120,29 @@
              </p>
              <div class="flex items-center justify-center sm:justify-start gap-1.5">
                  <StarIcon class="w-3.5 h-3.5 text-amber-400" v-for="i in 5" :key="i" />
-                 <span class="text-white/50 text-[10px] font-bold tracking-widest ml-2 uppercase">4.8 Rating</span>
+                 <span class="text-white/50 text-[10px] font-bold tracking-widest ml-2 ">4.8 Rating</span>
              </div>
            </div>
 
            <div class="relative z-10 shrink-0 self-center">
              <div class="bg-white p-3 rounded-2xl shadow-lg transform group-hover:scale-105 transition-transform duration-500 flex flex-col items-center">
                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" class="w-20 h-20 object-contain" alt="QR Code" />
-               <p class="text-[9px] font-bold text-gray-400 mt-1.5 uppercase tracking-widest text-center">Scan to Install</p>
+               <p class="text-[9px] font-bold text-gray-400 mt-1.5  tracking-widest text-center">Scan to Install</p>
              </div>
            </div>
         </div>
 
       </div>
-    </div>
+    </div> -->
+
+             <section class="py-14 bg-white border-b border-neutral-100 overflow-hidden relative">
+      <p class="text-center text-xs font-bold text-neutral-400  tracking-widest mb-8">Trusted by leading travel brands worldwide</p>
+      <div class="flex items-center space-x-16 animate-scroll-logos">
+        <div v-for="n in 2" :key="n" class="flex items-center space-x-16 flex-shrink-0">
+          <img v-for="(p, idx) in partners" :key="idx" :src="p.logo" class="h-10 lg:h-12 object-contain opacity-80 hover:opacity-100 transition-all cursor-pointer" :alt="p.name" />
+        </div>
+      </div>
+    </section>
 
     <!-- Exclusive Flight Deals Section -->
     <section v-if="currentTab === 'Flights' || showAllSections" class="py-16 bg-white relative z-0">
@@ -171,10 +180,14 @@
           <div v-for="i in 3" :key="i" class="bg-gray-50 animate-pulse h-[400px] rounded-[2rem]"></div>
         </div>
 
-        <div v-else-if="!currentFareDeals.length" class="text-center py-24 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
-           <TicketIcon class="h-16 w-16 text-gray-300 mx-auto mb-4" />
-           <p class="text-gray-900  text-xl">No {{ fareTab.toLowerCase() }} deals available</p>
-           <p class="text-gray-400 font-bold text-sm mt-1">Check back soon for latest flight offers from {{ userLocation?.city || 'your location' }}</p>
+        <div v-else-if="!currentFareDeals.length" class="w-full">
+           <EmptyState 
+             variant="flights" 
+             title="No flight deals found" 
+             :message="`We couldn't find any ${fareTab.toLowerCase()} offers from ${userLocation?.city || 'your location'} right now. Please check back later.`"
+             action-label="Reset Search"
+             @action="handleTabUpdate('Flights')"
+           />
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -251,6 +264,16 @@
           <div v-for="i in 4" :key="i" class="bg-gray-100 animate-pulse h-80 rounded-xl"></div>
         </div>
 
+        <div v-else-if="!flightRecommendations.length" class="w-full">
+           <EmptyState 
+             variant="flights" 
+             title="No nearby deals" 
+             message="We couldn't find any exclusive flight deals departing from your current location at the moment. Try searching for a specific destination."
+             action-label="Search Everywhere"
+             @action="navigateTo('/explore')"
+           />
+        </div>
+
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div v-for="(deal, idx) in flightRecommendations" :key="idx" 
             @click="handleBookNow(deal)"
@@ -260,7 +283,7 @@
                <img :src="deal.image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
                <div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors"></div>
                <div class="absolute top-4 left-4">
-                 <div class="px-2 py-1 bg-white/90 backdrop-blur text-[9px] uppercase tracking-widest rounded-lg shadow-lg  text-gray-900">Recommended</div>
+                 <div class="px-2 py-1 bg-white/90 backdrop-blur text-[9px]  tracking-widest rounded-lg shadow-lg  text-gray-900">Recommended</div>
                </div>
             </div>
             <div class="p-6 flex flex-col flex-1">
@@ -271,16 +294,16 @@
                 </div>
               </div>
               <div class="mt-auto">
-                <div class="flex justify-between text-[10px]  uppercase tracking-[0.15em] text-gray-400 border-t border-gray-50 pt-4">
+                <div class="flex justify-between text-[10px]   tracking-[0.15em] text-gray-400 border-t border-gray-50 pt-4">
                   <span>{{ deal.route }}</span>
                   <span class="text-gray-900">{{ deal.isRoundTrip ? 'Round Trip' : 'One Way' }}</span>
                 </div>
-                <p class="text-xs font-bold text-gray-300 mt-2">{{ deal.dates }}</p>
+                <p class="text-xs font-bold text-gray-500 mt-2">{{ deal.dates }}</p>
               </div>
             </div>
           </div>
         </div>
-        <!-- <p class="text-sm text-gray-400 font-bold mt-10 italic text-center">* All fares above were last found on: Mar 07, 2026 at 22:33:13 PM UTC.</p> -->
+        <!-- <p class="text-sm text-gray-400 font-bold mt-10  text-center">* All fares above were last found on: Mar 07, 2026 at 22:33:13 PM UTC.</p> -->
       </div>
     </section>
 
@@ -303,10 +326,14 @@
            <div v-for="i in 5" :key="i" class="bg-gray-200 animate-pulse h-64 rounded-2xl"></div>
         </div>
 
-        <div v-else-if="!trendingHotels.length" class="text-center py-16 bg-white/50 rounded-3xl border-2 border-dashed border-gray-200">
-           <GlobeAltIcon class="h-12 w-12 text-gray-300 mx-auto mb-3" />
-           <p class="text-gray-900  uppercase tracking-widest text-xs">Discovering trending destinations...</p>
-           <p class="text-gray-400 font-bold text-sm mt-1">Market data is being analyzed for your region</p>
+        <div v-else-if="!trendingHotels.length" class="w-full">
+           <EmptyState 
+             variant="stays" 
+             title="No trending hotels found" 
+             message="Market data is currently being analyzed for your region. Try exploring other destinations in the meantime."
+             action-label="Search Hotels"
+             @action="handleTabUpdate('Hotels')"
+           />
         </div>
 
         <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -317,10 +344,10 @@
             <img :src="dest.image" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
             <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
             <div class="absolute top-4 right-4 transition-premium group-hover:scale-110">
-               <div class="px-3 py-1 bg-gray-900 text-white text-[8px] uppercase tracking-widest rounded-full shadow-lg">{{ dest.isLive ? 'Trending' : 'Popular' }}</div>
+               <div class="px-3 py-1 bg-gray-900 text-white text-[8px]  tracking-widest rounded-full shadow-lg">{{ dest.isLive ? 'Trending' : 'Popular' }}</div>
             </div>
             <div class="absolute bottom-4 left-4 right-4">
-              <h4 class="text-white text-sm mb-1 uppercase tracking-tight line-clamp-1">{{ dest.name }}</h4>
+              <h4 class="text-white text-sm mb-1  tracking-tight line-clamp-1">{{ dest.name }}</h4>
               <div class="flex items-center justify-between">
                 <p class="text-white/70 text-[10px] font-bold">{{ dest.city }} • {{ dest.rating }} Stars</p>
                 <div class="text-right">
@@ -364,7 +391,7 @@
            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full relative z-10">
               <div v-if="busiestPeriods.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-gray-900/30 hover:shadow-xl transition-all group/stat">
                  <div class="flex items-center justify-between mb-4">
-                    <p class="text-sm  text-gray-900 uppercase tracking-[0.25em]">Peak Season</p>
+                    <p class="text-sm  text-gray-900  tracking-[0.25em]">Peak Season</p>
                     <SunIcon class="h-5 w-5 text-[#FFC107]" />
                  </div>
                  <p class="text-2xl  text-gray-900 mb-1">{{ formatPeriod(busiestPeriods[0].period) }}</p>
@@ -376,11 +403,11 @@
 
               <div v-if="mostBooked.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-gray-900/30 hover:shadow-xl transition-all group/stat">
                  <div class="flex items-center justify-between mb-4">
-                    <p class="text-sm  text-gray-900 uppercase tracking-[0.25em]">Trending Now</p>
+                    <p class="text-sm  text-gray-900  tracking-[0.25em]">Trending Now</p>
                     <div class="h-2 w-2 rounded-full bg-red-500 animate-ping"></div>
                  </div>
                  <p class="text-2xl  text-gray-900 mb-1">{{ mostBooked[0].destination }}</p>
-                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">+45% Booking Velocity</p>
+                 <p class="text-[9px] font-bold text-gray-400  tracking-widest">+45% Booking Velocity</p>
                  <div class="flex gap-1 mt-4">
                     <div v-for="i in 5" :key="i" class="h-4 w-2 rounded-sm bg-gray-900" :style="{ opacity: 0.2 + (i * 0.15) }"></div>
                  </div>
@@ -388,7 +415,7 @@
 
               <div v-if="mostTraveled.length" class="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 hover:border-gray-900/30 hover:shadow-xl transition-all group/stat">
                  <div class="flex items-center justify-between mb-4">
-                    <p class="text-sm  text-gray-900 uppercase tracking-[0.25em]">Verified Favs</p>
+                    <p class="text-sm  text-gray-900  tracking-[0.25em]">Verified Favs</p>
                     <ShieldCheckIcon class="h-5 w-5 text-gray-900" />
                  </div>
                  <p class="text-2xl  text-gray-900 mb-1">{{ mostTraveled[0].destination }}</p>
@@ -408,7 +435,7 @@
               <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-full group-hover/score:translate-x-full transition-transform duration-1000"></div>
               <div class="flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
                  <div class="text-center lg:text-left">
-                    <p class="text-sm text-gray-400 uppercase tracking-[0.3em] mb-2">Live Destination Analysis</p>
+                    <p class="text-sm text-gray-400  tracking-[0.3em] mb-2">Live Destination Analysis</p>
                     <h5 class="text-2xl  text-white mb-2">Why visit {{ topDestinationName }}?</h5>
                     <p class="text-xs font-bold text-white/40">Real-time lifestyle scores for your next destination.</p>
                  </div>
@@ -424,14 +451,14 @@
                              <span class="text-sm font-bold text-white">{{ score.overallMaxScore }}</span>
                           </div>
                        </div>
-                       <span class="text-[9px] font-bold text-white/50 uppercase tracking-widest">{{ score.categoryName }}</span>
+                       <span class="text-[9px] font-bold text-white/50  tracking-widest">{{ score.categoryName }}</span>
                     </div>
                  </div>
               </div>
            </div>
            
            <!-- Bottom Action -->
-            <p class="text-[9px]  text-brand-gray/40 uppercase tracking-widest relative z-10">Data powered by Amadeus Artificial Intelligence Platform</p>
+            <p class="text-[9px]  text-brand-gray/40  tracking-widest relative z-10">Data powered by Amadeus Artificial Intelligence Platform</p>
         </div>
       </div>
     </section>
@@ -451,7 +478,7 @@
     </div>
 
     <!-- Matchday/Promo Banner -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-0">
+    <!-- <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-0">
       <div class="bg-brand-blue rounded-[2.5rem] p-8 flex items-center justify-between shadow-xl shadow-brand-blue/20 overflow-hidden relative group">
         <div class="flex items-center gap-8 relative z-10">
           <div class="h-16 w-16 bg-white rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
@@ -462,10 +489,9 @@
             <a href="#" class="text-brand-green font-bold text-sm underline decoration-2 underline-offset-4 hover:text-white transition-colors">Find deals</a>
           </div>
         </div>
-        <!-- Abstract decor -->
         <div class="absolute right-0 top-0 h-full w-1/3 bg-white/5 skew-x-12"></div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Premium Travel Directory & Engagement Section -->
     <section class="pt-20 bg-[#F8FAFC] border-t border-gray-100 relative z-0 overflow-hidden">
@@ -482,15 +508,15 @@
                <TicketIcon class="h-6 w-6" />
              </div>
              <h4 class="text-xl  text-gray-900 mb-3 tracking-tight">Stay in the loop</h4>
-             <p class="text-xs font-bold text-gray-400 mb-6 leading-relaxed uppercase tracking-widest">Get exclusive deals & travel hacks</p>
+             <p class="text-xs font-bold text-gray-400 mb-6 leading-relaxed  tracking-widest">Get exclusive deals & travel hacks</p>
              <div class="relative">
-               <input 
+               <input v-model="email" 
                  type="email" 
                  placeholder="your@email.com" 
                  class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-brand-blue/20 transition-all outline-none"
                />
-               <button class="absolute right-2 top-2 bottom-2 bg-brand-blue text-white px-5 rounded-xl text-[10px] font-bold tracking-widest hover:bg-[#0a168a] transition-all transform active:scale-95 shadow-lg shadow-brand-blue/20">
-                 Join
+               <button @click="handleNewsletterSubscribe" :disabled="newsletterLoading || !email" class="absolute right-2 top-2 bottom-2 bg-brand-blue text-white px-5 rounded-xl text-[10px] font-bold tracking-widest hover:bg-[#0a168a] transition-all transform active:scale-95 shadow-lg shadow-brand-blue/20">
+                 {{ newsletterLoading ? "Joining..." : "Join" }}
                </button>
              </div>
           </div>
@@ -501,11 +527,12 @@
                <GlobeAltIcon class="h-6 w-6" />
              </div>
              <h4 class="text-xl  text-gray-900 mb-3 tracking-tight">Follow our journey</h4>
-             <p class="text-xs font-bold text-gray-400 mb-8 leading-relaxed uppercase tracking-widest">Connect with Flybeth globally</p>
+             <p class="text-xs font-bold text-gray-400 mb-8 leading-relaxed  tracking-widest">Connect with Flybeth globally</p>
              <div class="flex gap-4">
-                <a v-for="i in 4" :key="i" href="#" class="h-10 w-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 hover:bg-brand-blue hover:text-white hover:shadow-lg transition-all transform hover:-translate-y-1">
-                  <component :is="i === 1 ? 'div' : (i === 2 ? 'div' : (i === 3 ? 'div' : 'div'))" class="text-xs font-bold ">{{ i === 1 ? 'fb' : (i === 2 ? 'ig' : (i === 3 ? 'tw' : 'li')) }}</component>
-                </a>
+              <img src="@/assets/icons/instagram.svg" class="h-8 w-8 rounded-full" />
+              <img src="@/assets/icons/facebook.svg" class="h-8 w-8 rounded-full" />
+              <img src="@/assets/icons/twitter.svg" class="h-8 w-8 rounded-full" />
+              <img src="@/assets/icons/linkedin.svg" class="h-8 w-8 rounded-full" />
              </div>
           </div>
 
@@ -516,8 +543,8 @@
              </div>
              <div class="relative z-10 flex flex-col h-full">
                <h4 class="text-2xl  mb-2 tracking-tight">Get Inspired</h4>
-               <p class="text-[11px] font-bold text-white/70 mb-8 leading-relaxed uppercase tracking-widest">Discover your next destination</p>
-               <button class="mt-auto bg-brand-green text-white font-bold text-[10px] px-6 py-3.5 rounded-xl shadow-lg hover:bg-[#289003] transition-all tracking-widest uppercase self-start">
+               <p class="text-[11px] font-bold text-white/70 mb-8 leading-relaxed  tracking-widest">Discover your next destination</p>
+               <button class="mt-auto bg-brand-green text-white font-bold text-[10px] px-6 py-3.5 rounded-xl shadow-lg hover:bg-[#289003] transition-all tracking-widest  self-start">
                  Dreamguides
                </button>
              </div>
@@ -535,7 +562,7 @@
           <!-- Column: Flights -->
           <div v-if="africanCities.length || europeanCities.length" class="space-y-10 focus-within:z-10">
             <div>
-              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">
+              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400  tracking-widest mb-6">
                 <div class="h-2 w-2 rounded-full bg-brand-blue"></div>
                 Flights from Nigeria
               </h3>
@@ -544,7 +571,7 @@
                   { name: 'Africa', cities: africanCities },
                   { name: 'Europe', cities: europeanCities }
                 ]" :key="region.name" class="space-y-3">
-                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-green/30 pl-3 uppercase tracking-widest">{{ region.name }}</h4>
+                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-green/30 pl-3  tracking-widest">{{ region.name }}</h4>
                   <ul class="space-y-1 pl-3 flex flex-wrap gap-x-4 gap-y-1">
                     <li v-for="city in region.cities" :key="city" @click="navigateToFlightSearch(city)" class="text-[11px] font-bold text-gray-500 hover:text-brand-blue cursor-pointer transition-colors duration-300">{{ city }}</li>
                   </ul>
@@ -552,7 +579,7 @@
               </div>
             </div>
             <div>
-              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 border-t border-gray-100 pt-6">
+              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400  tracking-widest mb-6 border-t border-gray-100 pt-6">
                 <div class="h-2 w-2 rounded-full bg-brand-green"></div>
                 Global Routes
               </h3>
@@ -561,7 +588,7 @@
                   { name: 'Asia', cities: asianCities.slice(0, 4) },
                   { name: 'N. America', cities: northAmericanCities.slice(0, 4) }
                 ]" :key="region.name" class="space-y-3">
-                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-green/30 pl-3 uppercase tracking-widest">{{ region.name }}</h4>
+                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-green/30 pl-3  tracking-widest">{{ region.name }}</h4>
                   <ul class="space-y-1 pl-3 flex flex-wrap gap-x-4 gap-y-1">
                     <li v-for="city in region.cities" :key="city" @click="navigateToFlightSearch(city)" class="text-[11px] font-bold text-gray-500 hover:text-brand-blue cursor-pointer transition-colors duration-300">{{ city }}</li>
                   </ul>
@@ -573,7 +600,7 @@
           <!-- Column: Hotels -->
           <div v-if="africanCities.length || europeanCities.length" class="space-y-10">
             <div>
-              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">
+              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400  tracking-widest mb-6">
                 <div class="h-2 w-2 rounded-full bg-brand-green"></div>
                 Curated Hotels
               </h3>
@@ -582,7 +609,7 @@
                   { name: 'Africa', cities: africanCities },
                   { name: 'Europe', cities: europeanCities }
                 ]" :key="region.name" class="space-y-3">
-                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-blue/30 pl-3 uppercase tracking-widest">In {{ region.name }}</h4>
+                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-blue/30 pl-3  tracking-widest">In {{ region.name }}</h4>
                   <ul class="space-y-2 pl-3">
                     <li v-for="city in region.cities" :key="city" @click="navigateToHotelSearch(city)" class="group flex items-center gap-3 cursor-pointer">
                       <div class="h-6 w-6 rounded bg-white flex items-center justify-center text-[8px] font-bold text-gray-400 shadow-sm group-hover:bg-brand-blue group-hover:text-white transition-all">{{ city.slice(0, 2) }}</div>
@@ -601,8 +628,15 @@
     <!-- <PartnerCarousel /> -->
 
     <!-- Global Connectivity Hub: (Professional Light Theme) -->
-    <section class="relative w-full overflow-hidden mb-20 bg-gray-50 border-y border-gray-100">
-      <!-- Animated Focal Points (Light Theme) -->
+         <!-- <section class="py-14 bg-white border-b border-neutral-100 overflow-hidden relative">
+      <p class="text-center text-xs font-bold text-neutral-400  tracking-widest mb-8">Trusted by leading travel brands worldwide</p>
+      <div class="flex items-center space-x-16 animate-scroll-logos">
+        <div v-for="n in 2" :key="n" class="flex items-center space-x-16 flex-shrink-0">
+          <img v-for="(p, idx) in partners" :key="idx" :src="p.logo" class="h-10 lg:h-12 object-contain opacity-80 hover:opacity-100 transition-all cursor-pointer" :alt="p.name" />
+        </div>
+      </div>
+    </section> -->
+    <!-- <section class="relative w-full overflow-hidden mb-20 bg-gray-50 border-y border-gray-100">
       <div class="absolute inset-0 opacity-10 pointer-events-none">
         <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_120%,#3b82f6,transparent_50%),radial-gradient(circle_at_0%_0%,#10b981,transparent_30%)]"></div>
       </div>
@@ -613,31 +647,19 @@
             <div class="h-10 w-10 bg-brand-blue/5 rounded-xl flex items-center justify-center border border-brand-blue/10">
               <GlobeAltIcon class="h-5 v-5 text-brand-blue" />
             </div>
-            <span class="text-[10px] font-black text-brand-blue uppercase tracking-[0.4em]">Global Connectivity Hub</span>
+            <span class="text-[10px] font-black text-brand-blue  tracking-[0.4em]">Global Connectivity Hub</span>
           </div>
           <h2 class="text-3xl md:text-5xl lg:text-6xl  text-gray-950 mb-7 tracking-tighter leading-[1.05]">Partnerships that <span class="text-brand-blue underline decoration-brand-blue/20 decoration-8 underline-offset-4">Connect</span> the World.</h2>
           <p class="text-base sm:text-lg font-bold text-gray-500 leading-relaxed max-w-2xl">Access over 500+ airlines, 1.2M premium stays, and thousands of curated experiences across the globe, all at your fingertips.</p>
             <div class="mt-32">
                <PartnerCarousel />
             </div>
-        <!-- <div class="space-y-12 lg:space-y-20 [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
-          <div class="relative flex overflow-x-hidden group/m">
-            <div class="animate-marquee whitespace-nowrap flex items-center py-4">
-              <div v-for="(p, i) in [...partnerAirlines, ...partnerAirlines, ...partnerAirlines, ...partnerAirlines]" :key="`air-${i}`" 
-                   @click="navigateToCategory('airline', p)"
-                   class="mx-4 sm:mx-8 px-10 py-8 bg-white rounded-3xl shadow-lg border border-gray-100 hover:shadow-2xl hover:scale-105 transition-all duration-500 cursor-pointer group/logo shrink-0">
-                <img :src="p.logo" :alt="p.name" class="h-12 sm:h-14 w-28 sm:w-36 object-contain transition-all opacity-90 group-hover:opacity-100" />
-              </div>
-            </div>
-          </div>
-        </div> -->
        </div>
       </div>
-    </section>
-    <section class="py-24 bg-white relative z-0 overflow-hidden">
+    </section> -->
+    <!-- <section class="py-24 bg-white relative z-0 overflow-hidden">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
-        <!-- SEO Content Article: Styled & Collapsible -->
         <article class="relative bg-white rounded-[3rem] p-10 lg:p-16 border border-gray-100 shadow-sm overflow-hidden group/article transition-all duration-700" :class="showLongSeo ? 'max-h-[2000px]' : 'max-h-[480px]'">
           <div class="relative z-10">
             <h2 class="text-2xl  text-gray-900 mb-8 tracking-tight border-b-2 border-brand-green w-fit pb-2">The Flybeth Experience</h2>
@@ -659,7 +681,6 @@
             </div>
           </div>
 
-          <!-- Fade out overlay when collapsed -->
           <div v-if="!showLongSeo" class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white to-transparent z-20"></div>
           
           <div class="relative z-30 flex justify-center mt-8">
@@ -667,7 +688,7 @@
               @click="showLongSeo = !showLongSeo" 
               class="flex flex-col items-center gap-2 group/btn"
             >
-              <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 group-hover/btn:text-brand-blue transition-colors">
+              <span class="text-[10px] font-bold  tracking-[0.3em] text-gray-400 group-hover/btn:text-brand-blue transition-colors">
                 {{ showLongSeo ? 'Collapse Overview' : 'Explore Flybeth Story' }}
               </span>
               <div class="h-10 w-10 bg-white shadow-lg rounded-full flex items-center justify-center border border-gray-50 group-hover/btn:scale-110 transition-transform">
@@ -677,10 +698,10 @@
           </div>
         </article>
       </div>
-    </section>
+    </section> -->
 
     <!-- Footer Gradient Spacer -->
-    <div class="h-32 bg-gradient-to-t from-gray-50 to-transparent"></div>
+    <!-- <div class="h-32 bg-gradient-to-t from-gray-50 to-transparent"></div> -->
 
     <!-- Sticky Expert Tooltip -->
     <StickyExpertTooltip :show="showExpertTooltip" />
@@ -699,8 +720,16 @@ import MarketingModal from '@/components/MarketingModal.vue'
 import StickyExpertTooltip from '@/components/StickyExpertTooltip.vue'
 import CityDealsGrid from '@/components/CityDealsGrid.vue'
 import SettingsSwitcher from '@/components/SettingsSwitcher.vue' 
+import EmptyState from '@/components/EmptyState.vue' 
 
 const searchWidgetRef = ref<any>(null)
+
+  const activeSlide = ref(0)
+const progressWidth = ref(0)
+let carouselInterval: ReturnType<typeof setInterval> | null = null
+let progressInterval: ReturnType<typeof setInterval> | null = null
+
+const SLIDE_DURATION = 6000 // 6 seconds per slide
 
 const handleSelectDeal = (deal: any) => {
   if (searchWidgetRef.value) {
@@ -768,6 +797,25 @@ const showSettings = ref(false);
 const showLongSeo = ref(false);
 const offerTab = ref<'Flight' | 'Hotel'>('Flight');
 const fareTab = ref<'Round Trip' | 'One Way'>('Round Trip');
+
+import { useNewsletter } from '@/composables/modules/support/useNewsletter';
+const { loading: newsletterLoading, subscribe: subscribeNewsletter } = useNewsletter();
+const email = ref('');
+
+const handleNewsletterSubscribe = async () => {
+  if (!email.value) {
+    showToast({
+      title: 'Email Required',
+      message: 'Please enter a valid email address to join.',
+      toastType: 'error'
+    });
+    return;
+  }
+  const success = await subscribeNewsletter(email.value, 'landing-page');
+  if (success) {
+    email.value = '';
+  }
+};
 
 const { loading: flightDealsLoading, flightDeals, fetchFlightDeals } = useFetchFlightDeals();
 const { loading: staysLoading, stays, searchStays } = useSearchStays();
@@ -840,7 +888,7 @@ const currentOffers = computed(() => {
       installment: `₦${Math.floor(deal.classes[0]?.basePrice * 0.28).toLocaleString()}`,
       deal: deal.isFeatured,
       image: fallbackImages[Math.floor(Math.random() * fallbackImages.length)],
-      airlineLogo: `https://api.duffel.com/img/airlines/${deal.airline.slice(0, 2).toUpperCase()}.png`
+      airlineLogo: `https://api.duffel.com/img/airlines/${deal.airline.slice(0, 2).to()}.png`
     }));
   } else {
     const activeStays = Array.isArray(stays.value) ? stays.value : [];
@@ -997,7 +1045,7 @@ const navigateToFlightSearch = (destination: string) => {
   const origin = userLocation.value?.cityCode || 'LOS';
   const query = {
     origin,
-    destination: destination.toUpperCase().slice(0, 3), // Simple heuristic for demo
+    destination: destination.to().slice(0, 3), // Simple heuristic for demo
     departureDate: new Date().toISOString().split('T')[0],
     adults: 1,
     cabinClass: 'ECONOMY'
@@ -1229,6 +1277,65 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleWidgetScroll);
   if (marketingTimer) clearTimeout(marketingTimer)
 })
+
+// Show the next 3 slides as preview cards (excluding the active one)
+const visibleCards = computed(() => {
+  const cards = []
+  for (let i = 1; i <= 3; i++) {
+    const idx = (activeSlide.value + i) % slides.length
+    cards.push({ ...slides[idx], index: idx })
+  }
+  return cards
+})
+
+const nextSlide = () => {
+  activeSlide.value = (activeSlide.value + 1) % slides.length
+  resetProgress()
+}
+
+const prevSlide = () => {
+  activeSlide.value = (activeSlide.value - 1 + slides.length) % slides.length
+  resetProgress()
+}
+
+const goToSlide = (index: number) => {
+  activeSlide.value = index
+  resetProgress()
+}
+
+const resetProgress = () => {
+  progressWidth.value = 0
+}
+
+const startAutoPlay = () => {
+  // Progress bar ticker (updates every 30ms for smooth animation)
+  progressInterval = setInterval(() => {
+    progressWidth.value += (30 / SLIDE_DURATION) * 100
+    if (progressWidth.value >= 100) {
+      progressWidth.value = 0
+      activeSlide.value = (activeSlide.value + 1) % slides.length
+    }
+  }, 30)
+}
+
+const stopAutoPlay = () => {
+  if (progressInterval) clearInterval(progressInterval)
+  if (carouselInterval) clearInterval(carouselInterval)
+}
+
+const partners = [
+  { name: 'Aegean Airlines', logo: 'https://www.mondee.com/app/uploads/2023/11/AegeanLogo-1.png' },
+  { name: 'Air Canada', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_2_air_canada_large.png' },
+  { name: 'American Airlines', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_4_american_airline_larges.png' },
+  { name: 'Etihad', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_6_etihad_large.png' },
+  { name: 'Lufthansa', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_7_lufthansa_large.png' },
+  { name: 'Qatar Airways', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_8_qatar_large.png' },
+  { name: 'Singapore Airlines', logo: 'https://www.mondee.com/app/uploads/2024/02/Singapore-Airlines-3-1.png' },
+  { name: 'United Airlines', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_9_united_large.png' },
+  { name: 'Hilton', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_24_hilton_large.png' },
+  { name: 'Marriott Bonvoy', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_27_marriott_bonvoy_large.png' },
+  { name: 'Four Seasons', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_1_four_season_large.png' }
+]
 </script>
 
 <style>
@@ -1306,4 +1413,42 @@ onUnmounted(() => {
 .animate-marquee:hover, .animate-marquee-reverse:hover {
   animation-play-state: paused;
 }
+
+/* ===== Text transition (slide + fade) ===== */
+.slide-text-enter-active {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide-text-leave-active {
+  transition: all 0.4s cubic-bezier(0.5, 0, 0.75, 0);
+}
+.slide-text-enter-from {
+  opacity: 0;
+  transform: translateY(40px);
+}
+.slide-text-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+/* ===== Vertical text ===== */
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* ===== Logo scroll ===== */
+.animate-scroll-logos {
+  display: flex;
+  width: max-content;
+  animation: scroll-logos 40s linear infinite;
+}
+@keyframes scroll-logos {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: white; }
+::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
 </style>

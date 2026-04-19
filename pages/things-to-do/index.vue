@@ -1,232 +1,356 @@
 <template>
-  <main class="min-h-screen bg-[#F8FAFC]">
-    <!-- ── Premium Floating Header ─────────────────────────────────────────── -->
-    <div class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-sm transition-all duration-500">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-        <div class="flex flex-col md:flex-row items-center gap-4">
-          <!-- Back Button & Title -->
-          <div class="flex items-center gap-4 w-full md:w-auto">
-            <NuxtLink to="/" class="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-all border border-gray-100 shrink-0">
-              <ChevronLeftIcon class="h-5 w-5" />
-            </NuxtLink>
-            <div class="md:hidden flex-1">
-              <h1 class="text-lg font-bold text-gray-900 truncate">Things to do</h1>
+  <div class="tt-root" @mousedown="handleGlobalMousedown">
+
+    <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
+    <section class="tt-hero">
+      <div class="tt-hero-bg">
+        <div class="tt-orb tt-orb--a"></div>
+        <div class="tt-orb tt-orb--b"></div>
+      </div>
+
+      <div class="tt-wrap">
+
+        <!-- Dynamic headline -->
+        <div class="tt-headline">
+          <span class="tt-eyebrow">✦ Curated Experiences</span>
+          <h1 class="tt-h1">
+            <template v-if="currentCityName">
+              Exploring <em>{{ currentCityName }}</em>
+            </template>
+            <template v-else>
+              Discover<br><em>world wonders.</em>
+            </template>
+          </h1>
+        </div>
+
+        <!-- ── SEARCH BAR ── -->
+        <div class="tt-bar">
+
+          <!-- DESTINATION field -->
+          <div class="tt-fld tt-fld--dest" :class="{ 'tt-fld--active': activeField === 'dest' }" ref="destRef">
+            <div class="tt-fld-inner" @click="openField('dest')">
+              <svg class="tt-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <div class="tt-fld-text">
+                <span class="tt-fld-lbl">Where to?</span>
+                <span class="tt-fld-val" :class="{ 'tt-fld-val--set': searchQuery.destinationIata }">
+                  {{ currentCityName || 'Select city' }}
+                </span>
+              </div>
             </div>
+            <!-- Destination dropdown -->
+            <Transition name="td">
+              <div v-if="activeField === 'dest'" class="tt-drop tt-drop--dest" @mousedown.stop>
+                <div class="tt-drop-search">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  <input ref="destInputRef" v-model="destQuery" placeholder="Search cities…" class="tt-drop-input" @input="searchCities" />
+                  <button v-if="destQuery" class="tt-drop-clear" @click="destQuery = ''; searchQuery.destinationIata = ''">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                </div>
+                <div v-if="!destQuery" class="tt-drop-section">
+                  <span class="tt-drop-sec-label">Popular cities</span>
+                  <div class="tt-drop-grid">
+                    <button v-for="p in popularCities" :key="p.code" class="tt-pop-item" @click="selectCity(p)">
+                      <span class="tt-pop-icon">✨</span>
+                      <span class="tt-pop-name">{{ p.name }}</span>
+                    </button>
+                  </div>
+                </div>
+                <div v-else class="tt-drop-results">
+                  <button v-for="r in cityResults" :key="r.code" class="tt-loc-result" @click="selectCity(r)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span class="tt-loc-name">{{ r.name }}</span>
+                  </button>
+                  <div v-if="!cityResults.length" class="tt-drop-empty">No results for "{{ destQuery }}"</div>
+                </div>
+              </div>
+            </Transition>
           </div>
 
-          <!-- Glass Search Bar -->
-          <div class="flex-1 w-full bg-white rounded-2xl p-1.5 shadow-lg shadow-gray-200/50 border border-gray-100/50">
-            <div class="flex flex-col sm:flex-row items-center divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
-              <div class="w-full sm:flex-1">
-                <CityPicker v-model="searchQuery.destinationIata" label="Destination" placeholder="Where to go?" class="!bg-transparent" />
+          <div class="tt-bar-sep"></div>
+
+          <!-- DATE field -->
+          <div class="tt-fld tt-fld--date" :class="{ 'tt-fld--active': activeField === 'date' }" ref="dateRef">
+            <div class="tt-fld-inner" @click="openField('date')">
+              <svg class="tt-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <div class="tt-fld-text">
+                <span class="tt-fld-lbl">When?</span>
+                <span class="tt-fld-val" :class="{ 'tt-fld-val--set': searchQuery.date }">
+                  {{ searchQuery.date ? formatDate(searchQuery.date) : 'Choose date' }}
+                </span>
               </div>
-              <div class="w-full sm:w-64">
-                <FlightDateRangePicker :departure="searchQuery.date" mode="oneway" label="Date" @update:departure="(v) => searchQuery.date = v" />
+            </div>
+            <!-- Calendar dropdown -->
+            <Transition name="td">
+              <div v-if="activeField === 'date'" class="tt-drop tt-drop--cal" @mousedown.stop>
+                <div class="tt-cal-nav-row">
+                  <button class="tt-cal-arrow" @click="prevMonth">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+                  </button>
+                  <span class="tt-cal-title">{{ calMonthLabel }}</span>
+                  <button class="tt-cal-arrow" @click="nextMonth">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  </button>
+                </div>
+                <div class="tt-cal-grid">
+                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="tt-cal-dow">{{ d }}</div>
+                  <div v-for="c in calCells" :key="c.key"
+                    class="tt-cal-cell"
+                    :class="{
+                      'tt-cal-cell--blank': !c.date,
+                      'tt-cal-cell--past': c.past,
+                      'tt-cal-cell--sel': c.selected,
+                      'tt-cal-cell--today': c.today
+                    }"
+                    @click="c.date && !c.past && pickDate(c.date)"
+                  >{{ c.day }}</div>
+                </div>
               </div>
-              <div class="w-full sm:w-auto p-1.5">
-                <button
-                  @click="handleSearch"
-                  :disabled="loading"
-                  class="w-full sm:px-8 py-3.5 bg-brand-blue text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand-blue/90 flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-70"
+            </Transition>
+          </div>
+
+          <!-- SEARCH BTN -->
+          <button class="tt-search-btn" :class="{ 'tt-search-btn--busy': loading }" @click="handleSearch">
+            <span class="tt-search-inner">
+              <svg v-if="!loading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <span v-if="loading" class="tt-spin"></span>
+              <span>{{ loading ? 'Finding' : 'Find activities' }}</span>
+            </span>
+          </button>
+
+        </div><!-- /tt-bar -->
+      </div><!-- /tt-wrap -->
+    </section>
+
+    <!-- ═══════════════ MAIN BODY ═══════════════ -->
+    <div class="tt-wrap tt-main">
+
+      <!-- Body grid -->
+      <div class="tt-body">
+
+        <!-- Sidebar -->
+        <aside class="tt-sidebar" :class="{ 'tt-sidebar--open': mobileFilters }">
+          <div class="tt-sbar">
+            <div class="tt-sbar-hd">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              <span>Refine choices</span>
+              <button class="tt-reset" @click="resetFilters">Reset</button>
+            </div>
+
+            <div class="tt-sb-block">
+              <p class="tt-sb-label">Categories</p>
+              <div class="tt-chips">
+                <button v-for="c in availableCategories" :key="c" 
+                  class="tt-chip" 
+                  :class="{ 'tt-chip--on': filters.categories.includes(c) }" 
+                  @click="toggleCategory(c)"
+                >{{ c }}</button>
+              </div>
+            </div>
+
+            <div class="tt-sb-block">
+              <p class="tt-sb-label">Max price <strong>${{ filters.priceRange[1] }}</strong></p>
+              <div class="tt-range-wrap">
+                <input type="range" min="0" max="1000" step="10" v-model.number="filters.priceRange[1]" class="tt-range" />
+                <div class="tt-range-ends">
+                  <span>$0</span>
+                  <span>$1,000+</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tt-sb-block">
+              <p class="tt-sb-label">Minimum Rating</p>
+              <div class="tt-rating-opts">
+                <button v-for="r in [4, 3, 2]" :key="r" 
+                  class="tt-rate-opt" 
+                  :class="{ 'tt-rate-opt--on': filters.rating === r }" 
+                  @click="filters.rating = filters.rating === r ? 0 : r"
                 >
-                  <div v-if="loading" class="animate-spin h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full"></div>
-                  <MagnifyingGlassIcon v-else class="h-4 w-4" />
-                  <span>Search</span>
+                  <div class="tt-stars">
+                    <svg v-for="i in 5" :key="i" width="10" height="10" viewBox="0 0 24 24" :fill="i <= r ? '#fbbf24' : '#e5e7eb'"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </div>
+                  <span>{{ r }}+ Stars</span>
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Main Content Area ──────────────────────────────────────────────── -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div class="flex flex-col lg:flex-row gap-10">
-        
-        <!-- Sidebar: Functional Filters -->
-        <aside class="lg:w-80 shrink-0 space-y-8">
-           <!-- Filters Header -->
-           <div class="flex items-center justify-between">
-              <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                <AdjustmentsHorizontalIcon class="h-4 w-4" />
-                Filter by
-              </h2>
-              <button @click="resetFilters" class="text-[11px] font-bold text-brand-blue hover:text-brand-blue/80 uppercase tracking-wider transition-colors">Reset all</button>
-           </div>
-
-           <!-- Category Filter -->
-           <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-              <h3 class="text-sm font-bold text-gray-900 mb-5">Categories</h3>
-              <div class="space-y-3.5">
-                 <label v-for="cat in availableCategories" :key="cat" class="flex items-center justify-between cursor-pointer group">
-                    <div class="flex items-center gap-3">
-                       <div class="relative flex items-center justify-center">
-                          <input type="checkbox" v-model="filters.categories" :value="cat" class="peer h-5 w-5 rounded-md border-gray-200 text-brand-blue focus:ring-brand-blue/20 transition-all cursor-pointer" />
-                       </div>
-                       <span class="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{{ cat }}</span>
-                    </div>
-                 </label>
-              </div>
-           </div>
-
-           <!-- Price Filter -->
-           <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-              <div class="flex items-center justify-between mb-5">
-                 <h3 class="text-sm font-bold text-gray-900">Price range</h3>
-                 <span class="text-xs font-bold text-brand-blue">${{ filters.priceRange[0] }} - ${{ filters.priceRange[1] }}</span>
-              </div>
-              <input type="range" min="0" max="1000" v-model.number="filters.priceRange[1]" class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-brand-blue" />
-              <div class="flex justify-between mt-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                 <span>$0</span>
-                 <span>$1000+</span>
-              </div>
-           </div>
-
-           <!-- Rating Filter -->
-           <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-              <h3 class="text-sm font-bold text-gray-900 mb-5">Minimum Rating</h3>
-              <div class="space-y-3.5">
-                 <label v-for="rate in [4, 3, 2]" :key="rate" class="flex items-center gap-3 cursor-pointer group">
-                    <input type="radio" v-model="filters.rating" :value="rate" class="h-4 w-4 text-brand-blue border-gray-200 focus:ring-brand-blue/20" />
-                    <div class="flex items-center gap-1">
-                       <StarIcon v-for="i in rate" :key="i" class="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
-                       <StarIcon v-for="i in (5 - rate)" :key="i" class="h-3.5 w-3.5 text-gray-200 fill-gray-200" />
-                       <span class="text-xs font-bold text-gray-600 ml-1 mt-0.5">{{ rate }}+ Stars</span>
-                    </div>
-                 </label>
-              </div>
-           </div>
         </aside>
 
-        <!-- Main Content -->
-        <div class="flex-1 min-w-0">
-          <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 tracking-tight leading-none mb-3">Things to do in <span class="text-brand-blue">{{ currentCityName || 'the area' }}</span></h1>
-            <p class="text-sm font-medium text-gray-400">Discover and book curated experiences, tours, and activities.</p>
+        <!-- Results -->
+        <div class="tt-results">
+
+          <!-- Toolbar -->
+          <div v-if="filteredActivitiesList.length" class="tt-toolbar">
+            <span class="tt-rcount">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+              {{ filteredActivitiesList.length }} things found
+            </span>
+            <div class="tt-toolbar-r">
+               <button class="tt-filter-mob" @click="mobileFilters = !mobileFilters">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+                Filters
+              </button>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
-            <TransitionGroup name="activity-list">
-              <!-- Loading Skeleton -->
-              <template v-if="loading">
-                <div v-for="i in 4" :key="`skeleton-${i}`" class="bg-white rounded-3xl p-5 border border-gray-100 h-[420px] animate-pulse">
-                  <div class="w-full h-56 bg-gray-50 rounded-2xl mb-5" />
-                  <div class="space-y-3">
-                     <div class="h-6 w-3/4 bg-gray-50 rounded-lg" />
-                     <div class="h-4 w-1/4 bg-gray-50 rounded-lg" />
-                     <div class="h-10 w-full bg-gray-50 rounded-xl mt-6" />
-                  </div>
+          <!-- Loading skeletons -->
+          <div v-if="loading" class="tt-grid">
+            <div v-for="n in 4" :key="n" class="tt-skel-card">
+              <div class="tt-sk tt-sk--img"></div>
+              <div class="tt-sk-body">
+                <div class="tt-sk tt-sk--lg"></div>
+                <div class="tt-sk tt-sk--sm"></div>
+                <div class="tt-sk-row">
+                   <div class="tt-sk tt-sk--badge"></div>
+                   <div class="tt-sk tt-sk--price"></div>
                 </div>
-              </template>
-
-              <!-- Results -->
-              <template v-else-if="filteredActivitiesList.length > 0">
-                <div v-for="activity in filteredActivitiesList" :key="activity.experienceId" 
-                     class="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group cursor-pointer flex flex-col"
-                     @click="goToDetail(activity)">
-                  
-                  <!-- Image & Badges -->
-                  <div class="relative h-56 rounded-2xl overflow-hidden mb-5 shrink-0 bg-gray-100">
-                    <img v-if="activity.photos?.[0]" :src="activity.photos[0]" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" />
-                    
-                    <!-- Top Badges -->
-                    <div class="absolute top-4 left-4 flex gap-2">
-                      <div v-if="activity.rating" class="bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-md">
-                        <StarIcon class="h-3 w-3 text-orange-400 fill-orange-400" />
-                        <span class="text-[11px] font-bold text-gray-900">{{ activity.rating }}</span>
-                      </div>
-                      <div class="bg-brand-blue text-white px-2.5 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-md">
-                         {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : 'Amadeus' }}
-                      </div>
-                    </div>
-
-                    <!-- Duration Badge -->
-                    <div v-if="activity.minimumDuration" class="absolute bottom-4 left-4 px-3 py-1.5 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-1.5">
-                       <ClockIcon class="h-3 w-3 text-white" />
-                       <span class="text-[10px] font-bold text-white uppercase tracking-wider">{{ activity.minimumDuration }}</span>
-                    </div>
-                  </div>
-
-                  <!-- Details -->
-                  <div class="flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 class="text-xl font-bold text-gray-900 leading-tight group-hover:text-brand-blue transition-colors line-clamp-1 mb-2">{{ activity.name }}</h3>
-                      <p class="text-sm font-medium text-gray-400 line-clamp-2 leading-relaxed">{{ stripHtml(activity.description) }}</p>
-                    </div>
-
-                    <div class="mt-8 pt-5 border-t border-gray-50 flex items-center justify-between">
-                       <div>
-                         <p class="text-[10px] font-bold uppercase tracking-widest text-gray-300 mb-0.5">Starting from</p>
-                         <p class="text-2xl font-bold text-gray-900 tracking-tighter">
-                            <span class="text-sm font-medium text-gray-400 mr-1">{{ activity.currency || 'EUR' }}</span>
-                            {{ formatPrice(activity.price) }}
-                         </p>
-                       </div>
-                       <button class="h-12 px-6 bg-brand-blue text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand-blue/90 shadow-lg shadow-brand-blue/20 transition-all flex items-center gap-2">
-                          View details
-                          <ArrowRightIcon class="h-3.5 w-3.5" />
-                       </button>
-                    </div>
-                  </div>
-                </div>
-              </template>
-
-              <!-- Empty State -->
-              <template v-else>
-                 <div class="col-span-full py-24 text-center">
-                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
-                       <FaceFrownIcon class="h-12 w-12" />
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">No activities found</h2>
-                    <p class="text-sm font-medium text-gray-400 max-w-sm mx-auto">Try adjusting your filters or search for another destination to find exciting things to do.</p>
-                    <button @click="resetFilters" class="mt-8 px-8 py-3 bg-white text-gray-900 rounded-xl font-bold text-xs uppercase tracking-widest border border-gray-100 shadow-sm hover:bg-gray-50 transition-all">Clear all filters</button>
-                 </div>
-              </template>
-            </TransitionGroup>
+              </div>
+            </div>
           </div>
+
+          <!-- Empty state -->
+          <div v-else-if="!filteredActivitiesList.length && !loading" class="tt-empty">
+            <div class="tt-empty-ico">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            </div>
+            <h3 class="tt-empty-h">No activities found</h3>
+            <p class="tt-empty-p">Try adjusting your filters or search for another destination to find exciting things to do.</p>
+            <button class="tt-empty-btn" @click="resetFilters">Reset filters</button>
+          </div>
+
+          <!-- Grid area -->
+          <div v-if="filteredActivitiesList.length && !loading" class="tt-grid">
+            <div v-for="activity in filteredActivitiesList" :key="activity.experienceId" 
+                 class="tt-card"
+                 @click="goToDetail(activity)">
+              
+              <div class="tt-card-img-wrap">
+                <img v-if="activity.photos?.[0]" :src="activity.photos[0]" class="tt-card-img" loading="lazy" />
+                <div class="tt-card-badges">
+                  <div v-if="activity.rating" class="tt-card-badge tt-card-badge--white">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="#fbbf24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <span>{{ activity.rating }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tt-card-body">
+                <h3 class="tt-card-name">{{ activity.name }}</h3>
+                <p class="tt-card-desc">{{ stripHtml(activity.description) }}</p>
+                <div class="tt-card-foot">
+                  <div class="tt-card-price-grp">
+                    <span class="tt-price-lbl">From</span>
+                    <span class="tt-price-val">{{ activity.currency || '$' }} {{ formatPrice(activity.price) }}</span>
+                  </div>
+                  <button class="tt-card-btn">Details →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
-  </main>
+
+    <!-- Mobile filter overlay -->
+    <Transition name="tt-ov">
+      <div v-if="mobileFilters" class="tt-overlay" @click.self="mobileFilters = false"></div>
+    </Transition>
+
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, computed } from 'vue'
+definePageMeta({ layout: 'no-footer' })
+
+import { ref, onMounted, reactive, computed, nextTick, watch } from 'vue'
 import { useRoute } from '#app'
-import { 
-  ChevronLeftIcon, 
-  MagnifyingGlassIcon, 
-  MapPinIcon, 
-  AdjustmentsHorizontalIcon,
-  StarIcon,
-  ClockIcon,
-  FaceFrownIcon,
-  ArrowRightIcon
-} from '@heroicons/vue/24/solid'
 import { useSearchActivities } from '@/composables/modules/experiences/useSearchActivities'
 import { flightsApi } from '@/api_factory/modules/flights'
 
 const route = useRoute()
 const { loading, filteredActivitiesList, filters, searchActivities, activitiesList } = useSearchActivities()
 
+// ── Refs ──────────────────────────────────────────────────────────────
+const activeField = ref<string | null>(null)
+const destRef = ref<HTMLElement | null>(null)
+const dateRef = ref<HTMLElement | null>(null)
+const destInputRef = ref<HTMLInputElement | null>(null)
+const destQuery = ref('')
+const cityResults = ref<any[]>([])
+const calViewDate = ref(new Date())
+const mobileFilters = ref(false)
+const currentCityName = ref('')
+
 const searchQuery = reactive({
   destinationIata: (route.query.destination as string) || '',
   date: (route.query.date as string) || '',
 })
 
-const currentCityName = ref('')
+// ── Constants ─────────────────────────────────────────────────────────
 const availableCategories = ['Sightseeing', 'Culture', 'Museums', 'Nature', 'Adventure', 'Food', 'Nightlife']
+const popularCities = [
+  { name: 'Paris', code: 'PAR' },
+  { name: 'Dubai', code: 'DXB' },
+  { name: 'London', code: 'LON' },
+  { name: 'New York', code: 'NYC' },
+  { name: 'Lagos', code: 'LOS' },
+  { name: 'Nairobi', code: 'NBO' }
+]
+
+// ── Methods ───────────────────────────────────────────────────────────
+const openField = (field: string) => {
+  activeField.value = activeField.value === field ? null : field
+  if (field === 'dest') nextTick(() => destInputRef.value?.focus())
+}
+
+const handleGlobalMousedown = (e: MouseEvent) => {
+  const refs: Record<string, any> = { dest: destRef, date: dateRef }
+  if (activeField.value) {
+    const cur = refs[activeField.value]?.value
+    if (cur && !cur.contains(e.target as Node)) activeField.value = null
+  }
+}
+
+const searchCities = async () => {
+  if (!destQuery.value) { cityResults.value = []; return }
+  try {
+    const res = await flightsApi.searchAirports(destQuery.value)
+    const data = res.data?.data || res.data || []
+    cityResults.value = data.map((item: any) => ({
+      name: item.name || item.address?.cityName,
+      code: item.iataCode || item.id,
+      lat: item.geoCode?.latitude,
+      lon: item.geoCode?.longitude
+    })).slice(0, 5)
+  } catch (e) {
+    cityResults.value = []
+  }
+}
+
+const selectCity = async (city: any) => {
+  searchQuery.destinationIata = city.code
+  currentCityName.value = city.name
+  destQuery.value = city.name
+  activeField.value = null
+  nextTick(() => openField('date'))
+}
 
 const formatPrice = (p: any) => {
-  const num = parseFloat(p)
-  if (isNaN(num)) return '0.00'
+  const num = parseFloat(p); if (isNaN(num)) return '0.00'
   return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 const stripHtml = (html: string) => {
   if (!html) return ''
-  return html.replace(/<[^>]*>/g, '').slice(0, 120)
+  return html.replace(/<[^>]*>/g, '').slice(0, 80) + '...'
+}
+
+const toggleCategory = (c: string) => {
+  const idx = filters.value.categories.indexOf(c)
+  if (idx >= 0) filters.value.categories.splice(idx, 1)
+  else filters.value.categories.push(c)
 }
 
 const resetFilters = () => {
@@ -235,75 +359,198 @@ const resetFilters = () => {
   filters.value.rating = 0
 }
 
+const handleSearch = async () => {
+  activeField.value = null
+  if (!searchQuery.destinationIata) return
+  
+  loading.value = true
+  try {
+    const response = await flightsApi.searchAirports(searchQuery.destinationIata)
+    const data = response.data?.data || response.data || []
+    if (data?.length > 0) {
+      const top = data[0]
+      currentCityName.value = top.name || top.address?.cityName
+      const lat = top.geoCode?.latitude
+      const lon = top.geoCode?.longitude
+      if (lat && lon) {
+        await searchActivities({ latitude: lat, longitude: lon, date: searchQuery.date })
+        return
+      }
+    }
+  } catch (err) {
+    activitiesList.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
 const goToDetail = (activity: any) => {
   sessionStorage.setItem('selectedActivity', JSON.stringify(activity))
-  navigateTo({
-    path: `/things-to-do/${activity.experienceId}`,
-    query: { provider: activity.provider }
-  })
+  navigateTo({ path: `/things-to-do/${activity.experienceId}`, query: { provider: activity.provider } })
 }
 
-const handleSearch = async () => {
-    if (!searchQuery.destinationIata) return
-    
-    loading.value = true
-    try {
-        // Fix 404: Use flightsApi.searchAirports which is robust
-        const response = await flightsApi.searchAirports(searchQuery.destinationIata)
-        const data = response.data?.data || response.data || []
-        
-        if (data?.length > 0) {
-           const topHit = data[0]
-           currentCityName.value = topHit.name || topHit.address?.cityName
-           const lat = topHit.geoCode?.latitude
-           const lon = topHit.geoCode?.longitude
-           if (lat && lon) {
-             await searchActivities({ latitude: lat, longitude: lon, date: searchQuery.date })
-             return
-           }
-        }
-        activitiesList.value = []
-    } catch (err) {
-        console.error('Search failed:', err)
-        activitiesList.value = []
-    } finally {
-        loading.value = false
-    }
+// ── Calendar ──────────────────────────────────────────────────────────
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
+const calMonthLabel = computed(() => `${MONTHS[calViewDate.value.getMonth()]} ${calViewDate.value.getFullYear()}`)
+const calCells = computed(() => {
+  const y = calViewDate.value.getFullYear(), m = calViewDate.value.getMonth()
+  const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate()
+  const today = new Date(); today.setHours(0,0,0,0)
+  const cells = []
+  for (let i = 0; i < first; i++) cells.push({ key: `b${i}`, date: null, day: '', past: false, selected: false, today: false })
+  for (let d = 1; d <= days; d++) {
+    const dt = new Date(y, m, d), iso = dt.toISOString().split('T')[0]
+    cells.push({ key: iso, date: iso, day: d, past: dt < today, selected: searchQuery.date === iso, today: dt.getTime() === today.getTime() })
+  }
+  return cells
+})
+const prevMonth = () => { const d = new Date(calViewDate.value); d.setMonth(d.getMonth()-1); calViewDate.value = d }
+const nextMonth = () => { const d = new Date(calViewDate.value); d.setMonth(d.getMonth()+1); calViewDate.value = d }
+const pickDate = (iso: string) => { searchQuery.date = iso; activeField.value = null }
+const formatDate = (iso: string) => {
+  const [y,m,d] = iso.split('-').map(Number)
+  return `${d} ${MONTHS[m-1].slice(0,3)} ${y}`
 }
 
-onMounted(async () => {
-  if (searchQuery.destinationIata) {
-    handleSearch()
-  } else {
-    // Default fetch for Paris
+onMounted(() => {
+  if (searchQuery.destinationIata) handleSearch()
+  else {
     currentCityName.value = 'Paris'
-    await searchActivities({ latitude: 48.8566, longitude: 2.3522, radius: 30 })
+    searchActivities({ latitude: 48.8566, longitude: 2.3522, radius: 30 })
   }
 })
 </script>
 
 <style scoped>
-.activity-list-enter-active,
-.activity-list-leave-active {
-  transition: all 0.5s ease;
-}
-.activity-list-enter-from,
-.activity-list-leave-to {
-  opacity: 0;
-  transform: translateY(30px) scale(0.95);
-}
-.activity-list-move {
-  transition: transform 0.5s ease;
-}
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  border: 4px solid #0D1DAD;
-  @apply transition-all active:scale-110;
+.tt-root { min-height: 100vh; background: #fff; font-family: 'Sora', sans-serif; color: #111; }
+.tt-wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Hero ──────────────────────────────────────────────────────────── */
+.tt-hero { background: #f8f9f7; border-bottom: 1px solid #e8e8e2; padding: 40px 0 56px; position: relative; }
+.tt-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tt-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.28; }
+.tt-orb--a { width: 420px; height: 420px; background: radial-gradient(circle, #fde68a, transparent); top: -180px; right: -60px; }
+.tt-orb--b { width: 300px; height: 300px; background: radial-gradient(circle, #bfdbfe, transparent); bottom: -100px; left: 8%; }
+
+.tt-headline { margin-bottom: 28px; }
+.tt-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
+.tt-h1 { font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; letter-spacing: -0.03em; }
+.tt-h1 em { font-style: normal; color: #0d66d0; }
+
+/* ── Bar ───────────────────────────────────────────────────────────── */
+.tt-bar { background: #fff; border: 1.5px solid #e0e0d8; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.06); display: flex; align-items: stretch; position: relative; z-index: 50; }
+.tt-fld { position: relative; flex: 1; min-width: 0; }
+.tt-fld--dest { flex: 1.8; }
+.tt-fld-inner { display: flex; align-items: center; gap: 10px; padding: 14px 16px; height: 100%; cursor: pointer; border-radius: 14px; transition: background 0.15s; }
+.tt-fld-inner:hover { background: #f5f5f0; }
+.tt-fld--active .tt-fld-inner { background: #f0f4f7; }
+.tt-fld-ico { color: #aaa; flex-shrink: 0; }
+.tt-fld-text { display: flex; flex-direction: column; min-width: 0; }
+.tt-fld-lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #bbb; }
+.tt-fld-val { font-size: 13px; font-weight: 500; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-fld-val--set { color: #111; }
+.tt-bar-sep { width: 1px; background: #ebebe5; margin: 10px 0; }
+.tt-search-btn { background: #111; border: none; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 24px; margin: 6px; min-width: 140px; transition: background 0.2s; }
+.tt-search-btn:hover { background: #0d66d0; }
+.tt-spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Dropdowns ─────────────────────────────────────────────────────── */
+.tt-drop { position: absolute; top: calc(100% + 6px); left: 0; background: #fff; border: 1px solid #e0e0d8; border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); z-index: 999; overflow: hidden; }
+.tt-drop--dest { width: max(320px, 100%); }
+.tt-drop-search { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid #f0f0ea; background: #fafaf8; }
+.tt-drop-input { flex: 1; border: none; background: transparent; font-size: 13px; outline: none; }
+.tt-drop-clear { cursor: pointer; color: #bbb; border: none; background: none; }
+.tt-drop-section { padding: 14px; }
+.tt-drop-sec-label { font-size: 9px; font-weight: 700; color: #bbb; text-transform: uppercase; display: block; margin-bottom: 8px; }
+.tt-drop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.tt-pop-item { display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f8f5; border: none; border-radius: 10px; cursor: pointer; text-align: left; }
+.tt-pop-item:hover { background: #f0f4f7; }
+.tt-pop-name { font-size: 12px; font-weight: 600; }
+.tt-drop-results { padding: 8px; }
+.tt-loc-result { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px; border-radius: 8px; border: none; background: none; cursor: pointer; text-align: left; }
+.tt-loc-result:hover { background: #f5f5f0; }
+.tt-loc-name { font-size: 13px; font-weight: 500; }
+.tt-drop--cal { width: 300px; padding: 16px; }
+.tt-cal-nav-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.tt-cal-title { font-size: 13px; font-weight: 600; }
+.tt-cal-arrow { width: 28px; height: 28px; border: 1px solid #e8e8e0; border-radius: 8px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.tt-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.tt-cal-dow { font-size: 9px; font-weight: 600; color: #bbb; text-align: center; padding: 4px 0; }
+.tt-cal-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 12px; border-radius: 6px; cursor: pointer; }
+.tt-cal-cell:hover:not(.tt-cal-cell--blank) { background: #f0f4f7; }
+.tt-cal-cell--past { color: #ddd; pointer-events: none; }
+.tt-cal-cell--sel { background: #0d66d0 !important; color: #fff !important; font-weight: 600; }
+
+/* ── Main body ─────────────────────────────────────────────────────── */
+.tt-main { padding-top: 36px; padding-bottom: 60px; }
+.tt-body { display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+.tt-sidebar { position: sticky; top: 20px; }
+.tt-sbar { background: #fff; border: 1px solid #eaeae3; border-radius: 14px; padding: 18px; }
+.tt-sbar-hd { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; padding-bottom: 12px; border-bottom: 1px solid #f0f0ea; margin-bottom: 18px; }
+.tt-reset { margin-left: auto; font-size: 9px; color: #bbb; border: none; background: none; cursor: pointer; }
+.tt-sb-block { margin-bottom: 24px; }
+.tt-sb-label { font-size: 9px; font-weight: 700; text-transform: uppercase; color: #bbb; margin-bottom: 10px; display: block; }
+.tt-sb-label strong { color: #111; font-size: 12px; }
+.tt-chips { display: flex; flex-direction: column; gap: 5px; }
+.tt-chip { padding: 8px 12px; background: #fafaf7; border-radius: 8px; font-size: 12px; font-weight: 500; color: #555; border: 1.5px solid transparent; text-align: left; cursor: pointer; }
+.tt-chip--on { background: #f0f4f7; border-color: #0d66d0; color: #0d66d0; font-weight: 600; }
+.tt-range { width: 100%; accent-color: #0d66d0; }
+.tt-range-ends { display: flex; justify-content: space-between; font-size: 10px; color: #bbb; }
+.tt-rating-opts { display: flex; flex-direction: column; gap: 6px; }
+.tt-rate-opt { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #fafaf7; border-radius: 8px; border: 1.5px solid transparent; cursor: pointer; border: none; }
+.tt-rate-opt--on { background: #f0f4f7; border: 1.5px solid #0d66d0; }
+.tt-stars { display: flex; gap: 2px; }
+
+/* ── Results ───────────────────────────────────────────────────────── */
+.tt-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.tt-rcount { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #aaa; }
+.tt-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.tt-card { background: #fff; border: 1px solid #eaeae3; border-radius: 16px; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
+.tt-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+.tt-card-img-wrap { height: 180px; position: relative; background: #f0f0ea; }
+.tt-card-img { width: 100%; height: 100%; object-cover: cover; }
+.tt-card-badges { position: absolute; top: 10px; left: 10px; }
+.tt-card-badge { background: #fff; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.tt-card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+.tt-card-name { font-size: 17px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+.tt-card-desc { font-size: 13px; color: #888; margin-bottom: 18px; line-height: 1.5; flex: 1; }
+.tt-card-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #f0f0ea; }
+.tt-card-price-grp { display: flex; flex-direction: column; }
+.tt-price-lbl { font-size: 9px; font-weight: 700; color: #bbb; text-transform: uppercase; }
+.tt-price-val { font-size: 18px; font-weight: 700; color: #111; }
+.tt-card-btn { padding: 8px 16px; background: #111; color: #fff; border-radius: 10px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; }
+
+/* ── Skeletons ─────────────────────────────────────────────────────── */
+.tt-skel-card { background: #fff; border: 1px solid #eaeae3; border-radius: 16px; overflow: hidden; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.tt-sk { background: #f0f0ea; border-radius: 4px; }
+.tt-sk--img { width: 100%; height: 180px; }
+.tt-sk-body { padding: 18px; }
+.tt-sk--lg { height: 16px; width: 70%; margin-bottom: 10px; }
+.tt-sk--sm { height: 12px; width: 40%; margin-bottom: 16px; }
+.tt-sk-row { display: flex; justify-content: space-between; }
+.tt-sk--badge { width: 60px; height: 24px; }
+.tt-sk--price { width: 80px; height: 24px; }
+
+.tt-empty { display: flex; flex-direction: column; align-items: center; padding: 60px 24px; text-align: center; }
+.tt-empty-ico { width: 60px; height: 60px; border-radius: 50%; background: #f0f4f7; display: flex; align-items: center; justify-content: center; color: #0d66d0; margin-bottom: 16px; }
+.tt-empty-h { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.tt-empty-p { color: #aaa; font-size: 14px; margin-bottom: 24px; max-width: 320px; }
+.tt-empty-btn { padding: 10px 24px; background: #111; color: #fff; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; }
+
+/* Mobile */
+@media (max-width: 1024px) {
+  .tt-body { grid-template-columns: 1fr; }
+  .tt-sbar { display: none; }
+  .tt-filter-mob { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #111; color: #fff; border-radius: 10px; font-size: 12px; cursor: pointer; border: none; }
+}
+@media (max-width: 640px) {
+  .tt-grid { grid-template-columns: 1fr; }
+  .tt-bar { flex-direction: column; }
+  .tt-bar-sep { display: none; }
+  .tt-search-btn { margin: 4px; }
 }
 </style>

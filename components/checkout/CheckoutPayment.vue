@@ -1,45 +1,41 @@
 <template>
   <div class="checkout-payment">
-    <div class="payment-header flex justify-between items-center mb-6">
+    <div class="payment-header flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
       <div class="amount-display">
-        <span class="currency-symbol text-2xl font-bold text-gray-500 mr-1">{{ currencySymbol }}</span>
-        <span class="amount-value text-3xl  text-gray-900">{{ formatAmount(totalAmount) }}</span>
+        <span class="currency-symbol text-2xl font-black text-gray-400 mr-2">{{ currencySymbol }}</span>
+        <span class="amount-value text-2xl lg:text-4xl font-black text-gray-900 tracking-tight">{{ formatAmount(totalAmount) }}</span>
       </div>
-      <button 
-        type="button"
-        class="change-currency-btn text-blue-600 font-bold text-sm hover:underline flex items-center gap-1" 
-        @click="$emit('change-currency')"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-        </svg>
-        Change Currency
-      </button>
+      <div class="currency-selector-dropdown">
+        <CurrencyDropdown 
+          :current-currency="currency" 
+          @select="$emit('change-currency', $event)" 
+        />
+      </div>
     </div>
 
     <div class="space-y-4">
-      <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Choose Payment Method</h4>
+      <h4 class="text-xs font-black text-gray-400 tracking-widest mb-4">Choose Payment Method</h4>
       
       <!-- Card Payment -->
-      <div v-if="showCardPayment" class="rounded-2xl border transition-all overflow-hidden" :class="activeMethod === 'card' ? 'border-gray-900 bg-gray-50/30' : 'border-gray-100 bg-white'">
+      <div v-if="showCardPayment" class="rounded-2xl border transition-all" :class="activeMethod === 'card' ? 'border-gray-100 bg-gray-50/30' : 'border-gray-100 bg-white'">
         <div class="p-5 flex items-center justify-between cursor-pointer" @click="toggleMethod('card')">
           <div class="flex items-center gap-4">
             <div class="w-10 h-10 rounded-xl flex items-center justify-center" :class="activeMethod === 'card' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
               <CreditCard class="w-5 h-5" />
             </div>
-            <span class="text-sm font-black text-gray-900 uppercase tracking-tight">Debit / Credit Card</span>
+            <span class="text-sm font-black text-gray-900 tracking-tight">Debit / Credit Card</span>
           </div>
-          <ChevronDown class="w-4 h-4 text-gray-300 transition-transform" :class="{ 'rotate-180': activeMethod === 'card' }" />
+          <ChevronDown class="w-4 h-4 text-gray-500 transition-transform" :class="{ 'rotate-180': activeMethod === 'card' }" />
         </div>
 
         <div v-if="activeMethod === 'card'" class="px-5 pb-5 border-t border-gray-100 pt-5">
           <div v-if="provider === 'duffel'" class="space-y-5">
-             <div class="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl">
+             <div class="flex items-center justify-between p-4 bg-sky-50/50 border border-sky-100 rounded-xl">
                <div class="flex items-center gap-3">
-                 <img src="https://assets.duffel.com/img/duffel-logo-black.svg" class="h-3" />
-                 <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Secure Direct Booking</span>
+                 <ShieldCheck class="w-4 h-4 text-sky-600" />
+                 <span class="text-[10px] font-bold text-sky-900 tracking-widest uppercase">Secure Direct Booking</span>
                </div>
-               <div class="w-5 h-5 rounded-full bg-brand-green flex items-center justify-center text-white">
+               <div class="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white">
                  <Check class="w-3 h-3" />
                </div>
              </div>
@@ -49,7 +45,7 @@
           <div v-else class="p-4 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
             <div class="flex items-center gap-3">
               <img v-if="provider === 'paystack'" src="https://upload.wikimedia.org/wikipedia/commons/2/22/Paystack_logo.png" class="h-4" />
-              <img v-else src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/512px-Stripe_Logo%2C_revised_2016.svg.png" class="h-4" />
+              <img v-else src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" class="h-4" />
               <span class="text-xs font-bold text-gray-600">Standard Card Processor</span>
             </div>
             <div class="w-5 h-5 rounded-full bg-brand-green flex items-center justify-center text-white">
@@ -60,18 +56,18 @@
       </div>
 
       <!-- Bank Transfer -->
-      <div v-if="showBankTransfer" class="rounded-2xl border transition-all overflow-hidden" :class="activeMethod === 'bank' ? 'border-gray-900 bg-gray-50/30' : 'border-gray-100 bg-white'">
+      <div v-if="showBankTransfer" class="rounded-2xl border transition-all" :class="activeMethod === 'bank' ? 'border-gray-900 bg-gray-50/30' : 'border-gray-100 bg-white'">
         <div class="p-5 flex items-center justify-between cursor-pointer" @click="toggleMethod('bank')">
           <div class="flex items-center gap-4">
             <div class="w-10 h-10 rounded-xl flex items-center justify-center" :class="activeMethod === 'bank' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
               <Building2 class="w-5 h-5" />
             </div>
             <div>
-              <span class="text-sm font-black text-gray-900 uppercase tracking-tight block">Bank Transfer</span>
-              <span class="text-[9px] font-bold text-brand-green uppercase tracking-widest">Instant Ticketing Available</span>
+              <span class="text-sm font-black text-gray-900 tracking-tight block">Bank Transfer</span>
+              <span class="text-[9px] font-bold text-brand-green tracking-widest">Instant Ticketing Available</span>
             </div>
           </div>
-          <ChevronDown class="w-4 h-4 text-gray-300 transition-transform" :class="{ 'rotate-180': activeMethod === 'bank' }" />
+          <ChevronDown class="w-4 h-4 text-gray-500 transition-transform" :class="{ 'rotate-180': activeMethod === 'bank' }" />
         </div>
         <div v-if="activeMethod === 'bank'" class="px-5 pb-5 border-t border-gray-100 pt-5">
             <div class="p-4 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
@@ -89,7 +85,7 @@
 
       <!-- Apple Pay -->
       <div v-if="provider === 'stripe'" class="apple-pay-section space-y-2 mt-4">
-        <label class="block text-sm  uppercase tracking-wider text-gray-400 mb-2">Or Pay with Apple Pay</label>
+        <label class="block text-sm  tracking-wider text-gray-400 mb-2">Or Pay with Apple Pay</label>
         <ApplePayButton 
           :amount="totalAmount"
           :currency="currency"
@@ -105,7 +101,7 @@
       <button 
         @click="handlePay" 
         :disabled="processing"
-        class="w-full h-16 rounded-2xl text-white font-bold uppercase tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-4 bg-gray-900 hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full h-14 rounded-2xl text-white font-bold tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-4 bg-gray-900 hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span v-if="!processing">Authorize & Pay {{ currencySymbol }}{{ formatAmount(totalAmount) }}</span>
         <div v-else class="flex items-center gap-3">
@@ -116,10 +112,10 @@
           Authorizing...
         </div>
       </button>
-      <div class="mt-6 flex items-center justify-center gap-6 opacity-40 grayscale pointer-events-none">
-         <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="h-3" @error="$event.target.style.display='none'" />
-         <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="h-4" @error="$event.target.style.display='none'" />
-         <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" class="h-3.5" @error="$event.target.style.display='none'" />
+      <div class="mt-6 flex items-center justify-center gap-6 grayscale pointer-events-none">
+         <img src="@/assets/icons/visa.svg" alt="Visa" class="h-6" />
+         <img src="@/assets/icons/master-card.svg" alt="Mastercard" class="h-6" />
+         <img src="@/assets/icons/stripe.svg" alt="Stripe" class="h-6" />
       </div>
     </div>
   </div>
@@ -127,9 +123,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { CreditCard, Building2, Globe, Check, ChevronDown } from 'lucide-vue-next'
+import { CreditCard, Building2, Globe, Check, ChevronDown, ShieldCheck, Coins } from 'lucide-vue-next'
 import ApplePayButton from './ApplePayButton.vue'
 import DuffelCardForm from './DuffelCardForm.vue'
+import CurrencyDropdown from './CurrencyDropdown.vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -159,7 +156,14 @@ const duffelCardData = ref({
   name: '',
   number: '',
   expiry: '',
-  cvv: ''
+  cvv: '',
+  multi_use: false,
+  address_line_1: '',
+  address_line_2: '',
+  address_city: '',
+  address_region: '',
+  address_country_code: '',
+  address_postal_code: ''
 })
 
 const provider = computed(() => {

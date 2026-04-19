@@ -6,13 +6,13 @@
         <div class="h-9 w-9 rounded-lg bg-white p-1.5 border border-gray-100">
           <img v-if="airlineLogo" :src="airlineLogo" :alt="airlineName" class="h-full w-full object-contain" />
           <div v-else class="h-full w-full flex items-center justify-center bg-gray-50 rounded-lg">
-             <span class="text-gray-900 font-bold text-xs uppercase">{{ airlineName.slice(0, 2) }}</span>
+             <span class="text-gray-900 font-bold text-xs">{{ airlineName.slice(0, 2) }}</span>
           </div>
         </div>
-        <h3 class="font-bold text-gray-900 uppercase tracking-widest text-[10px]">{{ airlineName }}</h3>
+        <h3 class="font-bold text-gray-900 tracking-widest text-sm">{{ airlineName }}</h3>
       </div>
       <div class="flex items-center gap-3">
-        <span class="text-[10px] font-bold text-brand-gray/30 uppercase tracking-widest">Starting from</span>
+        <span class="text-sm font-bold text-brand-gray/30 tracking-widest">Starting from</span>
         <span class="text-xl font-black text-gray-900">${{ cheapestPrice }}</span>
       </div>
     </div>
@@ -37,7 +37,7 @@
             <img v-if="airlineLogo" :src="airlineLogo" class="w-full h-full object-cover opacity-60" />
          </div>
       </div>
-      <span class="text-sm  text-brand-gray/60 uppercase tracking-widest group-hover:text-gray-900 transition-colors">
+      <span class="text-sm  text-brand-gray/60 tracking-widest group-hover:text-gray-900 transition-colors">
         {{ isExpanded ? 'Hide' : `+${otherOffers.length}` }} {{ airlineName }} flights
       </span>
       <ChevronDown 

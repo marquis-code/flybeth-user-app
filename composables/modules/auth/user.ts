@@ -13,19 +13,29 @@ export const useUser = () => {
     const setUser = (newUser: any) => {
         user.value = newUser;
         userCookie.value = newUser;
+        
+        // Save tokens if they are present in the response
+        if (newUser.accessToken) {
+            const accessToken = useCookie('accessToken');
+            accessToken.value = newUser.accessToken;
+        }
+        if (newUser.refreshToken) {
+            const refreshToken = useCookie('refreshToken');
+            refreshToken.value = newUser.refreshToken;
+        }
     };
 
-    const logOut = () => {
+    const logOut = (shouldRedirect: boolean = true) => {
         user.value = null;
         userCookie.value = null;
         
-        // Clear tokens just in case (though backend should handle this)
+        // Clear tokens
         const accessToken = useCookie('accessToken');
         const refreshToken = useCookie('refreshToken');
         accessToken.value = null;
         refreshToken.value = null;
 
-        if (import.meta.client) {
+        if (import.meta.client && shouldRedirect) {
             window.location.href = "/auth/login";
         }
     };

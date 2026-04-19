@@ -97,9 +97,10 @@ export default defineNuxtConfig({
 
       script: [
         {
-          src: "https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js",
-          type: "text/javascript",
-        },
+          src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Rx0TJ9BGkQ9NC23BZc51zCql_Xrhs0&libraries=places",
+          async: true,
+          defer: true
+        }
       ],
     },
   },

@@ -54,7 +54,7 @@
                   :disabled="local[row.key] <= row.min"
                   class="h-9 w-9 rounded-full border-2 flex items-center justify-center text-lg font-bold transition-all"
                   :class="local[row.key] <= row.min
-                    ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                    ? 'border-gray-200 text-gray-500 cursor-not-allowed'
                     : 'border-red-400 text-red-400 hover:bg-red-50'"
                 >
                   −
@@ -65,7 +65,7 @@
                   :disabled="local[row.key] >= row.max"
                   class="h-9 w-9 rounded-full border-2 flex items-center justify-center text-lg font-bold transition-all"
                   :class="local[row.key] >= row.max
-                    ? 'border-gray-200 text-gray-300 cursor-not-allowed'
+                    ? 'border-gray-200 text-gray-500 cursor-not-allowed'
                     : 'border-gray-900 text-gray-900 hover:bg-gray-100'"
                 >
                   +

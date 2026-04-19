@@ -10,7 +10,7 @@
         </NuxtLink>
         <div>
           <h1 class="text-xl  text-white">Booking details</h1>
-          <p class="text-white/60 text-xs font-bold italic">View your flight booking information</p>
+          <p class="text-white/60 text-xs font-bold ">View your flight booking information</p>
         </div>
       </div>
     </div>
@@ -18,7 +18,7 @@
     <div class="max-w-4xl mx-auto px-4 py-10">
       <!-- PNR Search -->
       <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6 shadow-sm">
-        <h2 class="text-sm font-bold text-gray-900 tracking-widest mb-4 italic">Find booking by reference</h2>
+        <h2 class="text-sm font-bold text-gray-900 tracking-widest mb-4 ">Find booking by reference</h2>
         <div class="flex gap-3">
           <input
             v-model="pnrInput"

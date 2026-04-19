@@ -88,7 +88,7 @@
                 class="text-sm text-gray-600 leading-relaxed prose prose-sm max-w-none"
                 v-html="sanitizedDescription"
               ></div>
-              <p v-else class="text-sm text-gray-500 italic">No description available for this experience.</p>
+              <p v-else class="text-sm text-gray-500 ">No description available for this experience.</p>
             </div>
 
             <!-- Photo Grid -->

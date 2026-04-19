@@ -1,151 +1,141 @@
 <template>
-  <div class="traveller-form-step">
-    <div class="traveller-card">
-      <div class="px-6 py-6 border-b border-gray-200 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400">
-             <User class="w-5 h-5" />
+  <div class="ck-tf">
+    <div class="ck-tf-hd">
+       <div class="ck-tf-badge"> Traveler 1 (Adult)</div>
+       <h2 class="ck-tf-h">Who is traveling?</h2>
+       <p class="ck-tf-p">Names must match IDs exactly to avoid boarding issues.</p>
+    </div>
+
+    <div class="ck-tf-grid">
+       <!-- Basic Info Group -->
+       <div class="ck-tf-sec">
+          <div class="ck-tf-cards">
+             <div class="ck-tf-row">
+                <SelectInput
+                  v-model="form.title"
+                  label="Title"
+                  :options="['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']"
+                  class="flex-[0.3]"
+                />
+                <AnimatedInput
+                  v-model="form.lastName"
+                  label="Last Name / Surname"
+                  type="text"
+                  class="flex-1"
+                  position="middle"
+                />
+             </div>
+             <div class="ck-tf-row">
+                <AnimatedInput
+                  v-model="form.firstName"
+                  type="text"
+                  label="First Name"
+                  class="flex-1"
+                  position="middle"
+                />
+             </div>
+             <div class="ck-tf-row">
+                <FlatDatePicker
+                  v-model="form.dateOfBirth"
+                  label="Date of Birth"
+                  :maxDate="today"
+                  :hasError="dobError"
+                  class="flex-1"
+                />
+                <SelectInput
+                  v-model="form.gender"
+                  label="Gender"
+                  :options="['Male', 'Female', 'Unknown']"
+                  class="flex-1"
+                />
+             </div>
           </div>
-          <h2 class="text-base font-black text-gray-900 uppercase tracking-widest">Adult (12 yrs+)</h2>
-        </div>
-        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ isComplete ? '1' : '0' }}/1 added</span>
-      </div>
+       </div>
 
-      <div class="p-6 bg-gray-100/30 text-gray-500 text-[11px] font-bold leading-relaxed border-b border-gray-100">
-        Enter your name exactly as it appears on your passport. Passport must be valid for at least 6 months from the date of travel.
-      </div>
-
-      <div class="mx-6 mt-6 inline-flex items-center gap-2 bg-brand-green/10 text-brand-green text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest border border-brand-green/20">
-        <Check class="w-3 h-3" />
-        Primary Traveler
-      </div>
-
-      <div class="p-6 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Title -->
-          <SelectInput
-            v-model="form.title"
-            label="Title *"
-            :options="['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']"
-            position="top"
-          />
-
-          <!-- Last Name -->
-          <AnimatedInput
-            v-model="form.lastName"
-            label="Last Name *"
-            position="top"
-          />
-
-          <!-- First Name -->
-          <AnimatedInput
-            v-model="form.firstName"
-            label="First Name *"
-            position="middle"
-          />
-
-          <!-- Middle Name -->
-          <AnimatedInput
-            v-model="form.middleName"
-            label="Middle Name"
-            position="middle"
-          />
-
-          <!-- Date of Birth -->
-          <FlatDatePicker
-            v-model="form.dateOfBirth"
-            label="Date of Birth *"
-            :maxDate="today"
-            :hasError="dobError"
-          />
-
-          <!-- Nationality -->
-          <SelectInput
-            v-model="form.nationality"
-            label="Nationality *"
-            :options="countries"
-            position="middle"
-          />
-
-          <!-- Phone -->
-          <PhoneInput
-            v-model="form.phone"
-            label="Mobile No"
-            class="md:col-span-2"
-          />
-
-          <!-- Email -->
-          <AnimatedInput
-            v-model="form.email"
-            label="Email Address"
-            type="email"
-            position="bottom"
-            @blur="$emit('email-blur', form.email)"
-          />
-        </div>
-
-        <!-- Gender -->
-        <div class="py-2 px-3 bg-gray-50/50 rounded-2xl border border-gray-200 flex items-center justify-between">
-          <span class="text-sm font-bold text-gray-400 tracking-widest pl-2 lowercase">Gender *</span>
-          <div class="flex gap-4 pr-2">
-            <label class="flex items-center gap-2 cursor-pointer group">
-              <input type="radio" v-model="form.gender" value="male" class="w-4 h-4 accent-brand-blue" />
-              <span class="text-sm font-bold text-gray-900 group-hover:text-gray-900 transition-colors">Male</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer group">
-              <input type="radio" v-model="form.gender" value="female" class="w-4 h-4 accent-brand-blue" />
-              <span class="text-sm font-bold text-gray-900 group-hover:text-gray-900 transition-colors">Female</span>
-            </label>
+       <!-- Contact Group -->
+       <div class="ck-tf-sec">
+          <h3 class="ck-tf-sh">Contact details</h3>
+          <div class="ck-tf-cards">
+             <div class="ck-tf-row">
+                <PhoneInput
+                  v-model="form.phone"
+                  label="Mobile Number"
+                  class="flex-1"
+                />
+             </div>
+             <div class="ck-tf-row">
+                <AnimatedInput
+                  v-model="form.email"
+                  label="Email Address"
+                  type="email"
+                  class="flex-1"
+                  position="middle"
+                  @blur="$emit('email-blur', form.email)"
+                />
+             </div>
           </div>
-        </div>
-      </div>
+       </div>
 
-      <!-- Passport Section -->
-      <div class="p-6 border-t-[2px] border-dashed border-gray-200 mt-2">
-        <h3 class="text-sm  text-gray-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-          Passport information
-          <span class="flex-1 h-[1px] bg-gray-200"></span>
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <AnimatedInput
-            v-model="form.passportNumber"
-            label="Passport Number"
-            position="standalone"
-          />
-          <FlatDatePicker
-            v-model="form.passportExpiry"
-            label="Passport Expiry Date"
-            :minDate="today"
-          />
-        </div>
-      </div>
-    </div><!-- /.traveller-card -->
+       <!-- Identification Group -->
+       <div class="ck-tf-sec">
+          <h3 class="ck-tf-sh">Identification</h3>
+          <div class="ck-tf-cards">
+             <div class="ck-tf-row">
+                <SelectInput
+                  v-model="form.nationality"
+                  label="Nationality"
+                  :options="countriesNames"
+                  class="flex-1"
+                />
+             </div>
+             <div class="ck-tf-row">
+                <AnimatedInput
+                  v-model="form.passportNumber"
+                  label="Passport Number (Optional)"
+                  class="flex-1"
+                  type="number"
+                  position="standalone"
+                />
+                <FlatDatePicker
+                  v-model="form.passportExpiry"
+                  label="Passport Expiry"
+                  :minDate="today"
+                  class="flex-1"
+                />
+             </div>
+          </div>
+       </div>
+    </div>
 
-    <!-- Terms & Continue -->
-    <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 px-1">
-      <label class="flex items-center gap-3 cursor-pointer group">
-        <input type="checkbox" v-model="termsAccepted" class="w-5 h-5 rounded-md border-gray-200 text-brand-blue focus:ring-brand-blue" />
-        <span class="text-[11px] font-bold text-gray-400 group-hover:text-gray-900 transition-all uppercase tracking-tight">I have read and agree to the <NuxtLink to="/terms" target="_blank" class="text-brand-blue underline">Terms and Conditions</NuxtLink></span>
-      </label>
-      <button @click="handleContinue" :disabled="!canContinue" class="w-full md:w-auto bg-gray-900 text-white px-10 py-4 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-black active:scale-95 flex items-center justify-center gap-3" :class="{ 'opacity-50 cursor-not-allowed': !canContinue }">
-        Continue
-        <ChevronRight class="w-4 h-4" />
-      </button>
+    <!-- Actions -->
+    <div class="ck-tf-foot">
+       <label class="ck-tf-terms">
+          <input type="checkbox" v-model="termsAccepted" class="ck-tf-chk custom-checkbox" />
+          <span>I verify that all names stated above are identical to those in the original travel documents.</span>
+       </label>
+       <button 
+          @click="handleContinue" 
+          :disabled="!canContinue" 
+          class="ck-tf-btn"
+          :class="{ 'ck-tf-btn--off': !canContinue }"
+       >
+          <span>Continue to Extras</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import AnimatedInput from '@/components/ui/AnimatedInput.vue';
 import SelectInput from '@/components/ui/SelectInput.vue';
 import PhoneInput from '@/components/ui/PhoneInput.vue';
 import FlatDatePicker from '@/components/ui/FlatDatePicker.vue';
-import { User, Check, ChevronRight } from 'lucide-vue-next';
+import axios from 'axios'
 
 const today = new Date()
 today.setHours(23, 59, 59, 999)
-
 
 const props = defineProps({
   modelValue: { type: Object, default: () => ({}) }
@@ -154,65 +144,88 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'continue', 'email-blur'])
 
 const form = ref({
-  title: props.modelValue.title || 'mr',
+  title: props.modelValue.title || 'Mr',
   firstName: props.modelValue.firstName || '',
   lastName: props.modelValue.lastName || '',
   middleName: props.modelValue.middleName || '',
   email: props.modelValue.email || '',
   phone: props.modelValue.phone || '',
   phoneCountryCode: props.modelValue.phoneCountryCode || '+234',
-  gender: props.modelValue.gender || 'male',
+  gender: props.modelValue.gender || 'Male',
   dateOfBirth: props.modelValue.dateOfBirth || '',
-  nationality: props.modelValue.nationality || 'NG',
+  nationality: props.modelValue.nationality || 'Nigeria',
   passportNumber: props.modelValue.passportNumber || '',
   passportExpiry: props.modelValue.passportExpiry || '',
   passportCountry: props.modelValue.passportCountry || '',
 })
 
 const termsAccepted = ref(false)
+const countries = ref<{ code: string; name: string }[]>([])
 
-const countries = [
-  { code: 'NG', name: 'Nigeria' },
-  { code: 'US', name: 'United States' },
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'AE', name: 'United Arab Emirates' },
-  { code: 'IN', name: 'India' },
-  { code: 'CA', name: 'Canada' },
-  { code: 'DE', name: 'Germany' },
-  { code: 'FR', name: 'France' },
-  { code: 'GH', name: 'Ghana' },
-  { code: 'KE', name: 'Kenya' },
-  { code: 'ZA', name: 'South Africa' },
-  { code: 'SA', name: 'Saudi Arabia' },
-  { code: 'QA', name: 'Qatar' },
-  { code: 'EG', name: 'Egypt' },
-]
-
-const isComplete = computed(() => !!(form.value.firstName && form.value.lastName && form.value.email && form.value.dateOfBirth))
-
-const dobError = computed(() => {
-  if (!form.value.dateOfBirth) return false
-  return new Date(form.value.dateOfBirth) >= new Date()
+onMounted(async () => {
+  try {
+    const { data } = await axios.get('https://countriesnow.space/api/v0.1/countries/iso')
+    countries.value = data.data.map((c: any) => ({
+      code: c.Iso2,
+      name: c.name
+    }))
+  } catch (e) {
+    console.error('Failed to fetch countries', e)
+    // Fallback
+    countries.value = [
+      { code: 'NG', name: 'Nigeria' },
+      { code: 'US', name: 'United States' },
+      { code: 'GB', name: 'United Kingdom' }
+    ]
+  }
 })
 
+const countriesNames = computed(() => countries.value.map(c => c.name))
+
+const isComplete = computed(() => !!(form.value.firstName && form.value.lastName && form.value.email && form.value.phone && form.value.dateOfBirth))
+const dobError = computed(() => form.value.dateOfBirth && new Date(form.value.dateOfBirth) >= new Date())
 const canContinue = computed(() => isComplete.value && termsAccepted.value && !dobError.value)
 
-watch(form, (val) => {
-  emit('update:modelValue', { ...val })
-}, { deep: true })
-
-const handleContinue = () => {
-  if (canContinue.value) {
-    emit('continue')
-  }
-}
+watch(form, (val) => { emit('update:modelValue', { ...val }) }, { deep: true })
+const handleContinue = () => { if (canContinue.value) emit('continue') }
 </script>
 
 <style scoped>
-.traveller-card {
-  background: white;
-  border-radius: 1.5rem;
-  border: 1px solid #cbd5e1;
-  overflow: visible;
+.ck-tf { padding: 32px; font-family: 'Sora', sans-serif; }
+
+.ck-tf-hd { margin-bottom: 32px; }
+.ck-tf-badge { 
+  display: inline-block; font-size: 9px; font-weight: 700; 
+  letter-spacing: 0.1em; color: #1d7a4f; background: #f0f7f3; padding: 4px 10px; 
+  border-radius: 100px; margin-bottom: 12px;
+}
+.ck-tf-h { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 6px; letter-spacing: -0.02em; }
+.ck-tf-p { font-size: 13px; color: #888; }
+
+.ck-tf-grid { display: flex; flex-direction: column; gap: 32px; }
+.ck-tf-sh { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #111; margin-bottom: 16px; }
+
+.ck-tf-sec { position: relative; }
+.ck-tf-cards { display: flex; flex-direction: column; gap: 16px; }
+.ck-tf-row { display: flex; gap: 16px; }
+
+.ck-tf-foot { margin-top: 40px; border-top: 1px solid #f0f0ea; padding-top: 32px; display: flex; flex-direction: column; gap: 24px; }
+.ck-tf-terms { display: flex; gap: 12px; cursor: pointer; }
+.ck-tf-chk { width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid #eaeaef; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+.ck-tf-terms span { font-size: 12px; color: #888; line-height: 1.5; font-weight: 500; }
+
+.ck-tf-btn {
+  background: #111; color: #fff; border: none; border-radius: 12px; height: 48px;
+  padding: 0 32px; width: fit-content;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+}
+.ck-tf-btn:not(.ck-tf-btn--off):hover { background: #1d7a4f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+.ck-tf-btn:active { transform: scale(0.98); }
+.ck-tf-btn--off { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+
+@media (max-width: 640px) {
+  .ck-tf { padding: 24px 16px; }
+  .ck-tf-row { flex-direction: column; gap: 12px; }
 }
 </style>

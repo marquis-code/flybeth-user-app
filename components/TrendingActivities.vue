@@ -12,12 +12,12 @@
             <div class="h-8 w-8 bg-[#0084ff]/10 rounded-lg flex items-center justify-center">
               <svg class="w-4 h-4 text-[#0084ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
-            <span class="text-[10px] font-bold text-[#0084ff] uppercase tracking-[0.2em]">Things to do</span>
+            <span class="text-[10px] font-bold text-[#0084ff]  tracking-[0.2em]">Things to do</span>
           </div>
           <h2 class="text-3xl font-bold text-gray-900 tracking-tight mb-2">Discover Activities & Experiences</h2>
           <p class="text-sm text-gray-500 max-w-lg">Unforgettable tours, excursions, and things to do at your destination — powered by local experts.</p>
         </div>
-        <NuxtLink to="/things-to-do" class="flex items-center gap-2 text-[#0084ff] text-xs font-bold uppercase tracking-widest hover:underline transition-all group shrink-0">
+        <NuxtLink to="/things-to-do" class="flex items-center gap-2 text-[#0084ff] text-xs font-bold  tracking-widest hover:underline transition-all group shrink-0">
           View all activities
           <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </NuxtLink>
@@ -50,13 +50,13 @@
             </div>
             <!-- Provider badge -->
             <div class="absolute top-3 left-3">
-              <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-[8px] font-bold text-gray-700 uppercase tracking-wider border border-white/30 shadow-sm">
+              <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-[8px] font-bold text-gray-700  tracking-wider border border-white/30 shadow-sm">
                 {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : activity.provider }}
               </span>
             </div>
             <!-- Duration badge -->
             <div v-if="activity.minimumDuration" class="absolute bottom-3 right-3">
-              <span class="px-2 py-1 bg-black/50 backdrop-blur-md rounded-md text-[8px] font-bold text-white uppercase tracking-wider flex items-center gap-1">
+              <span class="px-2 py-1 bg-black/50 backdrop-blur-md rounded-md text-[8px] font-bold text-white  tracking-wider flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 {{ activity.minimumDuration }}
               </span>
@@ -80,13 +80,13 @@
             <!-- Price & CTA -->
             <div class="mt-auto flex items-end justify-between pt-3 border-t border-gray-50">
               <div>
-                <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest block mb-0.5">From</span>
+                <span class="text-[9px] text-gray-400 font-bold  tracking-widest block mb-0.5">From</span>
                 <span class="text-lg font-bold text-gray-900">${{ Math.round(activity.price || 0) }}</span>
                 <span class="text-[10px] text-gray-400 font-medium"> / person</span>
               </div>
               <button 
                 @click.stop="goToActivity(activity)"
-                class="px-3 py-2 bg-[#0084ff]/10 text-[#0084ff] text-[10px] font-bold rounded-lg hover:bg-[#0084ff] hover:text-white transition-all uppercase tracking-wider"
+                class="px-3 py-2 bg-[#0084ff]/10 text-[#0084ff] text-[10px] font-bold rounded-lg hover:bg-[#0084ff] hover:text-white transition-all  tracking-wider"
               >
                 Explore
               </button>
@@ -99,7 +99,7 @@
         <div class="text-center mt-10">
           <NuxtLink 
             to="/things-to-do"
-            class="inline-flex items-center gap-2.5 bg-[#0084ff] hover:bg-blue-600 text-white font-bold px-10 py-4 rounded-xl transition-all shadow-lg shadow-blue-200/50 active:scale-[0.98] uppercase tracking-widest text-sm group"
+            class="inline-flex items-center gap-2.5 bg-black text-white font-bold px-10 py-4 rounded-xl transition-all shadow-lg shadow-blue-200/50 active:scale-[0.98]  tracking-widest text-sm group"
           >
             View {{ totalCount > 4 ? totalCount - 4 : '' }} More Experiences
             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -109,12 +109,14 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-16 bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-200">
-        <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-[#0084ff]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        </div>
-        <p class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-1">Discovering activities...</p>
-        <p class="text-xs text-gray-400 max-w-sm mx-auto">We're finding the best tours and experiences near your location.</p>
+      <div v-else class="w-full">
+        <EmptyState 
+          variant="packages" 
+          title="No activities found" 
+          message="We're currently expanding our local experiences in your area. Try searching for a specific city to find curated tours and excursions."
+          action-label="Explore All"
+          @action="router.push('/things-to-do')"
+        />
       </div>
     </div>
   </section>
@@ -124,6 +126,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { activitiesApi } from '@/api_factory/modules/activities';
+import EmptyState from '@/components/EmptyState.vue';
 
 const router = useRouter();
 const loading = ref(true);

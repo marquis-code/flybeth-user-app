@@ -1,14 +1,14 @@
 <template>
   <div class="min-h-screen bg-gray-50/30">
     <!-- Premium Header -->
-    <div class="bg-brand-blue pt-32 pb-20 px-6 overflow-hidden relative">
+    <div class="bg-brand-blue pt-20 pb-12 px-6 overflow-hidden relative">
       <div class="max-w-4xl mx-auto relative z-10">
         <NuxtLink to="/" class="inline-flex items-center gap-2 text-[10px] font-bold text-white/50 hover:text-white transition-all tracking-[0.2em] uppercase mb-8 group">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" /></svg>
           Back to home
         </NuxtLink>
-        <h1 class="text-5xl md:text-6xl  text-white mb-6 tracking-tight">Terms & conditions</h1>
-        <p class="text-sm font-bold text-white/40 tracking-widest italic">Last updated: April 2026</p>
+        <h1 class="text-3xl md:text-4xl  text-white mb-6 tracking-tight">Terms & conditions</h1>
+        <p class="text-sm font-bold text-white/40 tracking-widest ">Last updated: April 2026</p>
       </div>
       <!-- Abstract Background -->
       <div class="absolute top-0 right-0 w-1/3 h-full bg-white/5 skew-x-12 translate-x-1/2"></div>

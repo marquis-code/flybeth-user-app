@@ -24,8 +24,8 @@ export const flightsApi = {
         return GATEWAY_ENDPOINT.get("/flights/deals/live", { params: { origin, tripType } });
     },
     // Duffel Specific Flows
-    setupDuffelIdentity() {
-        return GATEWAY_ENDPOINT_WITH_AUTH.post("/integrations/duffel/identity/setup");
+    setupDuffelIdentity(data: any) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/integrations/duffel/identity/setup", data);
     },
     hold(data: any) {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/hold", data);

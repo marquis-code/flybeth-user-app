@@ -1,205 +1,395 @@
 <template>
   <Teleport to="body">
-    <Transition name="modal-backdrop">
-      <div v-if="visible" class="fixed inset-0 z-[200] flex items-center justify-center p-4" @click.self="onBackdropClick">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-brand-blue/30 backdrop-blur-sm"></div>
-
-        <!-- Modal -->
-        <Transition name="modal-content" appear>
-          <div v-if="visible" class="relative bg-white rounded-[2rem] shadow-[0_40px_120px_-20px_rgba(13,29,173,0.3)] max-w-md w-full overflow-hidden">
-            <!-- Top Accent -->
-            <div class="h-1.5 w-full" :class="accentClass"></div>
-
-            <div class="p-10 text-center">
-              <!-- Animated Icon -->
-              <div class="mb-8 flex justify-center">
-                <div class="relative">
-                  <div class="h-20 w-20 rounded-full flex items-center justify-center animate-icon-entrance" :class="iconBgClass">
-                    <component :is="computedIcon" class="h-10 w-10 animate-icon-pop" :class="iconColorClass" />
-                  </div>
-                  <!-- Pulse ring -->
-                  <div class="absolute inset-0 rounded-full animate-icon-ring" :class="ringClass"></div>
-                </div>
-              </div>
-
-              <!-- Title -->
-              <h3 class="text-2xl  text-gray-900  tracking-tight mb-3 animate-text-up">
-                {{ title }}
-              </h3>
-
-              <!-- Message -->
-              <p class="text-sm text-brand-gray/60 font-bold leading-relaxed mb-10 animate-text-up-delay">
-                {{ message }}
-              </p>
-
-              <!-- Actions -->
-              <div class="flex gap-4 animate-buttons-up">
-                <button 
-                  v-if="cancelText !== ''"
-                  @click="onCancel" 
-                  class="flex-1 py-4 px-6 rounded-2xl border-2 border-gray-100 text-gray-900 text-xs  uppercase tracking-[0.15em] hover:bg-gray-50 hover:border-gray-200 active:scale-95 transition-all duration-300"
-                >
-                  {{ cancelText || 'Cancel' }}
-                </button>
-                <button 
-                  @click="onConfirm" 
-                  class="flex-1 py-4 px-6 rounded-2xl text-white text-xs  uppercase tracking-[0.15em] active:scale-95 transition-all duration-300 shadow-lg hover:scale-[1.02]"
-                  :class="confirmBtnClass"
-                >
-                  {{ confirmText || 'Confirm' }}
-                </button>
-              </div>
+    <Transition name="backdrop">
+      <div
+        v-if="visible"
+        class="modal-backdrop"
+        @click.self="handleCancel"
+        aria-modal="true"
+        role="dialog"
+      />
+    </Transition>
+ 
+    <!-- Desktop: centered card -->
+    <Transition name="modal-desktop">
+      <div
+        v-if="visible"
+        class="modal-desktop-wrapper"
+        @click.self="handleCancel"
+      >
+        <div class="modal-card" :class="`variant-${variant}`">
+          <!-- Icon -->
+          <div class="modal-icon-wrap" :class="`icon-${variant}`">
+            <component :is="variantConfig.icon" class="h-5 w-5" />
+          </div>
+ 
+          <!-- Content -->
+          <div class="modal-body">
+            <h2 class="modal-title">{{ title }}</h2>
+            <p class="modal-message">{{ message }}</p>
+          </div>
+ 
+          <!-- Actions -->
+          <div class="modal-actions">
+            <button class="btn-cancel" @click="handleCancel">
+              {{ cancelText }}
+            </button>
+            <button
+              class="btn-confirm"
+              :class="`confirm-${variant}`"
+              @click="handleConfirm"
+            >
+              {{ confirmText }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+ 
+    <!-- Mobile: bottom sheet -->
+    <Transition name="sheet">
+      <div
+        v-if="visible"
+        class="modal-sheet-wrapper"
+        @click.self="handleCancel"
+      >
+        <div class="modal-sheet" :class="`variant-${variant}`">
+          <!-- Handle -->
+          <div class="sheet-handle" />
+ 
+          <!-- Icon + Content -->
+          <div class="sheet-header">
+            <div class="sheet-icon-wrap" :class="`icon-${variant}`">
+              <component :is="variantConfig.icon" class="h-5 w-5" />
+            </div>
+            <div class="sheet-text">
+              <h2 class="modal-title">{{ title }}</h2>
+              <p class="modal-message">{{ message }}</p>
             </div>
           </div>
-        </Transition>
+ 
+          <!-- Actions -->
+          <div class="sheet-actions">
+            <button
+              class="sheet-btn-confirm"
+              :class="`confirm-${variant}`"
+              @click="handleConfirm"
+            >
+              {{ confirmText }}
+            </button>
+            <button class="sheet-btn-cancel" @click="handleCancel">
+              {{ cancelText }}
+            </button>
+          </div>
+        </div>
       </div>
     </Transition>
   </Teleport>
 </template>
-
+ 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { 
-  ArrowRightOnRectangleIcon,
-  ExclamationTriangleIcon,
-  TrashIcon,
-  QuestionMarkCircleIcon,
-  XCircleIcon
-} from '@heroicons/vue/24/outline'
-
-const props = defineProps({
-  visible: { type: Boolean, default: false },
-  title: { type: String, default: 'Are you sure?' },
-  message: { type: String, default: '' },
-  confirmText: { type: String, default: 'Confirm' },
-  cancelText: { type: String, default: 'Cancel' },
-  variant: {
-    type: String,
-    default: 'warning',
-    validator: (v: string) => ['warning', 'danger', 'logout', 'info', 'exit'].includes(v)
-  },
-  closeOnBackdrop: { type: Boolean, default: true }
-})
-
-const emit = defineEmits(['confirm', 'cancel', 'update:visible'])
-
-const iconMap: Record<string, any> = {
-  warning: ExclamationTriangleIcon,
-  danger: TrashIcon,
-  logout: ArrowRightOnRectangleIcon,
-  info: QuestionMarkCircleIcon,
-  exit: XCircleIcon,
+import { computed, watch, onMounted, onUnmounted } from 'vue'
+import { LogOut, X, AlertTriangle, DoorOpen } from 'lucide-vue-next'
+ 
+const props = defineProps<{
+  visible: boolean
+  variant?: 'logout' | 'exit' | 'danger' | 'info'
+  title: string
+  message: string
+  confirmText?: string
+  cancelText?: string
+}>()
+ 
+const emit = defineEmits<{
+  'update:visible': [value: boolean]
+  confirm: []
+  cancel: []
+}>()
+ 
+const variantMap = {
+  logout: { icon: LogOut },
+  exit:   { icon: DoorOpen },
+  danger: { icon: AlertTriangle },
+  info:   { icon: X },
 }
-
-const computedIcon = computed(() => iconMap[props.variant] || ExclamationTriangleIcon)
-
-const accentClass = computed(() => {
-  const map: Record<string, string> = {
-    warning: 'bg-gradient-to-r from-amber-400 to-orange-400',
-    danger: 'bg-gradient-to-r from-red-400 to-rose-500',
-    logout: 'bg-gradient-to-r from-brand-blue to-brand-green',
-    info: 'bg-gradient-to-r from-brand-blue to-sky-400',
-    exit: 'bg-gradient-to-r from-orange-400 to-red-400',
-  }
-  return map[props.variant] || map.warning
-})
-
-const iconBgClass = computed(() => {
-  const map: Record<string, string> = {
-    warning: 'bg-amber-50',
-    danger: 'bg-red-50',
-    logout: 'bg-brand-blue/5',
-    info: 'bg-sky-50',
-    exit: 'bg-orange-50',
-  }
-  return map[props.variant] || map.warning
-})
-
-const iconColorClass = computed(() => {
-  const map: Record<string, string> = {
-    warning: 'text-amber-500',
-    danger: 'text-red-500',
-    logout: 'text-gray-900',
-    info: 'text-sky-500',
-    exit: 'text-orange-500',
-  }
-  return map[props.variant] || map.warning
-})
-
-const ringClass = computed(() => {
-  const map: Record<string, string> = {
-    warning: 'border-2 border-amber-200',
-    danger: 'border-2 border-red-200',
-    logout: 'border-2 border-brand-blue/20',
-    info: 'border-2 border-sky-200',
-    exit: 'border-2 border-orange-200',
-  }
-  return map[props.variant] || map.warning
-})
-
-const confirmBtnClass = computed(() => {
-  const map: Record<string, string> = {
-    warning: 'bg-amber-500 shadow-amber-500/30 hover:shadow-amber-500/40',
-    danger: 'bg-red-500 shadow-red-500/30 hover:shadow-red-500/40',
-    logout: 'bg-brand-blue shadow-brand-blue/30 hover:shadow-brand-blue/40',
-    info: 'bg-brand-blue shadow-brand-blue/30 hover:shadow-brand-blue/40',
-    exit: 'bg-orange-500 shadow-orange-500/30 hover:shadow-orange-500/40',
-  }
-  return map[props.variant] || map.warning
-})
-
-const onConfirm = () => {
+ 
+const variantConfig = computed(() => variantMap[props.variant ?? 'logout'])
+ 
+const handleConfirm = () => {
   emit('confirm')
   emit('update:visible', false)
 }
-
-const onCancel = () => {
+ 
+const handleCancel = () => {
   emit('cancel')
   emit('update:visible', false)
 }
-
-const onBackdropClick = () => {
-  if (props.closeOnBackdrop) onCancel()
+ 
+// Lock body scroll while open
+const lockScroll = () => { document.body.style.overflow = 'hidden' }
+const unlockScroll = () => { document.body.style.overflow = '' }
+ 
+watch(() => props.visible, (val) => {
+  val ? lockScroll() : unlockScroll()
+}, { immediate: true })
+ 
+// Escape key
+const onKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && props.visible) handleCancel()
 }
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onUnmounted(() => { window.removeEventListener('keydown', onKeydown); unlockScroll() })
 </script>
-
+ 
 <style scoped>
-/* Backdrop */
-.modal-backdrop-enter-active { transition: opacity 0.4s ease; }
-.modal-backdrop-leave-active { transition: opacity 0.3s ease; }
-.modal-backdrop-enter-from,
-.modal-backdrop-leave-to { opacity: 0; }
-
-/* Content */
-.modal-content-enter-active { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.modal-content-leave-active { transition: all 0.3s cubic-bezier(0.4, 0, 1, 1); }
-.modal-content-enter-from { opacity: 0; transform: scale(0.9) translateY(30px); }
-.modal-content-leave-to { opacity: 0; transform: scale(0.95) translateY(-10px); }
-
-/* Icon entrance */
-@keyframes icon-entrance {
-  from { transform: scale(0) rotate(-30deg); opacity: 0; }
-  to { transform: scale(1) rotate(0deg); opacity: 1; }
+/* ─── Backdrop ─── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
-@keyframes icon-pop {
-  0% { transform: scale(0); }
-  60% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+ 
+/* ─── Desktop wrapper (hidden on mobile) ─── */
+.modal-desktop-wrapper {
+  display: none;
 }
-@keyframes icon-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(1.5); opacity: 0; }
+@media (min-width: 640px) {
+  .modal-desktop-wrapper {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 99991;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
 }
-@keyframes text-up {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+ 
+/* ─── Desktop card ─── */
+.modal-card {
+  background: #fff;
+  border-radius: 1.25rem;
+  border: 1px solid #e5e7eb;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
 }
-
-.animate-icon-entrance { animation: icon-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
-.animate-icon-pop { animation: icon-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; transform: scale(0); }
-.animate-icon-ring { animation: icon-ring 1s ease-out 0.3s forwards; opacity: 0; }
-.animate-text-up { animation: text-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
-.animate-text-up-delay { animation: text-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; opacity: 0; }
-.animate-buttons-up { animation: text-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; opacity: 0; }
+ 
+.modal-icon-wrap {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+ 
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+ 
+.modal-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+ 
+.modal-message {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  line-height: 1.55;
+  font-weight: 400;
+}
+ 
+.modal-actions {
+  display: flex;
+  gap: 0.625rem;
+  padding-top: 0.25rem;
+}
+ 
+.btn-cancel {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  border-radius: 0.625rem;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.btn-cancel:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+ 
+.btn-confirm {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  border-radius: 0.625rem;
+  border: 1px solid transparent;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.btn-confirm:hover { opacity: 0.88; }
+ 
+/* ─── Mobile: bottom sheet (hidden on desktop) ─── */
+.modal-sheet-wrapper {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 99991;
+  align-items: flex-end;
+}
+@media (min-width: 640px) {
+  .modal-sheet-wrapper { display: none; }
+}
+ 
+.modal-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 1.5rem 1.5rem 0 0;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+  padding: 1rem 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+ 
+.sheet-handle {
+  width: 2.5rem;
+  height: 0.25rem;
+  background: #e5e7eb;
+  border-radius: 99px;
+  margin: 0 auto 0.25rem;
+}
+ 
+.sheet-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+ 
+.sheet-icon-wrap {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+ 
+.sheet-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+ 
+.sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+ 
+.sheet-btn-confirm {
+  width: 100%;
+  padding: 0.8125rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.sheet-btn-confirm:hover { opacity: 0.88; }
+ 
+.sheet-btn-cancel {
+  width: 100%;
+  padding: 0.8125rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.sheet-btn-cancel:hover { background: #f3f4f6; }
+ 
+/* ─── Variant colors ─── */
+.icon-logout  { background: #fef3c7; color: #d97706; }
+.icon-exit    { background: #fee2e2; color: #dc2626; }
+.icon-danger  { background: #fee2e2; color: #dc2626; }
+.icon-info    { background: #eff6ff; color: #2563eb; }
+ 
+.confirm-logout { background: #111827; }
+.confirm-exit   { background: #dc2626; }
+.confirm-danger { background: #dc2626; }
+.confirm-info   { background: #2563eb; }
+ 
+/* ─── Backdrop transition ─── */
+.backdrop-enter-active,
+.backdrop-leave-active {
+  transition: opacity 0.22s ease;
+}
+.backdrop-enter-from,
+.backdrop-leave-to {
+  opacity: 0;
+}
+ 
+/* ─── Desktop modal transition ─── */
+.modal-desktop-enter-active {
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.modal-desktop-leave-active {
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+.modal-desktop-enter-from,
+.modal-desktop-leave-to {
+  opacity: 0;
+}
+.modal-desktop-enter-from .modal-card {
+  transform: scale(0.94) translateY(8px);
+}
+.modal-desktop-leave-to .modal-card {
+  transform: scale(0.96) translateY(4px);
+}
+ 
+/* ─── Bottom sheet transition ─── */
+.sheet-enter-active {
+  transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.sheet-leave-active {
+  transition: opacity 0.18s ease, transform 0.2s ease;
+}
+.sheet-enter-from,
+.sheet-leave-to {
+  opacity: 0;
+}
+.sheet-enter-from .modal-sheet,
+.sheet-leave-to .modal-sheet {
+  transform: translateY(100%);
+}
 </style>

@@ -221,7 +221,7 @@ const handleContinue = () => {
   background: #f97316; /* Orange from buttons */
   color: white;
   font-weight: 800;
-  text-transform: uppercase;
+  
   padding: 1rem;
   border: none;
   border-radius: 0.5rem;

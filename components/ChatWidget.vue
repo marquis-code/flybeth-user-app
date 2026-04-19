@@ -312,7 +312,7 @@ watch(messages, () => {
            
            <div class="space-y-3">
               <div class="relative group">
-                 <IdentificationIcon class="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300 group-focus-within:text-blue-500 transition-colors" />
+                 <IdentificationIcon class="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
                  <input 
                    v-model="guestInfo.name"
                    type="text" 
@@ -321,7 +321,7 @@ watch(messages, () => {
                  />
               </div>
               <div class="relative group">
-                 <EnvelopeIcon class="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300 group-focus-within:text-blue-500 transition-colors" />
+                 <EnvelopeIcon class="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-blue-500 transition-colors" />
                  <input 
                    v-model="guestInfo.email"
                    type="email" 
@@ -443,7 +443,7 @@ watch(messages, () => {
                 v-model="messageText"
                 rows="1"
                 placeholder="Type your message..." 
-                class="flex-1 bg-transparent border-0 focus:ring-0 text-sm font-medium p-2.5 resize-none outline-none placeholder:text-gray-300 max-h-20"
+                class="flex-1 bg-transparent border-0 focus:ring-0 text-sm font-medium p-2.5 resize-none outline-none placeholder:text-gray-500 max-h-20"
                 @keydown="handleKeyDown"
               ></textarea>
               <button 
@@ -454,7 +454,7 @@ watch(messages, () => {
                  <PaperAirplaneIcon class="h-4 w-4" />
               </button>
            </div>
-           <p class="text-[9px] text-gray-300 text-center mt-1.5 font-medium">Flybeth Support • Available 24/7</p>
+           <p class="text-[9px] text-gray-500 text-center mt-1.5 font-medium">Flybeth Support • Available 24/7</p>
         </div>
       </div>
     </Transition>

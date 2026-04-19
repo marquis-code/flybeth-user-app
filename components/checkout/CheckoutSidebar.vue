@@ -1,117 +1,101 @@
 <template>
-  <div class="checkout-sidebar">
-    <h2 class="sidebar-title">My cart</h2>
+  <div class="ck-sb">
+    <div class="ck-sb-hd">
+      <h2 class="ck-sb-title">Trip Summary</h2>
+      <div v-if="passengerCount" class="ck-sb-tag">{{ passengerCount }} Guest{{ passengerCount > 1 ? 's' : '' }}</div>
+    </div>
 
     <!-- Flight Info -->
-    <div v-if="flight" class="sidebar-section">
-      <h3 class="section-label">Flight details</h3>
-      <div class="flight-routes">
-        <div class="route-item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="route-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
-          <div>
-            <p class="route-text">{{ flight.originName || flight.origin }} to {{ flight.destinationName || flight.destination }}</p>
-            <p class="route-meta">{{ flight.origin }} ➔ {{ flight.destination }} • {{ capitalize(flight.cabinClass || 'economy') }}</p>
-          </div>
+    <div v-if="flight" class="ck-sb-sec">
+      <div class="ck-sb-item">
+        <div class="ck-sb-ico">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 21 4s-2 0-3.5 1.5L14 9l-8.2-1.8L3 10l8.2 2.8L11 15.2l-3 3.3V20l4.5-1.5 4.5 1.5v-1.5l-3-3.3 2.4-2.4 8.2 2.8-1.3 2.8z"/></svg>
+        </div>
+        <div class="ck-sb-info">
+          <p class="ck-sb-lbl">Flight</p>
+          <p class="ck-sb-val">{{ flight.origin }} ➔ {{ flight.destination }}</p>
+          <p class="ck-sb-sub">{{ capitalize(flight.cabinClass || 'economy') }} • {{ flight.airline }}</p>
         </div>
       </div>
     </div>
 
     <!-- Stay Info -->
-    <div v-if="currentStay" class="sidebar-section mt-4">
-      <h3 class="section-label">Hotel details</h3>
-      <div class="flight-routes">
-        <div class="route-item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="route-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-          <div>
-            <p class="route-text">{{ currentStay.hotelName || currentStay.name || currentStay.stay?.name }}</p>
-            <p class="route-meta">{{ currentStay.roomName || currentStay.selectedRoom?.name || 'Selected Room' }}</p>
-          </div>
+    <div v-if="currentStay" class="ck-sb-sec">
+      <div class="ck-sb-item">
+        <div class="ck-sb-ico">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="ck-sb-info">
+          <p class="ck-sb-lbl">Accommodation</p>
+          <p class="ck-sb-val">{{ currentStay.hotelName || currentStay.name || currentStay.stay?.name }}</p>
+          <p class="ck-sb-sub">{{ currentStay.roomName || currentStay.selectedRoom?.name || 'Standard Room' }}</p>
         </div>
       </div>
     </div>
 
-    <div class="sidebar-divider"></div>
+    <div class="ck-sb-divider"></div>
 
     <!-- Fare Summary -->
-    <div class="sidebar-section">
-      <h3 class="section-label">Fare summary</h3>
-      <div class="fare-rows space-y-4">
-        <!-- Flight Breakdown -->
-        <div v-if="flight" class="space-y-1">
-           <div class="text-[9px] font-bold text-gray-400 tracking-widest mb-2">Flight</div>
-           <div class="fare-row">
-             <span>Flights × {{ passengerCount }} Traveller{{ passengerCount > 1 ? 's' : '' }}</span>
-             <span>{{ currency }}{{ formatPrice(flightBasePrice) }}</span>
+    <div class="ck-sb-sec">
+      <div class="ck-sb-fares">
+        <div class="ck-sb-fare">
+          <span>Base Fare</span>
+          <span>{{ currency }}{{ formatPrice(baseFare) }}</span>
+        </div>
+        
+        <div v-if="showBreakdown" class="ck-sb-breakdown animate-in">
+           <div v-if="discount > 0" class="ck-sb-fare ck-sb-fare--disc">
+             <span>Promo Discount</span>
+             <span>-{{ currency }}{{ formatPrice(discount) }}</span>
+           </div>
+           <div class="ck-sb-fare ck-sb-fare--sub">
+             <span>Taxes & Fees</span>
+             <span>{{ currency }}{{ formatPrice(taxes) }}</span>
+           </div>
+           <div class="ck-sb-fare ck-sb-fare--sub">
+             <span>Service Charge</span>
+             <span>{{ currency }}{{ formatPrice(serviceCharge) }}</span>
+           </div>
+           <div v-for="addon in addOns" :key="addon.name" class="ck-sb-fare ck-sb-fare--sub">
+             <span>{{ addon.name }}</span>
+             <span>{{ currency }}{{ formatPrice(addon.price) }}</span>
            </div>
         </div>
 
-        <!-- Stay Breakdown -->
-        <div v-if="currentStay" class="space-y-1">
-           <div class="text-[9px] font-bold text-gray-400 tracking-widest mb-2">Hotel</div>
-           <div class="fare-row">
-             <span>Accommodation</span>
-             <span>{{ currency }}{{ formatPrice(stayPrice) }}</span>
-           </div>
-        </div>
-
-        <div class="sidebar-divider !my-2 opacity-50"></div>
-
-        <div v-show="showBreakdown" class="space-y-3 pt-3 border-t border-gray-50 mt-3">
-          <div v-if="discount > 0" class="fare-row discount text-[11px]">
-            <span class="text-gray-500">Discount applied</span>
-            <span class="text-red-600 font-bold">-{{ currency }}{{ formatPrice(discount) }}</span>
-          </div>
-          <div class="fare-row text-[11px]">
-            <span class="text-gray-500">Taxes & fees</span>
-            <span class="text-gray-900 font-bold">{{ currency }}{{ formatPrice(taxes) }}</span>
-          </div>
-          <div class="fare-row text-[11px]">
-            <span class="text-gray-500">Service charge</span>
-            <span class="text-gray-900 font-bold">{{ currency }}{{ formatPrice(serviceCharge) }}</span>
-          </div>
-        </div>
-      </div>
-      <button @click="showBreakdown = !showBreakdown" class="breakdown-link mt-4 flex items-center gap-1.5 text-brand-blue hover:text-brand-blue/80 transition-colors">
-        <span class="text-[10px] font-bold tracking-widest">{{ showBreakdown ? 'Hide' : 'View' }} breakdown</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transition-transform duration-300" :class="{ 'rotate-180': showBreakdown }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-      </button>
-    </div>
-
-    <div class="sidebar-divider"></div>
-
-    <!-- Add-ons -->
-    <div v-if="addOns.length > 0" class="sidebar-section">
-      <h3 class="section-label">Add-ons</h3>
-      <div class="fare-rows">
-        <div v-for="addon in addOns" :key="addon.name" class="fare-row">
-          <span>{{ addon.name }}</span>
-          <span>{{ currency }}{{ formatPrice(addon.price) }}</span>
-        </div>
-      </div>
-      <div class="sidebar-divider"></div>
-    </div>
-
-    <!-- Trip Total -->
-    <div class="sidebar-section total-section border-t-2 border-dashed border-gray-100 pt-6 mt-6">
-      <div class="total-row flex justify-between items-center px-1">
-        <span class="total-label text-base font-bold text-gray-900">Trip total</span>
-        <span class="total-amount text-2xl  text-gray-900 tracking-tight">{{ currency }}{{ formatPrice(tripTotal) }}</span>
+        <button @click="showBreakdown = !showBreakdown" class="ck-sb-toggle">
+          {{ showBreakdown ? 'Hide' : 'Show' }} breakdown 
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{ 'rotate-180': showBreakdown }"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
       </div>
     </div>
 
-    <!-- Pay Now Button (only at payment step) -->
-    <div v-if="showPayButton" class="space-y-3">
-        <button @click="$emit('pay-now')" class="pay-now-btn w-full mt-6 bg-brand-blue hover:bg-brand-blue/90 text-white font-bold py-3.5 rounded-2xl transition-all tracking-widest text-[11px] active:scale-[0.98]">
-          Complete payment
+    <div class="ck-sb-divider !border-solid border-gray-100"></div>
+
+    <!-- Total -->
+    <div class="ck-sb-total-wrap">
+       <span class="ck-sb-total-lbl">Total Amount</span>
+       <div class="ck-sb-total-price">
+          <span class="ck-sb-total-cur">{{ currency }}</span>
+          <span class="ck-sb-total-val">{{ formatPrice(tripTotal) }}</span>
+       </div>
+    </div>
+
+    <!-- Actions -->
+    <div v-if="showPayButton" class="ck-sb-actions">
+        <button @click="$emit('pay-now')" class="ck-sb-btn ck-sb-btn--primary">
+          Confirm & Pay Securely
         </button>
 
         <button 
           v-if="flight?.rawOffer?.provider === 'duffel' || $route.query.provider === 'duffel'" 
           @click="$emit('hold-now')" 
-          class="w-full bg-orange-50 hover:bg-orange-100 text-orange-600 font-bold py-3 rounded-2xl transition-all tracking-widest text-[10px] uppercase border border-orange-100"
+          class="ck-sb-btn ck-sb-btn--second"
         >
-          Hold for Later (Reserve)
+          Hold Reservation
         </button>
+    </div>
+    <div v-else class="ck-sb-meta">
+       <p>Taxes and fees are calculated based on your final selection.</p>
     </div>
   </div>
 </template>
@@ -136,7 +120,6 @@ const props = defineProps({
 defineEmits(['apply-promo', 'pay-now', 'hold-now'])
 
 const showBreakdown = ref(false)
-
 const currentStay = computed(() => props.bundledStay || props.stay)
 
 const stayPrice = computed(() => {
@@ -159,117 +142,71 @@ const tripTotal = computed(() => {
 })
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-
 const formatPrice = (price: number) => {
   return (price || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 </script>
 
 <style scoped>
-.checkout-sidebar {
-  background: white;
-  border-radius: 1.5rem;
-  border: 1px solid #cbd5e1;
-  padding: 1.5rem;
-  position: sticky;
-  top: 6rem;
+.ck-sb {
+  background: #fff;
+  border: 1px solid #eaeaef;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
 }
 
-.sidebar-title {
-  
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #1a2332;
-  margin-bottom: 2rem;
-  letter-spacing: -0.01em;
+.ck-sb-hd {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;
+}
+.ck-sb-title { font-size: 15px; font-weight: 700; color: #111; }
+.ck-sb-tag { font-size: 10px; font-weight: 700; background: #f0f7f3; color: #1d7a4f; padding: 4px 10px; border-radius: 100px; }
+
+.ck-sb-sec { margin-bottom: 16px; }
+
+.ck-sb-item { display: flex; gap: 12px; background: #fafaf8; border-radius: 16px; padding: 12px; border: 1px solid #f0f0ea; }
+.ck-sb-ico { color: #111; background: #fff; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #eee; flex-shrink: 0; }
+.ck-sb-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #aaa; margin-bottom: 2px; }
+.ck-sb-val { font-size: 13px; font-weight: 700; color: #111; line-height: 1.3; margin-bottom: 2px; }
+.ck-sb-sub { font-size: 11px; color: #888; }
+
+.ck-sb-divider { border-bottom: 1px dashed #eee; margin: 20px 0; }
+
+.ck-sb-fares { display: flex; flex-direction: column; gap: 10px; }
+.ck-sb-fare { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: #111; }
+.ck-sb-fare--sub { font-size: 12px; font-weight: 500; color: #888; }
+.ck-sb-fare--disc { color: #d00; }
+
+.ck-sb-toggle {
+  background: none; border: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700;
+  color: #111; margin-top: 4px;
 }
 
-.sidebar-section {
-  margin-bottom: 1.5rem;
+.ck-sb-total-wrap {
+  display: flex; align-items: center; justify-content: space-between; padding: 8px 0;
 }
+.ck-sb-total-lbl { font-size: 14px; font-weight: 700; color: #111; }
+.ck-sb-total-price { display: flex; align-items: baseline; gap: 2px; color: #1d7a4f; }
+.ck-sb-total-cur { font-size: 14px; font-weight: 700; }
+.ck-sb-total-val { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
 
-.section-label {
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: #94a3b8;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.ck-sb-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.ck-sb-btn {
+  width: 100%; height: 52px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); border: none;
 }
+.ck-sb-btn:active { transform: scale(0.98); }
 
-.flight-routes {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+.ck-sb-btn--primary { background: #111; color: #fff; }
+.ck-sb-btn--primary:hover { background: #1d7a4f; }
 
-.route-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  background: #f8fafc;
-  padding: 1rem;
-  border-radius: 1rem;
-  border: 1px solid #cbd5e1;
-}
+.ck-sb-btn--second { background: #fdf2e9; color: #c2410c; border: 1px solid #fed7aa; }
+.ck-sb-btn--second:hover { background: #ffedd5; }
 
-.route-icon {
-  width: 16px;
-  height: 16px;
-  color: #0D1DAD;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
+.ck-sb-meta { font-size: 11px; color: #aaa; text-align: center; margin-top: 16px; line-height: 1.5; }
 
-.route-text {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #1e293b;
-  line-height: 1.4;
-}
-
-.route-meta {
-  font-size: 0.65rem;
-  color: #9ca3af;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-top: 2px;
-}
-
-.sidebar-divider {
-  border-bottom: 1px dashed #e2e8f0;
-  margin: 1.25rem 0;
-}
-
-.fare-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: #475569;
-  font-weight: 500;
-}
-
-.fare-row.discount span:last-child {
-  color: #dc2626;
-}
-
-.breakdown-link {
-  display: flex;
-  align-items: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #0D1DAD;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.8;
-  transition: opacity 0.2s;
-}
-
-.breakdown-link:hover {
-  opacity: 1;
-}
+/* Animation */
+.animate-in { animation: ckFadeIn 0.3s ease both; }
+@keyframes ckFadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 </style>

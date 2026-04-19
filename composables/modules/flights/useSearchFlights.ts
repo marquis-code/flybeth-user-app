@@ -19,8 +19,10 @@ export const useSearchFlights = () => {
                 destLng: searchData.destLng,
                 departureDate: searchData.departureDate,
                 returnDate: searchData.returnDate,
-                adults: searchData.passengers || 1,
-                cabinClass: searchData.class || 'economy',
+                adults: searchData.adults || (searchData.passengers && !searchData.children && !searchData.infants ? searchData.passengers : 1),
+                children: searchData.children || 0,
+                infants: searchData.infants || (Number(searchData.infantsOnLap || 0) + Number(searchData.infantsInSeat || 0)) || 0,
+                cabinClass: searchData.cabinClass || searchData.class || 'economy',
             };
 
             const { data, status } = await flightsApi.searchLive(payload);

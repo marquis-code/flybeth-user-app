@@ -36,8 +36,9 @@ export const useAuth = () => {
 
             if (res.status === 200 || res.status === 201) {
                 if (authData.user) {
-                    setUser(authData.user);
+                    setUser({ ...authData.user, accessToken: authData.accessToken, refreshToken: authData.refreshToken });
                 }
+                closeAuthModal();
                 showToast({
                     title: "Success",
                     message: "Login successful",
@@ -74,8 +75,9 @@ export const useAuth = () => {
 
             if (res.status === 200 || res.status === 201) {
                 if (authData.user) {
-                    setUser(authData.user);
+                    setUser({ ...authData.user, accessToken: authData.accessToken, refreshToken: authData.refreshToken });
                 }
+                closeAuthModal();
                 showToast({
                     title: "Success",
                     message: "Registration successful. You are now logged in.",
@@ -164,8 +166,9 @@ export const useAuth = () => {
             if (res.status === 200 || res.status === 201) {
                 const authData = res.data?.data || res.data;
                 if (authData.user) {
-                    setUser(authData.user);
+                    setUser({ ...authData.user, accessToken: authData.accessToken, refreshToken: authData.refreshToken });
                 }
+                closeAuthModal();
 
                 showToast({
                     title: "Success",
@@ -209,8 +212,9 @@ export const useAuth = () => {
 
             if (res.status === 200 || res.status === 201) {
                 if (authData.user) {
-                    setUser(authData.user);
+                    setUser({ ...authData.user, accessToken: authData.accessToken, refreshToken: authData.refreshToken });
                 }
+                closeAuthModal();
                 showToast({
                     title: "Success",
                     message: "Login successful",

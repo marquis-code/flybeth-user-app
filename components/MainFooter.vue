@@ -41,7 +41,7 @@
             <ul class="space-y-4">
               <li><NuxtLink to="/help" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Help Center</NuxtLink></li>
               <li><NuxtLink to="/terms" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Terms of Service</NuxtLink></li>
-              <li><NuxtLink to="/privacy" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Privacy Policy</NuxtLink></li>
+              <li><NuxtLink to="/privacy-policy" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Privacy Policy</NuxtLink></li>
               <li><NuxtLink to="/contact" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Contact Us</NuxtLink></li>
             </ul>
           </div>
@@ -49,8 +49,8 @@
             <h4 class="text-xs font-bold text-gray-900 uppercase tracking-widest mb-6">Newsletter</h4>
             <p class="text-sm text-gray-500 mb-4">Get the latest deals and travel tips delivered to your inbox.</p>
             <form @submit.prevent class="relative">
-              <input type="email" placeholder="Your email address" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-brand-blue/20 outline-none text-sm" />
-              <button class="absolute right-2 top-2 bottom-2 px-4 bg-brand-blue text-white rounded-lg text-xs font-bold hover:bg-[#0a168a] transition-all">Join</button>
+              <input v-model="email"  type="email" placeholder="Your email address" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-brand-blue/20 outline-none text-sm" />
+              <button @click="handleNewsletterSubscribe" :disabled="newsletterLoading || !email"  class="absolute right-2 top-2 bottom-2 px-4 bg-brand-blue text-white rounded-lg text-xs font-bold hover:bg-[#0a168a] transition-all">{{ newsletterLoading ? "Joining..." : "Join" }}</button>
             </form>
           </div>
         </div>
@@ -72,6 +72,27 @@
 </template>
 
 <script setup lang="ts">
+import { useCustomToast } from '@/composables/core/useCustomToast';
+import { useNewsletter } from '@/composables/modules/support/useNewsletter';
+const { loading: newsletterLoading, subscribe: subscribeNewsletter } = useNewsletter();
+const { showToast } = useCustomToast();
+const email = ref('');
+
+const handleNewsletterSubscribe = async () => {
+  if (!email.value) {
+    showToast({
+      title: 'Email Required',
+      message: 'Please enter a valid email address to join.',
+      toastType: 'error'
+    });
+    return;
+  }
+  const success = await subscribeNewsletter(email.value, 'landing-page');
+  if (success) {
+    email.value = '';
+  }
+};
+
 // Professional Footer
 </script>
 

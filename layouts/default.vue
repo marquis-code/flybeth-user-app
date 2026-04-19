@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col font-sans">
     <NavBar v-if="showNavBar" />
-    <main class="flex-grow" :class="{ 'pt-20': showNavBar && !isHomePage }">
+    <main class="flex-grow" :class="{ 'pt-14': showNavBar && !isHomePage }">
       <slot />
     </main>
     <MainFooter />

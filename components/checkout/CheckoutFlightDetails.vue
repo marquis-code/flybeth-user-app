@@ -1,130 +1,105 @@
 <template>
-  <div class="flight-details-step">
+  <div class="ck-fd">
     <!-- Flight Itinerary -->
-    <div v-if="flightOffer" class="itinerary-card">
-      <div class="itinerary-header">
-        <div class="flex flex-col gap-1">
-          <h2 class="itinerary-route">{{ flightOffer.originName || flightOffer.origin }} → {{ flightOffer.destinationName || flightOffer.destination }}</h2>
-          <div class="route-iata text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-             {{ flightOffer.origin }} ➔ {{ flightOffer.destination }}
+    <div v-if="flightOffer" class="ck-fd-card">
+      <div class="ck-fd-hdr">
+        <div class="ck-fd-route-wrap">
+          <h2 class="ck-fd-h">{{ flightOffer.originName || flightOffer.origin }} ➔ {{ flightOffer.destinationName || flightOffer.destination }}</h2>
+          <div class="ck-fd-sub">
+             <span>{{ formatDate(flightOffer.departureTime) }}</span>
+             <span class="ck-fd-dot"></span>
+             <span>{{ flightOffer.stops === 0 ? 'Non-stop' : `${flightOffer.stops} Stop${flightOffer.stops > 1 ? 's' : ''}` }}</span>
+             <span class="ck-fd-dot"></span>
+             <span>{{ formatDuration(flightOffer.duration) }}</span>
           </div>
         </div>
-        <button @click="expanded = !expanded" class="expand-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform" :class="{ 'rotate-180': expanded }" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+        <button @click="expanded = !expanded" class="ck-fd-toggle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{ 'rotate-180': expanded }"><path d="M6 9l6 6 6-6"/></svg>
         </button>
       </div>
 
-      <!-- Date & summary bar -->
-      <div class="date-bar">
-        <span class="date-badge">{{ formatDate(flightOffer.departureTime) }}</span>
-        <span class="stops-badge">{{ flightOffer.stops === 0 ? 'Non stop' : `${flightOffer.stops} Stop${flightOffer.stops > 1 ? 's' : ''}` }}</span>
-        <span class="duration-badge">{{ formatDuration(flightOffer.duration) }}</span>
-      </div>
-
-      <div v-show="expanded" class="segments-list">
-        <template v-for="(segment, idx) in flightOffer.segments" :key="idx">
-          <!-- Segment -->
-          <div class="segment-card">
-            <div class="segment-header">
-              <div class="airline-info">
-                <img v-if="segment.airlineLogo" :src="segment.airlineLogo" :alt="segment.airline" class="airline-logo" />
-                <div>
-                  <span class="airline-name">{{ segment.airline }} {{ segment.flightNumber }}</span>
+      <Transition name="fade">
+        <div v-show="expanded" class="ck-fd-body">
+          <div v-for="(segment, idx) in flightOffer.segments" :key="idx" class="ck-fd-seg-group">
+            
+            <!-- Segment Card -->
+            <div class="ck-fd-seg">
+              <div class="ck-fd-seg-hd">
+                <div class="ck-fd-airline">
+                  <img v-if="segment.airlineLogo" :src="segment.airlineLogo" :alt="segment.airline" class="ck-fd-logo" />
+                  <span class="ck-fd-seg-name">{{ segment.airline }} • {{ segment.flightNumber }}</span>
                 </div>
-              </div>
-              <span class="cabin-badge">{{ capitalize(flightOffer.cabinClass || 'economy') }}</span>
-            </div>
-
-            <div class="segment-timeline">
-              <!-- Departure -->
-              <div class="timeline-point">
-                <span class="time">{{ formatTime(segment.departureTime) }}</span>
-                <div class="timeline-dot-container">
-                  <div class="timeline-dot"></div>
-                </div>
-                <div class="location-info">
-                  <span class="airport">{{ segment.origin }}{{ segment.originTerminal ? `, Terminal ${segment.originTerminal}` : '' }}</span>
-                </div>
+                <span class="ck-fd-cabin">{{ capitalize(flightOffer.cabinClass || 'economy') }}</span>
               </div>
 
-              <!-- Duration line -->
-              <div class="timeline-line">
-                <span class="seg-duration">{{ formatDuration(segment.duration) }}</span>
-              </div>
-
-              <!-- Arrival -->
-              <div class="timeline-point">
-                <span class="time">{{ formatTime(segment.arrivalTime) }}</span>
-                <div class="timeline-dot-container">
-                  <div class="timeline-dot"></div>
+              <div class="ck-fd-time-grid">
+                <div class="ck-fd-point">
+                  <span class="ck-fd-time">{{ formatTime(segment.departureTime) }}</span>
+                  <div class="ck-fd-loc">
+                    <span class="ck-fd-iata">{{ segment.origin }}</span>
+                    <span class="ck-fd-term">{{ segment.originTerminal ? `Terminal ${segment.originTerminal}` : 'Main Terminal' }}</span>
+                  </div>
                 </div>
-                <div class="location-info">
-                  <span class="airport">{{ segment.destination }}{{ segment.destinationTerminal ? `, Terminal ${segment.destinationTerminal}` : '' }}</span>
+
+                <div class="ck-fd-path">
+                  <div class="ck-fd-path-line"></div>
+                  <span class="ck-fd-path-dur">{{ formatDuration(segment.duration) }}</span>
+                </div>
+
+                <div class="ck-fd-point ck-fd-point--end">
+                  <span class="ck-fd-time">{{ formatTime(segment.arrivalTime) }}</span>
+                  <div class="ck-fd-loc">
+                    <span class="ck-fd-iata">{{ segment.destination }}</span>
+                    <span class="ck-fd-term">{{ segment.destinationTerminal ? `Terminal ${segment.destinationTerminal}` : 'Main Terminal' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Segment meta -->
-            <div class="segment-meta">
-              <div class="meta-item">
-                <span class="meta-label">BAGGAGE</span>
-                <span class="meta-value">2 × 23kg</span>
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">CHECK IN</span>
-                <span class="meta-value">Online</span>
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">CABIN</span>
-                <span class="meta-value">1 × 7kg</span>
-              </div>
+            <!-- Layover -->
+            <div v-if="idx < flightOffer.segments.length - 1" class="ck-fd-layover">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span>{{ calcLayover(segment, flightOffer.segments[idx + 1]) }} Layover in {{ segment.destinationName || segment.destination }}</span>
             </div>
           </div>
 
-          <!-- Layover -->
-          <div v-if="(idx as number) < flightOffer.segments.length - 1" class="layover-card">
-            <div class="layover-icon">⏱</div>
-            <div>
-              <span class="layover-title">Layover</span>
-              <span class="layover-info">{{ calcLayover(segment, flightOffer.segments[(idx as number) + 1]) }} Layover in {{ segment.destination }}</span>
-            </div>
+          <!-- Bag Info -->
+          <div class="ck-fd-bags">
+             <div class="ck-fd-bag-item">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+               <span>Check-in: 2 × 23kg</span>
+             </div>
+             <div class="ck-fd-bag-item">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+               <span>Cabin: 1 × 7kg</span>
+             </div>
           </div>
-        </template>
-      </div>
-
-      <!-- Conditions & Emissions -->
-      <div class="conditions-bar">
-        <div class="condition-tags">
-          <span v-if="flightOffer.conditions?.refundable" class="tag tag-green">Refundable</span>
-          <span v-else class="tag tag-red">Non-refundable</span>
-          <span v-if="flightOffer.conditions?.changeable" class="tag tag-green">Changeable</span>
-          <span v-else class="tag tag-gray">Non-changeable</span>
         </div>
-        <div v-if="flightOffer.totalEmissionsKg" class="emissions">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" /></svg>
-          <span class="font-bold">{{ flightOffer.totalEmissionsKg }}kg CO₂</span>
+      </Transition>
+
+      <!-- Footer Tags -->
+      <div class="ck-fd-ft">
+        <div class="ck-fd-tags">
+          <span :class="flightOffer.conditions?.refundable ? 'ck-tag--pos' : 'ck-tag--neg'">
+            {{ flightOffer.conditions?.refundable ? 'Refundable' : 'Non-refundable' }}
+          </span>
+          <span :class="flightOffer.conditions?.changeable ? 'ck-tag--pos' : 'ck-tag--neu'">
+             {{ flightOffer.conditions?.changeable ? 'Changeable' : 'Fixed Date' }}
+          </span>
+        </div>
+        <div v-if="flightOffer.totalEmissionsKg" class="ck-fd-co2">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 118-8 8 8 0 01-8 8z"/><path d="M12 6a6 6 0 016 6 6 6 0 01-6 6 6 6 0 01-6-6 6 6 0 016-6z"/></svg>
+          <span>{{ flightOffer.totalEmissionsKg }}kg CO₂</span>
         </div>
       </div>
     </div>
 
-    <!-- Important Information -->
-    <div class="important-info-card">
-      <h3 class="info-title">Important Information</h3>
-      <div class="info-notice">
-        <span class="notice-icon">🟡</span>
-        <div>
-          <strong>Important Notice</strong>
-          <p>We recommend double-checking your route and itinerary before continuing. This helps avoid any issues, as Flybeth cannot be held responsible for errors resulting from an incorrect route selection.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Continue Button -->
-    <div class="step-actions">
-      <button @click="$emit('continue')" class="continue-btn">
-        Continue
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-      </button>
+    <!-- Actions -->
+    <div class="ck-fd-actions">
+       <button @click="$emit('continue')" class="ck-fd-btn">
+          <span>Continue to passenger info</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+       </button>
     </div>
   </div>
 </template>
@@ -140,18 +115,18 @@ defineEmits(['continue'])
 
 const expanded = ref(true)
 
-const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1) : ''
+const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : ''
 
 const formatTime = (iso: string) => {
   if (!iso) return '—'
   const d = new Date(iso)
-  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
 }
 
 const formatDate = (iso: string) => {
   if (!iso) return '—'
   const d = new Date(iso)
-  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
 const formatDuration = (minutes: number) => {
@@ -164,355 +139,76 @@ const formatDuration = (minutes: number) => {
 const calcLayover = (seg1: any, seg2: any) => {
   if (!seg1?.arrivalTime || !seg2?.departureTime) return '—'
   const diff = new Date(seg2.departureTime).getTime() - new Date(seg1.arrivalTime).getTime()
-  const mins = Math.round(diff / 60000)
-  return formatDuration(mins)
+  return formatDuration(Math.round(diff / 60000))
 }
 </script>
 
 <style scoped>
-.flight-details-step {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.ck-fd { display: flex; flex-direction: column; gap: 24px; font-family: 'Sora', sans-serif; }
+
+.ck-fd-card { background: #fff; border: 1.5px solid #f0f0ea; border-radius: 20px; overflow: hidden; }
+
+.ck-fd-hdr { display: flex; align-items: center; justify-content: space-between; padding: 24px 32px; background: #fafaf8; }
+.ck-fd-h { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 4px; letter-spacing: -0.02em; }
+.ck-fd-sub { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; color: #aaa; }
+.ck-fd-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
+
+.ck-fd-toggle {
+  width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid #eee;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; color: #888;
 }
 
-.itinerary-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
+.ck-fd-body { padding: 32px; border-top: 1px solid #f0f0ea; }
+
+.ck-fd-seg-group { margin-bottom: 24px; }
+.ck-fd-seg { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; }
+.ck-fd-seg-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.ck-fd-airline { display: flex; align-items: center; gap: 10px; }
+.ck-fd-logo { width: 24px; height: 24px; object-fit: contain; }
+.ck-fd-seg-name { font-size: 11px; font-weight: 700; color: #111; }
+.ck-fd-cabin { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #1d7a4f; background: #f0f7f3; padding: 3px 8px; border-radius: 100px; }
+
+.ck-fd-time-grid { display: flex; align-items: center; gap: 24px; }
+.ck-fd-point { flex: 1; }
+.ck-fd-time { display: block; font-size: 16px; font-weight: 800; color: #111; margin-bottom: 4px; }
+.ck-fd-loc { display: flex; flex-direction: column; }
+.ck-fd-iata { font-size: 12px; font-weight: 700; color: #555; }
+.ck-fd-term { font-size: 10px; color: #aaa; }
+
+.ck-fd-path { flex: 1.2; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ck-fd-path-line { width: 100%; height: 2px; background: #eee; border-radius: 4px; position: relative; }
+.ck-fd-path-line::before, .ck-fd-path-line::after { content: ''; position: absolute; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: #eee; }
+.ck-fd-path-line::before { left: 0; } .ck-fd-path-line::after { right: 0; }
+.ck-fd-path-dur { font-size: 10px; font-weight: 600; color: #bbb; letter-spacing: 0.05em; }
+
+.ck-fd-point--end { text-align: right; }
+
+.ck-fd-layover {
+  display: flex; align-items: center; gap: 8px; margin: 12px 20px;
+  font-size: 11px; font-weight: 600; color: #c2410c; background: #fff7ed; padding: 6px 12px; border-radius: 100px; width: fit-content;
 }
 
-.itinerary-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  background: white;
-}
+.ck-fd-bags { display: flex; gap: 24px; margin-top: 32px; padding-top: 24px; border-top: 1px dashed #eee; }
+.ck-fd-bag-item { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: #555; }
+.ck-fd-bag-item svg { color: #aaa; }
 
-.itinerary-route {
-  
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #1a2332;
-  letter-spacing: -0.01em;
-}
+.ck-fd-ft { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #fafaf8; border-top: 1px solid #f0f0ea; }
+.ck-fd-tags { display: flex; gap: 12px; }
+.ck-fd-tags span { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 4px; }
+.ck-tag--pos { background: #f0fdf4; color: #166534; }
+.ck-tag--neg { background: #fef2f2; color: #991b1b; }
+.ck-tag--neu { background: #f3f4f6; color: #4b5563; }
 
-.expand-btn {
-  background: #f8fafc;
-  border-radius: 0.75rem;
-  border: 1px solid #f1f5f9;
-  cursor: pointer;
-  color: #64748b;
-  padding: 0.5rem;
-  transition: all 0.2s;
-}
+.ck-fd-co2 { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #059669; }
 
-.expand-btn:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+.ck-fd-actions { display: flex; justify-content: flex-end; }
+.ck-fd-btn {
+  background: #111; color: #fff; border: none; border-radius: 12px; height: 52px; padding: 0 32px;
+  display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
 }
+.ck-fd-btn:hover { background: #1d7a4f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+.ck-fd-btn:active { transform: scale(0.98); }
 
-.date-bar {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.25rem 2rem;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
-}
-
-.date-badge {
-  background: #0D1DAD;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.35rem 1rem;
-  border-radius: 2rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.stops-badge, .duration-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #6b7280;
-}
-
-.segments-list {
-  padding: 1rem 1.5rem;
-}
-
-.segment-card {
-  padding: 1rem 0;
-}
-
-.segment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.airline-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.airline-logo {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-}
-
-.airline-name {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #374151;
-}
-
-.cabin-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #0D1DAD;
-  background: rgba(13, 29, 173, 0.08);
-  padding: 0.2rem 0.6rem;
-  border-radius: 0.25rem;
-}
-
-.segment-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding-left: 1rem;
-}
-
-.timeline-point {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.time {
-  font-size: 1rem;
-  font-weight: 900;
-  color: #1a2332;
-  min-width: 48px;
-}
-
-.timeline-dot-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.timeline-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid #0D1DAD;
-  background: white;
-}
-
-.location-info {
-  flex: 1;
-}
-
-.airport {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #374151;
-}
-
-.timeline-line {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0 0.3rem calc(48px + 0.75rem);
-  position: relative;
-}
-
-.timeline-line::before {
-  content: '';
-  position: absolute;
-  left: calc(1rem + 48px + 0.75rem + 4px);
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #d1d5db;
-}
-
-.seg-duration {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #9ca3af;
-  padding-left: 1.5rem;
-}
-
-.segment-meta {
-  display: flex;
-  gap: 2rem;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px dashed #e5e7eb;
-}
-
-.meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.meta-label {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.meta-value {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #374151;
-}
-
-.layover-card {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: #fef3c7;
-  border-radius: 0.5rem;
-  margin: 0.5rem 0;
-  border-left: 4px solid #f59e0b;
-}
-
-.layover-icon {
-  font-size: 1.2rem;
-}
-
-.layover-title {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #92400e;
-}
-
-.layover-info {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #a16207;
-}
-
-.conditions-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  background: #f9fafb;
-  border-top: 1px solid #f3f4f6;
-}
-
-.condition-tags {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.tag {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.tag-green { background: #d1fae5; color: #065f46; }
-.tag-red { background: #fee2e2; color: #991b1b; }
-.tag-gray { background: #f3f4f6; color: #6b7280; }
-
-.emissions {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #059669;
-}
-
-.important-info-card {
-  background: white;
-  border-radius: 1rem;
-  border: 1px solid #e5e7eb;
-  padding: 1.5rem;
-}
-
-.info-title {
-  font-size: 1rem;
-  font-weight: 900;
-  color: #1a2332;
-  margin-bottom: 1rem;
-}
-
-.info-notice {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.notice-icon {
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-.info-notice strong {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #374151;
-  margin-bottom: 0.25rem;
-}
-
-.info-notice p {
-  font-size: 0.78rem;
-  color: #6b7280;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.step-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.continue-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: #0D1DAD;
-  color: white;
-  border: none;
-  padding: 1rem 2.5rem;
-  border-radius: 0.85rem;
-  font-size: 0.854rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.continue-btn:hover {
-  background: #0a168a;
-  transform: translateY(-1px);
-}
-
-.continue-btn:active {
-  transform: translateY(0);
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-10px); }
 </style>

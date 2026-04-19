@@ -4,7 +4,7 @@
     <!-- Car Image & Quick Badge -->
     <div class="md:w-[320px] lg:w-[380px] h-60 md:h-auto shrink-0 relative flex items-center justify-center rounded-[2rem] bg-[#F8FAFC] border border-gray-100/50 overflow-hidden group-hover:bg-white transition-colors duration-500">
       <img v-if="car.image" :src="car.image" :alt="car.name" class="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-1000 ease-out" />
-      <div v-else class="w-20 h-20 bg-gray-100 rounded-full animate-pulse flex items-center justify-center text-gray-300">
+      <div v-else class="w-20 h-20 bg-gray-100 rounded-full animate-pulse flex items-center justify-center text-gray-500">
          <CarIcon class="h-10 w-10" />
       </div>
 
@@ -33,7 +33,7 @@
           </div>
           <div class="flex items-center gap-2">
              <div class="text-right hidden sm:block">
-                <p class="text-[9px] font-bold text-gray-300 uppercase tracking-widest">Provider</p>
+                <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Provider</p>
                 <p class="text-[10px] font-extrabold text-gray-500">{{ car.provider || 'Rental Partner' }}</p>
              </div>
           </div>
@@ -64,7 +64,7 @@
       <div class="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
         <div class="flex items-baseline gap-1.5">
            <div class="flex flex-col">
-              <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-0.5">Total Price</span>
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-0.5">Total Price</span>
               <div class="flex items-baseline gap-1">
                  <span class="text-xs font-bold text-gray-400">USD</span>
                  <span class="text-3xl font-extrabold text-gray-900 tracking-tighter">{{ formatPrice(car.pricing?.basePrice || car.price) }}</span>

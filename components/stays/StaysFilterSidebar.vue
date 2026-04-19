@@ -69,7 +69,7 @@
             </div>
             <span class="text-[11px] font-black text-gray-900 tracking-wide opacity-60 group-hover:opacity-100 transition-opacity">{{ amenity.label }}</span>
           </div>
-          <span class="text-[9px] font-black text-gray-300 bg-gray-50 px-2.5 py-0.5 rounded-lg" v-if="counts[amenity.id]">{{ counts[amenity.id] }}</span>
+          <span class="text-[9px] font-black text-gray-500 bg-gray-50 px-2.5 py-0.5 rounded-lg" v-if="counts[amenity.id]">{{ counts[amenity.id] }}</span>
         </label>
       </div>
     </div>

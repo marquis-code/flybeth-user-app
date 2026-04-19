@@ -557,7 +557,7 @@ const DatePickerPanel = {
           @click="$emit('select', day)"
           class="w-10 h-10 flex items-center justify-center rounded-xl text-[12px] font-bold transition-all hover:bg-gray-50 relative"
           :class="{
-            'text-gray-300 pointer-events-none': !isSameMonth(day),
+            'text-gray-500 pointer-events-none': !isSameMonth(day),
             'text-gray-700': isSameMonth(day) && !isToday(day) && !isSelected(day),
             'bg-[#005967] text-white shadow-lg shadow-[#005967]/30': isToday(day),
             'ring-2 ring-[#005967]/50 text-[#005967]': isSelected(day) && !isToday(day)
