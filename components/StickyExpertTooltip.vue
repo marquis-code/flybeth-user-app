@@ -26,7 +26,7 @@
               to save:
             </p>
             <div class="flex items-center gap-2 mt-0.5">
-              <span class="text-sm md:text-base tracking-tight font-black">+1 844 FLYBETH (359-2384)</span>
+              <span class="text-sm md:text-base tracking-tight ">+1 844 FLYBETH (359-2384)</span>
               <a href="tel:+18443592384" class="text-[10px] md:text-[10px] font-bold text-brand-green uppercase tracking-widest hover:text-white transition-colors ml-2">Call Now</a>
             </div>
           </div>

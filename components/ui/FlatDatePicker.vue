@@ -8,20 +8,20 @@
       <label
         :class="[
           'absolute transition-all duration-300 ease-in-out pointer-events-none z-10 text-brand-gray/40 font-bold tracking-widest',
-          open || modelValue ? 'text-[10px] left-4 top-2' : 'text-sm left-4 top-1/2 -translate-y-1/2'
+          open || modelValue ? 'text-[10px] left-4 top-2' : 'text-sm left-11 top-1/2 -translate-y-1/2'
         ]"
       >{{ label }}</label>
       <div
         :class="[
-          'w-full py-4 pt-7 px-4 bg-white border border-gray-100 rounded-2xl cursor-pointer transition-all duration-300 min-h-[68px] flex items-end',
+          'w-full px-4 bg-white border border-gray-300 rounded-2xl cursor-pointer transition-all duration-300 min-h-[68px] flex items-center',
           open ? 'ring-2 ring-gray-900 border-gray-900' : 'hover:border-gray-300',
           hasError ? 'ring-red-500 border-red-500' : ''
         ]"
       >
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
            <Calendar class="h-4 w-4 text-brand-blue/60 shrink-0" />
            <span v-if="modelValue" class="font-semibold text-gray-900 text-sm tracking-tight">{{ displayDate }}</span>
-           <span v-else class="text-gray-400 text-sm font-semibold tracking-tight">Select date</span>
+           <span v-else-if="open" class="text-gray-400 text-sm font-semibold tracking-tight">Select date</span>
         </div>
       </div>
     </div>

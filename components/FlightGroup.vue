@@ -13,7 +13,7 @@
       </div>
       <div class="flex items-center gap-3">
         <span class="text-sm font-bold text-brand-gray/30 tracking-widest">Starting from</span>
-        <span class="text-xl font-black text-gray-900">${{ cheapestPrice }}</span>
+        <span class="text-xl  text-gray-900">${{ cheapestPrice }}</span>
       </div>
     </div>
 

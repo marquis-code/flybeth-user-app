@@ -6,7 +6,7 @@
       class="flex-1 min-w-[200px] bg-white rounded-r-[1.75rem] px-8 py-4 group hover:bg-gray-50 transition-all cursor-pointer"
     >
       <p class="text-[10px] text-gray-500 font-bold tracking-wide mb-2 opacity-50 group-hover:opacity-100 transition-opacity">Travelers</p>
-      <div class="flex items-center text-sm font-black text-gray-900 leading-none truncate">
+      <div class="flex items-center text-sm  text-gray-900 leading-none truncate">
         {{ rooms }} Room, {{ adults + children }} Travelers
       </div>
     </div>
@@ -22,14 +22,14 @@
           <!-- Rooms -->
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-[11px] font-black text-gray-900 tracking-wide">Rooms</div>
+              <div class="text-[11px]  text-gray-900 tracking-wide">Rooms</div>
               <div class="text-[10px] text-gray-400 font-bold tracking-wide mt-1">Total rooms</div>
             </div>
             <div class="flex items-center gap-3">
               <button @click="rooms > 1 && rooms--" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
               </button>
-              <span class="text-sm font-black w-4 text-center">{{ rooms }}</span>
+              <span class="text-sm  w-4 text-center">{{ rooms }}</span>
               <button @click="rooms++" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
               </button>
@@ -39,14 +39,14 @@
           <!-- Adults -->
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-[11px] font-black text-gray-900 tracking-wide">Adults</div>
+              <div class="text-[11px]  text-gray-900 tracking-wide">Adults</div>
               <div class="text-[10px] text-gray-400 font-bold tracking-wide mt-1">Age 13+</div>
             </div>
             <div class="flex items-center gap-3">
               <button @click="adults > 1 && adults--" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
               </button>
-              <span class="text-sm font-black w-4 text-center">{{ adults }}</span>
+              <span class="text-sm  w-4 text-center">{{ adults }}</span>
               <button @click="adults++" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
               </button>
@@ -56,14 +56,14 @@
           <!-- Children -->
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-[11px] font-black text-gray-900 tracking-wide">Children</div>
+              <div class="text-[11px]  text-gray-900 tracking-wide">Children</div>
               <div class="text-[10px] text-gray-400 font-bold tracking-wide mt-1">Age 0-12</div>
             </div>
             <div class="flex items-center gap-3">
               <button @click="children > 0 && children--" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
               </button>
-              <span class="text-sm font-black w-4 text-center">{{ children }}</span>
+              <span class="text-sm  w-4 text-center">{{ children }}</span>
               <button @click="children++" class="h-9 w-9 rounded-xl border-2 border-gray-50 flex items-center justify-center text-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
               </button>
@@ -72,7 +72,7 @@
 
           <button 
             @click="apply"
-            class="w-full bg-gray-900 hover:bg-gray-800 text-white font-black py-4 rounded-2xl transition-all tracking-wide text-[10px] active:scale-[0.98] mt-4"
+            class="w-full bg-gray-900 hover:bg-gray-800 text-white  py-4 rounded-2xl transition-all tracking-wide text-[10px] active:scale-[0.98] mt-4"
           >
             Apply changes
           </button>

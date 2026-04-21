@@ -173,8 +173,32 @@ const handleClickOutside = (e: MouseEvent) => {
   }
 }
 
-onMounted(() => window.addEventListener('click', handleClickOutside))
+onMounted(async () => {
+  window.addEventListener('click', handleClickOutside)
+  
+  // Auto-detect location if no phone number is provided
+  if (!props.modelValue) {
+    try {
+      const { data } = await axios.get('https://ipapi.co/json/')
+      if (data && data.country_code) {
+        const match = countries.find(c => c.code === data.country_code)
+        if (match) {
+          selectedCountry.value = match
+          emitValue()
+        }
+      }
+    } catch (e) {
+      console.warn('Geolocation failed', e)
+    }
+  }
+})
+
 onUnmounted(() => window.removeEventListener('click', handleClickOutside))
+</script>
+
+<script lang="ts">
+import axios from 'axios'
+export default {}
 </script>
 
 <style scoped>

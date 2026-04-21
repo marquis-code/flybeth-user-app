@@ -14,7 +14,7 @@
         </div>
         
         <div class="flex-1 pt-0.5">
-          <h3 class="text-sm font-black text-gray-900 leading-tight mb-1">{{ toast.title }}</h3>
+          <h3 class="text-sm  text-gray-900 leading-tight mb-1">{{ toast.title }}</h3>
           <p class="text-[13px] font-medium text-gray-500 leading-relaxed">{{ toast.message }}</p>
         </div>
 

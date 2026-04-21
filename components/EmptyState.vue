@@ -11,7 +11,7 @@
 
     <!-- Text Content -->
     <div class="space-y-3 max-w-sm">
-      <h3 class="text-lg font-black text-gray-900  tracking-[0.2em]">
+      <h3 class="text-lg  text-gray-900  tracking-[0.2em]">
         {{ title || 'No Results' }}
       </h3>
       <p class="text-[11px] font-bold text-gray-400 leading-relaxed  tracking-widest">
@@ -23,7 +23,7 @@
     <div v-if="actionLabel" class="mt-8">
       <button 
         @click="$emit('action')" 
-        class="px-8 py-3 bg-gray-900 text-white rounded-xl text-[10px] font-black tracking-[0.2em] hover:bg-black transition-all active:scale-[0.98] shadow-lg shadow-gray-200"
+        class="px-8 py-3 bg-gray-900 text-white rounded-xl text-[10px]  tracking-[0.2em] hover:bg-black transition-all active:scale-[0.98] shadow-lg shadow-gray-200"
       >
         {{ actionLabel }}
       </button>

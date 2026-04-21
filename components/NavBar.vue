@@ -60,7 +60,7 @@
             <div class="relative group">
               <button class="flex items-center gap-2 px-3 py-2 border border-blue-50 bg-blue-50/20 rounded-lg hover:border-blue-100 hover:bg-blue-50 transition-all duration-300">
                 <img :src="getFlag(locale)" class="h-3 w-4.5 object-cover rounded shadow-[0_1px_2px_rgba(0,0,0,0.1)] border border-white/50" />
-                <span class="text-[10px] font-black tracking-[0.15em] text-gray-500 uppercase">{{ locale }} · {{ currentCurrency.code }}</span>
+                <span class="text-[10px]  tracking-[0.15em] text-gray-500 uppercase">{{ locale }} · {{ currentCurrency.code }}</span>
                 <ChevronDown class="h-3 w-3 text-gray-300 transition-transform duration-200 group-hover:rotate-180" />
               </button>
 
@@ -151,7 +151,7 @@
                     <p class="text-[13px] font-bold text-gray-900 leading-none">{{ user?.firstName }} {{ user?.lastName }}</p>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{{ user?.role?.name || 'Explorer' }}</p>
                   </div>
-                  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-blue to-blue-600 flex items-center justify-center text-white text-[13px] font-black border-2 border-white shadow-sm overflow-hidden">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-blue to-blue-600 flex items-center justify-center text-white text-[13px]  border-2 border-white shadow-sm overflow-hidden">
                     <img v-if="user?.avatar" :src="user.avatar" class="w-full h-full object-cover" />
                     <span v-else>{{ user?.firstName?.charAt(0) }}{{ user?.lastName?.charAt(0) }}</span>
                   </div>

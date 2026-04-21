@@ -27,5 +27,12 @@ export const paymentsApi = {
         return GATEWAY_ENDPOINT_WITH_AUTH.get('/currency/convert', {
             params: { amount, from, to }
         });
+    },
+
+    /**
+     * Initialize a wallet top-up session
+     */
+    initializeTopUp(data: { amount: number; currency: string; callbackUrl: string }) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/payments/wallet/topup", data);
     }
 };

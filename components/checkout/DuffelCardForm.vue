@@ -63,7 +63,7 @@
 
       <!-- Billing Address -->
       <div class="space-y-3 pt-2">
-        <p class="text-[10px] font-black text-gray-400 tracking-widest uppercase pl-1">Billing Address</p>
+        <p class="text-[10px]  text-gray-400 tracking-widest uppercase pl-1">Billing Address</p>
         
         <div class="grid grid-cols-1 gap-3">
           <input 

@@ -435,7 +435,7 @@
               <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-full group-hover/score:translate-x-full transition-transform duration-1000"></div>
               <div class="flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
                  <div class="text-center lg:text-left">
-                    <p class="text-sm text-gray-400  tracking-[0.3em] mb-2">Live Destination Analysis</p>
+                    <p class="text-sm text-gray-400   mb-2">Live Destination Analysis</p>
                     <h5 class="text-2xl  text-white mb-2">Why visit {{ topDestinationName }}?</h5>
                     <p class="text-xs font-bold text-white/40">Real-time lifestyle scores for your next destination.</p>
                  </div>
@@ -647,7 +647,7 @@
             <div class="h-10 w-10 bg-brand-blue/5 rounded-xl flex items-center justify-center border border-brand-blue/10">
               <GlobeAltIcon class="h-5 v-5 text-brand-blue" />
             </div>
-            <span class="text-[10px] font-black text-brand-blue  tracking-[0.4em]">Global Connectivity Hub</span>
+            <span class="text-[10px]  text-brand-blue  tracking-[0.4em]">Global Connectivity Hub</span>
           </div>
           <h2 class="text-3xl md:text-5xl lg:text-6xl  text-gray-950 mb-7 tracking-tighter leading-[1.05]">Partnerships that <span class="text-brand-blue underline decoration-brand-blue/20 decoration-8 underline-offset-4">Connect</span> the World.</h2>
           <p class="text-base sm:text-lg font-bold text-gray-500 leading-relaxed max-w-2xl">Access over 500+ airlines, 1.2M premium stays, and thousands of curated experiences across the globe, all at your fingertips.</p>
@@ -688,7 +688,7 @@
               @click="showLongSeo = !showLongSeo" 
               class="flex flex-col items-center gap-2 group/btn"
             >
-              <span class="text-[10px] font-bold  tracking-[0.3em] text-gray-400 group-hover/btn:text-brand-blue transition-colors">
+              <span class="text-[10px] font-bold   text-gray-400 group-hover/btn:text-brand-blue transition-colors">
                 {{ showLongSeo ? 'Collapse Overview' : 'Explore Flybeth Story' }}
               </span>
               <div class="h-10 w-10 bg-white shadow-lg rounded-full flex items-center justify-center border border-gray-50 group-hover/btn:scale-110 transition-transform">

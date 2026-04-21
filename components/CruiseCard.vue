@@ -22,7 +22,7 @@
       <!-- Line Badge -->
       <div class="absolute bottom-4 left-4">
          <div class="bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-md border border-white/20">
-            <span class="text-[10px] font-black text-gray-900 uppercase tracking-tighter">{{ cruise.cruiseLineName || 'Cruise Line' }}</span>
+            <span class="text-[10px]  text-gray-900 uppercase tracking-tighter">{{ cruise.cruiseLineName || 'Cruise Line' }}</span>
          </div>
       </div>
     </div>

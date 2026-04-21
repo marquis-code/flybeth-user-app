@@ -17,7 +17,7 @@
         v-if="type === 'textarea'"
         :id="inputId"
         :value="modelValue"
-        :placeholder="placeholder"
+        :placeholder="isFocused || modelValue ? placeholder : ''"
         :disabled="disabled"
         :readonly="readonly"
         :rows="rows"
@@ -38,12 +38,12 @@
         ref="inputRef"
         :type="computedType" 
         :value="displayValue"
-        :placeholder="placeholder"
+        :placeholder="isFocused || modelValue ? placeholder : ''"
         :disabled="disabled"
         :readonly="readonly || type === 'date' || type === 'time' || type === 'datetime-local'"
         :autocomplete="autocomplete"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-white border border-gray-100 focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
+          'w-full py-3 pt-6 px-3 bg-white border border-gray-300 focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
           (type === 'date' || type === 'time' || type === 'datetime-local') ? 'cursor-pointer' : '',
@@ -100,8 +100,8 @@
         >
           <!-- Compact Header -->
           <div class="bg-gray-900 p-6 text-white text-center">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-60 mb-1">Select Schedule</h3>
-            <p class="text-lg font-black tracking-tight">
+            <h3 class="text-[10px]  uppercase  opacity-60 mb-1">Select Schedule</h3>
+            <p class="text-lg  tracking-tight">
               {{ selectedDate ? formatDateDisplay(selectedDate) : 'Availability Calendar' }}
             </p>
           </div>
@@ -120,7 +120,7 @@
               </button>
               
               <div class="flex gap-2">
-                <span class="text-[11px] font-black uppercase tracking-widest text-gray-900">
+                <span class="text-[11px]  uppercase tracking-widest text-gray-900">
                   {{ months[currentMonth] }} {{ currentYear }}
                 </span>
               </div>
@@ -138,7 +138,7 @@
             
             <!-- Calendar Grid -->
             <div class="grid grid-cols-7 gap-1 mb-2">
-              <div v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="text-center text-[9px] font-black text-gray-400 py-1">{{ d }}</div>
+              <div v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="text-center text-[9px]  text-gray-400 py-1">{{ d }}</div>
             </div>
             
             <div class="grid grid-cols-7 gap-1">
@@ -165,14 +165,14 @@
              <button 
               type="button" 
               @click.stop="setToday" 
-              class="flex-1 py-3 text-[9px] font-black uppercase tracking-widest border border-gray-100 hover:bg-gray-50 rounded-xl transition-all"
+              class="flex-1 py-3 text-[9px]  uppercase tracking-widest border border-gray-100 hover:bg-gray-50 rounded-xl transition-all"
             >
               Today
             </button>
             <button 
               type="button" 
               @click.stop="clearDateValue" 
-              class="flex-1 py-3 text-[9px] font-black uppercase tracking-widest bg-gray-900 text-white rounded-xl transition-all hover:bg-black shadow-lg shadow-gray-200"
+              class="flex-1 py-3 text-[9px]  uppercase tracking-widest bg-gray-900 text-white rounded-xl transition-all hover:bg-black shadow-lg shadow-gray-200"
             >
               Clear
             </button>

@@ -1,9 +1,12 @@
 <template>
   <div class="ck-tf">
     <div class="ck-tf-hd">
-       <div class="ck-tf-badge"> Traveler 1 (Adult)</div>
-       <h2 class="ck-tf-h">Who is traveling?</h2>
-       <p class="ck-tf-p">Names must match IDs exactly to avoid boarding issues.</p>
+        <div class="ck-tf-badge"> Traveler 1 (Adult)</div>
+        <h2 class="ck-tf-h flex items-center gap-3">
+          <User class="w-6 h-6 text-blue-600" />
+          Who is traveling?
+        </h2>
+        <p class="ck-tf-p">Names must match IDs exactly to avoid boarding issues.</p>
     </div>
 
     <div class="ck-tf-grid">
@@ -54,7 +57,10 @@
 
        <!-- Contact Group -->
        <div class="ck-tf-sec">
-          <h3 class="ck-tf-sh">Contact details</h3>
+          <h3 class="ck-tf-sh flex items-center gap-2">
+            <Mail class="w-4 h-4 text-blue-600" />
+            Contact details
+          </h3>
           <div class="ck-tf-cards">
              <div class="ck-tf-row">
                 <PhoneInput
@@ -78,7 +84,10 @@
 
        <!-- Identification Group -->
        <div class="ck-tf-sec">
-          <h3 class="ck-tf-sh">Identification</h3>
+          <h3 class="ck-tf-sh flex items-center gap-2">
+            <Globe class="w-4 h-4 text-blue-600" />
+            Identification
+          </h3>
           <div class="ck-tf-cards">
              <div class="ck-tf-row">
                 <SelectInput
@@ -93,7 +102,7 @@
                   v-model="form.passportNumber"
                   label="Passport Number (Optional)"
                   class="flex-1"
-                  type="number"
+                  type="text"
                   position="standalone"
                 />
                 <FlatDatePicker
@@ -109,10 +118,16 @@
 
     <!-- Actions -->
     <div class="ck-tf-foot">
-       <label class="ck-tf-terms">
-          <input type="checkbox" v-model="termsAccepted" class="ck-tf-chk custom-checkbox" />
-          <span>I verify that all names stated above are identical to those in the original travel documents.</span>
-       </label>
+       <div class="flex flex-col gap-4 mb-6">
+          <label v-if="isLoggedIn" class="ck-tf-terms">
+             <input type="checkbox" v-model="form.saveForFuture" class="ck-tf-chk custom-checkbox" />
+             <span class="font-bold text-gray-800">Save traveler information for future bookings</span>
+          </label>
+          <label class="ck-tf-terms">
+             <input type="checkbox" v-model="termsAccepted" class="ck-tf-chk custom-checkbox" />
+             <span>I verify that all names stated above are identical to those in the original travel documents.</span>
+          </label>
+       </div>
        <button 
           @click="handleContinue" 
           :disabled="!canContinue" 
@@ -132,7 +147,11 @@ import AnimatedInput from '@/components/ui/AnimatedInput.vue';
 import SelectInput from '@/components/ui/SelectInput.vue';
 import PhoneInput from '@/components/ui/PhoneInput.vue';
 import FlatDatePicker from '@/components/ui/FlatDatePicker.vue';
+import { useAuth } from '@/composables/modules/auth/useAuth';
+import { User, Mail, Globe } from 'lucide-vue-next'
 import axios from 'axios'
+
+const { isLoggedIn } = useAuth()
 
 const today = new Date()
 today.setHours(23, 59, 59, 999)
@@ -157,6 +176,7 @@ const form = ref({
   passportNumber: props.modelValue.passportNumber || '',
   passportExpiry: props.modelValue.passportExpiry || '',
   passportCountry: props.modelValue.passportCountry || '',
+  saveForFuture: props.modelValue.saveForFuture || false,
 })
 
 const termsAccepted = ref(false)
@@ -169,6 +189,12 @@ onMounted(async () => {
       code: c.Iso2,
       name: c.name
     }))
+
+    // Auto-detect location for nationality
+    const geo = await axios.get('https://ipapi.co/json/')
+    if (geo.data && geo.data.country_name) {
+      form.value.nationality = geo.data.country_name
+    }
   } catch (e) {
     console.error('Failed to fetch countries', e)
     // Fallback

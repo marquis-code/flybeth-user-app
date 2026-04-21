@@ -15,7 +15,7 @@
     <Transition name="slide-up">
       <div v-if="isOpen" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[500] origin-top-right">
         <div class="p-4 border-b border-gray-50 bg-gray-50/50">
-          <p class="text-[10px] font-black text-gray-400 tracking-widest uppercase">Select Currency</p>
+          <p class="text-[10px]  text-gray-400 tracking-widest uppercase">Select Currency</p>
         </div>
         
         <div class="max-h-80 overflow-y-auto custom-scrollbar p-2 grid grid-cols-2 gap-1">

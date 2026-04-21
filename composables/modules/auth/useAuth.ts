@@ -8,6 +8,9 @@ const isAuthModalVisible = ref(false);
 
 export const useAuth = () => {
     const loading = ref(false);
+    const googleLoading = ref(false);
+    const authLoading = ref(false);
+    const verifyLoading = ref(false);
     const { user, setUser, logOut, isLoggedIn } = useUser();
     const { showToast } = useCustomToast();
 
@@ -21,6 +24,7 @@ export const useAuth = () => {
 
     const login = async (payload: any) => {
         loading.value = true;
+        authLoading.value = true;
         try {
             const res = await authApiFactory.login(payload);
             const authData = res.data?.data || res.data;
@@ -55,11 +59,13 @@ export const useAuth = () => {
             });
         } finally {
             loading.value = false;
+            authLoading.value = false;
         }
     };
 
     const register = async (payload: any) => {
         loading.value = true;
+        authLoading.value = true;
         try {
             const res = await authApiFactory.register(payload);
             const authData = res.data?.data || res.data;
@@ -94,6 +100,7 @@ export const useAuth = () => {
             });
         } finally {
             loading.value = false;
+            authLoading.value = false;
         }
     };
 
@@ -161,6 +168,7 @@ export const useAuth = () => {
 
     const verifyOtp = async (payload: any) => {
         loading.value = true;
+        verifyLoading.value = true;
         try {
             const res = await authApiFactory.verifyOtp(payload);
             if (res.status === 200 || res.status === 201) {
@@ -186,6 +194,7 @@ export const useAuth = () => {
             });
         } finally {
             loading.value = false;
+            verifyLoading.value = false;
         }
     };
 
@@ -202,6 +211,7 @@ export const useAuth = () => {
     };
 
     const loginWithGoogle = async () => {
+        googleLoading.value = true;
         loading.value = true;
         try {
             const result = await signInWithPopup(auth, googleProvider);
@@ -237,11 +247,15 @@ export const useAuth = () => {
             });
         } finally {
             loading.value = false;
+            googleLoading.value = false;
         }
     };
 
     return {
         loading,
+        googleLoading,
+        authLoading,
+        verifyLoading,
         login,
         register,
         forgotPassword,

@@ -35,7 +35,7 @@
                     <path d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">{{ formatMonthYear(currentMonth) }}</h3>
+                <h3 class="text-sm  text-gray-900 uppercase tracking-widest">{{ formatMonthYear(currentMonth) }}</h3>
                 <button v-if="!isDesktop" @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" />
@@ -45,7 +45,7 @@
              </div>
 
              <div class="grid grid-cols-7 mb-4">
-                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px] font-black text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
+                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px]  text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
              </div>
 
              <div class="grid grid-cols-7 gap-1 relative">
@@ -80,7 +80,7 @@
           <div v-if="isDesktop" class="flex-1">
              <div class="flex items-center justify-between mb-8">
                 <div class="w-8"></div>
-                <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">{{ formatMonthYear(nextMonthDate) }}</h3>
+                <h3 class="text-sm  text-gray-900 uppercase tracking-widest">{{ formatMonthYear(nextMonthDate) }}</h3>
                 <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" />
@@ -89,7 +89,7 @@
              </div>
 
              <div class="grid grid-cols-7 mb-4">
-                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px] font-black text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
+                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px]  text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
              </div>
 
              <div class="grid grid-cols-7 gap-1 relative">
@@ -125,7 +125,7 @@
         <div class="mt-10 pt-6 border-t border-gray-100 flex items-center justify-end gap-4">
           <button 
             @click="isOpen = false"
-            class="px-8 py-3 bg-gray-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
+            class="px-8 py-3 bg-gray-900 text-white text-[10px]  uppercase tracking-[0.2em] rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
           >
             Apply Selection
           </button>

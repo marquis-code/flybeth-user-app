@@ -12,13 +12,13 @@
 
         <!-- Compact Header & Tab Switcher -->
         <div class="pt-8 px-8 pb-4 border-b border-gray-50">
-          <h2 class="text-xs font-black text-gray-400 uppercase tracking-[0.3em] mb-6">Preferences</h2>
+          <h2 class="text-xs  text-gray-400 uppercase  mb-6">Preferences</h2>
           <div class="flex bg-gray-100 p-1.5 rounded-2xl">
             <button 
               v-for="tab in ['language', 'currency']" 
               :key="tab"
               @click="currentTab = tab"
-              class="flex-1 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all duration-500"
+              class="flex-1 py-3 text-[10px]  uppercase tracking-[0.2em] rounded-xl transition-all duration-500"
               :class="currentTab === tab ? 'bg-white text-brand-blue shadow-sm' : 'text-gray-400 hover:text-gray-600'"
             >
               {{ $t(`settings.${tab}`) }}
@@ -77,12 +77,12 @@
 
         <!-- Compact Footer Action -->
         <div class="px-8 py-5 bg-gray-50/50 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-           <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest text-center sm:text-left">
+           <p class="text-[9px]  text-gray-400 uppercase tracking-widest text-center sm:text-left">
              {{ currentTab === 'language' ? 'Settings will update UI strings' : 'Settings will update price data' }}
            </p>
            <button 
              @click="$emit('close')" 
-             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all "
+             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-[10px]  uppercase tracking-[0.2em] rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all "
            >
               {{ $t('settings.applyChanges') }}
            </button>

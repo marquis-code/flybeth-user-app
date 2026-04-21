@@ -41,7 +41,7 @@
            <button @click.stop="previousMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-100">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
            </button>
-           <div class="flex gap-4 md:gap-40 text-gray-900 font-black tracking-widest text-[10px] uppercase">
+           <div class="flex gap-4 md:gap-40 text-gray-900  tracking-widest text-[10px] uppercase">
              <span>{{ getMonthName(currentDateLeft) }} {{ currentDateLeft.getFullYear() }}</span>
              <span class="hidden md:inline">{{ getMonthName(currentDateRight) }} {{ currentDateRight.getFullYear() }}</span>
            </div>
@@ -53,7 +53,7 @@
         <div class="flex flex-col md:flex-row gap-10">
           <!-- Left Month -->
           <div class="flex-1">
-             <div class="grid grid-cols-7 text-center text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">
+             <div class="grid grid-cols-7 text-center text-[9px]  text-gray-400 uppercase tracking-widest mb-4">
                 <div v-for="d in ['S','M','T','W','T','F','S']" :key="d">{{ d }}</div>
              </div>
              <div class="grid grid-cols-7 gap-1 relative">
@@ -67,8 +67,8 @@
                 >
                     <div v-if="day.date" class="h-full w-full rounded-xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
                        {{ day.date }}
-                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
-                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
+                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
+                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
                     </div>
                  </div>
               </div>
@@ -76,7 +76,7 @@
 
            <!-- Right Month (Desktop Only) -->
            <div class="hidden md:block flex-1">
-              <div class="grid grid-cols-7 text-center text-[9px] font-black text-gray-400 uppercase tracking-widest mb-4">
+              <div class="grid grid-cols-7 text-center text-[9px]  text-gray-400 uppercase tracking-widest mb-4">
                 <div v-for="d in ['S','M','T','W','T','F','S']" :key="d">{{ d }}</div>
               </div>
               <div class="grid grid-cols-7 gap-1 relative">
@@ -90,8 +90,8 @@
                  >
                     <div v-if="day.date" class="h-full w-full rounded-xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
                        {{ day.date }}
-                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
-                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px] font-black px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
+                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
+                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
                     </div>
                  </div>
               </div>

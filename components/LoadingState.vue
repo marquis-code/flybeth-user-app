@@ -8,7 +8,7 @@
 
     <!-- Text Content -->
     <div class="space-y-3">
-      <h3 class="text-[10px] font-black text-gray-900 uppercase tracking-[0.4em] animate-pulse">
+      <h3 class="text-[10px]  text-gray-900 uppercase tracking-[0.4em] animate-pulse">
         Optimizing Flight Routes
       </h3>
       <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">

@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-8">
     <div>
-      <h2 class="text-sm  text-brand-green uppercase tracking-[0.3em] mb-4">{{ $t('auth.getStarted') }}</h2>
+      <h2 class="text-sm  text-brand-green uppercase  mb-4">{{ $t('auth.getStarted') }}</h2>
       <h3 class="text-4xl  text-gray-900  tracking-tighter">{{ $t('auth.createAccount') }}</h3>
     </div>
 

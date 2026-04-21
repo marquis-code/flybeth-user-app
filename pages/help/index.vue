@@ -10,7 +10,7 @@
 
       <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
          <div class="max-w-3xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <h1 class="text-3xl md:text-4xl font-black text-neutral-900 tracking-tight leading-[1.1]">
+            <h1 class="text-3xl md:text-4xl  text-neutral-900 tracking-tight leading-[1.1]">
                We're here to help you<br/>
                <span class="text-brand-blue">travel with confidence.</span>
             </h1>
@@ -40,7 +40,7 @@
               <BookOpenIcon class="h-8 w-8 text-neutral-400 group-hover:text-brand-blue transition-colors" />
            </div>
            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-black text-neutral-900 group-hover:text-brand-blue transition-colors">Knowledgebase</h3>
+              <h3 class="text-lg  text-neutral-900 group-hover:text-brand-blue transition-colors">Knowledgebase</h3>
               <ArrowLongRightIcon class="h-6 w-6 text-neutral-300 group-hover:text-brand-blue group-hover:translate-x-1 transition-all" />
            </div>
            <p class="text-[13px] font-semibold text-neutral-400 group-hover:text-neutral-500 transition-colors leading-relaxed">Step-by-step guides for all Flybeth travel products and services.</p>
@@ -52,7 +52,7 @@
               <TicketIcon class="h-8 w-8 text-neutral-400 group-hover:text-brand-blue transition-colors" />
            </div>
            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-black text-neutral-900 group-hover:text-brand-blue transition-colors">Support ticket</h3>
+              <h3 class="text-lg  text-neutral-900 group-hover:text-brand-blue transition-colors">Support ticket</h3>
               <ArrowLongRightIcon class="h-6 w-6 text-neutral-300 group-hover:text-brand-blue group-hover:translate-x-1 transition-all" />
            </div>
            <p class="text-[13px] font-semibold text-neutral-400 group-hover:text-neutral-500 transition-colors leading-relaxed">Reach our 24/7 support desk for personalized travel assistance.</p>
@@ -64,7 +64,7 @@
               <ChatBubbleOvalLeftEllipsisIcon class="h-8 w-8 text-neutral-400 group-hover:text-brand-blue transition-colors" />
            </div>
            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-black text-neutral-900 group-hover:text-brand-blue transition-colors">Leave feedback</h3>
+              <h3 class="text-lg  text-neutral-900 group-hover:text-brand-blue transition-colors">Leave feedback</h3>
               <ArrowLongRightIcon class="h-6 w-6 text-neutral-300 group-hover:text-brand-blue group-hover:translate-x-1 transition-all" />
            </div>
            <p class="text-[13px] font-semibold text-neutral-400 group-hover:text-neutral-500 transition-colors leading-relaxed">Love our platform? Have suggestions? We'd love to hear them.</p>
@@ -76,7 +76,7 @@
               <ExclamationTriangleIcon class="h-8 w-8 text-neutral-400 group-hover:text-brand-blue transition-colors" />
            </div>
            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-lg font-black text-neutral-900 group-hover:text-brand-blue transition-colors">Reporting abuse</h3>
+              <h3 class="text-lg  text-neutral-900 group-hover:text-brand-blue transition-colors">Reporting abuse</h3>
               <ArrowLongRightIcon class="h-6 w-6 text-neutral-300 group-hover:text-brand-blue group-hover:translate-x-1 transition-all" />
            </div>
            <p class="text-[13px] font-semibold text-neutral-400 group-hover:text-neutral-500 transition-colors leading-relaxed">Report phishing, prohibited content, or illegal platform behavior.</p>
@@ -87,13 +87,13 @@
     <!-- Popular FAQ Section -->
     <section class="max-w-5xl mx-auto px-6 py-20 bg-white">
        <div class="text-center mb-20 space-y-4">
-          <h2 class="text-4xl font-black text-neutral-900">Frequently Asked Questions</h2>
+          <h2 class="text-4xl  text-neutral-900">Frequently Asked Questions</h2>
           <p class="text-neutral-400 font-bold tracking-widest uppercase text-xs">Quick answers to your travel needs</p>
        </div>
        <div class="space-y-6">
           <div v-for="faq in faqs" :key="faq.q" class="bg-neutral-50 border border-neutral-100 rounded-3xl p-8 hover:bg-white hover:shadow-xl transition-all duration-500 group cursor-pointer">
              <div class="flex items-center justify-between">
-                <h4 class="text-lg font-black text-neutral-900">{{ faq.q }}</h4>
+                <h4 class="text-lg  text-neutral-900">{{ faq.q }}</h4>
                 <div class="h-8 w-8 bg-white border border-neutral-100 rounded-full flex items-center justify-center group-hover:bg-brand-blue group-hover:text-white transition-all duration-500">
                    <ChevronDownIcon class="h-4 w-4" />
                 </div>

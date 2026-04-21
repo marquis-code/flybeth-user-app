@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-8">
     <div>
-      <h2 class="text-sm  text-brand-green uppercase tracking-[0.3em] mb-4">Verification</h2>
+      <h2 class="text-sm  text-brand-green uppercase  mb-4">Verification</h2>
       <h3 class="text-4xl  text-gray-900  tracking-tighter">Verify Email</h3>
       <p class="mt-3 text-sm text-brand-gray/60 font-bold">
         Enter the 6-digit code sent to 
@@ -21,20 +21,20 @@
           @input="onOtpInput(idx, $event)"
           @keydown.delete="onOtpDelete(idx, $event)"
           @paste="onOtpPaste"
-          class="w-16 h-16 text-center text-2xl font-black bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue/30 outline-none text-gray-900 transition-all font-mono"
+          class="w-16 h-16 text-center text-2xl  bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue/30 outline-none text-gray-900 transition-all font-mono"
         />
       </div>
 
       <button
         type="submit"
         :disabled="loading || combinedOtp.length !== 6"
-        class="w-full py-3 bg-brand-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-xl shadow-brand-blue/20 hover:shadow-brand-blue/40 transition-all active:scale-[0.98] disabled:opacity-50"
+        class="w-full py-3 bg-brand-blue text-white rounded-2xl text-[10px]  uppercase  shadow-xl shadow-brand-blue/20 hover:shadow-brand-blue/40 transition-all active:scale-[0.98] disabled:opacity-50"
       >
         <span v-if="loading">Validating Secure Protocol...</span>
         <span v-else>Verify Identity</span>
       </button>
       
-      <p class="text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+      <p class="text-center text-[10px]  text-gray-400 uppercase tracking-[0.2em]">
         Didn't receive the code?
         <button type="button" @click="handleResend" class="text-brand-green hover:underline ml-1">Resend</button>
       </p>

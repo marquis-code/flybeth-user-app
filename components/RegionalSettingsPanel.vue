@@ -7,7 +7,7 @@
           v-for="tab in ['language', 'currency']" 
           :key="tab"
           @click="currentTab = tab"
-          class="flex-1 py-1.5 text-[10px] font-black uppercase tracking-[0.1em] rounded-lg transition-all"
+          class="flex-1 py-1.5 text-[10px]  uppercase tracking-[0.1em] rounded-lg transition-all"
           :class="currentTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
         >
           {{ tab }}
@@ -47,7 +47,7 @@
           :class="currentCurrency.code === currencyData.code ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm' : 'border-gray-50 hover:border-gray-200 hover:bg-gray-50 text-gray-600'"
         >
           <img :src="currencyData.flag" class="h-3 w-5 object-cover rounded-sm border border-gray-100" />
-          <span class="text-[10px] font-black tracking-tight">{{ currencyData.code }}</span>
+          <span class="text-[10px]  tracking-tight">{{ currencyData.code }}</span>
           <span class="text-[9px] font-medium opacity-60">{{ currencyData.symbol }}</span>
         </button>
       </div>

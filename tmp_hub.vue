@@ -11,7 +11,7 @@
             <div class="h-10 w-10 bg-brand-blue/5 rounded-xl flex items-center justify-center border border-brand-blue/10">
               <GlobeAltIcon class="h-5 w-5 text-brand-blue" />
             </div>
-            <span class="text-[10px] font-black text-brand-blue uppercase tracking-[0.4em]">Global Connectivity Hub</span>
+            <span class="text-[10px]  text-brand-blue uppercase tracking-[0.4em]">Global Connectivity Hub</span>
           </div>
           <h2 class="text-3xl md:text-5xl lg:text-6xl  text-gray-950 mb-7 tracking-tighter leading-[1.05]">Partnerships that <span class="text-brand-blue underline decoration-brand-blue/20 decoration-8 underline-offset-4">Connect</span> the World.</h2>
           <p class="text-base sm:text-lg font-bold text-gray-500 leading-relaxed max-w-2xl">Access over 500+ airlines, 1.2M premium stays, and thousands of curated experiences across the globe, all at your fingertips.</p>
@@ -39,7 +39,7 @@
                  <div class="w-72 sm:w-[500px] h-48 sm:h-64 rounded-[3rem] overflow-hidden border border-gray-200 shadow-2xl relative">
                    <img :src="p.image" class="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-[2000ms] ease-out" />
                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/20 to-transparent flex flex-col justify-end p-8 sm:p-10">
-                      <span v-if="p.type" class="text-[9px] font-black text-brand-green uppercase tracking-widest mb-2 px-3 py-1 bg-brand-green/20 backdrop-blur-md w-fit rounded-full">{{ p.type }}</span>
+                      <span v-if="p.type" class="text-[9px]  text-brand-green uppercase tracking-widest mb-2 px-3 py-1 bg-brand-green/20 backdrop-blur-md w-fit rounded-full">{{ p.type }}</span>
                       <div class="flex items-center justify-between">
                          <h4 class="text-xl sm:text-2xl font-bold text-white tracking-tighter">{{ p.name }}</h4>
                          <div class="h-10 w-10 rounded-xl bg-white/10 backdrop-blur-xl flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all transform translate-y-4 group-hover/item:translate-y-0">

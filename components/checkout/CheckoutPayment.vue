@@ -1,9 +1,9 @@
 <template>
   <div class="checkout-payment">
-    <div class="payment-header flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
+    <div class="payment-header flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
       <div class="amount-display">
-        <span class="currency-symbol text-2xl font-black text-gray-400 mr-2">{{ currencySymbol }}</span>
-        <span class="amount-value text-2xl lg:text-4xl font-black text-gray-900 tracking-tight">{{ formatAmount(totalAmount) }}</span>
+        <span class="currency-symbol text-xl text-gray-400 mr-1">{{ currencySymbol }}</span>
+        <span class="amount-value text-2xl lg:text-3xl font-black text-gray-900 tracking-tight">{{ formatAmount(totalAmount) }}</span>
       </div>
       <div class="currency-selector-dropdown">
         <CurrencyDropdown 
@@ -14,8 +14,61 @@
     </div>
 
     <div class="space-y-4">
-      <h4 class="text-xs font-black text-gray-400 tracking-widest mb-4">Choose Payment Method</h4>
+      <h4 class="text-xs  text-gray-400 tracking-widest mb-4">Choose Payment Method</h4>
       
+      <!-- Flybeth Wallet (Prioritized) -->
+      <div class="rounded-2xl border transition-all" :class="activeMethod === 'wallet' ? 'border-gray-900 bg-gray-50/30' : 'border-gray-100 bg-white'">
+        <div class="p-5 flex items-center justify-between cursor-pointer" @click="toggleMethod('wallet')">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center relative" :class="activeMethod === 'wallet' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
+              <Wallet class="w-5 h-5" />
+              <div class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white"></div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-gray-900 tracking-tight">Flybeth Wallet</span>
+                <span class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[8px] font-black rounded uppercase tracking-widest">Recommended</span>
+              </div>
+              <span v-if="!isWalletLoading" class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+                Balance: {{ currencySymbol }}{{ formatAmount(walletBalance) }}
+              </span>
+              <span v-else class="text-[10px] font-bold text-gray-300 tracking-widest uppercase animate-pulse">Loading Balance...</span>
+            </div>
+          </div>
+          <ChevronDown class="w-4 h-4 text-gray-500 transition-transform" :class="{ 'rotate-180': activeMethod === 'wallet' }" />
+        </div>
+        <div v-if="activeMethod === 'wallet'" class="px-5 pb-5 border-t border-gray-100 pt-5 space-y-4">
+            <div v-if="hasSufficientWalletBalance" class="space-y-4">
+                <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <Check class="w-4 h-4 text-emerald-600" />
+                    <span class="text-xs font-bold text-emerald-700 uppercase tracking-widest">Instant Ticketing Available</span>
+                  </div>
+                </div>
+                
+                <div class="space-y-2">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Secure Wallet PIN</label>
+                  <input 
+                    v-model="walletPin"
+                    type="password"
+                    maxlength="4"
+                    placeholder="Enter 4-digit PIN"
+                    class="w-full h-12 bg-white border border-gray-200 rounded-xl px-4 text-sm tracking-[0.5em] focus:border-gray-900 focus:ring-0 transition-all text-center outline-none"
+                  />
+                </div>
+            </div>
+            <div v-else class="p-4 bg-red-50 border border-red-100 rounded-xl space-y-3">
+              <div class="flex items-center gap-3 text-red-600">
+                <AlertCircle class="w-4 h-4" />
+                <span class="text-xs font-bold">Insufficient wallet balance</span>
+              </div>
+              <button @click="showFundModal = true" class="w-full text-[10px] font-black text-white bg-gray-900 h-10 rounded-xl uppercase tracking-widest hover:bg-black transition-all">
+                Add Funds to Wallet
+              </button>
+            </div>
+        </div>
+      </div>
+
       <!-- Card Payment -->
       <div v-if="showCardPayment" class="rounded-2xl border transition-all" :class="activeMethod === 'card' ? 'border-gray-100 bg-gray-50/30' : 'border-gray-100 bg-white'">
         <div class="p-5 flex items-center justify-between cursor-pointer" @click="toggleMethod('card')">
@@ -23,7 +76,7 @@
             <div class="w-10 h-10 rounded-xl flex items-center justify-center" :class="activeMethod === 'card' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
               <CreditCard class="w-5 h-5" />
             </div>
-            <span class="text-sm font-black text-gray-900 tracking-tight">Debit / Credit Card</span>
+            <span class="text-sm  text-gray-900 tracking-tight">Debit / Credit Card</span>
           </div>
           <ChevronDown class="w-4 h-4 text-gray-500 transition-transform" :class="{ 'rotate-180': activeMethod === 'card' }" />
         </div>
@@ -48,40 +101,18 @@
               <img v-else src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" class="h-4" />
               <span class="text-xs font-bold text-gray-600">Standard Card Processor</span>
             </div>
-            <div class="w-5 h-5 rounded-full bg-brand-green flex items-center justify-center text-white">
+            <div class="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white">
               <Check class="w-3 h-3" />
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Bank Transfer -->
-      <div v-if="showBankTransfer" class="rounded-2xl border transition-all" :class="activeMethod === 'bank' ? 'border-gray-900 bg-gray-50/30' : 'border-gray-100 bg-white'">
-        <div class="p-5 flex items-center justify-between cursor-pointer" @click="toggleMethod('bank')">
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center" :class="activeMethod === 'bank' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
-              <Building2 class="w-5 h-5" />
-            </div>
-            <div>
-              <span class="text-sm font-black text-gray-900 tracking-tight block">Bank Transfer</span>
-              <span class="text-[9px] font-bold text-brand-green tracking-widest">Instant Ticketing Available</span>
-            </div>
-          </div>
-          <ChevronDown class="w-4 h-4 text-gray-500 transition-transform" :class="{ 'rotate-180': activeMethod === 'bank' }" />
-        </div>
-        <div v-if="activeMethod === 'bank'" class="px-5 pb-5 border-t border-gray-100 pt-5">
-            <div class="p-4 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <Globe class="w-5 h-5 text-gray-400" />
-                <span class="text-xs font-bold text-gray-600">Manual Bank Transfer / Wire</span>
-              </div>
-              <div class="w-5 h-5 rounded-full bg-brand-green flex items-center justify-center text-white">
-                <Check class="w-3 h-3" />
-              </div>
-            </div>
-        </div>
-      </div>
     </div>
+
+    <!-- Modals -->
+    <WalletAdModal :show="showAdModal" @close="handleAdClose" />
+    <FundWalletModal :show="showFundModal" :currency="currency" :current-balance="walletBalance" @close="showFundModal = false" />
 
       <!-- Apple Pay -->
       <div v-if="provider === 'stripe'" class="apple-pay-section space-y-2 mt-4">
@@ -96,38 +127,26 @@
         />
       </div>
 
-    <!-- Complete Payment Button -->
-    <div class="pt-10">
-      <button 
-        @click="handlePay" 
-        :disabled="processing"
-        class="w-full h-14 rounded-2xl text-white font-bold tracking-[0.2em] text-xs transition-all flex items-center justify-center gap-4 bg-gray-900 hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <span v-if="!processing">Authorize & Pay {{ currencySymbol }}{{ formatAmount(totalAmount) }}</span>
-        <div v-else class="flex items-center gap-3">
-          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Authorizing...
-        </div>
-      </button>
       <div class="mt-6 flex items-center justify-center gap-6 grayscale pointer-events-none">
          <img src="@/assets/icons/visa.svg" alt="Visa" class="h-6" />
          <img src="@/assets/icons/master-card.svg" alt="Mastercard" class="h-6" />
          <img src="@/assets/icons/stripe.svg" alt="Stripe" class="h-6" />
       </div>
     </div>
-  </div>
-</template>
+  </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { CreditCard, Building2, Globe, Check, ChevronDown, ShieldCheck, Coins } from 'lucide-vue-next'
+import { CreditCard, Check, ChevronDown, ShieldCheck, Coins, Wallet, AlertCircle, Clock } from 'lucide-vue-next'
 import ApplePayButton from './ApplePayButton.vue'
 import DuffelCardForm from './DuffelCardForm.vue'
 import CurrencyDropdown from './CurrencyDropdown.vue'
+import WalletAdModal from './WalletAdModal.vue'
+import FundWalletModal from './FundWalletModal.vue'
 import { useRouter, useRoute } from 'vue-router'
+import { financeApi } from '@/api_factory/modules/finance'
+import { onMounted } from 'vue'
+import { useAuth } from '~/composables/modules/auth/useAuth'
 
 const router = useRouter()
 const route = useRoute()
@@ -145,13 +164,23 @@ const props = defineProps({
     type: String,
     default: 'USD'
   },
-  processing: Boolean
+  processing: Boolean,
+  flightOffer: {
+    type: Object,
+    default: null
+  }
 })
 
 const emit = defineEmits(['complete-payment', 'change-currency'])
 
-const activeMethod = ref('card')
+const activeMethod = ref('wallet') // Prioritize Wallet
 const paystackChannel = ref('card')
+const walletBalance = ref(0)
+const walletPin = ref('')
+const isWalletLoading = ref(false)
+const showAdModal = ref(false)
+const showFundModal = ref(false)
+
 const duffelCardData = ref({
   name: '',
   number: '',
@@ -177,9 +206,54 @@ const provider = computed(() => {
 })
 
 const showCardPayment = computed(() => true) // Always show card
-const showBankTransfer = computed(() => {
-  return ['NGN', 'USD'].includes(props.currency.toUpperCase())
+
+const hasSufficientWalletBalance = computed(() => {
+  return walletBalance.value >= props.totalAmount
 })
+
+const canHold = computed(() => {
+  // Check if flight offer explicitly supports hold
+  if (props.flightOffer?.paymentRequirements) {
+    return props.flightOffer.paymentRequirements.requiresInstantPayment === false
+  }
+  // Generic hold support could be added here for other providers
+  return false
+})
+
+const { openAuthModal } = useAuth()
+
+const fetchWalletBalance = async () => {
+  isWalletLoading.value = true
+  try {
+    const { data } = await financeApi.getWalletBalance()
+    if (data.success) {
+      walletBalance.value = data.data.balance || 0
+    }
+  } catch (error: any) {
+    console.error('Failed to fetch wallet balance', error)
+    if (error.response?.status === 401) {
+      openAuthModal()
+    }
+  } finally {
+    isWalletLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchWalletBalance()
+  // Show Ad Modal with a slight delay only if not previously dismissed
+  const isDismissed = localStorage.getItem('flybeth_wallet_ad_dismissed')
+  if (!isDismissed) {
+    setTimeout(() => {
+      showAdModal.value = true
+    }, 1000)
+  }
+})
+
+const handleAdClose = () => {
+  showAdModal.value = false
+  localStorage.setItem('flybeth_wallet_ad_dismissed', 'true')
+}
 
 const toggleMethod = (method: string) => {
   activeMethod.value = method
@@ -207,6 +281,13 @@ const handleApplePayError = (message: string) => {
 const handlePay = () => {
   if (activeMethod.value === 'bank') {
     emit('complete-payment', { provider: 'manual', channel: 'transfer' })
+  } else if (activeMethod.value === 'wallet') {
+    if (!hasSufficientWalletBalance.value) return
+    emit('complete-payment', { 
+      provider: 'wallet', 
+      channel: 'wallet',
+      pin: walletPin.value 
+    })
   } else {
     emit('complete-payment', { 
       provider: provider.value, 
@@ -215,6 +296,19 @@ const handlePay = () => {
     })
   }
 }
+
+const handleHold = () => {
+  emit('complete-payment', { 
+    provider: 'manual', 
+    channel: 'hold', 
+    paymentModel: 'on_hold' 
+  })
+}
+
+defineExpose({
+  handlePay,
+  handleHold
+})
 </script>
 
 <style scoped>

@@ -20,7 +20,7 @@
       <div class="text-right">
         <div class="flex items-center justify-end gap-1">
           <span class="text-sm font-bold text-brand-gray/30 tracking-widest">From</span>
-          <p class="text-2xl font-black text-gray-900">${{ formatPrice(flight.priceWithCommission || flight.price) }}</p>
+          <p class="text-2xl  text-gray-900">${{ formatPrice(flight.priceWithCommission || flight.price) }}</p>
         </div>
         <p class="text-sm font-bold text-gray-500 tracking-widest mt-0.5">{{ flight.cabinClass }}</p>
       </div>
@@ -30,7 +30,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center gap-6">
       <!-- Departure -->
       <div class="text-center md:text-left min-w-[80px]">
-        <p class="text-xl font-black text-gray-900">{{ formatTime(flight.departureTime) }}</p>
+        <p class="text-xl  text-gray-900">{{ formatTime(flight.departureTime) }}</p>
         <p class="text-sm font-bold text-brand-gray/40 tracking-widest mt-1">{{ flight.origin }}</p>
       </div>
 
@@ -60,7 +60,7 @@
 
       <!-- Arrival -->
       <div class="text-center md:text-right min-w-[80px]">
-        <p class="text-xl font-black text-gray-900">{{ formatTime(flight.arrivalTime) }}</p>
+        <p class="text-xl  text-gray-900">{{ formatTime(flight.arrivalTime) }}</p>
         <p class="text-sm font-bold text-brand-gray/40 tracking-widest mt-1">{{ flight.destination }}</p>
       </div>
     </div>

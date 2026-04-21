@@ -12,10 +12,10 @@
         <div class="max-w-3xl space-y-6">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 backdrop-blur-md">
             <Anchor class="h-3.5 w-3.5 text-primary" />
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">Ultra-Luxury Sailings</span>
+            <span class="text-[10px]  uppercase tracking-[0.2em] text-white/70">Ultra-Luxury Sailings</span>
           </div>
           
-          <h1 class="text-5xl md:text-7xl font-black text-white tracking-tight leading-[1.05]">
+          <h1 class="text-5xl md:text-7xl  text-white tracking-tight leading-[1.05]">
             <template v-if="searchQuery.destinationLabel">
               Sailing <span class="text-primary italic">{{ searchQuery.destinationLabel }}</span>
             </template>
@@ -36,7 +36,7 @@
             <div class="flex items-center gap-4 px-6 py-4 rounded-[1.5rem] hover:bg-white/5 transition-all cursor-pointer" @click="openField('dest')">
               <MapPin class="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
               <div class="flex flex-col">
-                <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Region</span>
+                <span class="text-[10px]  uppercase tracking-widest text-white/30">Region</span>
                 <span class="text-white font-bold text-lg truncate" :class="{ 'opacity-40': !searchQuery.destination }">
                   {{ searchQuery.destinationLabel || 'Select Destination' }}
                 </span>
@@ -46,7 +46,7 @@
             <Transition name="cd">
               <div v-if="activeField === 'dest'" class="cr-drop absolute top-[calc(100%+0.5rem)] left-0 w-full min-w-[320px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-2 z-[100]" @mousedown.stop>
                 <div class="p-3">
-                  <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 p-2 block">Popular Routes</span>
+                  <span class="text-[9px]  uppercase tracking-widest text-gray-400 p-2 block">Popular Routes</span>
                   <div class="grid grid-cols-1 gap-1">
                     <button v-for="p in cruiseDestinations" :key="p.value" 
                       class="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-all text-left group/item"
@@ -69,7 +69,7 @@
             <div class="flex items-center gap-4 px-6 py-4 rounded-[1.5rem] hover:bg-white/5 transition-all cursor-pointer" @click="openField('month')">
               <Calendar class="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
               <div class="flex flex-col">
-                <span class="text-[10px] font-black uppercase tracking-widest text-white/30">Departure</span>
+                <span class="text-[10px]  uppercase tracking-widest text-white/30">Departure</span>
                 <span class="text-white font-bold text-lg truncate" :class="{ 'opacity-40': !searchQuery.departingMonth }">
                   {{ searchQuery.departingLabel || 'Any Month' }}
                 </span>
@@ -78,7 +78,7 @@
             <Transition name="cd">
               <div v-if="activeField === 'month'" class="cr-drop absolute top-[calc(100%+0.5rem)] left-0 w-full min-w-[240px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-2 z-[100]" @mousedown.stop>
                 <div class="p-3">
-                  <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 p-2 block">Sailing Schedule</span>
+                  <span class="text-[9px]  uppercase tracking-widest text-gray-400 p-2 block">Sailing Schedule</span>
                   <div class="grid grid-cols-1 gap-1 max-h-[300px] overflow-y-auto no-scrollbar">
                     <button v-for="m in cruiseMonths" :key="m.value" 
                       class="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-all text-left"
@@ -94,7 +94,7 @@
             </Transition>
           </div>
 
-          <button class="bg-primary text-white font-black px-10 py-5 rounded-[1.5rem] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-primary/20" :disabled="loading" @click="handleSearch">
+          <button class="bg-primary text-white  px-10 py-5 rounded-[1.5rem] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-primary/20" :disabled="loading" @click="handleSearch">
             <template v-if="!loading">
               <Compass class="h-5 w-5" />
               <span>Search Cruises</span>
@@ -114,14 +114,14 @@
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <Filter class="h-4 w-4 text-gray-400" />
-                <span class="text-xs font-black uppercase tracking-widest text-gray-900">Refine</span>
+                <span class="text-xs  uppercase tracking-widest text-gray-900">Refine</span>
               </div>
               <button class="text-[10px] font-bold text-gray-400 hover:text-primary uppercase tracking-widest" @click="resetFilters">Reset</button>
             </div>
 
             <!-- Lines -->
             <div class="space-y-4">
-              <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Cruise Line</p>
+              <p class="text-[10px]  uppercase tracking-widest text-gray-400">Cruise Line</p>
               <div class="flex flex-col gap-1.5">
                 <button v-for="l in availableCruiseLines" :key="l.value" 
                   v-show="l.value"
@@ -137,7 +137,7 @@
 
             <!-- Length -->
             <div class="space-y-4">
-              <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Duration</p>
+              <p class="text-[10px]  uppercase tracking-widest text-gray-400">Duration</p>
               <div class="flex flex-col gap-1.5">
                 <button v-for="d in cruiseLengths" :key="d.value" 
                   v-show="d.value"
@@ -154,8 +154,8 @@
             <!-- Price -->
             <div class="space-y-4">
               <div class="flex justify-between items-baseline">
-                <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Budget</p>
-                <span class="text-sm font-black text-primary">${{ filters.priceRange[1] }}</span>
+                <p class="text-[10px]  uppercase tracking-widest text-gray-400">Budget</p>
+                <span class="text-sm  text-primary">${{ filters.priceRange[1] }}</span>
               </div>
               <input type="range" min="0" max="10000" step="100" v-model.number="filters.priceRange[1]" class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary" />
               <div class="flex justify-between text-[10px] font-bold text-gray-400">
@@ -170,13 +170,13 @@
         <div class="flex-grow">
           <!-- Toolbar -->
           <div v-if="filteredCruises.length" class="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
-            <span class="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+            <span class="text-sm  text-gray-400 uppercase tracking-widest flex items-center gap-2">
               <Ship class="h-4 w-4" />
               {{ filteredCruises.length }} expeditions found
             </span>
             <div class="flex items-center gap-4">
               <div class="relative" ref="sortRef">
-                <button class="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-100 rounded-xl text-xs font-black uppercase tracking-widest text-gray-600 hover:border-primary transition-all" @click.stop="sortOpen = !sortOpen">
+                <button class="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-100 rounded-xl text-xs  uppercase tracking-widest text-gray-600 hover:border-primary transition-all" @click.stop="sortOpen = !sortOpen">
                   <span>Sort</span>
                   <ChevronDown class="h-3.5 w-3.5 transition-transform" :class="{ 'rotate-180': sortOpen }" />
                 </button>
@@ -188,7 +188,7 @@
                   </div>
                 </Transition>
               </div>
-              <button class="lg:hidden flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest" @click="mobileFilters = true">
+              <button class="lg:hidden flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-xs  uppercase tracking-widest" @click="mobileFilters = true">
                 <Filter class="h-3.5 w-3.5" />
                 Filter
               </button>
@@ -213,7 +213,7 @@
               <Waves class="h-8 w-8" />
             </div>
             <div class="space-y-2">
-              <h3 class="text-2xl font-black text-gray-900">No sailings found</h3>
+              <h3 class="text-2xl  text-gray-900">No sailings found</h3>
               <p class="text-gray-500 max-w-sm">We couldn't find any cruises matching your criteria. Try adjusting your filters or destination.</p>
             </div>
             <button class="bg-primary text-white font-bold px-8 py-3 rounded-xl shadow-md" @click="resetFilters">Reset filters</button>

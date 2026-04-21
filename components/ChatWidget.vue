@@ -265,7 +265,7 @@ watch(messages, () => {
       <!-- Unread badge -->
       <div 
         v-if="!isOpen && unreadCount > 0" 
-        class="absolute -top-1 -right-1 h-6 w-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-black text-white animate-bounce"
+        class="absolute -top-1 -right-1 h-6 w-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px]  text-white animate-bounce"
       >
         {{ unreadCount > 9 ? '9+' : unreadCount }}
       </div>

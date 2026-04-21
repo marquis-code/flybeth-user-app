@@ -33,20 +33,20 @@
         </button>
 
         <div class="flex flex-col items-center">
-          <span class="text-2xl font-black text-white tracking-widest">Flybeth</span>
+          <span class="text-2xl  text-white tracking-widest">Flybeth</span>
           <div class="flex items-center gap-1.5 mt-1">
             <Lock class="h-3 w-3 text-primary" />
-            <span class="text-[9px] font-black tracking-[0.2em] text-white/30">AES-256 Encrypted</span>
+            <span class="text-[9px]  tracking-[0.2em] text-white/30">AES-256 Encrypted</span>
           </div>
         </div>
 
         <div class="flex items-center gap-3">
           <div v-if="currentStep < 3" class="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
             <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
-            <span class="text-[10px] font-black text-white/50 tracking-widest whitespace-nowrap">Held for 14:59</span>
+            <span class="text-[10px]  text-white/50 tracking-widest whitespace-nowrap">Held for 14:59</span>
           </div>
           <div class="hidden md:flex flex-col items-end">
-             <span class="text-[10px] font-black text-white/20 tracking-widest">Support</span>
+             <span class="text-[10px]  text-white/20 tracking-widest">Support</span>
              <span class="text-sm font-bold text-white/50">+1 800 FLYBETH</span>
           </div>
         </div>
@@ -56,19 +56,19 @@
     <!-- Refined Stepper -->
     <div class="bg-white border-b border-gray-100 py-6">
        <div class="ck-wrap">
-          <CheckoutStepper :currentStep="currentStep" />
+          <CheckoutStepper :currentStep="currentStep" :steps="['Review', 'Travelers', 'Extras', 'Payment']" />
        </div>
     </div>
 
-    <main class="ck-main py-12 md:py-20">
+    <main class="ck-main py-10">
       <div class="ck-wrap">
-        <div class="flex flex-col lg:flex-row gap-12 items-start">
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
           
           <div class="flex-grow w-full space-y-8">
             <!-- Step 0: Review -->
             <div v-if="currentStep === 0" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
               <div class="p-3 md:p-12 border-b border-gray-50 bg-gray-50/30">
-                 <h2 class="text-2xl font-black text-gray-900 tracking-tight">Review selection</h2>
+                 <h2 class="text-2xl  text-gray-900 tracking-tight">Review selection</h2>
                  <p class="text-gray-400 font-medium text-sm mt-1">Confirm your trip specifics before adding traveler data.</p>
               </div>
               <div class="p-3 md:p-12">
@@ -109,28 +109,32 @@
                 :traveller="travellerData"
                 :totalPrice="displayPrices.total"
                 v-model:selectedAddOns="selectedAddOns"
+                v-model:selectedSeats="selectedSeats"
+                @update:seatPrice="val => seatPrice = val"
                 @continue="goToStep(3)"
+                @back="goToStep(1)"
               />
             </div>
 
-            <!-- Step 3: Payment -->
-            <div v-if="currentStep === 3" class="animate-in space-y-8">
-              <div class="flex gap-6 p-6 bg-sky-50 border border-sky-100 rounded-[2rem] items-start">
-                  <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-sky-500 shadow-sm flex-shrink-0">
-                    <ShieldCheck class="h-7 w-7" />
+                <div v-if="currentStep === 3" class="animate-in space-y-6">
+                  <div class="flex gap-4 p-4 bg-sky-50 border border-sky-100 rounded-2xl items-center max-w-xl">
+                      <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-sky-500 shadow-sm flex-shrink-0">
+                        <ShieldCheck class="h-5 w-5" />
+                      </div>
+                      <div class="space-y-0.5">
+                         <p class="text-sm font-black text-sky-900 tracking-tight">Security Verification</p>
+                         <p class="text-[10px] text-sky-700/60 font-bold leading-none">Your transaction is protected by multi-layer encryption.</p>
+                      </div>
                   </div>
-                  <div class="space-y-1 py-1">
-                     <p class="text-xl font-black text-sky-900">Document Verification</p>
-                     <p class="text-sky-700/60 font-medium text-sm leading-relaxed">Ensure names match passports exactly. Flybeth is not responsible for corrections after airline issuance.</p>
-                  </div>
-              </div>
 
-              <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden p-4 md:p-12">
+                  <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
                 <CheckoutPayment 
-                  :total-amount="priceDetailed?.priceWithCommission" 
+                  ref="paymentRef"
+                  :total-amount="displayPrices.total" 
                   :currency-symbol="currencySymbol"
                   :currency="priceDetailed?.currency"
                   :processing="paymentProcessing"
+                  :flight-offer="priceDetailed"
                   @complete-payment="handlePayment"
                   @change-currency="handleCurrencySelect"
                 />
@@ -150,6 +154,8 @@
                 :discount="0"
                 :serviceCharge="displayPrices.serviceCharge"
                 :addOns="selectedAddOns"
+                :selectedSeats="selectedSeats"
+                :seatPrice="seatPrice"
                 :currency="currencySymbol"
                 :showPayButton="currentStep === 3"
                 :bundledStay="bundledStay"
@@ -163,13 +169,11 @@
         </div>
       </div>
     </main>
-
-    <!-- Footer removed as per request -->
 </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { ChevronLeft, Lock, ShieldCheck } from 'lucide-vue-next'
 import { useRoute, useRouter, navigateTo, useRuntimeConfig } from '#app'
 import { staysApi } from '~/api_factory/modules/stays'
@@ -183,17 +187,17 @@ import CheckoutTravellerForm from '~/components/checkout/CheckoutTravellerForm.v
 import CheckoutTripCustomization from '~/components/checkout/CheckoutTripCustomization.vue'
 import CheckoutPayment from '~/components/checkout/CheckoutPayment.vue'
 import CurrencySelectorModal from '~/components/checkout/CurrencySelectorModal.vue'
-import CurrencyConversionLoader from '~/components/checkout/CurrencyConversionLoader.vue'
 import ManualPaymentDetailsModal from '~/components/checkout/ManualPaymentDetailsModal.vue'
 import CheckoutSidebar from '~/components/checkout/CheckoutSidebar.vue'
+import SeatSelection from '~/components/checkout/SeatSelection.vue'
 import CheckoutStayDetails from '~/components/checkout/CheckoutStayDetails.vue'
 import { flightsApi } from '~/api_factory/modules/flights'
 import { transfersApi } from '~/api_factory/modules/transfers'
 import { bookingsApi } from '~/api_factory/modules/bookings'
-
 import { useDuffelIdentity } from '~/composables/modules/integrations/useDuffelIdentity'
 import { useTracking } from '~/composables/core/useTracking'
 import { useAuth } from '~/composables/modules/auth/useAuth'
+import { useUser } from '~/composables/modules/auth/user'
 import { useCustomToast } from '~/composables/core/useCustomToast'
 
 const { token, isLoggedIn, openAuthModal } = useAuth()
@@ -213,6 +217,8 @@ const showBrandedLoader = ref(true)
 const loaderStatus = ref('Confirming best fare with airline...')
 const paymentProcessing = ref(false)
 const selectedAddOns = ref<{ id: string; name: string; price: number }[]>([])
+const selectedSeats = ref<any[]>([])
+const seatPrice = ref(0)
 
 const { loading: pricingLoading, pricingDetails, priceFlightOffer } = useFlightCheckout()
 const selectedFlight = ref<any>(null)
@@ -233,7 +239,53 @@ const travellerData = ref({
   passportNumber: '',
   passportExpiry: '',
   passportCountry: '',
+  saveForFuture: false,
 })
+
+// Persistence Key
+const PERSISTENCE_KEY = computed(() => `flybeth_checkout_${bookingDetails.value.id}`)
+
+const saveCheckoutState = () => {
+    const state = {
+        currentStep: currentStep.value,
+        travellerData: travellerData.value,
+        selectedSeats: selectedSeats.value,
+        seatPrice: seatPrice.value,
+        selectedAddOns: selectedAddOns.value
+    }
+    localStorage.setItem(PERSISTENCE_KEY.value, JSON.stringify(state))
+}
+
+const loadCheckoutState = () => {
+    const saved = localStorage.getItem(PERSISTENCE_KEY.value)
+    if (saved) {
+        try {
+            const state = JSON.parse(saved)
+            currentStep.value = state.currentStep || 0
+            travellerData.value = { ...travellerData.value, ...state.travellerData }
+            selectedSeats.value = state.selectedSeats || []
+            seatPrice.value = state.seatPrice || 0
+            selectedAddOns.value = state.selectedAddOns || []
+        } catch (e) {
+            console.warn('Failed to load checkout state', e)
+        }
+    }
+}
+
+const clearCheckoutState = () => {
+    localStorage.removeItem(PERSISTENCE_KEY.value)
+}
+
+// Prefill from user profile if logged in and empty
+const prefillFromUser = () => {
+    const u = useUser().user.value
+    if (u && !travellerData.value.firstName) {
+        travellerData.value.firstName = u.firstName || ''
+        travellerData.value.lastName = u.lastName || ''
+        travellerData.value.email = u.email || ''
+        travellerData.value.phone = u.phone || ''
+    }
+}
 
 // Booking details from query
 const bookingDetails = computed(() => ({
@@ -263,10 +315,14 @@ const displayPrices = computed(() => {
   if (priceDetailed.value) {
     total = priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
     base = priceDetailed.value.price || 0
-    tax = priceDetailed.value.tax || (base * 0.12)
-    // If total is greater than base + tax, the remainder is service charge/commission
-    const remainder = total - base - tax
-    serviceCharge = remainder > 0 ? remainder : (base * 0.05)
+    
+    // Split the flight/stay total into components that always sum to 'total'
+    tax = priceDetailed.value.tax || (total * 0.08) 
+    serviceCharge = total - base - tax
+    if (serviceCharge < 0) {
+        serviceCharge = 0
+        tax = total - base
+    }
     currency = priceDetailed.value.currency || 'USD'
   }
 
@@ -276,11 +332,14 @@ const displayPrices = computed(() => {
     total += stayPrice
   }
 
+  // Calculate final aggregated total once
+  const finalTotal = total + seatPrice.value + addOnsTotal.value
+
   return {
     base,
     tax,
     serviceCharge,
-    total: total
+    total: finalTotal
   }
 })
 
@@ -310,19 +369,15 @@ const parseDuration = (durationStr: string) => {
 
 const normalizeFlightData = (rawFlight: any) => {
   if (!rawFlight) return null
-
-  // If already normalized or custom format
   if (rawFlight.origin && rawFlight.destination && typeof rawFlight.price === 'number' && rawFlight.segments) {
     return rawFlight
   }
 
-  // Duffel Format (slices, total_amount, total_currency)
   if (rawFlight.slices && rawFlight.slices.length > 0) {
     const slice = rawFlight.slices[0]
     const segments = slice.segments || []
     const firstSegment = segments[0]
     const lastSegment = segments[segments.length - 1]
-
     const basePrice = Number(rawFlight.base_amount || 0)
     const totalPrice = Number(rawFlight.total_amount || 0)
     const taxPrice = Number(rawFlight.tax_amount || 0)
@@ -344,8 +399,6 @@ const normalizeFlightData = (rawFlight: any) => {
     }))
 
     const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + (s.duration || 0), 0)
-
-    // Duffel conditions
     const canChange = rawFlight.conditions?.change_before_departure?.allowed || false
     const canRefund = rawFlight.conditions?.refund_before_departure?.allowed || false
 
@@ -360,7 +413,7 @@ const normalizeFlightData = (rawFlight: any) => {
       duration: totalDuration,
       price: basePrice,
       tax: taxPrice,
-      priceWithCommission: totalPrice, // Assuming commission logic is handled on backend or already factored in
+      priceWithCommission: totalPrice,
       currency: rawFlight.total_currency || 'USD',
       stops: segments.length - 1,
       segments: normalizedSegments,
@@ -368,24 +421,18 @@ const normalizeFlightData = (rawFlight: any) => {
       airline: rawFlight.owner?.name || firstSegment?.marketing_carrier?.name || 'Airline',
       airlineLogo: rawFlight.owner?.logo_symbol_url || firstSegment?.marketing_carrier?.logo_symbol_url,
       totalEmissionsKg: rawFlight.total_emissions_kg,
-      conditions: {
-        refundable: canRefund,
-        changeable: canChange
-      },
+      conditions: { refundable: canRefund, changeable: canChange },
       rawOffer: rawFlight,
     }
   }
 
-  // Amadeus / GDS Format
   if (rawFlight.itineraries && rawFlight.itineraries.length > 0) {
     const itinerary = rawFlight.itineraries[0]
     const segments = itinerary.segments || []
     const firstSegment = segments[0]
     const lastSegment = segments[segments.length - 1]
-
     const basePrice = Number(rawFlight.price?.base || rawFlight.price?.total || 0)
     const totalPrice = Number(rawFlight.price?.total || rawFlight.price?.grandTotal || 0)
-
     const cabin = (rawFlight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY').toLowerCase()
 
     const normalizedSegments = segments.map((s: any) => ({
@@ -419,29 +466,24 @@ const normalizeFlightData = (rawFlight: any) => {
       cabinClass: cabin,
       airline: rawFlight.validatingAirlineCodes?.[0] || firstSegment?.carrierCode || 'Airline',
       airlineLogo: `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${rawFlight.validatingAirlineCodes?.[0] || firstSegment?.carrierCode}.svg`,
-      rawOffer: rawFlight, // Preserve original for backend
+      rawOffer: rawFlight,
     }
   }
-
   return rawFlight
 }
 
-// Step Navigation
 const goToStep = (step: number) => {
   currentStep.value = step
+  saveCheckoutState()
   window.scrollTo({ top: 0, behavior: 'smooth' })
-  
   const steps = ['review', 'passengers', 'customization', 'payment']
-  trackAction(`booking_step_${steps[step]}`, { 
-    type: bookingDetails.value.type,
-    item: bookingDetails.value.name,
-    price: displayPrices.value.total
-  })
+  trackAction(`booking_step_${steps[step]}`, { type: bookingDetails.value.type, item: bookingDetails.value.name, price: displayPrices.value.total })
 }
 
 const handleGoBack = () => {
   if (currentStep.value > 0) {
     currentStep.value--
+    saveCheckoutState()
     window.scrollTo({ top: 0, behavior: 'smooth' })
   } else {
     router.back()
@@ -450,578 +492,208 @@ const handleGoBack = () => {
 
 const handleTravellerContinue = async () => {
   if (!isLoggedIn.value) {
-    showToast({
-      title: "Authentication Required",
-      message: "Please sign in or create an account to complete your booking.",
-      toastType: "info",
-    });
+    showToast({ title: "Authentication Required", message: "Please sign in or create an account to continue.", toastType: "info" });
     openAuthModal();
     return
   }
-
-  // Ensure Duffel Identity if using Duffel
   if (bookingDetails.value.provider === 'duffel') {
     showBrandedLoader.value = true
-    loaderStatus.value = 'Setting up your secure travel identity...'
+    loaderStatus.value = 'Setting up travel identity...'
     try {
       await ensureDuffelIdentity(travellerData.value)
     } catch (err: any) {
-      if (err?.response?.status === 401) {
-        showToast({
-          title: "Session Expired",
-          message: "Please sign in again to continue with your booking.",
-          toastType: "info",
-        });
-        openAuthModal();
-        showBrandedLoader.value = false
-        return
-      }
+      if (err?.response?.status === 401) { openAuthModal(); return }
     }
     showBrandedLoader.value = false
   }
-
   goToStep(2)
 }
 
-// Payment Flow
-const handleCurrencySelect = async (newCurrency: string) => {
-  isCurrencyModalVisible.value = false
-  if (newCurrency === priceDetailed.value?.currency) return
+const paymentRef = ref<any>(null)
 
+const handleHold = () => {
+  if (paymentRef.value) {
+    paymentRef.value.handleHold()
+  } else {
+    handlePayment({ provider: 'manual', paymentModel: 'on_hold' })
+  }
+}
+
+const handlePayNow = () => {
+  if (paymentRef.value) {
+    paymentRef.value.handlePay()
+  }
+}
+
+const handlePayment = async (paymentInfo: any) => {
+  paymentProcessing.value = true
+  showBrandedLoader.value = true
+  loaderStatus.value = paymentInfo.paymentModel === 'on_hold' ? 'Securing reservation...' : 'Finalizing booking...'
+  
+  try {
+    const payload: any = {
+      contactDetails: {
+        email: travellerData.value.email,
+        phone: travellerData.value.phone,
+        name: `${travellerData.value.firstName} ${travellerData.value.lastName}`,
+        state: travellerData.value.nationality
+      },
+      currency: priceDetailed.value?.currency || 'USD',
+      paymentModel: paymentInfo.paymentModel || 'pay_now',
+      paymentProvider: paymentInfo.provider,
+      paymentMetadata: paymentInfo,
+      passengerDetails: [{
+        ...travellerData.value,
+        gender: (travellerData.value.gender || 'male').toLowerCase(),
+        title: (travellerData.value.title || 'mr').toLowerCase(),
+        type: 'adult'
+      }],
+      pricing: {
+        baseFare: priceDetailed.value?.price || bookingDetails.value.price || 0,
+        taxes: (priceDetailed.value?.price || bookingDetails.value.price || 0) * 0.12, // Standard flight tax estimation
+        fees: 0
+      },
+      tenantId: bookingDetails.value.provider === 'duffel' ? undefined : undefined // Add if needed
+    }
+
+    if (bookingDetails.value.type === 'flight') {
+      payload.flights = [{
+        flightId: bookingDetails.value.id,
+        class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
+        offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId,
+        provider: bookingDetails.value.provider,
+        passengerIds: []
+      }]
+    } else if (bookingDetails.value.type === 'stay') {
+      payload.stays = [{
+        hotelId: bookingDetails.value.id,
+        roomId: bookingDetails.value.roomId,
+        checkIn: bookingDetails.value.checkIn,
+        checkOut: bookingDetails.value.checkOut,
+        occupancy: {
+          rooms: bookingDetails.value.rooms,
+          adults: bookingDetails.value.adults,
+          children: bookingDetails.value.children
+        }
+      }]
+    }
+
+    const { data } = await bookingsApi.create(payload)
+    
+    if (data && data.pnr) {
+      clearCheckoutState()
+      router.push(`/booking-confirmation?pnr=${data.pnr}`)
+    } else {
+      throw new Error('Booking response was invalid')
+    }
+  } catch (err: any) {
+    console.error('Payment/Booking error:', err)
+    
+    // Aggressive session recovery: automatically show auth modal if unauthorized
+    if (err.response?.status === 401) {
+      showToast({ 
+        title: "Session Expired", 
+        message: "Please sign in again to complete your booking.", 
+        toastType: "info" 
+      })
+      openAuthModal()
+      return
+    }
+
+    showToast({ 
+      title: "Booking Error", 
+      message: err.response?.data?.message || err.message || "Failed to process booking", 
+      toastType: "error" 
+    })
+  } finally {
+    paymentProcessing.value = false
+    showBrandedLoader.value = false
+  }
+}
+
+const handleCurrencySelect = async (newCurrency: string) => {
+  if (!priceDetailed.value || priceDetailed.value.currency === newCurrency) return
+  
+  const currentAmount = priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
+  const currentCurrency = priceDetailed.value.currency || 'USD'
+  
   isConversionLoading.value = true
   try {
     const { data } = await paymentsApi.convertCurrency(
-      priceDetailed.value.priceWithCommission,
-      priceDetailed.value.currency,
+      currentAmount,
+      currentCurrency,
       newCurrency
     )
     
-    if (data.success) {
-      priceDetailed.value.priceWithCommission = data.data.convertedAmount
-      priceDetailed.value.currency = data.data.toCurrency
-      const rate = data.data.exchangeRate
-      priceDetailed.value.price = Math.round(priceDetailed.value.price * rate * 100) / 100
-    }
-  } catch (error) {
-    console.error('Currency conversion failed:', error)
-  } finally {
-    setTimeout(() => {
-      isConversionLoading.value = false
-    }, 1500)
-  }
-}
-
-const handleEmailBlur = async (email: string) => {
-  if (!email || !email.includes('@')) return
-  
-  const config = useRuntimeConfig()
-  const checkoutUrl = `${window.location.origin}/checkout/${route.params.pnr || ''}`
-  
-  try {
-    await bookingsApi.emailCapture({
-      email,
-      firstName: travellerData.value.firstName || 'Traveler',
-      destination: priceDetailed.value?.segments?.[0]?.destination?.name || 'your destination',
-      checkoutUrl,
-      tenantId: route.query.tenantId as string
-    })
-    console.log('Email captured and draft nudge sent')
-  } catch (err) {
-    console.error('Email capture failed', err)
-  }
-}
-
-const handlePayment = async (paymentInfo: { provider: string; channel: string; cardData?: any }) => {
-  paymentProcessing.value = true
-  showBrandedLoader.value = true
-  loaderStatus.value = 'Preparing for payment...'
-  
-  try {
-    if (bookingDetails.value.type === 'stay') {
-      const guestsList = [];
-      const numAdults = bookingDetails.value.adults || 1;
-      const numChildren = bookingDetails.value.children || 0;
+    if (data && data.success) {
+      // Re-normalize pricing fields with new converted value
+      const convertedVal = data.data.convertedAmount || data.data.amount
+      const conversionFactor = convertedVal / currentAmount
       
-      for (let i = 0; i < numAdults; i++) {
-        guestsList.push({
-          type: 'AD',
-          firstName: i === 0 ? travellerData.value.firstName : `Adult ${i + 1}`,
-          lastName: travellerData.value.lastName
-        });
-      }
-      for (let i = 0; i < numChildren; i++) {
-        guestsList.push({
-          type: 'CH',
-          firstName: `Child ${i + 1}`,
-          lastName: travellerData.value.lastName,
-          age: 7
-        });
-      }
-
-      const stayPayload = {
-        quoteId: priceDetailed.value?.quoteId || bookingDetails.value.roomId,
-        provider: bookingDetails.value.provider,
-        guestDetails: {
-          email: travellerData.value.email,
-          phoneNumber: travellerData.value.phone,
-          guests: guestsList,
-        }
-      }
-
-      loaderStatus.value = 'Reserving your room with the property...'
-      const response = await staysApi.book(stayPayload)
-      const bookData = response.data?.data || response.data
-
-      if (bookData?.bookingId || bookData?.id) {
-         const bookingId = bookData.bookingId || bookData.id
-         const callbackUrl = `${window.location.origin}/confirmation?type=stay&provider=${bookingDetails.value.provider}&orderId=${bookingId}`
-         
-         const paymentResponse = await paymentsApi.initialize({
-            bookingId: bookingId,
-            provider: paymentInfo.provider,
-            callbackUrl
-         })
-         
-         const paymentData = paymentResponse.data?.data || paymentResponse.data
-         if (paymentData?.url || paymentData?.authorization_url) {
-           window.location.href = paymentData.url || paymentData.authorization_url
-           return
-         }
-
-         navigateTo({
-           path: '/confirmation',
-           query: {
-             type: 'stay',
-             orderId: bookingId,
-             status: 'pending_payment'
-           }
-         })
-      }
-      return
-    }
-
-    if (bookingDetails.value.type === 'transfer') {
-      const transferPayload = {
-        offerId: bookingDetails.value.id,
-        provider: bookingDetails.value.provider,
-        passengerDetails: {
-          firstName: travellerData.value.firstName,
-          lastName: travellerData.value.lastName,
-          title: travellerData.value.title.toUpperCase(),
-          email: travellerData.value.email,
-          phone: travellerData.value.phoneCountryCode.replace('+', '') + travellerData.value.phone,
-          payment: {
-            methodOfPayment: 'CREDIT_CARD',
-            creditCard: {
-              number: "4111111111111111",
-              holderName: `${travellerData.value.firstName} ${travellerData.value.lastName}`.toUpperCase(),
-              vendorCode: "VI",
-              expiryDate: "1225",
-              cvv: "111"
-            }
-          }
-        }
-      }
-
-      loaderStatus.value = 'Booking your transfer...'
-      const response = await transfersApi.book(transferPayload)
-      const bookData = response.data?.data || response.data
-
-      if (bookData?.orderId || bookData?.bookingId || bookData?.id) {
-         const bookingId = bookData.orderId || bookData.bookingId || bookData.id
-         const pnr = bookData.confirmationNumber || bookData.orderId
-         navigateTo({
-           path: '/confirmation',
-           query: {
-             type: 'transfer',
-             orderId: bookingId,
-             pnr: pnr,
-             status: 'confirmed'
-           }
-         })
-      }
-      return
-    }
-
-    if (paymentInfo.provider === 'manual') {
-      const { data } = await paymentsApi.getBankAccounts(priceDetailed.value.currency || 'USD')
-      if (data.success) {
-        bankAccounts.value = data.data
-        isManualDetailsVisible.value = true
-      }
-      paymentProcessing.value = false
-      showBrandedLoader.value = false
-      return
-    }
-
-    let paymentPayload: any = null
-
-    // Specialized Duffel Card Flow
-    if (paymentInfo.provider === 'duffel' && paymentInfo.cardData) {
-      loaderStatus.value = 'Securing your card details...'
-      try {
-        const cardResponse = await flightsApi.createDuffelCard({
-          provider: 'duffel',
-          cardData: {
-            number: paymentInfo.cardData.number.replace(/\s/g, ''),
-            expiry_month: paymentInfo.cardData.expiry_month,
-            expiry_year: paymentInfo.cardData.expiry_year,
-            cvc: paymentInfo.cardData.cvv,
-            name: paymentInfo.cardData.name,
-            multi_use: paymentInfo.cardData.multi_use,
-            address_line_1: paymentInfo.cardData.address_line_1,
-            address_line_2: paymentInfo.cardData.address_line_2,
-            address_city: paymentInfo.cardData.address_city,
-            address_region: paymentInfo.cardData.address_region,
-            address_country_code: paymentInfo.cardData.address_country_code,
-            address_postal_code: paymentInfo.cardData.address_postal_code,
-          }
-        })
-        
-        const card = cardResponse.data?.data || cardResponse.data
-        if (!card?.id) throw new Error('Failed to secure card details')
-
-        paymentPayload = {
-          type: 'card',
-          cardId: card.id
-        }
-      } catch (err: any) {
-        throw new Error(`Payment security failed: ${err.response?.data?.message || err.message}`)
-      }
-    }
-
-    const flightOffer = priceDetailed.value
-    const bookPayload = {
-      offerId: bookingDetails.value.id,
-      provider: bookingDetails.value.provider,
-      offer: flightOffer,
-      payment: paymentPayload,
-      ipAddress: 'detect-on-backend',
-      userAgent: navigator.userAgent,
-      deviceFingerprint: btoa(navigator.userAgent + screen.width + screen.height),
-      passengers: [{
-        title: travellerData.value.title,
-        firstName: travellerData.value.firstName,
-        lastName: travellerData.value.lastName,
-        email: travellerData.value.email,
-        phone: travellerData.value.phone,
-        phoneCountryCode: travellerData.value.phoneCountryCode.replace('+', ''),
-        gender: travellerData.value.gender,
-        dateOfBirth: travellerData.value.dateOfBirth,
-        passportNumber: travellerData.value.passportNumber || undefined,
-        passportExpiry: travellerData.value.passportExpiry || undefined,
-        passportCountry: travellerData.value.passportCountry || undefined,
-        nationality: travellerData.value.nationality || undefined,
-      }]
-    }
-
-    // Validate DOB - must be in the past
-    const dob = travellerData.value.dateOfBirth
-    if (!dob || new Date(dob) >= new Date()) {
-      showBrandedLoader.value = false
-      paymentProcessing.value = false
-      showToast({
-        title: "Invalid Date of Birth",
-        message: "Please enter a valid Date of Birth. The date must be in the past.",
-        toastType: "error",
-      });
-      return
-    }
-
-    loaderStatus.value = 'Booking your flight with the airline...'
-    const bookResponse = await flightsApi.book(bookPayload)
-    const bookData = bookResponse.data?.data || bookResponse.data
-    
-    if (bookData?.bookingId || bookData?.orderId) {
-      const bookingId = bookData.bookingId || bookData.orderId
-      
-      // If payment was already handled by Duffel card, we don't need to initialize another payment
-      if (paymentPayload?.cardId) {
-        navigateTo({
-          path: '/confirmation',
-          query: {
-            pnr: bookData.pnr || bookData.reference,
-            orderId: bookingId,
-            status: 'confirmed'
-          }
-        })
-        return
-      }
-
-      loaderStatus.value = 'Initializing secure payment...'
-      const callbackUrl = `${window.location.origin}/confirmation?type=flight&provider=${bookingDetails.value.provider}&orderId=${bookingId}`
-      
-      try {
-        const paymentResponse = await paymentsApi.initialize({
-          bookingId: bookingId,
-          provider: paymentInfo.provider,
-          callbackUrl
-        })
-        
-        const paymentData = paymentResponse.data?.data || paymentResponse.data
-        if (paymentData?.url || paymentData?.authorization_url) {
-          window.location.href = paymentData.url || paymentData.authorization_url
-          return
-        }
-      } catch (paymentErr: any) {
-        console.warn('Payment initialization failed:', paymentErr)
-        showToast({
-          title: "Payment Error",
-          message: `Payment initialization failed: ${paymentErr.response?.data?.message || paymentErr.message}.`,
-          toastType: "error",
-        });
+      priceDetailed.value.currency = newCurrency
+      priceDetailed.value.price = (priceDetailed.value.price || 0) * conversionFactor
+      priceDetailed.value.priceWithCommission = convertedVal
+      if (priceDetailed.value.tax) {
+        priceDetailed.value.tax = priceDetailed.value.tax * conversionFactor
       }
       
-      navigateTo({
-        path: '/confirmation',
-        query: {
-          pnr: bookData.pnr || bookData.reference,
-          orderId: bookingId,
-          status: 'pending_payment'
-        }
-      })
+      showToast({ title: "Currency Updated", message: `Pricing switched to ${newCurrency} successfully.`, toastType: "success" })
     }
-  } catch (error: any) {
-    console.error('Booking failed:', error)
-    showBrandedLoader.value = false
-    paymentProcessing.value = false
-    const msg = error.response?.data?.message || error.message || 'An unexpected error occurred'
-    showToast({
-      title: "Booking Failed",
-      message: msg,
-      toastType: "error",
-    });
-  } finally {
-    paymentProcessing.value = false
-  }
-}
-
-const handleHold = async () => {
-  paymentProcessing.value = true
-  showBrandedLoader.value = true
-  loaderStatus.value = 'Reserving your seats without payment...'
-  
-  try {
-    const bookPayload = {
-      offerId: bookingDetails.value.id,
-      provider: bookingDetails.value.provider,
-      passengers: [{
-        title: travellerData.value.title,
-        firstName: travellerData.value.firstName,
-        lastName: travellerData.value.lastName,
-        email: travellerData.value.email,
-        phone: travellerData.value.phone,
-        phoneCountryCode: travellerData.value.phoneCountryCode.replace('+', ''),
-        gender: travellerData.value.gender,
-        dateOfBirth: travellerData.value.dateOfBirth,
-        passportNumber: travellerData.value.passportNumber || undefined,
-        passportExpiry: travellerData.value.passportExpiry || undefined,
-        passportCountry: travellerData.value.passportCountry || undefined,
-        nationality: travellerData.value.nationality || undefined,
-      }]
-    }
-
-    const response = await flightsApi.hold(bookPayload)
-    const data = response.data?.data || response.data
-    
-    if (data?.bookingId || data?.id) {
-       navigateTo({
-         path: '/confirmation',
-         query: {
-           pnr: data.pnr || data.reference,
-           orderId: data.bookingId || data.id,
-           status: 'held'
-         }
-       })
-    }
-  } catch (error: any) {
-    console.error('Hold failed:', error)
-    showBrandedLoader.value = false
-    const msg = error.response?.data?.message || error.message || 'An unexpected error occurred'
-    showToast({
-       title: "Reservation Failed",
-       message: msg,
-       toastType: "error",
+  } catch (err: any) {
+    console.error('Currency conversion failed:', err)
+    showToast({ 
+      title: "Conversion Error", 
+      message: "We couldn't update the pricing to your selected currency at this time.", 
+      toastType: "error" 
     })
   } finally {
-    paymentProcessing.value = false
+    isConversionLoading.value = false
   }
-}
-const handlePayNow = () => {
-  if (currentStep.value === 3) {
-    const p = bookingDetails.value.provider === 'duffel' ? 'duffel' : 'stripe'
-    handlePayment({ provider: p, channel: 'card' })
-  } else {
-    goToStep(3)
-  }
-}
-
-const handleApplyPromo = (code: string) => {
-  console.log('Apply promo code:', code)
 }
 
 onMounted(async () => {
-  // Initial tracking for landing on checkout
-  trackAction('booking_step_review', { 
-    type: bookingDetails.value.type,
-    item: bookingDetails.value.name 
-  })
-
+  trackAction('booking_step_review', { type: bookingDetails.value.type, item: bookingDetails.value.name })
   if (bookingDetails.value.type === 'flight') {
     const saved = sessionStorage.getItem('selectedFlight')
     if (saved) {
       selectedFlight.value = JSON.parse(saved)
       try {
-        loaderStatus.value = 'Confirming best fare with airline...'
         const pricedData = await priceFlightOffer(selectedFlight.value, bookingDetails.value.provider)
-        
-        if (pricedData?.flightOffers?.[0]) {
-          priceDetailed.value = normalizeFlightData(pricedData.flightOffers[0])
-        } else {
-          priceDetailed.value = normalizeFlightData(selectedFlight.value)
-        }
-      } catch (err) {
+        priceDetailed.value = { ...normalizeFlightData(pricedData?.flightOffers?.[0] || selectedFlight.value), provider: bookingDetails.value.provider }
+      } catch (err: any) { 
         console.error('Pricing failed:', err)
-        priceDetailed.value = selectedFlight.value
-      }
-    } else {
-      priceDetailed.value = {
-        airline: bookingDetails.value.name,
-        origin: 'N/A',
-        destination: 'N/A',
-        price: 0,
-        priceWithCommission: 0,
-        currency: 'USD',
-        segments: [],
-        conditions: {},
-      }
-    }
-  } else if (bookingDetails.value.type === 'stay') {
-    loaderStatus.value = 'Finalizing property rates...'
-    try {
-      // Use quoteId if available, otherwise create a new quote
-      const quoteId = bookingDetails.value.quoteId || bookingDetails.value.roomId
-      const response = await staysApi.createQuote(quoteId, bookingDetails.value.provider)
-      const quoteResult = response.data?.data || response.data
-      
-      // Merge query param data with quote result
-      priceDetailed.value = {
-        ...quoteResult,
-        hotelName: quoteResult?.hotelName || bookingDetails.value.name,
-        quoteId: quoteResult?.id || quoteId,
-        checkIn: bookingDetails.value.checkIn,
-        checkOut: bookingDetails.value.checkOut,
-      }
-    } catch (err) {
-      console.error('Stay quote failed, using fallback from query params:', err)
-      // Use query param data as fallback so user can still proceed
-      priceDetailed.value = {
-        hotelName: bookingDetails.value.name,
-        currency: bookingDetails.value.currency || 'USD',
-        price: bookingDetails.value.price || 0,
-        priceWithCommission: bookingDetails.value.price || 0,
-        quoteId: bookingDetails.value.quoteId || bookingDetails.value.roomId,
-        checkIn: bookingDetails.value.checkIn,
-        checkOut: bookingDetails.value.checkOut,
-        rooms: bookingDetails.value.rooms,
-        adults: bookingDetails.value.adults,
+        if (err.response?.status === 404) {
+          showToast({ 
+            title: "Offer Expired", 
+            message: "This flight offer has expired. Please go back and select it again to get the latest pricing.", 
+            toastType: "info" 
+          })
+        }
+        priceDetailed.value = { ...selectedFlight.value, provider: bookingDetails.value.provider } 
       }
     }
   }
+  loadCheckoutState()
   showBrandedLoader.value = false
 })
 
-onMounted(() => {
-  // Check for bundled stay
-  const savedStay = sessionStorage.getItem('pendingStayBooking')
-  if (savedStay) {
-    bundledStay.value = JSON.parse(savedStay)
-  }
-})
-
-const handleManualConfirm = async (account: any) => {
-  isManualDetailsVisible.value = false
-  paymentProcessing.value = true
-  showBrandedLoader.value = true
-  loaderStatus.value = 'Processing your booking for manual payment...'
-  
-  try {
-    const flightOffer = priceDetailed.value
-    const bookPayload = {
-      offerId: bookingDetails.value.id,
-      provider: bookingDetails.value.provider,
-      offer: flightOffer,
-      passengers: [{
-        title: travellerData.value.title,
-        firstName: travellerData.value.firstName,
-        lastName: travellerData.value.lastName,
-        email: travellerData.value.email,
-        phone: travellerData.value.phone,
-        phoneCountryCode: travellerData.value.phoneCountryCode.replace('+', ''),
-        gender: travellerData.value.gender,
-        dateOfBirth: travellerData.value.dateOfBirth,
-        passportNumber: travellerData.value.passportNumber || undefined,
-        passportExpiry: travellerData.value.passportExpiry || undefined,
-        passportCountry: travellerData.value.passportCountry || undefined,
-        nationality: travellerData.value.nationality || undefined,
-      }]
-    }
-
-    const bookResponse = await flightsApi.book(bookPayload)
-    const bookData = bookResponse.data?.data || bookResponse.data
-    if (!bookData?.bookingId && !bookData?.orderId) throw new Error('Booking failed to return ID')
-
-    const bookingId = bookData.bookingId || bookData.orderId
-    const pnr = bookData.pnr || bookData.reference
-
-    await paymentsApi.initialize({
-      bookingId: bookingId,
-      provider: 'manual',
-      callbackUrl: `${window.location.origin}/confirmation?orderId=${bookingId}&pnr=${pnr}&status=pending_payment`
-    })
-
-    navigateTo(`/confirmation?orderId=${bookingId}&pnr=${pnr}&status=pending_payment`)
-  } catch (error: any) {
-    console.error('Manual booking failed:', error)
-    showBrandedLoader.value = false
-    showToast({
-      title: "Manual Booking Error",
-      message: error.response?.data?.message || error.message,
-      toastType: "error",
-    });
-  } finally {
-    paymentProcessing.value = false
-  }
-}
+watch([currentStep, travellerData, selectedSeats, selectedAddOns], () => { saveCheckoutState() }, { deep: true })
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap');
-
-.ck-root {
-  min-height: 100vh;
-  background: #fbfbf9;
-  font-family: 'Sora', sans-serif;
-  color: #111;
-  display: flex;
-  flex-direction: column;
-}
-
 .ck-wrap {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 40px;
-}
-
-.animate-in {
-  animation: ckIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@keyframes ckIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 @media (max-width: 640px) {
-  .ck-wrap { padding: 0 20px; }
+  .ck-wrap {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 </style>

@@ -9,8 +9,8 @@
       <div class="max-w-7xl mx-auto px-6 relative z-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div>
-            <span class="inline-block mb-4 px-4 py-1.5 bg-brand-blue/5 rounded-full text-[10px] font-bold uppercase tracking-[0.3em] text-brand-blue">Contact Support</span>
-            <h1 class="text-5xl lg:text-7xl font-black text-gray-900 tracking-tighter leading-[1.05] mb-8">
+            <span class="inline-block mb-4 px-4 py-1.5 bg-brand-blue/5 rounded-full text-[10px] font-bold uppercase  text-brand-blue">Contact Support</span>
+            <h1 class="text-5xl lg:text-7xl  text-gray-900 tracking-tighter leading-[1.05] mb-8">
               We're here <br><span class="text-brand-blue italic">for you.</span>
             </h1>
             <p class="text-lg text-gray-500 font-medium max-w-xl leading-relaxed mb-12">
@@ -23,14 +23,14 @@
                   <Mail class="h-6 w-6" />
                 </div>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Email Support</p>
-                <p class="text-gray-900 font-black">hello@flybeth.com</p>
+                <p class="text-gray-900 ">hello@flybeth.com</p>
               </div>
               <div class="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group">
                 <div class="h-12 w-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-emerald-500 group-hover:text-white transition-all mb-6">
                   <Phone class="h-6 w-6" />
                 </div>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Call Concierge</p>
-                <p class="text-gray-900 font-black">+1 (800) FLY-BETH</p>
+                <p class="text-gray-900 ">+1 (800) FLY-BETH</p>
               </div>
             </div>
           </div>
@@ -41,18 +41,18 @@
               <form @submit.prevent="handleSubmit" class="space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div class="space-y-3">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Full Name</label>
+                    <label class="text-[10px]  uppercase tracking-widest text-gray-400 ml-1">Full Name</label>
                     <input v-model="form.name" required type="text" placeholder="John Doe" class="contact-field" />
                   </div>
                   <div class="space-y-3">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
+                    <label class="text-[10px]  uppercase tracking-widest text-gray-400 ml-1">Email Address</label>
                     <input v-model="form.email" required type="email" placeholder="john@example.com" class="contact-field" />
                   </div>
                 </div>
                 
                 <!-- Custom Dropdown -->
                 <div class="space-y-3 relative">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Subject</label>
+                  <label class="text-[10px]  uppercase tracking-widest text-gray-400 ml-1">Subject</label>
                   <div @click="showDropdown = !showDropdown" 
                        class="contact-field cursor-pointer flex items-center justify-between group"
                        :class="{ 'border-brand-blue ring-4 ring-brand-blue/5': showDropdown }">
@@ -75,11 +75,11 @@
                 </div>
 
                 <div class="space-y-3">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Message</label>
+                  <label class="text-[10px]  uppercase tracking-widest text-gray-400 ml-1">Message</label>
                   <textarea v-model="form.message" required rows="4" placeholder="How can we help you today?" class="contact-field resize-none"></textarea>
                 </div>
 
-                <button :disabled="loading" type="submit" class="w-full h-14 rounded-2xl bg-gray-900 text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-black transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-gray-200">
+                <button :disabled="loading" type="submit" class="w-full h-14 rounded-2xl bg-gray-900 text-white  text-xs uppercase tracking-[0.2em] hover:bg-black transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-gray-200">
                   <template v-if="!loading">
                     <Send class="h-4 w-4" />
                     Send Message
@@ -98,21 +98,21 @@
       <div class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
           <div class="p-8 rounded-3xl bg-white border border-gray-100">
-            <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Corporate Office</h3>
+            <h3 class="text-sm  text-gray-900 uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Corporate Office</h3>
             <p class="text-gray-500 font-bold leading-relaxed">
               1880 S Dairy Ashford Rd, Suite 207,<br>
               Houston, TX 77077
             </p>
           </div>
           <div class="p-8 rounded-3xl bg-white border border-gray-100">
-            <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Support Hours</h3>
+            <h3 class="text-sm  text-gray-900 uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Support Hours</h3>
             <p class="text-gray-500 font-bold leading-relaxed">
               Mon - Fri: 9:00 AM - 6:00 PM (GMT)<br>
               Sat: 10:00 AM - 2:00 PM (GMT)
             </p>
           </div>
           <div class="p-8 rounded-3xl bg-white border border-gray-100">
-            <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Connect</h3>
+            <h3 class="text-sm  text-gray-900 uppercase tracking-widest mb-6 border-b border-gray-100 pb-4">Connect</h3>
             <div class="flex items-center justify-center md:justify-start gap-4">
               <a href="#" class="h-10 w-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-brand-blue hover:text-white transition-all">
                 <Instagram class="h-5 w-5" />

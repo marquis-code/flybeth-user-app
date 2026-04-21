@@ -3,7 +3,7 @@
     <div class="flex flex-col md:flex-row gap-12">
       <!-- Sidebar Categories -->
       <aside class="w-full md:w-64 shrink-0 space-y-2">
-        <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400 mb-6">Categories</h3>
+        <h3 class="text-[10px]  uppercase  text-neutral-400 mb-6">Categories</h3>
         <button v-for="cat in categories" :key="cat" 
           @click="activeCategory = cat"
           class="w-full text-left px-6 py-4 rounded-2xl text-sm font-bold transition-all"
@@ -16,7 +16,7 @@
       <!-- Main Content -->
       <div class="flex-1 space-y-12">
         <div class="space-y-4 text-center md:text-left">
-           <h1 class="text-4xl font-black text-neutral-900 tracking-tight">{{ activeCategory }} Guides</h1>
+           <h1 class="text-4xl  text-neutral-900 tracking-tight">{{ activeCategory }} Guides</h1>
            <p class="text-neutral-500 font-medium">Explore detailed articles and step-by-step instructions for {{ activeCategory.toLowerCase() }}.</p>
         </div>
 
@@ -26,9 +26,9 @@
                  <div class="h-10 w-10 rounded-xl bg-neutral-50 flex items-center justify-center group-hover:bg-brand-blue/5 transition-colors">
                     <BookOpenIcon class="h-5 w-5 text-neutral-400 group-hover:text-brand-blue" />
                  </div>
-                 <span class="text-[10px] font-black uppercase tracking-widest text-neutral-300">5 min read</span>
+                 <span class="text-[10px]  uppercase tracking-widest text-neutral-300">5 min read</span>
               </div>
-              <h4 class="text-lg font-black text-neutral-900 mb-2 group-hover:text-brand-blue transition-colors">{{ article.title }}</h4>
+              <h4 class="text-lg  text-neutral-900 mb-2 group-hover:text-brand-blue transition-colors">{{ article.title }}</h4>
               <p class="text-[13px] font-semibold text-neutral-400 mb-8 leading-relaxed">{{ article.excerpt }}</p>
               <div class="flex items-center gap-2 text-brand-blue font-bold text-xs">
                  Read Article

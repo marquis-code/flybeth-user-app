@@ -20,7 +20,7 @@
     </div>
 
     <!-- Stay Info -->
-    <div v-if="currentStay" class="ck-sb-sec">
+    <div v-if="currentStay" class="ck-sb-sec animate-in">
       <div class="ck-sb-item">
         <div class="ck-sb-ico">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -29,6 +29,34 @@
           <p class="ck-sb-lbl">Accommodation</p>
           <p class="ck-sb-val">{{ currentStay.hotelName || currentStay.name || currentStay.stay?.name }}</p>
           <p class="ck-sb-sub">{{ currentStay.roomName || currentStay.selectedRoom?.name || 'Standard Room' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Enhancements -->
+    <div v-for="addon in addOns.filter(a => a.id !== 'seat-selection')" :key="addon.id" class="ck-sb-sec animate-in duration-300">
+      <div class="ck-sb-item !border-blue-100 !bg-blue-50/30">
+        <div class="ck-sb-ico !text-blue-600 !bg-white">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </div>
+        <div class="ck-sb-info">
+          <p class="ck-sb-lbl">Enhancement</p>
+          <p class="ck-sb-val">{{ addon.name }}</p>
+          <p class="ck-sb-sub">Live Service • Verified</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Seats -->
+    <div v-if="selectedSeats.length" class="ck-sb-sec animate-in duration-300">
+      <div class="ck-sb-item !border-blue-100 !bg-blue-100/10">
+        <div class="ck-sb-ico !text-blue-600 !bg-white">
+          <Armchair class="w-3.5 h-3.5" />
+        </div>
+        <div class="ck-sb-info">
+          <p class="ck-sb-lbl">Seat Selection</p>
+          <p class="ck-sb-val">Seat {{ selectedSeats.map(s => s.seat_number || s.code).join(', ') }}</p>
+          <p class="ck-sb-sub">{{ seatPrice > 0 ? `${currency}${formatPrice(seatPrice)} Total` : 'Included' }}</p>
         </div>
       </div>
     </div>
@@ -55,6 +83,10 @@
            <div class="ck-sb-fare ck-sb-fare--sub">
              <span>Service Charge</span>
              <span>{{ currency }}{{ formatPrice(serviceCharge) }}</span>
+           </div>
+           <div v-if="seatPrice > 0" class="ck-sb-fare ck-sb-fare--sub">
+             <span>Seat Selection</span>
+             <span>{{ currency }}{{ formatPrice(seatPrice) }}</span>
            </div>
            <div v-for="addon in addOns" :key="addon.name" class="ck-sb-fare ck-sb-fare--sub">
              <span>{{ addon.name }}</span>
@@ -102,6 +134,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { Armchair } from 'lucide-vue-next'
 
 const props = defineProps({
   flight: { type: Object, default: null },
@@ -112,7 +145,9 @@ const props = defineProps({
   taxes: { type: Number, default: 0 },
   discount: { type: Number, default: 0 },
   serviceCharge: { type: Number, default: 0 },
-  addOns: { type: Array as () => { name: string; price: number }[], default: () => [] },
+  addOns: { type: Array as () => { id: string; name: string; price: number }[], default: () => [] },
+  selectedSeats: { type: Array as () => any[], default: () => [] },
+  seatPrice: { type: Number, default: 0 },
   currency: { type: String, default: '$' },
   showPayButton: { type: Boolean, default: false },
 })
@@ -138,7 +173,7 @@ const flightBasePrice = computed(() => {
 
 const tripTotal = computed(() => {
   const addOnTotal = props.addOns.reduce((sum, a) => sum + a.price, 0)
-  return props.baseFare + props.taxes + props.serviceCharge - props.discount + addOnTotal
+  return props.baseFare + props.taxes + props.serviceCharge - props.discount + addOnTotal + props.seatPrice
 })
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
@@ -204,7 +239,7 @@ const formatPrice = (price: number) => {
 .ck-sb-btn--second { background: #fdf2e9; color: #c2410c; border: 1px solid #fed7aa; }
 .ck-sb-btn--second:hover { background: #ffedd5; }
 
-.ck-sb-meta { font-size: 11px; color: #aaa; text-align: center; margin-top: 16px; line-height: 1.5; }
+.ck-sb-meta { font-size: 13px; color: #aaa; text-align: center; margin-top: 16px; line-height: 1.5; }
 
 /* Animation */
 .animate-in { animation: ckFadeIn 0.3s ease both; }
