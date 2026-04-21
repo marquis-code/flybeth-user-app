@@ -1,0 +1,1 @@
+import{ap as s,at as i,aq as r}from"./rbBP_EY2.js";const m=s({cast(t){return typeof t=="string"&&(t={name:t}),t},defaults:{"@type":"ListItem"},resolve(t,e){return typeof t.item=="string"?t.item=i(e.meta.host,t.item):typeof t.item=="object"&&(t.item=r(t.item,e)),t}});export{m as listItemResolver};
