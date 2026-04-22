@@ -4,7 +4,7 @@
     <div class="relative w-full pb-8 lg:pb-20 overflow-hidden">
       <!-- Background with elegant gradient overlay -->
       <div class="absolute inset-0 z-0 text-3xl tracking-tight text-white leading-snug">
-        <img src="@/assets/img/happy-trips.jpg" class="w-full h-full object-cover object-top" alt="Hero Background" />
+        <img src="https://flybeth.s3.us-east-2.amazonaws.com/flight-booking/general/happy-trips.jpg" class="w-full h-full object-cover object-top" alt="Hero Background" />
         <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a]/80 via-[#0f172a]/60 to-[#f8fafc]"></div>
       </div>
       
@@ -323,7 +323,7 @@
         </div>
 
         <div v-if="marketInsightsLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-           <div v-for="i in 5" :key="i" class="bg-gray-200 animate-pulse h-64 rounded-2xl"></div>
+           <StaySkeleton v-for="i in 5" :key="i" class="h-64" />
         </div>
 
         <div v-else-if="!trendingHotels.length" class="w-full">
@@ -494,136 +494,7 @@
     </div> -->
 
     <!-- Premium Travel Directory & Engagement Section -->
-    <section class="pt-20 bg-[#F8FAFC] border-t border-gray-100 relative z-0 overflow-hidden">
-      <!-- Animated Background Accents -->
-      <div class="absolute top-0 right-0 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-      <div class="absolute bottom-0 left-0 w-96 h-96 bg-brand-green/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <!-- Top Row: Engagement Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          <!-- Newsletter Signup Card -->
-          <div class="bg-white p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50 group">
-             <div class="h-12 w-12 bg-brand-blue/5 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-500">
-               <TicketIcon class="h-6 w-6" />
-             </div>
-             <h4 class="text-xl  text-gray-900 mb-3 tracking-tight">Stay in the loop</h4>
-             <p class="text-xs font-bold text-gray-400 mb-6 leading-relaxed  tracking-widest">Get exclusive deals & travel hacks</p>
-             <div class="relative">
-               <input v-model="email" 
-                 type="email" 
-                 placeholder="your@email.com" 
-                 class="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-brand-blue/20 transition-all outline-none"
-               />
-               <button @click="handleNewsletterSubscribe" :disabled="newsletterLoading || !email" class="absolute right-2 top-2 bottom-2 bg-brand-blue text-white px-5 rounded-xl text-[10px] font-bold tracking-widest hover:bg-[#0a168a] transition-all transform active:scale-95 shadow-lg shadow-brand-blue/20">
-                 {{ newsletterLoading ? "Joining..." : "Join" }}
-               </button>
-             </div>
-          </div>
-
-          <!-- Social Engagement Card -->
-          <div class="bg-white p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50 group">
-             <div class="h-12 w-12 bg-brand-green/5 rounded-2xl flex items-center justify-center text-brand-green mb-6 group-hover:bg-brand-green group-hover:text-white transition-colors duration-500">
-               <GlobeAltIcon class="h-6 w-6" />
-             </div>
-             <h4 class="text-xl  text-gray-900 mb-3 tracking-tight">Follow our journey</h4>
-             <p class="text-xs font-bold text-gray-400 mb-8 leading-relaxed  tracking-widest">Connect with Flybeth globally</p>
-             <div class="flex gap-4">
-              <img src="@/assets/icons/instagram.svg" class="h-8 w-8 rounded-full" />
-              <img src="@/assets/icons/facebook.svg" class="h-8 w-8 rounded-full" />
-              <img src="@/assets/icons/twitter.svg" class="h-8 w-8 rounded-full" />
-              <img src="@/assets/icons/linkedin.svg" class="h-8 w-8 rounded-full" />
-             </div>
-          </div>
-
-          <!-- Inspiration Card -->
-          <div class="bg-brand-blue p-8 rounded-[2.5rem] shadow-xl shadow-brand-blue/20 text-white relative overflow-hidden group border border-white/10">
-             <div class="absolute -right-8 -top-8 opacity-20 group-hover:scale-110 transition-transform duration-700">
-                <SparklesIcon class="w-40 h-40" />
-             </div>
-             <div class="relative z-10 flex flex-col h-full">
-               <h4 class="text-2xl  mb-2 tracking-tight">Get Inspired</h4>
-               <p class="text-[11px] font-bold text-white/70 mb-8 leading-relaxed  tracking-widest">Discover your next destination</p>
-               <button class="mt-auto bg-brand-green text-white font-bold text-[10px] px-6 py-3.5 rounded-xl shadow-lg hover:bg-[#289003] transition-all tracking-widest  self-start">
-                 Dreamguides
-               </button>
-             </div>
-          </div>
-        </div>
-
-        <!-- Section Heading: Flybeth Directory -->
-        <!-- <div class="flex flex-col items-center text-center mb-16">
-          <h2 class="text-3xl  text-gray-900 mb-4 tracking-tight">Travel Directory</h2>
-          <div class="h-1 w-12 bg-brand-green rounded-full"></div>
-        </div> -->
-
-        <!-- Directory Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
-          <!-- Column: Flights -->
-          <div v-if="africanCities.length || europeanCities.length" class="space-y-10 focus-within:z-10">
-            <div>
-              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400  tracking-widest mb-6">
-                <div class="h-2 w-2 rounded-full bg-brand-blue"></div>
-                Flights from Nigeria
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div v-for="region in [
-                  { name: 'Africa', cities: africanCities },
-                  { name: 'Europe', cities: europeanCities }
-                ]" :key="region.name" class="space-y-3">
-                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-green/30 pl-3  tracking-widest">{{ region.name }}</h4>
-                  <ul class="space-y-1 pl-3 flex flex-wrap gap-x-4 gap-y-1">
-                    <li v-for="city in region.cities" :key="city" @click="navigateToFlightSearch(city)" class="text-[11px] font-bold text-gray-500 hover:text-brand-blue cursor-pointer transition-colors duration-300">{{ city }}</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400  tracking-widest mb-6 border-t border-gray-100 pt-6">
-                <div class="h-2 w-2 rounded-full bg-brand-green"></div>
-                Global Routes
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div v-for="region in [
-                  { name: 'Asia', cities: asianCities.slice(0, 4) },
-                  { name: 'N. America', cities: northAmericanCities.slice(0, 4) }
-                ]" :key="region.name" class="space-y-3">
-                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-green/30 pl-3  tracking-widest">{{ region.name }}</h4>
-                  <ul class="space-y-1 pl-3 flex flex-wrap gap-x-4 gap-y-1">
-                    <li v-for="city in region.cities" :key="city" @click="navigateToFlightSearch(city)" class="text-[11px] font-bold text-gray-500 hover:text-brand-blue cursor-pointer transition-colors duration-300">{{ city }}</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Column: Hotels -->
-          <div v-if="africanCities.length || europeanCities.length" class="space-y-10">
-            <div>
-              <h3 class="flex items-center gap-2 text-xs font-bold text-gray-400  tracking-widest mb-6">
-                <div class="h-2 w-2 rounded-full bg-brand-green"></div>
-                Curated Hotels
-              </h3>
-              <div class="grid grid-cols-1 gap-6">
-                <div v-for="region in [
-                  { name: 'Africa', cities: africanCities },
-                  { name: 'Europe', cities: europeanCities }
-                ]" :key="region.name" class="space-y-3">
-                  <h4 class="text-[10px] font-bold text-gray-900 border-l-2 border-brand-blue/30 pl-3  tracking-widest">In {{ region.name }}</h4>
-                  <ul class="space-y-2 pl-3">
-                    <li v-for="city in region.cities" :key="city" @click="navigateToHotelSearch(city)" class="group flex items-center gap-3 cursor-pointer">
-                      <div class="h-6 w-6 rounded bg-white flex items-center justify-center text-[8px] font-bold text-gray-400 shadow-sm group-hover:bg-brand-blue group-hover:text-white transition-all">{{ city.slice(0, 2) }}</div>
-                      <span class="text-[11px] font-bold text-gray-500 group-hover:text-brand-blue transition-colors">Hotels in {{ city }}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
+ 
 
     <!-- <PartnerCarousel /> -->
 
@@ -749,6 +620,7 @@ import { useSearchStays } from '@/composables/modules/stays/useSearchStays';
 import { useFlightRecommendations } from '@/composables/modules/flights/useFlightRecommendations';
 import { useFetchLiveDeals } from '@/composables/modules/flights/useFetchLiveDeals';
 import TopHotelDeals from '@/components/stays/TopHotelDeals.vue'
+import StaySkeleton from '@/components/stays/StaySkeleton.vue'
 import TrendingActivities from '@/components/TrendingActivities.vue'
 import { useCustomToast } from '@/composables/core/useCustomToast';
 const { showToast } = useCustomToast();

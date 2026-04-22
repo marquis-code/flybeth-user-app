@@ -249,37 +249,39 @@ watch(messages, () => {
 </script>
 
 <template>
-  <div class="fixed bottom-6 right-6 z-[9999]">
+  <div class="fixed bottom-6 right-6 z-[1000005] sm:bottom-6 sm:right-6">
     <!-- Chat Button -->
     <button 
       @click="toggleChat"
-      class="h-16 w-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 relative group"
+      class="h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 relative group"
       :class="isOpen 
         ? 'bg-gradient-to-br from-red-500 to-red-600 text-white shadow-red-500/30' 
         : 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-blue-600/40'"
     >
       <Transition name="fade" mode="out-in">
-        <XMarkIcon v-if="isOpen" class="h-7 w-7" />
-        <ChatBubbleLeftRightIcon v-else class="h-7 w-7" />
+        <XMarkIcon v-if="isOpen" class="h-6 w-6 sm:h-7 sm:w-7" />
+        <ChatBubbleLeftRightIcon v-else class="h-6 w-6 sm:h-7 sm:w-7" />
       </Transition>
       <!-- Unread badge -->
       <div 
         v-if="!isOpen && unreadCount > 0" 
-        class="absolute -top-1 -right-1 h-6 w-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px]  text-white animate-bounce"
+        class="absolute -top-1 -right-1 h-5 w-5 sm:h-6 sm:w-6 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[9px] sm:text-[10px]  text-white animate-bounce"
       >
         {{ unreadCount > 9 ? '9+' : unreadCount }}
       </div>
       <!-- Online pulse -->
-      <div v-if="!isOpen && unreadCount === 0" class="absolute -top-0.5 -right-0.5 h-4 w-4 bg-emerald-500 rounded-full border-2 border-white">
+      <div v-if="!isOpen && unreadCount === 0" class="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 sm:h-4 sm:w-4 bg-emerald-500 rounded-full border-2 border-white">
         <div class="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75"></div>
       </div>
     </button>
 
     <!-- Chat Window -->
     <Transition name="slide-up">
-      <div v-if="isOpen" class="absolute bottom-20 right-0 w-[400px] max-w-[calc(100vw-32px)] max-h-[600px] h-[80vh] bg-white rounded-2xl shadow-2xl shadow-black/20 border border-gray-100 flex flex-col overflow-hidden origin-bottom-right">
+      <div v-if="isOpen" 
+        class="fixed inset-0 sm:absolute sm:bottom-20 sm:right-0 sm:inset-auto sm:w-[400px] sm:max-w-[calc(100vw-32px)] sm:max-h-[600px] sm:h-[80vh] bg-white sm:rounded-2xl shadow-2xl shadow-black/20 border border-gray-100 flex flex-col overflow-hidden origin-bottom-right"
+      >
         <!-- Header -->
-        <div class="p-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shrink-0">
+        <div class="p-5 bg-primary text-white shrink-0">
           <div class="flex items-center justify-between mb-2">
              <div class="flex items-center space-x-3">
                 <div class="h-11 w-11 bg-white/20 rounded-xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
@@ -297,7 +299,7 @@ watch(messages, () => {
                 <XMarkIcon class="h-5 w-5" />
              </button>
           </div>
-          <p class="text-[11px] font-medium opacity-60">Powered by AI • Live agents available</p>
+          <p class="text-[11px] font-medium text-white">Powered by AI • Live agents available</p>
         </div>
 
         <!-- Identification Form -->

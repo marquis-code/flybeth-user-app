@@ -3,7 +3,7 @@
     <h3 class="text-2xl font-bold text-gray-900 mb-6  tracking-tight">Top hotel deals in {{ destinationName }}</h3>
     
     <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div v-for="i in 4" :key="i" class="h-[400px] bg-gray-100 animate-pulse rounded-2xl"></div>
+      <StaySkeleton v-for="i in 4" :key="i" />
     </div>
     
     <div v-else-if="hotels.length > 0">
@@ -49,9 +49,12 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="h-48 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-gray-400">
-      <svg class="w-8 h-8 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-      <span class="text-xs tracking-wide font-bold">No deals found for {{ destinationName }}</span>
+    <div v-else class="w-full">
+      <EmptyState 
+        variant="stays" 
+        :title="`No deals for ${destinationName}`" 
+        message="Our team is currently negotiating fresh rates for this destination. Please check back shortly."
+      />
     </div>
   </div>
 </template>
@@ -60,6 +63,8 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { staysApi } from '@/api_factory/modules/stays';
+import StaySkeleton from './StaySkeleton.vue';
+import EmptyState from '@/components/EmptyState.vue';
 
 const props = defineProps<{
   destinationName: string;
@@ -129,9 +134,7 @@ const fetchHotels = async () => {
     rawStays.value = results.slice(0, 4);
     
     if (rawStays.value.length === 0) {
-      setTimeout(() => {
-         generateFallbackData();
-      }, 500);
+      // Logic for staying empty
     }
   } catch (error) {
     console.error('Error fetching deals for', props.destinationName, error);

@@ -10,6 +10,15 @@ export default defineNuxtConfig({
       failOnError: false
     }
   },
+  
+  typescript: {
+    shim: false,
+    typeCheck: false
+  },
+
+  ogImage: {
+    enabled: false
+  },
 
   postcss: {
     plugins: {
@@ -164,6 +173,7 @@ export default defineNuxtConfig({
 
   seo: {
     enabled: true,
+    ogImage: { enabled: false },
     meta: {
       title: 'Flybeth - Your Gateway to Global Travel',
       description: 'Find and book the best travel deals globally. Aggregated from top-tier providers like Hotelbeds, Amadeus, and Duffel.',

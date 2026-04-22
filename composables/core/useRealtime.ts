@@ -2,12 +2,14 @@ import { ref } from 'vue';
 import { io, Socket } from 'socket.io-client';
 import { useCustomToast } from './useCustomToast';
 
+// Global shared state
+const socket = ref<Socket | null>(null);
+const isConnected = ref(false);
+const notifications = ref<any[]>([]);
+const newMessages = ref<any[]>([]);
+
 export const useRealtime = () => {
   const { showToast } = useCustomToast();
-  const socket = ref<Socket | null>(null);
-  const isConnected = ref(false);
-  const notifications = ref<any[]>([]);
-  const newMessages = ref<any[]>([]);
 
   const connect = () => {
     if (socket.value && socket.value.connected) return;

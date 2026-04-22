@@ -14,14 +14,18 @@
             <span class="block text-brand-orange font-medium">Hello@flybeth.com</span>
           </p>
           <div class="flex gap-4">
-            <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-brand-blue/10 hover:text-brand-blue transition-all">
+              <img src="@/assets/icons/instagram.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
+              <img src="@/assets/icons/facebook.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
+              <img src="@/assets/icons/twitter.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
+              <img src="@/assets/icons/linkedin.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
+            <!-- <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-brand-blue/10 hover:text-brand-blue transition-all">
               <span class="sr-only">Facebook</span>
               <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
             </a>
             <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-brand-blue/10 hover:text-brand-blue transition-all">
               <span class="sr-only">Instagram</span>
               <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.715.013 3.68.057 1.05.048 1.767.216 2.391.459a4.803 4.803 0 011.696 1.104 4.803 4.803 0 011.104 1.696c.243.624.411 1.341.459 2.391.044.965.057 1.25.057 3.68s-.013 2.715-.057 3.68c-.048 1.05-.216 1.767-.459 2.391a4.803 4.803 0 01-1.104 1.696 4.803 4.803 0 01-1.696 1.104c-.624.243-1.341.411-2.391.459-.965.044-1.25.057-3.68.057s-2.715-.013-3.68-.057c-1.05-.048-1.767-.216-2.391-.459a4.803 4.803 0 01-1.696-1.104 4.803 4.803 0 01-1.104-1.696c-.243-.624-.411-1.341-.459-2.391-.044-.965-.057-1.25-.057-3.68s.013-2.715.057-3.68c.048-1.05.216-1.767.459-2.391a4.803 4.803 0 011.104-1.696 4.803 4.803 0 011.696-1.104c.624-.243 1.341-.411 2.391-.459.965-.044 1.25-.057 3.68-.057H12.315zM12 2c-2.43 0-2.715.013-3.68.057-1.05.048-1.767.216-2.391.459a4.803 4.803 0 00-1.696 1.104A4.803 4.803 0 003.328 5.61c-.243.624-.411 1.341-.459 2.391C2.825 8.965 2.812 9.25 2.812 11.685s.013 2.715.057 3.68c.048 1.05.216 1.767.459 2.391a4.803 4.803 0 001.104 1.696 4.803 4.803 0 001.696 1.104c.624.243 1.341.411 2.391.459.965.044 1.25.057 3.68.057s2.715-.013 3.68-.057c1.05-.048 1.767-.216 2.391-.459a4.803 4.803 0 001.696-1.104 4.803 4.803 0 001.104-1.696c.243-.624.411-1.341.459-2.391.044-.965.057-1.25.057-3.68s-.013-2.715-.057-3.68c-.048-1.05-.216-1.767-.459-2.391a4.803 4.803 0 00-1.104-1.696 4.803 4.803 0 00-1.696-1.104c-.624-.243-1.341-.411-2.391-.459C15.03 2.013 14.745 2 12.315 2H12z"/><path d="M12 5.865a5.82 5.82 0 100 11.64 5.82 5.82 0 000-11.64zm0 9.64a3.82 3.82 0 110-7.64 3.82 3.82 0 010 7.64z"/><path d="M18.056 4.545a1.36 1.36 0 11-2.72 0 1.36 1.36 0 012.72 0z"/></svg>
-            </a>
+            </a> -->
           </div>
         </div>
 

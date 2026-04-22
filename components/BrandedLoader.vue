@@ -104,7 +104,7 @@ defineProps({
   position: absolute;
   inset: 5px;
   border-radius: 50%;
-  background: #32B404;
+  background: #0D1DAD;
   opacity: 0.1;
 }
 
@@ -125,7 +125,7 @@ defineProps({
 }
 
 .orbit-dot {
-  stroke: #32B404;
+  stroke: #0D1DAD;
   stroke-width: 2px;
   stroke-dasharray: 1, 300;
   stroke-linecap: round;
@@ -164,7 +164,7 @@ defineProps({
 .bar-progress {
   width: 40%;
   height: 100%;
-  background: #32B404;
+  background: #0D1DAD;
   border-radius: 10px;
   animation: bar-slide 1.5s ease-in-out infinite;
 }

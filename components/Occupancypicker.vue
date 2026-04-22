@@ -5,12 +5,12 @@
       @click="openPicker"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none"
     >
-      <p class="text-[11px]  text-brand-gray/40 uppercase tracking-widest mb-0.5 group-hover:text-gray-900 transition-colors">
+      <p class="text-[11px] text-brand-gray/40 font-bold tracking-wide mb-0.5 group-hover:text-gray-900 transition-colors">
         {{ label }}
       </p>
       <div class="flex items-center gap-2">
         <UserGroupIcon class="h-5 w-5 text-gray-400 shrink-0" />
-        <span class="text-base  text-gray-900">{{ summary }}</span>
+        <span class="text-[14px] font-semibold text-gray-900">{{ summary }}</span>
       </div>
     </div>
 
@@ -33,11 +33,11 @@
           :style="panelStyle"
           class="fixed z-[10011] bg-white rounded-2xl shadow-[0_8px_48px_rgba(0,0,0,0.2)] border border-gray-100 overflow-hidden"
           :class="[
-            isMobile ? 'inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[360px]'
+            isMobile ? 'inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[320px]'
           ]"
           @click.stop
         >
-          <div class="px-6 py-5 space-y-5">
+          <div class="px-5 py-5 space-y-5">
             <!-- Rows -->
             <div
               v-for="row in rows"
@@ -45,14 +45,14 @@
               class="flex items-center justify-between"
             >
               <div>
-                <p class="text-base font-bold text-gray-800">{{ row.label }}</p>
+                <p class="text-sm font-bold text-gray-800">{{ row.label }}</p>
                 <p v-if="row.note" class="text-xs text-gray-400">{{ row.note }}</p>
               </div>
               <div class="flex items-center gap-4">
                 <button
                   @click="decrement(row.key)"
                   :disabled="local[row.key] <= row.min"
-                  class="h-9 w-9 rounded-full border-2 flex items-center justify-center text-lg font-bold transition-all"
+                  class="h-8 w-8 rounded-full border-2 flex items-center justify-center text-base font-bold transition-all"
                   :class="local[row.key] <= row.min
                     ? 'border-gray-200 text-gray-500 cursor-not-allowed'
                     : 'border-red-400 text-red-400 hover:bg-red-50'"
@@ -63,7 +63,7 @@
                 <button
                   @click="increment(row.key)"
                   :disabled="local[row.key] >= row.max"
-                  class="h-9 w-9 rounded-full border-2 flex items-center justify-center text-lg font-bold transition-all"
+                  class="h-8 w-8 rounded-full border-2 flex items-center justify-center text-base font-bold transition-all"
                   :class="local[row.key] >= row.max
                     ? 'border-gray-200 text-gray-500 cursor-not-allowed'
                     : 'border-gray-900 text-gray-900 hover:bg-gray-100'"
@@ -74,14 +74,14 @@
             </div>
 
             <!-- Children note -->
-            <p v-if="showChildNote" class="text-xs text-gray-400 leading-relaxed -mt-2">
+            <p v-if="showChildNote" class="text-[11px] text-gray-400 leading-relaxed -mt-2">
               Add your child's age at check-in for the best deals and assistance. Each hotel has unique policies.
             </p>
 
             <!-- Done Button -->
             <button
               @click="done"
-              class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-black transition-colors"
+              class="w-full bg-gray-900 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-black transition-colors"
             >
               Confirm
             </button>

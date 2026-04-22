@@ -2,7 +2,7 @@
   <Transition name="slide-up">
     <div 
       v-if="show && !isDismissed" 
-      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-[95%] max-w-2xl"
+      class="fixed bottom-24 sm:bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-[95%] max-w-2xl"
     >
       <div class="bg-[#001732] text-white rounded-2xl p-3 md:p-4 shadow-2xl flex items-center justify-between border border-white/10">
         <div class="flex items-center gap-3">

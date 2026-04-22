@@ -6,7 +6,7 @@
       @click="openCalendar"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none whitespace-nowrap"
     >
-      <p class="text-[11px] font-bold text-brand-gray/40 tracking-widest mb-0.5 group-hover:text-gray-900 transition-colors ">
+      <p class="text-[11px] font-bold text-brand-gray/40 tracking-wide mb-0.5 group-hover:text-gray-900 transition-colors ">
         {{ mode === 'oneway' ? 'Departure date' : 'Check-in – Check-out' }}
       </p>
       <div class="flex items-center gap-2">
@@ -38,31 +38,44 @@
       <Transition name="fade-overlay">
         <div v-if="showCalendar">
 
-          <!-- Dark backdrop — z-[10010], click to dismiss -->
+          <!-- Dark backdrop — z-[100010], click to dismiss -->
           <div
-            class="fixed inset-0 z-[10010] bg-black/50 backdrop-blur-[3px]"
+            class="fixed inset-0 z-[100010] bg-black/60 backdrop-blur-[4px]"
             @click="closeCalendar"
           />
 
-          <!-- Calendar card — z-[10011], sibling of backdrop so blur cannot reach it -->
+          <!-- Calendar card — z-[100011], sibling of backdrop so blur cannot reach it -->
           <div
             :style="panelStyle"
-            class="fixed z-[10011] bg-white rounded-2xl overflow-hidden select-none transition-all duration-300 shadow-2xl"
+            class="fixed z-[100011] bg-white overflow-hidden select-none transition-all duration-300 shadow-2xl flex flex-col"
             :class="[
-              isMobile ? 'inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[660px]'
+              isMobile ? 'inset-0 w-full h-full rounded-none' : 'inset-x-0 w-[580px] rounded-2xl'
             ]"
             @click.stop
           >
 
+            <!-- Mobile Header (Close/Back) -->
+            <div v-if="isMobile" class="flex items-center justify-between px-6 pt-6 pb-2 border-b border-gray-50 mb-2">
+              <button @click="closeCalendar" class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors">
+                <ChevronLeftIcon class="h-6 w-6 text-gray-900" />
+              </button>
+              <div class="text-center">
+                 <h2 class="text-base font-bold text-gray-900 leading-none">Select dates</h2>
+                 <p class="text-[10px] font-bold text-gray-400 tracking-widest mt-1 uppercase">{{ mode === 'oneway' ? 'One-way' : 'Round-trip' }}</p>
+              </div>
+              <div class="w-10"></div>
+            </div>
+
             <!-- ── Month nav header ──────────────────────────────────────── -->
-            <div class="flex items-center justify-between px-4 sm:px-6 pt-5 pb-3">
+            <div class="flex items-center justify-between px-4 sm:px-6 py-4">
               <button
                 @click="prevMonth"
                 :disabled="isAtMinMonth"
                 class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center transition-colors"
                 :class="isAtMinMonth ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50'"
               >
-                <ChevronLeftIcon class="h-4 w-4 text-gray-500" />
+                <ChevronLeftIcon v-if="!isMobile" class="h-4 w-4 text-gray-500" />
+                <span v-else class="text-xs font-bold text-gray-500">Prev</span>
               </button>
 
               <div class="flex-1 grid gap-4 text-center" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
@@ -74,12 +87,13 @@
                 @click="nextMonth"
                 class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
               >
-                <ChevronRightIcon class="h-4 w-4 text-gray-500" />
+                <ChevronRightIcon v-if="!isMobile" class="h-4 w-4 text-gray-500" />
+                <span v-else class="text-xs font-bold text-gray-500">Next</span>
               </button>
             </div>
 
             <!-- ── Two-month grid ────────────────────────────────────────── -->
-            <div class="grid gap-0 px-4 pb-4" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
+            <div class="flex-1 overflow-y-auto px-4 pb-4 grid gap-0" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
 
               <!-- Left month -->
               <div :class="!isMobile ? 'pr-4 border-r border-gray-100' : ''">
@@ -92,19 +106,19 @@
                 <div class="grid grid-cols-7">
                   <template v-for="(cell, i) in leftCells" :key="`l-${i}`">
                     <!-- Empty filler for offset -->
-                    <div v-if="cell === null" class="h-9 sm:h-10" />
+                    <div v-if="cell === null" class="h-9" />
 
                     <!-- Day wrapper (carries the range-strip bg) -->
                     <div
                       v-else
-                      class="flex items-center justify-center h-9 sm:h-10"
+                      class="flex items-center justify-center h-9"
                       :class="rangeWrapClass(cell)"
                       @mouseover="!isPast(cell) && (hoverDate = cell)"
                       @mouseleave="hoverDate = null"
                       @click="selectDate(cell)"
                     >
                       <span
-                        class="h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
+                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
                         :class="dayClass(cell)"
                       >{{ cellDay(cell) }}</span>
                     </div>
@@ -122,18 +136,49 @@
                 </div>
                 <div class="grid grid-cols-7">
                   <template v-for="(cell, i) in rightCells" :key="`r-${i}`">
-                    <div v-if="cell === null" class="h-10" />
+                    <div v-if="cell === null" class="h-9" />
 
                     <div
                       v-else
-                      class="flex items-center justify-center h-10"
+                      class="flex items-center justify-center h-9"
                       :class="rangeWrapClass(cell)"
                       @mouseover="!isPast(cell) && (hoverDate = cell)"
                       @mouseleave="hoverDate = null"
                       @click="selectDate(cell)"
                     >
                       <span
-                        class="h-10 w-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
+                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
+                        :class="dayClass(cell)"
+                      >{{ cellDay(cell) }}</span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Extra month for mobile if they want to scroll more -->
+              <div v-if="isMobile" class="mt-8">
+                <div class="text-center mb-4">
+                  <p class="text-base font-bold text-gray-900">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
+                </div>
+                <div class="grid grid-cols-7 mb-2">
+                  <div
+                    v-for="d in dayHeaders" :key="`mh-${d}`"
+                    class="text-center text-[11px] font-bold text-gray-400 py-1"
+                  >{{ d }}</div>
+                </div>
+                <div class="grid grid-cols-7">
+                  <template v-for="(cell, i) in rightCells" :key="`m-${i}`">
+                    <div v-if="cell === null" class="h-9" />
+                    <div
+                      v-else
+                      class="flex items-center justify-center h-9"
+                      :class="rangeWrapClass(cell)"
+                      @mouseover="!isPast(cell) && (hoverDate = cell)"
+                      @mouseleave="hoverDate = null"
+                      @click="selectDate(cell)"
+                    >
+                      <span
+                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
                         :class="dayClass(cell)"
                       >{{ cellDay(cell) }}</span>
                     </div>
@@ -144,7 +189,7 @@
             </div>
 
             <!-- ── Footer ────────────────────────────────────────────────── -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-gray-100 bg-gray-50/60">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-6 sm:py-4 border-t border-gray-100 bg-white sticky bottom-0">
               <div class="flex items-center gap-2 text-sm text-gray-500 font-medium text-center sm:text-left">
                 <InformationCircleIcon class="h-4 w-4 shrink-0 hidden sm:block" />
                 <span v-if="!startDate">
@@ -153,7 +198,7 @@
                 <span v-else-if="mode !== 'oneway' && !endDate">
                   Select check-out
                 </span>
-                <span v-else class="text-gray-900 text-xs sm:text-sm">
+                <span v-else class="text-gray-900 text-xs sm:text-sm font-bold">
                   {{ mode === 'oneway' ? formatDisplay(startDate) : `${formatDisplay(startDate)} – ${formatDisplay(endDate!)}` }}
                 </span>
               </div>
@@ -162,14 +207,14 @@
                 <button
                   v-if="startDate"
                   @click="clearDates"
-                  class="flex-1 sm:flex-none text-xs sm:text-sm font-bold text-gray-500 hover:text-gray-700 px-3 py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
+                  class="flex-1 sm:flex-none text-xs sm:text-sm font-bold text-gray-500 hover:text-gray-700 px-3 py-3 sm:py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
                 >
                   Clear
                 </button>
                 <button
                   @click="done"
                   :disabled="!startDate || (mode !== 'oneway' && !endDate)"
-                  class="flex-1 sm:flex-none px-6 sm:px-8 py-2.5 bg-gray-900 text-white rounded-xl text-xs sm:text-sm font-bold
+                  class="flex-[2] sm:flex-none px-6 sm:px-8 py-4 sm:py-2.5 bg-gray-900 text-white rounded-xl text-sm font-bold
                          disabled:opacity-40 disabled:cursor-not-allowed
                          hover:bg-black transition-colors active:scale-95 shadow-sm"
                 >
@@ -220,6 +265,9 @@ const isMobile     = ref(false)
 const checkMobile = () => {
   if (typeof window !== 'undefined') {
     isMobile.value = window.innerWidth < 768
+    if (isMobile.value) {
+      panelStyle.value = {}
+    }
   }
 }
 
@@ -427,7 +475,7 @@ function updatePosition() {
   const el = pickerRef.value
   if (!el) return
   const rect       = el.getBoundingClientRect()
-  const panelWidth = 660
+  const panelWidth = 580
   let   left       = rect.left
   if (left + panelWidth > window.innerWidth - 8) left = window.innerWidth - panelWidth - 8
   panelStyle.value = {
@@ -496,12 +544,18 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-/* Card pops up on entry */
+/* Card slide up on mobile, pop on desktop */
 .fade-overlay-enter-active .fixed.z-\[10011\] {
-  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
 }
 .fade-overlay-enter-from .fixed.z-\[10011\] {
-  transform: translateY(-10px) scale(0.97);
+  transform: translateY(100%);
   opacity: 0;
+}
+@media (min-width: 768px) {
+  .fade-overlay-enter-from .fixed.z-\[10011\] {
+    transform: translateY(-10px) scale(0.97);
+    opacity: 0;
+  }
 }
 </style>

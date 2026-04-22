@@ -1,0 +1,1 @@
+import{u as r}from"./Cnxl6nxW.js";import{a4 as a,I as o}from"./DW9hSygz.js";const s=a(e=>{const{token:t}=r();if(!t.value)return o({path:"/",query:{redirect:e.fullPath,requireLogin:"1"}})});export{s as default};

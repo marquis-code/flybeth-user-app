@@ -156,7 +156,7 @@ const viewBooking = () => {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #32B404 0%, #28a003 100%);
+  background: linear-gradient(135deg, #0D1DAD 0%, #28a003 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -256,7 +256,7 @@ const viewBooking = () => {
 }
 
 .status-success {
-  color: #32B404 !important;
+  color: #0D1DAD !important;
 }
 
 .email-notice {

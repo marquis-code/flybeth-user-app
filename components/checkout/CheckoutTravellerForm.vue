@@ -2,9 +2,11 @@
   <div class="ck-tf">
     <div class="ck-tf-hd">
         <div class="ck-tf-badge"> Traveler 1 (Adult)</div>
-        <h2 class="ck-tf-h flex items-center gap-3">
-          <User class="w-6 h-6 text-blue-600" />
-          Who is traveling?
+        <h2 class="ck-tf-h flex items-center gap-4">
+          <div class="w-10 h-10 rounded-2xl bg-[#0D1DAD]/10 flex items-center justify-center">
+            <User class="w-6 h-6 text-[#0D1DAD]" />
+          </div>
+          Primary Traveler
         </h2>
         <p class="ck-tf-p">Names must match IDs exactly to avoid boarding issues.</p>
     </div>
@@ -58,8 +60,8 @@
        <!-- Contact Group -->
        <div class="ck-tf-sec">
           <h3 class="ck-tf-sh flex items-center gap-2">
-            <Mail class="w-4 h-4 text-blue-600" />
-            Contact details
+            <Mail class="w-4 h-4 text-[#0D1DAD]" />
+            Contact Information
           </h3>
           <div class="ck-tf-cards">
              <div class="ck-tf-row">
@@ -85,8 +87,8 @@
        <!-- Identification Group -->
        <div class="ck-tf-sec">
           <h3 class="ck-tf-sh flex items-center gap-2">
-            <Globe class="w-4 h-4 text-blue-600" />
-            Identification
+            <Globe class="w-4 h-4 text-[#0D1DAD]" />
+            Document details
           </h3>
           <div class="ck-tf-cards">
              <div class="ck-tf-row">
@@ -217,41 +219,42 @@ const handleContinue = () => { if (canContinue.value) emit('continue') }
 </script>
 
 <style scoped>
-.ck-tf { padding: 32px; font-family: 'Sora', sans-serif; }
+.ck-tf { padding: 40px 32px; font-family: 'Onest', sans-serif; }
 
-.ck-tf-hd { margin-bottom: 32px; }
+.ck-tf-hd { margin-bottom: 40px; }
 .ck-tf-badge { 
-  display: inline-block; font-size: 9px; font-weight: 700; 
-  letter-spacing: 0.1em; color: #1d7a4f; background: #f0f7f3; padding: 4px 10px; 
-  border-radius: 100px; margin-bottom: 12px;
+  display: inline-block; font-size: 10px; font-weight: 800; 
+  letter-spacing: 0.1em; color: #0D1DAD; background: #0D1DAD/10; padding: 6px 14px; 
+  border-radius: 100px; margin-bottom: 16px; 
 }
-.ck-tf-h { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 6px; letter-spacing: -0.02em; }
-.ck-tf-p { font-size: 13px; color: #888; }
+.ck-tf-h { font-size: 28px; font-weight: 800; color: #111; margin-bottom: 8px; letter-spacing: -0.025em; }
+.ck-tf-p { font-size: 14px; color: #666; font-weight: 500; }
 
-.ck-tf-grid { display: flex; flex-direction: column; gap: 32px; }
-.ck-tf-sh { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #111; margin-bottom: 16px; }
+.ck-tf-grid { display: flex; flex-direction: column; gap: 40px; }
+.ck-tf-sh { font-size: 12px; font-weight: 800; letter-spacing: 0.15em; color: #999; margin-bottom: 24px;  }
 
 .ck-tf-sec { position: relative; }
 .ck-tf-cards { display: flex; flex-direction: column; gap: 16px; }
 .ck-tf-row { display: flex; gap: 16px; }
 
-.ck-tf-foot { margin-top: 40px; border-top: 1px solid #f0f0ea; padding-top: 32px; display: flex; flex-direction: column; gap: 24px; }
-.ck-tf-terms { display: flex; gap: 12px; cursor: pointer; }
-.ck-tf-chk { width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid #eaeaef; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
-.ck-tf-terms span { font-size: 12px; color: #888; line-height: 1.5; font-weight: 500; }
+.ck-tf-foot { margin-top: 48px; border-top: 1px solid #f0f0ea; padding-top: 40px; display: flex; flex-direction: column; gap: 32px; }
+.ck-tf-terms { display: flex; gap: 14px; cursor: pointer; align-items: flex-start; }
+.ck-tf-chk { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #eaeaef; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+.ck-tf-terms span { font-size: 13px; color: #555; line-height: 1.6; font-weight: 500; }
 
 .ck-tf-btn {
-  background: #111; color: #fff; border: none; border-radius: 12px; height: 48px;
-  padding: 0 32px; width: fit-content;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  background: #0D1DAD; color: #fff; border: none; border-radius: 16px; height: 60px;
+  padding: 0 40px; width: fit-content;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 25px -5px rgba(50, 180, 4, 0.25);  letter-spacing: 0.1em;
 }
-.ck-tf-btn:not(.ck-tf-btn--off):hover { background: #1d7a4f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
-.ck-tf-btn:active { transform: scale(0.98); }
-.ck-tf-btn--off { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+.ck-tf-btn:not(.ck-tf-btn--off):hover { background: #0D1DAD; transform: translateY(-3px); box-shadow: 0 20px 40px -10px rgba(50, 180, 4, 0.4); }
+.ck-tf-btn:active { transform: scale(0.97); }
+.ck-tf-btn--off { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
 
 @media (max-width: 640px) {
-  .ck-tf { padding: 24px 16px; }
-  .ck-tf-row { flex-direction: column; gap: 12px; }
+  .ck-tf { padding: 32px 20px; }
+  .ck-tf-row { flex-direction: column; gap: 16px; }
 }
 </style>

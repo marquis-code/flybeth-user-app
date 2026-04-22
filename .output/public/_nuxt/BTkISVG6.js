@@ -1,1 +1,0 @@
-import{G as s}from"./DbLCNPhO.js";const t={searchLive(r){return s.post("/transfers/search/live",r)},book(r){return s.post("/transfers/book",r)},cancel(r){return s.post("/transfers/cancel",r)}};export{t};

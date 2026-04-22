@@ -8,14 +8,14 @@
       @click="openDropdown"
     >
       <p
-        class="text-[11px]  uppercase tracking-widest mb-0.5 transition-colors"
+        class="text-[11px] font-bold tracking-wide mb-0.5 transition-colors"
         :class="showDropdown ? 'text-gray-900' : 'text-brand-gray/40 group-hover:text-gray-900'"
       >
         {{ label }}
       </p>
 
       <div v-if="selectedLocationName && !showDropdown" class="flex items-baseline gap-2 min-w-0">
-        <span class="text-base  text-gray-900 leading-tight truncate">
+        <span class="text-[14px] text-gray-900 leading-tight truncate font-semibold">
           {{ selectedLocationName }}
         </span>
         <span class="text-xs  text-brand-gray/40 uppercase shrink-0">{{ modelValue }}</span>
@@ -27,7 +27,7 @@
           class="h-5 w-5 shrink-0 transition-colors"
           :class="showDropdown ? 'text-gray-900' : 'text-gray-500'"
         />
-        <span class="text-base  text-gray-500">
+        <span class="text-[14px] text-gray-500 font-medium">
           {{ placeholder || 'Search city or airport...' }}
         </span>
       </div>
@@ -172,7 +172,7 @@
                     <p class="text-sm font-bold text-gray-700 group-hover/sug:text-gray-900 transition-colors truncate leading-tight">
                       {{ dest.city }}
                     </p>
-                    <p class="text-sm  text-gray-500 uppercase tracking-wide">{{ dest.iataCode }}</p>
+                    <p class="text-sm text-gray-500 tracking-wide">{{ dest.iataCode }}</p>
                   </div>
                 </div>
               </div>

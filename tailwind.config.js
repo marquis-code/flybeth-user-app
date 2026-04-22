@@ -13,11 +13,11 @@ module.exports = {
       colors: {
         brand: {
           blue: '#0D1DAD',
-          green: '#32B404',
+          green: '#0D1DAD',
           gray: '#606062',
         },
         primary: '#0D1DAD',
-        secondary: '#32B404',
+        secondary: '#0D1DAD',
       },
       fontFamily: {
         Onest: ['Onest', 'sans-serif'],

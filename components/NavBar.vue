@@ -140,6 +140,22 @@
               </div>
             </div>
 
+            <!-- Notifications -->
+            <div class="relative">
+              <button 
+                @click="showNotifications = !showNotifications"
+                class="flex items-center justify-center w-9 h-9 border border-gray-200 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 hover:border-gray-300 transition-colors relative"
+              >
+                <Bell class="h-4 w-4" />
+                <span v-if="notifications.length > 0" class="absolute top-2 right-2 h-2 w-2 bg-red-500 border border-white rounded-full"></span>
+              </button>
+
+              <div v-if="showNotifications" class="absolute right-0 top-[calc(100%+8px)] z-[100000]">
+                <NotificationPanel @click.stop />
+                <div class="fixed inset-0 bg-transparent -z-1" @click="showNotifications = false"></div>
+              </div>
+            </div>
+
             <!-- Divider -->
             <div class="h-5 w-px bg-gray-200 mx-1"></div>
 
@@ -174,10 +190,21 @@
 
           <!-- Mobile Right Actions -->
           <div class="flex lg:hidden items-center gap-2">
-            <button type="button" class="relative w-9 h-9 flex items-center justify-center border border-gray-200 rounded-md text-gray-500">
-              <Bell class="h-4 w-4" />
-              <span class="absolute top-2 right-2 h-2 w-2 bg-red-500 border border-white rounded-full"></span>
-            </button>
+            <div class="relative">
+              <button 
+                type="button" 
+                @click="showNotifications = !showNotifications"
+                class="relative w-9 h-9 flex items-center justify-center border border-gray-200 rounded-md text-gray-500"
+              >
+                <Bell class="h-4 w-4" />
+                <span v-if="notifications.length > 0" class="absolute top-2 right-2 h-2 w-2 bg-red-500 border border-white rounded-full"></span>
+              </button>
+              
+              <div v-if="showNotifications" class="fixed inset-x-4 top-20 z-[100000] flex justify-center">
+                <NotificationPanel class="w-full" />
+                <div class="fixed inset-0 bg-black/10 -z-1" @click="showNotifications = false"></div>
+              </div>
+            </div>
             <button v-if="!user" @click="openAuthModal" class="bg-gray-900 text-white px-4 py-2 rounded-md text-[12px] font-semibold active:scale-95 transition-all">
               Sign in
             </button>
@@ -314,12 +341,17 @@ import {
 
 import { useSettings } from '@/composables/useSettings'
 import RegionalSettingsPanel from './RegionalSettingsPanel.vue'
+import NotificationPanel from './NotificationPanel.vue'
 import { useI18n } from 'vue-i18n'
+import { useRealtime } from '@/composables/core/useRealtime'
 
 const { user, logout, openAuthModal } = useAuth()
 const { locale } = useI18n()
 const { currentCurrency } = useSettings()
+const { notifications, connect } = useRealtime()
 const showSettings = inject('showSettings') as Ref<boolean>
+
+const showNotifications = ref(false)
 
 const route = useRoute()
 const router = useRouter()
@@ -391,6 +423,7 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   window.addEventListener('beforeunload', handleBeforeUnload)
   handleScroll()
+  connect() // Ensure real-time connection
 })
 
 onUnmounted(() => {

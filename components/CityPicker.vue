@@ -8,7 +8,7 @@
       @click="openDropdown"
     >
       <p
-        class="text-[11px]  uppercase tracking-widest mb-0.5 transition-colors"
+        class="text-[11px] font-bold tracking-wide mb-0.5 transition-colors"
         :class="showDropdown ? 'text-gray-900' : 'text-brand-gray/40 group-hover:text-gray-900'"
       >
         {{ label }}
@@ -152,7 +152,7 @@
                     <p class="text-sm font-bold text-gray-700 group-hover/sug:text-gray-900 transition-colors truncate leading-tight">
                       {{ dest.city }}
                     </p>
-                    <p class="text-sm  text-gray-500 uppercase tracking-wide">{{ dest.iataCode }}</p>
+                    <p class="text-sm text-gray-500 tracking-wide">{{ dest.iataCode }}</p>
                   </div>
                 </div>
               </div>

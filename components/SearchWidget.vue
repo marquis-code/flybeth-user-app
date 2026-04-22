@@ -66,7 +66,20 @@
             <div class="sw-field sw-field--grow" @click="isFocused = true">
               <LocationPicker v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
             </div>
-            <div class="sw-bar-div" />
+            <!-- Swap button: sits between From and To -->
+            <div class="sw-swap-wrap">
+              <div class="sw-bar-div" />
+              <button
+                v-if="flightMode !== 'multicity'"
+                class="sw-swap-btn"
+                @click.stop="swapFlightLocations(leg)"
+                title="Swap locations"
+                type="button"
+              >
+                <ArrowUpDown class="sw-ico-sm" />
+              </button>
+              <div v-else class="sw-bar-div" />
+            </div>
             <div class="sw-field sw-field--grow" @click="isFocused = true">
               <LocationPicker v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
             </div>
@@ -94,16 +107,39 @@
               />
             </div>
             <div v-if="idx === 0" class="sw-bar-div" />
-            <div v-if="idx === 0" class="sw-field sw-field--class" @click="isFocused = true">
-              <div class="sw-field-inner">
-                <span class="sw-fld-lbl">Class</span>
-                <select v-model="flightTravelers.cabinClass" class="sw-class-select">
-                  <option value="economy">Economy</option>
-                  <option value="premium_economy">Premium</option>
-                  <option value="business">Business</option>
-                  <option value="first">First</option>
-                </select>
-              </div>
+            <div v-if="idx === 0" class="sw-field sw-field--class" ref="classRef">
+              <button 
+                type="button"
+                @click="isClassOpen = !isClassOpen" 
+                class="sw-field-inner w-full text-left bg-transparent border-none p-0 outline-none group"
+              >
+                <span class="sw-fld-lbl group-hover:text-gray-900 transition-colors">Class</span>
+                <div class="flex items-center justify-between gap-1 mt-1">
+                  <span class="sw-fld-val sw-fld-val--trunc">{{ currentCabinLabel }}</span>
+                  <ChevronDown class="sw-ico-xs sw-ico-muted transition-transform duration-200" :class="isClassOpen ? 'rotate-180' : ''" />
+                </div>
+              </button>
+
+              <Teleport v-if="isClassOpen" to="body">
+                <div class="fixed inset-0 z-[1000000] bg-black/5" @click="isClassOpen = false"></div>
+                <Transition name="sw-drop" appear>
+                  <div 
+                    class="sw-drop" 
+                    :style="classDropdownStyle"
+                  >
+                    <div 
+                      v-for="opt in cabinClasses" 
+                      :key="opt.value"
+                      @click="flightTravelers.cabinClass = opt.value; isClassOpen = false"
+                      class="sw-drop-item"
+                      :class="flightTravelers.cabinClass === opt.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'"
+                    >
+                      <span class="text-[14px] font-semibold" :class="flightTravelers.cabinClass === opt.value ? 'text-white' : 'text-gray-900'">{{ opt.label }}</span>
+                      <Check v-if="flightTravelers.cabinClass === opt.value" class="sw-ico-sm text-green-500" />
+                    </div>
+                  </div>
+                </Transition>
+              </Teleport>
             </div>
           </div>
         </div>
@@ -256,10 +292,14 @@
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--time">
             <span class="sw-fld-lbl">Time</span>
-            <div class="sw-time-row">
-              <Clock class="sw-ico-sm sw-ico-muted" />
-              <input type="time" v-model="transferSearchState.time" class="sw-time-input" />
-            </div>
+            <CustomTimePicker v-model="transferSearchState.time" @focus="isFocused = true" @close="isFocused = false">
+              <template #default="{ value }">
+                <div class="sw-time-row">
+                  <Clock class="sw-ico-sm sw-ico-muted" />
+                  <span class="sw-fld-val">{{ value }}</span>
+                </div>
+              </template>
+            </CustomTimePicker>
           </div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--pax"><Occupancypicker label="Passengers" variant="flight" v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" @focus="isFocused = true" @close="isFocused = false" /></div>
@@ -392,13 +432,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
 import {
   Plane, Bed, Car, Package, Anchor, Ticket, Truck,
   Search, CalendarDays, Clock, Timer, Check, Plus,
-  ChevronDown, MapPin
+  ChevronDown, MapPin, ArrowUpDown
 } from 'lucide-vue-next'
 import { useTracking } from '@/composables/core/useTracking'
+import CustomTimePicker from '@/components/ui/CustomTimePicker.vue'
 
 const { trackAction } = useTracking()
 const props = defineProps({ isSticky: { type: Boolean, default: false } })
@@ -415,6 +456,13 @@ const packageType         = ref('Hotel+Flight')
 const onlyPartialHotel    = ref(false)
 const differentCarDropoff = ref(false)
 const activeCruiseField   = ref<string | null>(null)
+const isClassOpen         = ref(false)
+const classRef            = ref<HTMLElement | null>(null)
+const isMobile            = ref(false)
+
+const checkMobile = () => {
+  if (typeof window !== 'undefined') isMobile.value = window.innerWidth < 768
+}
 
 const destRef   = ref<HTMLElement | null>(null)
 const departRef = ref<HTMLElement | null>(null)
@@ -424,17 +472,56 @@ const cruiseRefs: Record<string, typeof destRef> = {
   destination: destRef, departing: departRef, length: lengthRef, line: lineRef
 }
 
-// ─── Cruise dropdown positioning (Teleport to body) ─────────
-const cruiseDropdownStyle = (field: string) => {
-  const el = cruiseRefs[field]?.value as HTMLElement | null
-  if (!el) return {}
-  const rect = el.getBoundingClientRect()
-  const spaceBelow = window.innerHeight - rect.bottom
-  const w = Math.max(rect.width, 220)
-  if (spaceBelow < 280) {
-    return { position: 'fixed', left: `${rect.left}px`, bottom: `${window.innerHeight - rect.top + 6}px`, width: `${w}px` }
+// ─── Dropdown Positioning logic ──────────────────────────────
+const dynamicStyles = reactive<Record<string, any>>({})
+
+const updateDropdownPositions = () => {
+  // 1. Cabin Class
+  if (isClassOpen.value && classRef.value) {
+    let el = classRef.value as any
+    if (Array.isArray(el)) el = el[0]
+    if (!el || !el.getBoundingClientRect) return
+
+    const rect = el.getBoundingClientRect()
+    const isMob = window.innerWidth < 768
+    const w = isMob ? Math.min(280, window.innerWidth - 32) : rect.width
+    let left = rect.left
+    if (left + w > window.innerWidth - 12) left = window.innerWidth - w - 12
+    if (left < 12) left = 12
+
+    dynamicStyles.class = {
+      position: 'fixed',
+      top: `${rect.bottom + 6}px`,
+      left: `${left}px`,
+      width: `${w}px`,
+      minWidth: isMob ? 'none' : '200px',
+      zIndex: 1000001
+    }
   }
-  return { position: 'fixed', left: `${rect.left}px`, top: `${rect.bottom + 6}px`, width: `${w}px` }
+
+  // 2. Cruise Fields
+  if (activeCruiseField.value) {
+    const el = cruiseRefs[activeCruiseField.value]?.value as HTMLElement | null
+    if (el) {
+      const rect = el.getBoundingClientRect()
+      const w = Math.max(rect.width, 220)
+      dynamicStyles.cruise = {
+        position: 'fixed',
+        left: `${rect.left}px`,
+        top: `${rect.bottom + 6}px`,
+        width: `${w}px`,
+        zIndex: 1000001
+      }
+    }
+  }
+}
+
+watch([isClassOpen, activeCruiseField], () => {
+  nextTick(updateDropdownPositions)
+})
+
+const cruiseDropdownStyle = (field: string) => {
+  return dynamicStyles.cruise || {}
 }
 
 const toggleCruiseField = (field: string) => {
@@ -469,6 +556,13 @@ const packageTypes = [
   { label: 'Hotel + Car', value: 'Hotel+Car' },
 ]
 
+const cabinClasses = [
+  { value: 'economy',         label: 'Economy' },
+  { value: 'premium_economy', label: 'Premium Economy' },
+  { value: 'business',        label: 'Business' },
+  { value: 'first',           label: 'First' },
+]
+
 // ─── Search state ────────────────────────────────────────────
 const occupancy             = reactive({ rooms: 1, adults: 2, children: 0 })
 const searchState           = reactive({ location: '', checkIn: '', checkOut: '' })
@@ -486,6 +580,14 @@ const packageSearchState    = reactive({ origin: '', destination: '', departureD
 const cruiseSearchState     = reactive({ destination: '', destinationLabel: '', departingMonth: '04/1/2026', departingLabel: 'April 2026', length: '', lengthLabel: '', line: '', lineLabel: '' })
 
 const addHotelLeg = () => { if (multiHotelLegs.value.length < 5) multiHotelLegs.value.push({ location: '', checkIn: '', checkOut: '' }) }
+
+const currentCabinLabel = computed(() => {
+  return cabinClasses.find(c => c.value === flightTravelers.cabinClass)?.label || 'Economy'
+})
+
+const classDropdownStyle = computed(() => {
+  return dynamicStyles.class || {}
+})
 
 // ─── Cruise data ─────────────────────────────────────────────
 const cruiseDestinations = [
@@ -533,6 +635,18 @@ const cruiseLines = [
 watch(isFocused, (val) => emit('focus-change', val))
 watch(currentTab, (val) => emit('update:tab', val), { immediate: true })
 
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+  window.addEventListener('scroll', updateDropdownPositions, true)
+  window.addEventListener('resize', updateDropdownPositions)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+  window.removeEventListener('scroll', updateDropdownPositions, true)
+  window.removeEventListener('resize', updateDropdownPositions)
+})
+
 const handleSearch = () => {
   isFocused.value = false
   const query: any = { tab: currentTab.value }
@@ -559,6 +673,12 @@ const handleExternalDeal = (deal: any) => {
   else if (deal.type === 'Cars')   carSearchState.destination = deal.to || ''
 }
 defineExpose({ handleExternalDeal })
+
+const swapFlightLocations = (leg: { origin: string; destination: string }) => {
+  const tmp = leg.origin
+  leg.origin = leg.destination
+  leg.destination = tmp
+}
 </script>
 
 <style scoped>
@@ -613,10 +733,10 @@ defineExpose({ handleExternalDeal })
 .sw-tab-pill {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 7px 14px;
   border-radius: 99px;
-  font-size: 10.5px;
+  font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
@@ -632,13 +752,13 @@ defineExpose({ handleExternalDeal })
 .sw-tab-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 14px 16px;
-  font-size: 10.5px;
-  font-weight: 500;
+  gap: 8px;
+  padding: 15px 22px;
+  font-size: 14.5px;
+  font-weight: 600;
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  color: #aaa;
+  border-bottom: 2.5px solid transparent;
+  color: #888;
   background: none;
   border-top: none;
   border-left: none;
@@ -649,7 +769,7 @@ defineExpose({ handleExternalDeal })
 .sw-tab-btn--on  { color: #111; border-bottom-color: #111; }
 .sw-tab-btn:not(.sw-tab-btn--on):hover { color: #555; }
 
-.sw-tab-ico { width: 13px; height: 13px; flex-shrink: 0; }
+.sw-tab-ico { width: 17px; height: 17px; flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════════
    PANEL
@@ -697,6 +817,72 @@ defineExpose({ handleExternalDeal })
   }
 }
 
+/* ── Swap button wrapper ── */
+.sw-swap-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* mobile: horizontal divider context */
+  width: 100%;
+  height: 0;
+}
+@media (min-width: 768px) {
+  .sw-swap-wrap {
+    width: 0;
+    height: auto;
+  }
+}
+
+.sw-swap-btn {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e0e0d8;
+  background: #fff;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* mobile: position to the right edge */
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+@media (min-width: 768px) {
+  .sw-swap-btn {
+    right: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+.sw-swap-btn:hover {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+  transform: translateY(-50%) rotate(180deg);
+}
+@media (min-width: 768px) {
+  .sw-swap-btn:hover {
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+}
+.sw-swap-btn:active {
+  transform: translateY(-50%) scale(0.9);
+}
+@media (min-width: 768px) {
+  .sw-swap-btn:active {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+
 /* Individual field cell */
 .sw-field {
   background: #fff;
@@ -738,7 +924,7 @@ defineExpose({ handleExternalDeal })
 /* ── Field label/value (for non-component fields) ── */
 .sw-fld-lbl {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   color: #aaa;
   
@@ -747,9 +933,9 @@ defineExpose({ handleExternalDeal })
 }
 .sw-fld-val {
   display: block;
-  font-size: 12px;
-  font-weight: 400;
-  color: #222;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
   margin-top: 3px;
   line-height: 1.3;
 }
@@ -768,20 +954,7 @@ defineExpose({ handleExternalDeal })
 .sw-field--cat { padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; }
 
 /* Class field interior */
-.sw-field--class { padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; }
-.sw-class-select {
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 13px;
-  font-weight: 500;
-  color: #222;
-  width: 100%;
-  padding: 0;
-  margin-top: 4px;
-  cursor: pointer;
-  -webkit-appearance: none;
-}
+.sw-field--class { padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; position: relative; min-width: 185px; }
 .sw-field-inner { display: flex; flex-direction: column; }
 
 /* ═══════════════════════════════════════════════════
@@ -896,24 +1069,25 @@ defineExpose({ handleExternalDeal })
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: #111;
+  background: #0D1DAD;
   color: #fff;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   padding: 10.5px 22px;
   border-radius: 9px;
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s;
+  transition: all 0.2s;
   flex-shrink: 0;
+  font-family: 'Onest', sans-serif;
   /* On mobile: full width */
   width: 100%;
 }
 @media (min-width: 640px) {
   .sw-search-btn { width: auto; }
 }
-.sw-search-btn:hover { background: #000; }
+.sw-search-btn:hover { background: #0D1DAD; transform: translateY(-1px); }
 .sw-search-btn--full { width: 100%; }
 @media (min-width: 640px) { .sw-search-btn--full { width: auto; } }
 
@@ -1046,7 +1220,7 @@ defineExpose({ handleExternalDeal })
    ICON HELPERS
 ═══════════════════════════════════════════════════ */
 .sw-ico-xs { width: 10px; height: 10px; flex-shrink: 0; }
-.sw-ico-sm { width: 13px; height: 13px; flex-shrink: 0; }
+.sw-ico-sm { width: 16px; height: 16px; flex-shrink: 0; }
 .sw-ico-muted { color: #bbb; }
 
 /* ═══════════════════════════════════════════════════
