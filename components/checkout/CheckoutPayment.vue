@@ -17,7 +17,7 @@
       <h4 class="text-xs  text-gray-400 tracking-widest mb-4">Choose Payment Method</h4>
       
       <!-- Flybeth Wallet (Prioritized) -->
-      <div class="rounded-2xl border transition-all" :class="activeMethod === 'wallet' ? 'border-gray-900 bg-gray-50/30' : 'border-gray-100 bg-white'">
+      <div v-if="isLoggedIn" class="rounded-2xl border transition-all" :class="activeMethod === 'wallet' ? 'border-gray-900 bg-gray-50/30' : 'border-gray-100 bg-white'">
         <div class="p-5 flex items-center justify-between cursor-pointer" @click="toggleMethod('wallet')">
           <div class="flex items-center gap-4">
             <div class="w-10 h-10 rounded-xl flex items-center justify-center relative" :class="activeMethod === 'wallet' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
@@ -220,9 +220,10 @@ const canHold = computed(() => {
   return false
 })
 
-const { openAuthModal } = useAuth()
+const { openAuthModal, isLoggedIn } = useAuth()
 
 const fetchWalletBalance = async () => {
+  if (!isLoggedIn.value) return; // Don't fetch for guests
   isWalletLoading.value = true
   try {
     const { data } = await financeApi.getWalletBalance()
@@ -231,7 +232,7 @@ const fetchWalletBalance = async () => {
     }
   } catch (error: any) {
     console.error('Failed to fetch wallet balance', error)
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && isLoggedIn.value) {
       openAuthModal()
     }
   } finally {
@@ -240,10 +241,16 @@ const fetchWalletBalance = async () => {
 }
 
 onMounted(() => {
-  fetchWalletBalance()
+  if (isLoggedIn.value) {
+    fetchWalletBalance()
+    activeMethod.value = 'wallet'
+  } else {
+    activeMethod.value = 'card' // Default to card for guests
+  }
+  
   // Show Ad Modal with a slight delay only if not previously dismissed
   const isDismissed = localStorage.getItem('flybeth_wallet_ad_dismissed')
-  if (!isDismissed) {
+  if (!isDismissed && isLoggedIn.value) {
     setTimeout(() => {
       showAdModal.value = true
     }, 1000)

@@ -181,7 +181,11 @@
             <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleHotel" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleHotel ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleHotel" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Hotel</span></label>
             <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleCar" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleCar ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleCar" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Car</span></label>
           </div>
-          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search flights</button>
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
+            <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
+            <Search v-else class="sw-ico-sm" /> 
+            {{ isSearching ? 'Searching...' : 'Search flights' }}
+          </button>
         </div>
       </div>
 
@@ -227,7 +231,11 @@
             <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleFlight" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleFlight ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleFlight" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Flight</span></label>
             <label class="sw-chk"><input type="checkbox" v-model="bundles.bundleCar" class="sr-only" /><span class="sw-chk-box" :class="bundles.bundleCar ? 'sw-chk-box--on' : ''"><Check v-if="bundles.bundleCar" class="sw-ico-xs sw-chk-ico" /></span><span class="sw-radio-txt">+ Car</span></label>
           </div>
-          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search hotels</button>
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
+            <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
+            <Search v-else class="sw-ico-sm" /> 
+            {{ isSearching ? 'Searching...' : 'Search hotels' }}
+          </button>
         </div>
       </div>
 
@@ -275,7 +283,11 @@
 
         <div class="sw-footer">
           <a href="#" class="sw-adv-link">Advanced search</a>
-          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search packages</button>
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
+            <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
+            <Search v-else class="sw-ico-sm" /> 
+            {{ isSearching ? 'Searching...' : 'Search packages' }}
+          </button>
         </div>
       </div>
 
@@ -297,7 +309,11 @@
             <span class="sw-chk-box" :class="differentCarDropoff ? 'sw-chk-box--on' : ''"><Check v-if="differentCarDropoff" class="sw-ico-xs sw-chk-ico" /></span>
             <span class="sw-radio-txt">Return at different location</span>
           </label>
-          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search cars</button>
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
+            <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
+            <Search v-else class="sw-ico-sm" /> 
+            {{ isSearching ? 'Searching...' : 'Search cars' }}
+          </button>
         </div>
       </div>
 
@@ -328,7 +344,11 @@
           <div class="sw-field sw-field--pax"><Occupancypicker label="Passengers" variant="flight" v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" @focus="isFocused = true" @close="isFocused = false" /></div>
         </div>
         <div class="sw-footer sw-footer--end">
-          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search transfers</button>
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
+            <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
+            <Search v-else class="sw-ico-sm" /> 
+            {{ isSearching ? 'Searching...' : 'Search transfers' }}
+          </button>
         </div>
       </div>
 
@@ -345,7 +365,11 @@
           </div>
         </div>
         <div class="sw-footer sw-footer--end">
-          <button @click="handleSearch" class="sw-search-btn"><Search class="sw-ico-sm" /> Search activities</button>
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
+            <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
+            <Search v-else class="sw-ico-sm" /> 
+            {{ isSearching ? 'Searching...' : 'Search activities' }}
+          </button>
         </div>
       </div>
 
@@ -446,7 +470,11 @@
             </Teleport>
           </div>
 
-          <button @click="handleSearch" class="sw-search-btn sw-search-btn--full"><Search class="sw-ico-sm" /> Search cruises</button>
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn sw-search-btn--full">
+            <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
+            <Search v-else class="sw-ico-sm" /> 
+            {{ isSearching ? 'Searching...' : 'Search cruises' }}
+          </button>
         </div>
       </div>
 
@@ -459,7 +487,7 @@ import { ref, reactive, watch, computed, onMounted, onUnmounted, nextTick } from
 import {
   Plane, Bed, Car, Package, Anchor, Ticket, Truck,
   Search, CalendarDays, Clock, Timer, Check, Plus,
-  ChevronDown, MapPin, History, X, ArrowUpDown
+  ChevronDown, MapPin, History, X, ArrowUpDown, Loader2
 } from 'lucide-vue-next'
 import { useTracking } from '@/composables/core/useTracking'
 import { flightsApi } from '@/api_factory/modules/flights'
@@ -473,6 +501,7 @@ const emit  = defineEmits(['focus-change', 'update:tab'])
 
 // ─── State ──────────────────────────────────────────────────
 const isFocused           = ref(false)
+const isSearching         = ref(false)
 const currentTab          = ref('Flights')
 const stayMode            = ref('single')
 const flightMode          = ref('roundtrip')
@@ -731,6 +760,8 @@ onUnmounted(() => {
 })
 
 const handleSearch = async () => {
+  if (isSearching.value) return
+  isSearching.value = true
   isFocused.value = false
   const query: any = { tab: currentTab.value }
   const routes: Record<string, string> = {
@@ -754,7 +785,6 @@ const handleSearch = async () => {
          try {
            const local = localStorage.getItem('flybeth_recent_searches')
            let history = local ? JSON.parse(local) : []
-           // Only keep if it has minimum info
            if (searchCriteria.origin && searchCriteria.destination) {
              history = [searchCriteria, ...history.filter((h: any) => h.origin !== searchCriteria.origin || h.destination !== searchCriteria.destination)].slice(0, 10)
              localStorage.setItem('flybeth_recent_searches', JSON.stringify(history))
@@ -762,11 +792,17 @@ const handleSearch = async () => {
          } catch (e) {}
       }
 
-      if (data?.sid) {
-        return navigateTo({ path: '/flights', query: { sid: data.sid } })
+      // Handle both sid and sessionId for robustness
+      const sid = data?.sid || data?.sessionId
+      if (sid) {
+        return navigateTo({ path: '/flights', query: { sid } })
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to create secure search session:', err)
+      // Check for 404 specifically
+      if (err.response?.status === 404) {
+        console.warn('Search session endpoint not found (404). Check backend routing.')
+      }
     }
     // Fallback to URL params if session creation fails
     Object.assign(query, flightSearchState)
@@ -777,7 +813,11 @@ const handleSearch = async () => {
   else if (currentTab.value === 'Activities') Object.assign(query, activitiesSearchState)
   else if (currentTab.value === 'Hotels')   { Object.assign(query, searchState); Object.assign(query, occupancy) }
   trackAction('booking_step_search', { tab: currentTab.value, ...query })
-  navigateTo({ path: routes[currentTab.value] || '/search', query })
+  try {
+    await navigateTo({ path: routes[currentTab.value] || '/search', query })
+  } finally {
+    isSearching.value = false
+  }
 }
 
 const handleExternalDeal = (deal: any) => {
@@ -1073,26 +1113,27 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 /* ═══════════════════════════════════════════════════
    RADIOS & CHECKBOXES
 ═══════════════════════════════════════════════════ */
-.sw-radios { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.sw-radios--wrap { gap: 12px 20px; }
+.sw-radios { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-bottom: 4px; }
+.sw-radios--wrap { gap: 12px 28px; }
 
 .sw-radio { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 .sw-radio-dot {
-  width: 14px; height: 14px; border-radius: 50%;
-  border: 0.5px solid #d1d5db;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid #d1d5db;
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: border-color 0.15s;
+  flex-shrink: 0; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  background: #fff;
 }
 .sw-radio-dot::after {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: transparent; transition: background 0.15s;
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: transparent; transition: background 0.2s;
   position: absolute;
 }
-.sw-radio-dot--on { border-color: #111; }
+.sw-radio-dot--on { border-color: #111; border-width: 2px; box-shadow: 0 0 0 4px rgba(0,0,0,0.03); }
 .sw-radio-dot--on::after { background: #111; }
 
-.sw-radio-txt { font-size: 10.5px; font-weight: 500; color: #888; user-select: none; }
+.sw-radio-txt { font-size: 14px; font-weight: 600; color: #6b7280; user-select: none; transition: color 0.2s; letter-spacing: -0.01em; }
 .sw-radio-txt--on { color: #111; }
 
 .sw-chk  { display: flex; align-items: center; gap: 7px; cursor: pointer; }
@@ -1111,17 +1152,17 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 ═══════════════════════════════════════════════════ */
 .sw-seg {
   display: flex;
-  border: 0.5px solid #e0e0d8;
-  border-radius: 9px;
-  padding: 2px;
+  border: 1px solid #e0e0d8;
+  border-radius: 12px;
+  padding: 4px;
   background: #f5f5f0;
   width: fit-content;
 }
 .sw-seg-btn {
-  padding: 6px 14px;
-  font-size: 10.5px;
-  font-weight: 500;
-  border-radius: 7px;
+  padding: 8px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 9px;
   color: #888;
   background: none;
   border: none;
@@ -1209,20 +1250,20 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 ═══════════════════════════════════════════════════ */
 .sw-rows { display: flex; flex-direction: column; gap: 10px; }
 .sw-multi-leg { display: flex; flex-direction: column; gap: 4px; }
-.sw-leg-lbl { font-size: 10px; font-weight: 500; color: #aaa;  letter-spacing: 0.07em; }
+.sw-leg-lbl { font-size: 11px; font-weight: 700; color: #9ca3af;  letter-spacing: 0.05em; text-transform: uppercase; }
 .sw-add-btn {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10.5px;
-  font-weight: 500;
-  color: #aaa;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #374151;
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.15s;
+  transition: all 0.2s;
   align-self: flex-start;
-  padding: 0;
+  padding: 4px 0;
 }
 .sw-add-btn:hover { color: #333; }
 
@@ -1349,4 +1390,12 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-slide-enter-active { transition: all 0.2s ease; }
 .sw-slide-leave-active { transition: all 0.15s ease; }
 .sw-slide-enter-from, .sw-slide-leave-to { opacity: 0; transform: translateY(-6px); }
+
+.animate-spin {
+  animation: sw-spin 1s linear infinite;
+}
+@keyframes sw-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 </style>

@@ -1,1 +1,0 @@
-import{ap as r,aq as m,ar as l}from"./CXQd9bl9.js";import{listItemResolver as a}from"./DapgPsD8.js";const p=r({defaults:{"@type":"ItemList"},resolve(e,t){if(e.itemListElement){let s=1;e.itemListElement=m(e.itemListElement,t,a,{array:!0,afterResolve(i){l(i,"position",s++)}})}return e}});export{p as itemListResolver};

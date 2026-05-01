@@ -1,14 +1,38 @@
 <template>
-  <div class="ck-tf">
+  <div class="">
     <!-- Header with horizontal padding -->
-    <div class="ck-tf-hd px-6 md:px-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+    <div class="ck-tf-hd  flex flex-col md:flex-row md:items-start justify-between gap-6">
         <div class="flex-1">
           <div class="ck-tf-badge">Batch & Group Booking</div>
           <h2 class="ck-tf-h">Traveler Details</h2>
           <p class="ck-tf-p">Add your group members or upload a CSV to automate the process.</p>
         </div>
 
-         <div class="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
+        <div class="flex flex-col md:flex-row flex-wrap items-center gap-3 mt-4 md:mt-0">
+   <input 
+     type="file" 
+     ref="csvInput" 
+     accept=".csv" 
+     class="hidden" 
+     @change="handleCSVUpload" 
+   />
+   <button 
+     @click="$refs.csvInput.click()"
+     class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-neutral-100 text-neutral-600 font-bold text-sm hover:bg-neutral-200 transition-colors"
+   >
+      <Upload class="w-4 h-4" />
+      <span>Import CSV</span>
+   </button>
+   <button 
+     @click="addTraveler"
+     class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-black text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-lg"
+   >
+      <Plus class="w-4 h-4" />
+      <span>Add Traveler</span>
+   </button>
+</div>
+
+    <!-- <div class="lg:flex   flex-wrap items-center gap-3 mt-4 md:mt-0">
             <input 
               type="file" 
               ref="csvInput" 
@@ -30,17 +54,17 @@
                <Plus class="w-4 h-4" />
                <span>Add Traveler</span>
             </button>
-         </div>
+         </div> -->
     </div>
 
-    <div class="space-y-6 mt-8 px-6 md:px-10">
+    <div class="space-y-6 mt-8">
       <div v-for="(traveler, index) in travelers" :key="index" class="relative animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div class="flex items-center justify-between mb-4">
            <div class="flex flex-wrap items-center gap-3">
               <div class="w-8 h-8 rounded-full bg-neutral-900 text-white text-xs font-black flex items-center justify-center">
                 {{ index + 1 }}
               </div>
-              <span class="text-sm font-black text-neutral-900 tracking-tight uppercase">Traveler {{ index + 1 }}</span>
+              <span class="text-sm font-black text-neutral-900 tracking-tight">Traveler {{ index + 1 }}</span>
            </div>
            <button 
              v-if="travelers.length > 1" 
@@ -52,7 +76,7 @@
         </div>
 
         <!-- Form Box with reduced internal padding -->
-        <div class="ck-tf-grid bg-white border border-neutral-100 rounded-[2rem] p-6 md:p-8 shadow-sm">
+        <div class="ck-tf-grid bg-white border-neutral-100 rounded-[2rem] shadow-sm">
            <!-- Basic Info Group -->
            <div class="ck-tf-sec">
               <div class="ck-tf-cards">
@@ -134,8 +158,8 @@
     </div>
 
     <!-- Contact Group -->
-    <div class="mt-8 mx-6 md:mx-10 p-6 md:p-8 bg-[#0D1DAD]/[0.02] rounded-[2rem] border border-[#0D1DAD]/10">
-        <h3 class="ck-tf-sh flex items-center gap-2 mb-5">
+    <div class="mt-8 p-5  bg-[#0D1DAD]/[0.02] rounded-[2rem] border border-[#0D1DAD]/10">
+        <h3 class="ck-tf-sh flex items-center text-sm gap-2 mb-5">
           <Mail class="w-4 h-4 text-[#0D1DAD]" />
           Booking Contact (For the whole group)
         </h3>
@@ -146,7 +170,7 @@
                 class="w-full max-w-md"
               />
               <div class="w-full max-w-md">
-                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
+                <label class="block text-sm font-medium text-brand-gray  mb-1.5 ml-1">Email Address</label>
                 <AnimatedInput
                   v-model="contact.email"
                   label=""
@@ -159,12 +183,21 @@
         </div>
     </div>
 
-    <div class="ck-tf-foot px-6 md:px-10">
+    <div class="ck-tf-foot">
        <div class="flex flex-col gap-3 mb-4">
           <label v-if="isLoggedIn" class="ck-tf-terms">
              <input type="checkbox" v-model="saveForFuture" class="ck-tf-chk custom-checkbox" />
              <span class="font-bold text-gray-800">Save traveler information for future bookings</span>
           </label>
+          <div v-else class="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl mb-2 flex items-center gap-3">
+             <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
+             </div>
+             <div>
+                <p class="text-[11px] font-black text-blue-900  tracking-widest">Guest Mode Active</p>
+                <p class="text-sm text-blue-700/70 font-medium">You're booking without an account. We'll send your ticket to the email below.</p>
+             </div>
+          </div>
           <label class="ck-tf-terms">
              <input type="checkbox" v-model="termsAccepted" class="ck-tf-chk custom-checkbox" />
              <span>I verify that all names stated above are identical to those in the original travel documents.</span>
@@ -322,7 +355,7 @@ const handleContinue = () => { if (canContinue.value) emit('continue') }
 .ck-tf-p { font-size: 14px; color: #666; font-weight: 500; }
 
 .ck-tf-grid { display: flex; flex-direction: column; gap: 20px; }
-.ck-tf-sh { font-size: 12px; font-weight: 800; letter-spacing: 0.15em; color: #999; margin-bottom: 18px; }
+.ck-tf-sh { font-size: 12px; font-weight: 800; color: black; margin-bottom: 18px; }
 
 .ck-tf-sec { position: relative; }
 .ck-tf-cards { display: flex; flex-direction: column; gap: 14px; }
@@ -352,4 +385,3 @@ const handleContinue = () => { if (canContinue.value) emit('continue') }
   .ck-tf-row { flex-direction: column; gap: 14px; }
 }
 </style>
-" ,Description:

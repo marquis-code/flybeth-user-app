@@ -495,12 +495,13 @@ const handleGoBack = () => {
 }
 
 const handleTravellerContinue = async () => {
-  if (!isLoggedIn.value) {
-    showToast({ title: "Authentication Required", message: "Please sign in or create an account to continue.", toastType: "info" });
-    openAuthModal();
-    return
-  }
+  // Guest booking enabled: we don't block if not logged in.
+  // We just proceed to the next step.
+  
   if (bookingDetails.value.provider === 'duffel') {
+    // If guest, ensureDuffelIdentity will use the data from the form
+    // Note: ensureDuffelIdentity might still fail if the backend requires auth for this endpoint,
+    // but we will try to proceed as guest.
     showBrandedLoader.value = true
     loaderStatus.value = 'Setting up travel identity...'
     try {
@@ -510,11 +511,33 @@ const handleTravellerContinue = async () => {
         phone: travellerData.value.contact.phone
       })
     } catch (err: any) {
-      if (err?.response?.status === 401) { openAuthModal(); return }
+      // If it's a 401 and we are not logged in, we might still want to proceed if guest booking is supported.
+      // For now, we only re-open auth modal if it's a clear auth failure on a protected route.
+      console.error('Duffel identity setup failed:', err)
+      if (err?.response?.status === 401 && isLoggedIn.value) { 
+        openAuthModal(); 
+        showBrandedLoader.value = false
+        return 
+      }
     }
     showBrandedLoader.value = false
   }
   goToStep(2)
+}
+
+const handleEmailBlur = async () => {
+  if (!travellerData.value.contact.email) return
+  try {
+    await bookingsApi.emailCapture({
+      email: travellerData.value.contact.email,
+      firstName: travellerData.value.travelers[0]?.firstName || 'Guest',
+      destination: bookingDetails.value.name,
+      checkoutUrl: window.location.href,
+      tenantId: bookingDetails.value.provider === 'duffel' ? undefined : undefined
+    })
+  } catch (err) {
+    console.warn('Email capture failed (silent):', err)
+  }
 }
 
 const paymentRef = ref<any>(null)

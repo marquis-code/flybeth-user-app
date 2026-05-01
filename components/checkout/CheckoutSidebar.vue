@@ -2,7 +2,13 @@
   <div class="ck-sb">
     <div class="ck-sb-hd">
       <h2 class="ck-sb-title">Trip Summary</h2>
-      <div v-if="passengerCount" class="ck-sb-tag">{{ passengerCount }} Guest{{ passengerCount > 1 ? 's' : '' }}</div>
+      <div class="flex items-center gap-2">
+        <div v-if="!isLoggedIn" class="ck-sb-tag !bg-blue-50 !text-blue-600 border border-blue-100 flex items-center gap-1">
+          <UserX class="w-3 h-3" />
+          <span>Guest Checkout</span>
+        </div>
+        <div v-if="passengerCount" class="ck-sb-tag">{{ passengerCount }} Guest{{ passengerCount > 1 ? 's' : '' }}</div>
+      </div>
     </div>
 
     <!-- Flight Info -->
@@ -134,7 +140,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Armchair } from 'lucide-vue-next'
+import { Armchair, UserX } from 'lucide-vue-next'
+import { useAuth } from '~/composables/modules/auth/useAuth'
+
+const { isLoggedIn } = useAuth()
 
 const props = defineProps({
   flight: { type: Object, default: null },

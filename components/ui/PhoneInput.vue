@@ -1,6 +1,6 @@
 <template>
   <div class="relative" ref="phoneRef">
-    <label v-if="label" class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70  block">
+    <label v-if="label" class="text-sm text-brand-gray font-medium  mb-2 px-1 opacity-70  block">
       {{ label }}
     </label>
 
