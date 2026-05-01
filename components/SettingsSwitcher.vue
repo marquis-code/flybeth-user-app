@@ -18,7 +18,7 @@
               v-for="tab in ['language', 'currency']" 
               :key="tab"
               @click="currentTab = tab"
-              class="flex-1 py-3 text-[10px]  uppercase tracking-[0.2em] rounded-xl transition-all duration-500"
+              class="flex-1 py-3 text-[10px]  uppercase  rounded-xl transition-all duration-500"
               :class="currentTab === tab ? 'bg-white text-brand-blue shadow-sm' : 'text-gray-400 hover:text-gray-600'"
             >
               {{ $t(`settings.${tab}`) }}
@@ -82,7 +82,7 @@
            </p>
            <button 
              @click="$emit('close')" 
-             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-[10px]  uppercase tracking-[0.2em] rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all "
+             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-[10px]  uppercase  rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all "
            >
               {{ $t('settings.applyChanges') }}
            </button>

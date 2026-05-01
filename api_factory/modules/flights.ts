@@ -132,4 +132,21 @@ export const flightsApi = {
             params: { cityCodes, ...(travelerCountryCode ? { travelerCountryCode } : {}) }
         });
     },
+    // Search Sessions
+    createSearchSession(criteria: any) {
+        return GATEWAY_ENDPOINT.post("/flights/search-session", criteria);
+    },
+    getSearchSession(id: string) {
+        return GATEWAY_ENDPOINT.get(`/flights/search-session/${id}`);
+    },
+    // Recent Searches
+    saveRecentSearch(criteria: any) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/recent", criteria);
+    },
+    getRecentSearches() {
+        return GATEWAY_ENDPOINT_WITH_AUTH.get("/flights/recent");
+    },
+    removeRecentSearch(id: string) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.delete(`/flights/recent/${id}`);
+    },
 };

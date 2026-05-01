@@ -1,5 +1,11 @@
 <template>
-  <div class="sw-root" :class="isSticky ? 'sw-root--sticky' : ''">
+  <div 
+    class="sw-root transition-all duration-300" 
+    :class="[
+      isSticky ? 'sw-root--sticky' : '', 
+      isFocused ? 'z-[10002] relative shadow-2xl' : 'z-10 relative'
+    ]"
+  >
 
     <!-- ─── Tab Bar ─── -->
     <div class="sw-tabs">
@@ -151,6 +157,23 @@
         >
           <Plus class="sw-ico-xs" /> Add flight
         </button>
+
+        <!-- Recent Searches -->
+        <div v-if="recentSearches.length > 0" class="mt-4 flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-top-2">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+            <History class="w-3 h-3" />
+            Recent
+          </span>
+          <div v-for="s in recentSearches" :key="s._id" 
+            class="group flex items-center gap-2 bg-gray-50 border border-gray-100 hover:border-gray-900 px-3 py-1.5 rounded-full transition-all cursor-pointer"
+            @click="applyRecentSearch(s)"
+          >
+            <span class="text-[11px] font-bold text-gray-700">{{ s.origin }} → {{ s.destination }}</span>
+            <button @click.stop="removeSearch(s._id)" class="text-gray-300 hover:text-rose-500 transition-colors">
+              <X class="w-3 h-3" />
+            </button>
+          </div>
+        </div>
 
         <div class="sw-footer">
           <div class="sw-bundles">
@@ -432,15 +455,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, watch, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import {
   Plane, Bed, Car, Package, Anchor, Ticket, Truck,
   Search, CalendarDays, Clock, Timer, Check, Plus,
-  ChevronDown, MapPin, ArrowUpDown
+  ChevronDown, MapPin, History, X, ArrowUpDown
 } from 'lucide-vue-next'
 import { useTracking } from '@/composables/core/useTracking'
+import { flightsApi } from '@/api_factory/modules/flights'
+import { useAuth } from '@/composables/modules/auth/useAuth'
 import CustomTimePicker from '@/components/ui/CustomTimePicker.vue'
 
+const { isLoggedIn } = useAuth()
 const { trackAction } = useTracking()
 const props = defineProps({ isSticky: { type: Boolean, default: false } })
 const emit  = defineEmits(['focus-change', 'update:tab'])
@@ -634,9 +660,66 @@ const cruiseLines = [
 // ─── Watchers & Search ──────────────────────────────────────
 watch(isFocused, (val) => emit('focus-change', val))
 watch(currentTab, (val) => emit('update:tab', val), { immediate: true })
+watch(isLoggedIn, (val) => { if (val) fetchRecentSearches() })
+
+// ─── Recent Searches (Restore) ──────────────────────────────
+const recentSearches = ref<any[]>([])
+
+const fetchRecentSearches = async () => {
+  if (!isLoggedIn.value) return
+  try {
+    const res = await flightsApi.getRecentSearches()
+    const rawData = res.data?.data || res.data || []
+    recentSearches.value = Array.isArray(rawData) ? rawData : []
+    
+    // Auto-prefill if empty
+    if (recentSearches.value.length > 0 && !flightSearchState.origin && !flightSearchState.destination) {
+       applyRecentSearch(recentSearches.value[0])
+    }
+  } catch (err) {
+    console.error('Failed to fetch recent searches:', err)
+  }
+}
+
+const applyRecentSearch = (s: any) => {
+  if (s.origin) flightSearchState.origin = s.origin
+  if (s.destination) flightSearchState.destination = s.destination
+  if (s.departureDate) flightSearchState.departureDate = s.departureDate
+  if (s.returnDate) flightSearchState.returnDate = s.returnDate
+  if (s.adults) flightTravelers.adults = s.adults
+  if (s.children) flightTravelers.children = s.children
+  if (s.cabinClass) flightTravelers.cabinClass = s.cabinClass
+  if (s.type) flightMode.value = s.type
+  
+  // If it's multicity, we might need more complex logic, but for now focus on basic restore
+  trackAction('recent_search_applied', { origin: s.origin, destination: s.destination })
+}
+
+const removeSearch = async (id: string) => {
+  try {
+    await flightsApi.removeRecentSearch(id)
+    recentSearches.value = recentSearches.value.filter(s => s._id !== id)
+  } catch (err) {}
+}
 
 onMounted(() => {
   checkMobile()
+  fetchRecentSearches()
+  
+  // Also check localStorage for guest search history if not logged in
+  if (!isLoggedIn.value) {
+    const local = localStorage.getItem('flybeth_recent_searches')
+    if (local) {
+      try { 
+        recentSearches.value = JSON.parse(local).slice(0, 5)
+        // Auto-prefill for guest
+        if (recentSearches.value.length > 0 && !flightSearchState.origin && !flightSearchState.destination) {
+           applyRecentSearch(recentSearches.value[0])
+        }
+      } catch(e) {}
+    }
+  }
+
   window.addEventListener('resize', checkMobile)
   window.addEventListener('scroll', updateDropdownPositions, true)
   window.addEventListener('resize', updateDropdownPositions)
@@ -647,18 +730,49 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateDropdownPositions)
 })
 
-const handleSearch = () => {
+const handleSearch = async () => {
   isFocused.value = false
   const query: any = { tab: currentTab.value }
   const routes: Record<string, string> = {
     Activities: '/things-to-do', Hotels: '/stays', Flights: '/flights',
     Cars: '/cars', Packages: '/packages', Transfers: '/transfers', Cruises: '/cruises',
   }
-  if (currentTab.value === 'Cruises')       Object.assign(query, cruiseSearchState)
-  else if (currentTab.value === 'Flights') {
-    Object.assign(query, flightSearchState);
-    Object.assign(query, flightTravelers);
+
+  if (currentTab.value === 'Flights') {
+    try {
+      // Secure Search Session
+      const searchCriteria = {
+        ...flightSearchState,
+        ...flightTravelers,
+        type: flightMode.value
+      }
+      
+      const { data } = await flightsApi.createSearchSession(searchCriteria)
+      
+      // Save to local history for quick access (Always save for guests, backend handles logged in)
+      if (import.meta.client) {
+         try {
+           const local = localStorage.getItem('flybeth_recent_searches')
+           let history = local ? JSON.parse(local) : []
+           // Only keep if it has minimum info
+           if (searchCriteria.origin && searchCriteria.destination) {
+             history = [searchCriteria, ...history.filter((h: any) => h.origin !== searchCriteria.origin || h.destination !== searchCriteria.destination)].slice(0, 10)
+             localStorage.setItem('flybeth_recent_searches', JSON.stringify(history))
+           }
+         } catch (e) {}
+      }
+
+      if (data?.sid) {
+        return navigateTo({ path: '/flights', query: { sid: data.sid } })
+      }
+    } catch (err) {
+      console.error('Failed to create secure search session:', err)
+    }
+    // Fallback to URL params if session creation fails
+    Object.assign(query, flightSearchState)
+    Object.assign(query, flightTravelers)
   }
+  else if (currentTab.value === 'Cruises')       Object.assign(query, cruiseSearchState)
   else if (currentTab.value === 'Transfers') { Object.assign(query, transferSearchState); query.mode = transferMode.value }
   else if (currentTab.value === 'Activities') Object.assign(query, activitiesSearchState)
   else if (currentTab.value === 'Hotels')   { Object.assign(query, searchState); Object.assign(query, occupancy) }
@@ -837,29 +951,28 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
 .sw-swap-btn {
   position: absolute;
-  z-index: 20;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 1px solid #e0e0d8;
-  background: #fff;
-  color: #888;
+  border: 1px solid #e2e2e2;
+  background: #ffffff;
+  color: #4b5563;
   cursor: pointer;
-  transition: all 0.2s ease;
-  /* mobile: position to the right edge */
-  right: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  /* mobile: centered on the divider line */
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
 }
 @media (min-width: 768px) {
   .sw-swap-btn {
-    right: auto;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 34px;
+    height: 34px;
   }
 }
 .sw-swap-btn:hover {
@@ -1033,9 +1146,9 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   flex-wrap: wrap;
 }
 .sw-bundle-lbl {
-  font-size: 9px;
-  font-weight: 600;
-  color: #bbb;
+  font-size: 13px;
+  font-weight: 500;
+  color: black;
   
   letter-spacing: 0.1em;
   white-space: nowrap;
@@ -1069,7 +1182,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: #0D1DAD;
+  background: black;
   color: #fff;
   font-size: 12px;
   font-weight: 700;
@@ -1087,7 +1200,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 @media (min-width: 640px) {
   .sw-search-btn { width: auto; }
 }
-.sw-search-btn:hover { background: #0D1DAD; transform: translateY(-1px); }
+.sw-search-btn:hover { background: black; transform: translateY(-1px); }
 .sw-search-btn--full { width: 100%; }
 @media (min-width: 640px) { .sw-search-btn--full { width: auto; } }
 

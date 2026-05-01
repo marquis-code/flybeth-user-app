@@ -3,7 +3,7 @@
     <!-- Premium Header -->
     <div class="bg-brand-blue pt-20 pb-12 px-6 overflow-hidden relative">
       <div class="max-w-4xl mx-auto relative z-10">
-        <NuxtLink to="/" class="inline-flex items-center gap-2 text-[10px] font-bold text-white/50 hover:text-white transition-all tracking-[0.2em] uppercase mb-8 group">
+        <NuxtLink to="/" class="inline-flex items-center gap-2 text-[10px] font-bold text-white/50 hover:text-white transition-all  uppercase mb-8 group">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7" /></svg>
           Back to home
         </NuxtLink>

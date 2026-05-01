@@ -1,128 +1,168 @@
 <template>
   <div class="ck-tf">
-    <div class="ck-tf-hd">
-        <div class="ck-tf-badge"> Traveler 1 (Adult)</div>
-        <h2 class="ck-tf-h flex items-center gap-4">
-          <div class="w-10 h-10 rounded-2xl bg-[#0D1DAD]/10 flex items-center justify-center">
-            <User class="w-6 h-6 text-[#0D1DAD]" />
-          </div>
-          Primary Traveler
-        </h2>
-        <p class="ck-tf-p">Names must match IDs exactly to avoid boarding issues.</p>
+    <!-- Header with horizontal padding -->
+    <div class="ck-tf-hd px-6 md:px-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+        <div class="flex-1">
+          <div class="ck-tf-badge">Batch & Group Booking</div>
+          <h2 class="ck-tf-h">Traveler Details</h2>
+          <p class="ck-tf-p">Add your group members or upload a CSV to automate the process.</p>
+        </div>
+
+         <div class="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
+            <input 
+              type="file" 
+              ref="csvInput" 
+              accept=".csv" 
+              class="hidden" 
+              @change="handleCSVUpload" 
+            />
+            <button 
+              @click="$refs.csvInput.click()"
+              class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-neutral-100 text-neutral-600 font-bold text-sm hover:bg-neutral-200 transition-colors"
+            >
+               <Upload class="w-4 h-4" />
+               <span>Import CSV</span>
+            </button>
+            <button 
+              @click="addTraveler"
+              class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-black text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-lg"
+            >
+               <Plus class="w-4 h-4" />
+               <span>Add Traveler</span>
+            </button>
+         </div>
     </div>
 
-    <div class="ck-tf-grid">
-       <!-- Basic Info Group -->
-       <div class="ck-tf-sec">
-          <div class="ck-tf-cards">
-             <div class="ck-tf-row">
-                <SelectInput
-                  v-model="form.title"
-                  label="Title"
-                  :options="['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']"
-                  class="flex-[0.3]"
-                />
-                <AnimatedInput
-                  v-model="form.lastName"
-                  label="Last Name / Surname"
-                  type="text"
-                  class="flex-1"
-                  position="middle"
-                />
-             </div>
-             <div class="ck-tf-row">
-                <AnimatedInput
-                  v-model="form.firstName"
-                  type="text"
-                  label="First Name"
-                  class="flex-1"
-                  position="middle"
-                />
-             </div>
-             <div class="ck-tf-row">
-                <FlatDatePicker
-                  v-model="form.dateOfBirth"
-                  label="Date of Birth"
-                  :maxDate="today"
-                  :hasError="dobError"
-                  class="flex-1"
-                />
-                <SelectInput
-                  v-model="form.gender"
-                  label="Gender"
-                  :options="['Male', 'Female', 'Unknown']"
-                  class="flex-1"
-                />
-             </div>
-          </div>
-       </div>
+    <div class="space-y-6 mt-8 px-6 md:px-10">
+      <div v-for="(traveler, index) in travelers" :key="index" class="relative animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="flex items-center justify-between mb-4">
+           <div class="flex flex-wrap items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-neutral-900 text-white text-xs font-black flex items-center justify-center">
+                {{ index + 1 }}
+              </div>
+              <span class="text-sm font-black text-neutral-900 tracking-tight uppercase">Traveler {{ index + 1 }}</span>
+           </div>
+           <button 
+             v-if="travelers.length > 1" 
+             @click="removeTraveler(index)"
+             class="p-2 text-red-400 hover:text-red-600 transition-colors"
+           >
+             <Trash2 class="w-4 h-4" />
+           </button>
+        </div>
 
-       <!-- Contact Group -->
-       <div class="ck-tf-sec">
-          <h3 class="ck-tf-sh flex items-center gap-2">
-            <Mail class="w-4 h-4 text-[#0D1DAD]" />
-            Contact Information
-          </h3>
-          <div class="ck-tf-cards">
-             <div class="ck-tf-row">
-                <PhoneInput
-                  v-model="form.phone"
-                  label="Mobile Number"
-                  class="flex-1"
-                />
-             </div>
-             <div class="ck-tf-row">
+        <!-- Form Box with reduced internal padding -->
+        <div class="ck-tf-grid bg-white border border-neutral-100 rounded-[2rem] p-6 md:p-8 shadow-sm">
+           <!-- Basic Info Group -->
+           <div class="ck-tf-sec">
+              <div class="ck-tf-cards">
+                 <div class="ck-tf-row">
+                    <SelectInput
+                      v-model="traveler.title"
+                      label="Title"
+                      :options="['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']"
+                      class="flex-[0.3]"
+                    />
+                    <AnimatedInput
+                      v-model="traveler.lastName"
+                      label="Last Name / Surname"
+                      type="text"
+                      class="flex-1"
+                      position="middle"
+                    />
+                 </div>
+                 <div class="ck-tf-row">
+                    <AnimatedInput
+                      v-model="traveler.firstName"
+                      type="text"
+                      label="First Name"
+                      class="flex-1"
+                      position="middle"
+                    />
+                 </div>
+                 <div class="ck-tf-row">
+                    <FlatDatePicker
+                      v-model="traveler.dateOfBirth"
+                      label="Date of Birth"
+                      :maxDate="today"
+                      class="flex-1"
+                    />
+                    <SelectInput
+                      v-model="traveler.gender"
+                      label="Gender"
+                      :options="['Male', 'Female', 'Unknown']"
+                      class="flex-1"
+                    />
+                 </div>
+              </div>
+           </div>
+
+           <!-- Identity Information -->
+           <div v-if="index === 0" class="ck-tf-sec mt-5 pt-5 border-t border-neutral-100">
+              <h3 class="ck-tf-sh flex items-center gap-2">
+                <Globe class="w-4 h-4 text-[#0D1DAD]" />
+                Identity Information
+              </h3>
+              <div class="ck-tf-cards">
+                  <div class="ck-tf-row">
+                    <SelectInput
+                      v-model="traveler.nationality"
+                      label="Nationality"
+                      :options="countriesNames"
+                      class="flex-1"
+                    />
+                    <AnimatedInput
+                      v-model="traveler.passportNumber"
+                      label="Passport Number"
+                      type="text"
+                      class="flex-1"
+                      position="middle"
+                    />
+                 </div>
+                 <div class="ck-tf-row">
+                    <FlatDatePicker
+                      v-model="traveler.passportExpiry"
+                      label="Passport Expiry Date"
+                      :minDate="today"
+                      class="flex-1"
+                    />
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Group -->
+    <div class="mt-8 mx-6 md:mx-10 p-6 md:p-8 bg-[#0D1DAD]/[0.02] rounded-[2rem] border border-[#0D1DAD]/10">
+        <h3 class="ck-tf-sh flex items-center gap-2 mb-5">
+          <Mail class="w-4 h-4 text-[#0D1DAD]" />
+          Booking Contact (For the whole group)
+        </h3>
+        <div class="ck-tf-cards space-y-6">
+              <PhoneInput
+                v-model="contact.phone"
+                label="Mobile Number"
+                class="w-full max-w-md"
+              />
+              <div class="w-full max-w-md">
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
                 <AnimatedInput
-                  v-model="form.email"
-                  label="Email Address"
+                  v-model="contact.email"
+                  label=""
+                  placeholder="e.g. jdoe@example.com"
                   type="email"
-                  class="flex-1"
+                  class="w-full"
                   position="middle"
-                  @blur="$emit('email-blur', form.email)"
                 />
-             </div>
-          </div>
-       </div>
-
-       <!-- Identification Group -->
-       <div class="ck-tf-sec">
-          <h3 class="ck-tf-sh flex items-center gap-2">
-            <Globe class="w-4 h-4 text-[#0D1DAD]" />
-            Document details
-          </h3>
-          <div class="ck-tf-cards">
-             <div class="ck-tf-row">
-                <SelectInput
-                  v-model="form.nationality"
-                  label="Nationality"
-                  :options="countriesNames"
-                  class="flex-1"
-                />
-             </div>
-             <div class="ck-tf-row">
-                <AnimatedInput
-                  v-model="form.passportNumber"
-                  label="Passport Number (Optional)"
-                  class="flex-1"
-                  type="text"
-                  position="standalone"
-                />
-                <FlatDatePicker
-                  v-model="form.passportExpiry"
-                  label="Passport Expiry"
-                  :minDate="today"
-                  class="flex-1"
-                />
-             </div>
-          </div>
-       </div>
+              </div>
+        </div>
     </div>
 
-    <!-- Actions -->
-    <div class="ck-tf-foot">
-       <div class="flex flex-col gap-4 mb-6">
+    <div class="ck-tf-foot px-6 md:px-10">
+       <div class="flex flex-col gap-3 mb-4">
           <label v-if="isLoggedIn" class="ck-tf-terms">
-             <input type="checkbox" v-model="form.saveForFuture" class="ck-tf-chk custom-checkbox" />
+             <input type="checkbox" v-model="saveForFuture" class="ck-tf-chk custom-checkbox" />
              <span class="font-bold text-gray-800">Save traveler information for future bookings</span>
           </label>
           <label class="ck-tf-terms">
@@ -133,7 +173,7 @@
        <button 
           @click="handleContinue" 
           :disabled="!canContinue" 
-          class="ck-tf-btn"
+          class="ck-tf-btn w-full md:w-fit"
           :class="{ 'ck-tf-btn--off': !canContinue }"
        >
           <span>Continue to Extras</span>
@@ -150,39 +190,92 @@ import SelectInput from '@/components/ui/SelectInput.vue';
 import PhoneInput from '@/components/ui/PhoneInput.vue';
 import FlatDatePicker from '@/components/ui/FlatDatePicker.vue';
 import { useAuth } from '@/composables/modules/auth/useAuth';
-import { User, Mail, Globe } from 'lucide-vue-next'
+import { Mail, Globe, Users, Plus, Trash2, Upload } from 'lucide-vue-next'
 import axios from 'axios'
+import { useCustomToast } from '~/composables/core/useCustomToast';
 
 const { isLoggedIn } = useAuth()
+const { showToast } = useCustomToast()
 
 const today = new Date()
 today.setHours(23, 59, 59, 999)
 
 const props = defineProps({
-  modelValue: { type: Object, default: () => ({}) }
+  modelValue: { type: Object, default: () => ({ travelers: [], contact: {} }) }
 })
 
 const emit = defineEmits(['update:modelValue', 'continue', 'email-blur'])
 
-const form = ref({
-  title: props.modelValue.title || 'Mr',
-  firstName: props.modelValue.firstName || '',
-  lastName: props.modelValue.lastName || '',
-  middleName: props.modelValue.middleName || '',
-  email: props.modelValue.email || '',
-  phone: props.modelValue.phone || '',
-  phoneCountryCode: props.modelValue.phoneCountryCode || '+234',
-  gender: props.modelValue.gender || 'Male',
-  dateOfBirth: props.modelValue.dateOfBirth || '',
-  nationality: props.modelValue.nationality || 'Nigeria',
-  passportNumber: props.modelValue.passportNumber || '',
-  passportExpiry: props.modelValue.passportExpiry || '',
-  passportCountry: props.modelValue.passportCountry || '',
-  saveForFuture: props.modelValue.saveForFuture || false,
+const travelers = ref(props.modelValue.travelers?.length ? [...props.modelValue.travelers] : [{
+  title: 'Mr',
+  firstName: '',
+  lastName: '',
+  dateOfBirth: '',
+  gender: 'Male',
+  nationality: 'Nigeria',
+  passportNumber: '',
+  passportExpiry: ''
+}])
+
+const contact = ref(props.modelValue.contact?.email ? { ...props.modelValue.contact } : {
+  email: '',
+  phone: '',
+  phoneCountryCode: '+234'
 })
 
+const saveForFuture = ref(false)
 const termsAccepted = ref(false)
 const countries = ref<{ code: string; name: string }[]>([])
+
+const addTraveler = () => {
+  travelers.value.push({
+    title: 'Mr',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    gender: 'Male',
+    nationality: travelers.value[0]?.nationality || 'Nigeria',
+    passportNumber: '',
+    passportExpiry: ''
+  })
+}
+
+const removeTraveler = (index: number) => {
+  travelers.value.splice(index, 1)
+}
+
+const handleCSVUpload = (event: any) => {
+  const file = event.target.files[0]
+  if (!file) return
+  
+  const reader = new FileReader()
+  reader.onload = (e: any) => {
+    try {
+      const text = e.target.result
+      const lines = text.split('\n').filter(l => l.trim())
+      
+      const newTravelers = lines.slice(1).map(line => {
+        const values = line.split(',')
+        return {
+          title: values[0] || 'Mr',
+          firstName: values[1] || '',
+          lastName: values[2] || '',
+          dateOfBirth: values[3] || '',
+          gender: values[4] || 'Male',
+          nationality: values[5] || travelers.value[0]?.nationality || 'Nigeria'
+        }
+      })
+
+      if (newTravelers.length) {
+        travelers.value = newTravelers
+        showToast({ title: "Batch Import Successful", message: `Imported ${newTravelers.length} travelers from CSV.`, toastType: "success" })
+      }
+    } catch (err) {
+      showToast({ title: "Import Error", message: "Failed to parse CSV file. Ensure it follows: title,firstName,lastName,dob,gender,nationality", toastType: "error" })
+    }
+  }
+  reader.readAsText(file)
+}
 
 onMounted(async () => {
   try {
@@ -191,70 +284,72 @@ onMounted(async () => {
       code: c.Iso2,
       name: c.name
     }))
-
-    // Auto-detect location for nationality
-    const geo = await axios.get('https://ipapi.co/json/')
-    if (geo.data && geo.data.country_name) {
-      form.value.nationality = geo.data.country_name
-    }
   } catch (e) {
-    console.error('Failed to fetch countries', e)
-    // Fallback
-    countries.value = [
-      { code: 'NG', name: 'Nigeria' },
-      { code: 'US', name: 'United States' },
-      { code: 'GB', name: 'United Kingdom' }
-    ]
+    countries.value = [{ code: 'NG', name: 'Nigeria' }, { code: 'US', name: 'United States' }]
   }
 })
 
 const countriesNames = computed(() => countries.value.map(c => c.name))
 
-const isComplete = computed(() => !!(form.value.firstName && form.value.lastName && form.value.email && form.value.phone && form.value.dateOfBirth))
-const dobError = computed(() => form.value.dateOfBirth && new Date(form.value.dateOfBirth) >= new Date())
-const canContinue = computed(() => isComplete.value && termsAccepted.value && !dobError.value)
+const isComplete = computed(() => {
+  const travelersComplete = travelers.value.every(t => t.firstName && t.lastName && t.dateOfBirth)
+  const contactComplete = !!(contact.value.email && contact.value.phone)
+  return travelersComplete && contactComplete
+})
 
-watch(form, (val) => { emit('update:modelValue', { ...val }) }, { deep: true })
+const canContinue = computed(() => isComplete.value && termsAccepted.value)
+
+watch([travelers, contact], () => { 
+  emit('update:modelValue', { travelers: [...travelers.value], contact: { ...contact.value } }) 
+}, { deep: true })
+
 const handleContinue = () => { if (canContinue.value) emit('continue') }
 </script>
 
 <style scoped>
-.ck-tf { padding: 40px 32px; font-family: 'Onest', sans-serif; }
+.ck-tf { padding: 40px 0px; font-family: 'Onest', sans-serif; width: 100%; margin: 0 auto; }
 
-.ck-tf-hd { margin-bottom: 40px; }
+.ck-tf-hd { margin-bottom: 28px; }
 .ck-tf-badge { 
   display: inline-block; font-size: 10px; font-weight: 800; 
-  letter-spacing: 0.1em; color: #0D1DAD; background: #0D1DAD/10; padding: 6px 14px; 
-  border-radius: 100px; margin-bottom: 16px; 
+  letter-spacing: 0.1em; color: #0D1DAD; background: rgba(13,29,173,0.08); padding: 6px 14px; 
+  border-radius: 100px; margin-bottom: 12px; 
 }
-.ck-tf-h { font-size: 28px; font-weight: 800; color: #111; margin-bottom: 8px; letter-spacing: -0.025em; }
+.ck-tf-h { font-size: 28px; font-weight: 800; color: #111; margin-bottom: 6px; letter-spacing: -0.025em; white-space: normal; }
+@media (min-width: 768px) {
+  .ck-tf-h { white-space: nowrap; }
+}
 .ck-tf-p { font-size: 14px; color: #666; font-weight: 500; }
 
-.ck-tf-grid { display: flex; flex-direction: column; gap: 40px; }
-.ck-tf-sh { font-size: 12px; font-weight: 800; letter-spacing: 0.15em; color: #999; margin-bottom: 24px;  }
+.ck-tf-grid { display: flex; flex-direction: column; gap: 20px; }
+.ck-tf-sh { font-size: 12px; font-weight: 800; letter-spacing: 0.15em; color: #999; margin-bottom: 18px; }
 
 .ck-tf-sec { position: relative; }
-.ck-tf-cards { display: flex; flex-direction: column; gap: 16px; }
-.ck-tf-row { display: flex; gap: 16px; }
+.ck-tf-cards { display: flex; flex-direction: column; gap: 14px; }
+.ck-tf-row { display: flex; flex-direction: column; gap: 14px; }
+@media (min-width: 640px) {
+  .ck-tf-row { flex-direction: row; }
+}
 
-.ck-tf-foot { margin-top: 48px; border-top: 1px solid #f0f0ea; padding-top: 40px; display: flex; flex-direction: column; gap: 32px; }
-.ck-tf-terms { display: flex; gap: 14px; cursor: pointer; align-items: flex-start; }
-.ck-tf-chk { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #eaeaef; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+.ck-tf-foot { margin-top: 32px; border-top: 1px solid #f0f0ea; padding-top: 28px; display: flex; flex-direction: column; gap: 20px; }
+.ck-tf-terms { display: flex; gap: 12px; cursor: pointer; align-items: flex-start; }
+.ck-tf-chk { width: 18px; height: 18px; border-radius: 5px; border: 2px solid #eaeaef; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
 .ck-tf-terms span { font-size: 13px; color: #555; line-height: 1.6; font-weight: 500; }
 
 .ck-tf-btn {
-  background: #0D1DAD; color: #fff; border: none; border-radius: 16px; height: 60px;
-  padding: 0 40px; width: fit-content;
+  background: #0D1DAD; color: #fff; border: none; border-radius: 14px; height: 52px;
+  padding: 0 28px; width: fit-content;
   display: flex; align-items: center; justify-content: center; gap: 12px;
-  font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 25px -5px rgba(50, 180, 4, 0.25);  letter-spacing: 0.1em;
+  font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 20px -5px rgba(13, 29, 173, 0.2); letter-spacing: 0.05em;
 }
-.ck-tf-btn:not(.ck-tf-btn--off):hover { background: #0D1DAD; transform: translateY(-3px); box-shadow: 0 20px 40px -10px rgba(50, 180, 4, 0.4); }
+.ck-tf-btn:not(.ck-tf-btn--off):hover { background: #0D1DAD; transform: translateY(-3px); box-shadow: 0 20px 40px -10px rgba(13, 29, 173, 0.4); }
 .ck-tf-btn:active { transform: scale(0.97); }
 .ck-tf-btn--off { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
 
 @media (max-width: 640px) {
-  .ck-tf { padding: 32px 20px; }
-  .ck-tf-row { flex-direction: column; gap: 16px; }
+  .ck-tf { padding: 32px 0px; }
+  .ck-tf-row { flex-direction: column; gap: 14px; }
 }
 </style>
+" ,Description:

@@ -125,7 +125,7 @@
         <div class="mt-10 pt-6 border-t border-gray-100 flex items-center justify-end gap-4">
           <button 
             @click="isOpen = false"
-            class="px-8 py-3 bg-gray-900 text-white text-[10px]  uppercase tracking-[0.2em] rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
+            class="px-8 py-3 bg-gray-900 text-white text-[10px]  uppercase  rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
           >
             Apply Selection
           </button>

@@ -29,7 +29,7 @@
               <!-- Badge -->
               <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 mb-6 border border-white/10">
                 <div class="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse"></div>
-                <span class="text-[10px] font-bold text-white/90 uppercase tracking-[0.2em]">Live Support</span>
+                <span class="text-[10px] font-bold text-white/90 uppercase ">Live Support</span>
               </div>
 
               <h3 class="text-2xl sm:text-[28px] font-bold text-white leading-[1.2] mb-4 tracking-tight">
@@ -64,7 +64,7 @@
             
             <!-- Benefits List -->
             <div>
-              <p class="text-[10px] font-bold text-gray-400 font-sans uppercase tracking-[0.2em] mb-6">Why call us?</p>
+              <p class="text-[10px] font-bold text-gray-400 font-sans uppercase  mb-6">Why call us?</p>
               <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-1 gap-y-6 xs:gap-x-4">
                 <div 
                   v-for="(benefit, idx) in benefits" 
@@ -96,7 +96,7 @@
                     <PhoneIcon class="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <p class="text-[8px] sm:text-[9px] font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Call us now</p>
+                    <p class="text-[8px] sm:text-[9px] font-bold text-white/50 uppercase  mb-0.5">Call us now</p>
                     <p class="text-xs sm:text-sm font-bold text-white tabular-nums tracking-wide">+1 844 FLYBETH (359-2384)</p>
                   </div>
                 </div>

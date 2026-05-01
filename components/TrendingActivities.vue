@@ -12,7 +12,7 @@
             <div class="h-8 w-8 bg-[#0084ff]/10 rounded-lg flex items-center justify-center">
               <svg class="w-4 h-4 text-[#0084ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
-            <span class="text-[10px] font-bold text-[#0084ff]  tracking-[0.2em]">Things to do</span>
+            <span class="text-[10px] font-bold text-[#0084ff]  ">Things to do</span>
           </div>
           <h2 class="text-3xl font-bold text-gray-900 tracking-tight mb-2">Discover Activities & Experiences</h2>
           <p class="text-sm text-gray-500 max-w-lg">Unforgettable tours, excursions, and things to do at your destination — powered by local experts.</p>

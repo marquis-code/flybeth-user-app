@@ -148,7 +148,10 @@ const calcLayover = (seg1: any, seg2: any) => {
 
 .ck-fd-card { background: #fff; border: 1.5px solid #f0f0ea; border-radius: 20px; overflow: hidden; }
 
-.ck-fd-hdr { display: flex; align-items: center; justify-content: space-between; padding: 24px 32px; background: #fafaf8; }
+.ck-fd-hdr { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafaf8; }
+@media (min-width: 640px) {
+  .ck-fd-hdr { padding: 24px 32px; }
+}
 .ck-fd-h { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 4px; letter-spacing: -0.02em; }
 .ck-fd-sub { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; color: #aaa; }
 .ck-fd-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
@@ -158,7 +161,10 @@ const calcLayover = (seg1: any, seg2: any) => {
   display: flex; align-items: center; justify-content: center; cursor: pointer; color: #888;
 }
 
-.ck-fd-body { padding: 32px; border-top: 1px solid #f0f0ea; }
+.ck-fd-body { padding: 20px; border-top: 1px solid #f0f0ea; }
+@media (min-width: 640px) {
+  .ck-fd-body { padding: 32px; }
+}
 
 .ck-fd-seg-group { margin-bottom: 24px; }
 .ck-fd-seg { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; }
@@ -168,7 +174,10 @@ const calcLayover = (seg1: any, seg2: any) => {
 .ck-fd-seg-name { font-size: 11px; font-weight: 700; color: #111; }
 .ck-fd-cabin { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #1d7a4f; background: #f0f7f3; padding: 3px 8px; border-radius: 100px; }
 
-.ck-fd-time-grid { display: flex; align-items: center; gap: 24px; }
+.ck-fd-time-grid { display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 640px) {
+  .ck-fd-time-grid { flex-direction: row; gap: 24px; }
+}
 .ck-fd-point { flex: 1; }
 .ck-fd-time { display: block; font-size: 16px; font-weight: 800; color: #111; margin-bottom: 4px; }
 .ck-fd-loc { display: flex; flex-direction: column; }
@@ -181,7 +190,10 @@ const calcLayover = (seg1: any, seg2: any) => {
 .ck-fd-path-line::before { left: 0; } .ck-fd-path-line::after { right: 0; }
 .ck-fd-path-dur { font-size: 10px; font-weight: 600; color: #bbb; letter-spacing: 0.05em; }
 
-.ck-fd-point--end { text-align: right; }
+.ck-fd-point--end { text-align: left; }
+@media (min-width: 640px) {
+  .ck-fd-point--end { text-align: right; }
+}
 
 .ck-fd-layover {
   display: flex; align-items: center; gap: 8px; margin: 12px 20px;

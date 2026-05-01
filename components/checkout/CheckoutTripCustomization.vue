@@ -58,7 +58,7 @@
          <h3 class="text-lg font-bold text-gray-900 tracking-tight">Personalize your journey</h3>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-4">
         <div 
           v-for="addon in allServices" 
           :key="addon.id" 
@@ -91,8 +91,8 @@
     </div>
 
     <!-- Conditional Seat Selection Area -->
-    <div v-if="isAddonSelected('seat-selection')" class="animate-in slide-in-from-top-4 duration-500">
-       <div class="bg-gray-900 rounded-3xl p-1 relative overflow-hidden">
+     <div v-if="isAddonSelected('seat-selection')" class="animate-in slide-in-from-top-4 duration-500">
+        <div class="bg-white rounded-3xl border border-gray-100 p-1 relative overflow-hidden">
           <SeatSelection
             v-if="flightOffer"
             is-embedded
@@ -110,10 +110,10 @@
 
     <!-- Continue -->
     <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10 border-t border-gray-100">
-      <button @click="$emit('back')" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors">
+      <button @click="$emit('back')" class="text-xs bg-gray-200 py-3 px-6 rounded-2xl font-bold uppercase tracking-widest text-gray-600 hover:text-gray-900 transition-colors">
         Go Back
       </button>
-      <button @click="$emit('continue')" class="w-full sm:w-auto bg-[#0D1DAD] hover:bg-[#0D1DAD] px-12 h-14 rounded-2xl font-bold tracking-widest text-[11px] text-white transition-all active:scale-[0.98] shadow-lg shadow-[#0D1DAD]/20 flex items-center justify-center gap-4 uppercase">
+      <button @click="$emit('continue')" class="w-full sm:w-auto bg-black px-12 h-14 rounded-2xl font-bold tracking-widest text-[11px] text-white transition-all active:scale-[0.98] shadow-lg shadow-[#0D1DAD]/20 flex items-center justify-center gap-4 uppercase">
         Continue to Payment
         <ChevronRight class="w-4 h-4" />
       </button>

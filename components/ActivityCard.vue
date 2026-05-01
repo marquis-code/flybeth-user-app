@@ -16,7 +16,7 @@
       <div class="flex-grow p-6 flex flex-col justify-between">
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <span class="text-sm  text-brand-green uppercase tracking-[0.2em] bg-brand-green/5 px-2 py-1 rounded-md">
+            <span class="text-sm  text-brand-green uppercase  bg-brand-green/5 px-2 py-1 rounded-md">
               {{ activity.content?.category || 'Activity' }}
             </span>
             <div class="text-right">

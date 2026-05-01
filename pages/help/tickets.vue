@@ -19,7 +19,7 @@
                      <component :is="statusIcons[ticket.status]" class="h-6 w-6" />
                   </div>
                   <div>
-                     <p class="text-[10px]  uppercase tracking-[0.2em] text-neutral-300 mb-1">#{{ ticket.id }} • {{ ticket.category }}</p>
+                     <p class="text-[10px]  uppercase  text-neutral-300 mb-1">#{{ ticket.id }} • {{ ticket.category }}</p>
                      <h4 class="text-lg  text-neutral-900">{{ ticket.subject }}</h4>
                   </div>
                </div>

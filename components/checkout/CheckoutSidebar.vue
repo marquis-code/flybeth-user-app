@@ -202,8 +202,8 @@ const formatPrice = (price: number) => {
 .ck-sb-item { display: flex; gap: 12px; background: #fafaf8; border-radius: 16px; padding: 12px; border: 1px solid #f0f0ea; }
 .ck-sb-ico { color: #111; background: #fff; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #eee; flex-shrink: 0; }
 .ck-sb-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #aaa; margin-bottom: 2px; }
-.ck-sb-val { font-size: 13px; font-weight: 700; color: #111; line-height: 1.3; margin-bottom: 2px; }
-.ck-sb-sub { font-size: 11px; color: #888; }
+.ck-sb-val { font-size: 13px; font-weight: 700; color: #111; line-height: 1.3; margin-bottom: 2px; word-break: break-word; }
+.ck-sb-sub { font-size: 11px; color: #888; word-break: break-word; }
 
 .ck-sb-divider { border-bottom: 1px dashed #eee; margin: 20px 0; }
 

@@ -9,7 +9,7 @@
       </div>
 
       <!-- Legend (Compact) -->
-      <div class="flex items-center gap-4 px-4 py-2.5 bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div class="flex flex-wrap items-center gap-4 px-4 py-2.5 bg-white rounded-xl border border-gray-100 shadow-sm">
         <div class="flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-blue-600"></div>
           <span class="text-[9px] font-black text-gray-400 tracking-widest uppercase">Available</span>
@@ -32,7 +32,7 @@
         <div class="absolute inset-0 border-4 border-t-blue-600 rounded-full animate-spin"></div>
       </div>
       <div class="text-center">
-        <p class="text-sm  text-gray-900 tracking-[0.2em]">Mapping Aircraft Cabin</p>
+        <p class="text-sm  text-gray-900 ">Mapping Aircraft Cabin</p>
         <p class="text-[10px] font-bold text-gray-400 tracking-widest mt-2">Retrieving real-time availability...</p>
       </div>
     </div>
@@ -40,29 +40,29 @@
     <!-- Main Content -->
     <div v-else-if="seatmaps.length" class="space-y-6">
       <!-- Main Selection Bar -->
-      <div class="w-full flex items-center justify-between p-6 bg-gray-900 rounded-[2rem] text-white shadow-xl relative overflow-hidden group">
+      <div class="w-full flex items-center justify-between p-6 bg-white border border-gray-100 rounded-[2rem] text-gray-900 shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
         
         <!-- Selection Info -->
         <div class="flex items-center gap-4 relative z-10">
-          <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white border border-white/10">
+          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
             <User class="w-5 h-5" />
           </div>
           <div class="min-w-0">
-            <p class="text-[9px]  text-white/40  tracking-[0.2em] mb-1">Traveler Selection</p>
+            <p class="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-1">Traveler Selection</p>
             <div class="flex items-center gap-2">
-              <span class="text-base  truncate">{{ passengers.firstName }} {{ passengers.lastName }}</span>
-              <div v-if="selectedSeats[0]" class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px]  rounded-lg border border-emerald-500/30 tracking-widest">
+              <span class="text-base font-bold text-gray-900 truncate">{{ passengers.firstName }} {{ passengers.lastName }}</span>
+              <div v-if="selectedSeats[0]" class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-bold rounded-lg border border-emerald-100 tracking-widest uppercase">
                 SEAT {{ selectedSeats[0].designator }}
               </div>
             </div>
           </div>
         </div>
-
+ 
         <!-- Pricing -->
         <div class="text-right relative z-10">
-          <p class="text-[9px]  text-white/40  tracking-[0.2em] mb-1">Seat Surcharge</p>
-          <span class="text-2xl  text-white tracking-tight">{{ formatPrice(totalSeatPrice) }}</span>
+          <p class="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-1">Seat Surcharge</p>
+          <span class="text-2xl font-black text-[#0D1DAD] tracking-tight">{{ formatPrice(totalSeatPrice) }}</span>
         </div>
       </div>
 
@@ -83,7 +83,7 @@
                   <!-- Cabin Header -->
                   <div class="flex items-center gap-4 justify-center sticky top-0 bg-white/95 backdrop-blur-md py-6 z-20">
                     <div class="h-[2px] flex-1 bg-gradient-to-r from-transparent via-gray-100 to-blue-100"></div>
-                    <span class="px-8 py-3 bg-blue-600 rounded-xl text-xs sm:text-sm  text-white   shadow-xl shadow-blue-200 whitespace-nowrap">
+                    <span class="px-8 py-3 bg-black rounded-xl text-xs sm:text-sm  text-white   shadow-xl shadow-blue-200 whitespace-nowrap">
                       {{ cabin.name || 'Main Cabin' }}
                     </span>
                     <div class="h-[2px] flex-1 bg-gradient-to-l from-transparent via-gray-100 to-blue-100"></div>
@@ -185,10 +185,10 @@
         <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border border-gray-200 group-hover:border-gray-900 transition-colors flex-shrink-0">
           <ChevronRight class="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-180" />
         </div>
-        <span class="text-[9px] sm:text-[10px]   tracking-[0.2em] text-gray-400 group-hover:text-gray-900 hidden xs:block">Previous Review</span>
+        <span class="text-[9px] sm:text-[10px]    text-gray-400 group-hover:text-gray-900 hidden xs:block">Previous Review</span>
       </button>
 
-      <button @click="$emit('continue')" class="group relative bg-gray-900 text-white px-8 sm:px-12 py-3.5 rounded-lg text-[10px] sm:text-[11px]   tracking-[0.2em] shadow-2xl hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden">
+      <button @click="$emit('continue')" class="group relative bg-gray-900 text-white px-8 sm:px-12 py-3.5 rounded-lg text-[10px] sm:text-[11px]    shadow-2xl hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-white/10 to-blue-600/0 -translate-x-full group-hover:animate-shimmer"></div>
         <span class="relative z-10 flex items-center gap-2 sm:gap-3">
           Finalize Selection

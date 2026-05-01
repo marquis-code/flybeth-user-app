@@ -20,7 +20,7 @@
     <!-- Footer -->
     <!-- <footer class="pt-20 pb-12 border-t border-neutral-100 bg-neutral-50/50">
       <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-center text-xs font-bold text-neutral-400 gap-8 uppercase tracking-[0.2em]">
+        <div class="flex flex-col md:flex-row justify-between items-center text-xs font-bold text-neutral-400 gap-8 uppercase ">
            <div class="flex items-center space-x-3">
               <img src="@/assets/img/logo.png" class="h-6 w-auto grayscale opacity-50" />
               <p>© 2026 Flybeth Travel. All rights reserved.</p>

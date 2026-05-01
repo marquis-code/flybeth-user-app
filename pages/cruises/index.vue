@@ -12,7 +12,7 @@
         <div class="max-w-3xl space-y-6">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 backdrop-blur-md">
             <Anchor class="h-3.5 w-3.5 text-primary" />
-            <span class="text-[10px]  uppercase tracking-[0.2em] text-white/70">Ultra-Luxury Sailings</span>
+            <span class="text-[10px]  uppercase  text-white/70">Ultra-Luxury Sailings</span>
           </div>
           
           <h1 class="text-5xl md:text-7xl  text-white tracking-tight leading-[1.05]">

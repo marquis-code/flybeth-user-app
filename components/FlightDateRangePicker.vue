@@ -1,233 +1,120 @@
 <template>
-  <div class="relative w-full" ref="pickerRef">
+  <div class="relative w-full h-full" ref="pickerRef">
 
-    <!-- ── Trigger ─────────────────────────────────────────────────────────── -->
+    <!-- ── Trigger ── -->
     <div
-      @click="openCalendar"
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none whitespace-nowrap"
+      @mousedown.prevent="toggleCalendar"
+      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
+      :class="showCalendar ? 'bg-blue-50/30 ring-2 ring-gray-900/5' : 'hover:bg-gray-50/60'"
     >
-      <p class="text-[11px] font-bold text-brand-gray/40 tracking-wide mb-0.5 group-hover:text-gray-900 transition-colors ">
-        {{ mode === 'oneway' ? 'Departure date' : 'Check-in – Check-out' }}
+      <p 
+        class="text-[10px] font-bold tracking-[0.05em] mb-0.5 transition-colors uppercase"
+        :class="showCalendar ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-900'"
+      >
+        {{ mode === 'oneway' ? 'Departure' : 'Check-in – Check-out' }}
       </p>
+      
       <div class="flex items-center gap-2">
-        <CalendarDaysIcon class="h-4 w-4 text-brand-blue/60 shrink-0" />
-        <span class="text-sm font-semibold tracking-tight">
+        <CalendarDaysIcon class="h-4 w-4 shrink-0 transition-colors" :class="showCalendar ? 'text-gray-900' : 'text-gray-300'" />
+        <div class="flex items-baseline gap-1.5 min-w-0">
           <template v-if="mode === 'oneway'">
-            <span :class="startDate ? 'text-gray-900' : 'text-gray-500'">
-              {{ startDate ? formatDisplay(startDate) : 'Select date' }}
+            <span class="text-[14px] font-bold truncate" :class="startDate ? 'text-gray-900' : 'text-gray-400'">
+              {{ startDate ? formatDisplayCompact(startDate) : 'Select date' }}
             </span>
           </template>
           <template v-else>
-            <span :class="startDate ? 'text-gray-900' : 'text-gray-500'">
-              {{ startDate ? formatDisplay(startDate) : 'Check-in' }}
+            <span class="text-[14px] font-bold truncate" :class="startDate ? 'text-gray-900' : 'text-gray-400'">
+              {{ startDate ? formatDisplayCompact(startDate) : 'Check-in' }}
             </span>
-            <span class="text-gray-500 mx-1.5">–</span>
-            <span :class="endDate ? 'text-gray-900' : 'text-gray-500'">
-              {{ endDate ? formatDisplay(endDate) : 'Check-out' }}
+            <span class="text-gray-300 font-bold mx-0.5 text-[10px]">–</span>
+            <span class="text-[14px] font-bold truncate" :class="endDate ? 'text-gray-900' : 'text-gray-400'">
+              {{ endDate ? formatDisplayCompact(endDate) : 'Check-out' }}
             </span>
           </template>
-        </span>
+        </div>
       </div>
-      <p v-if="startDate && endDate && mode !== 'oneway'" class="text-[11px] text-gray-400 font-medium mt-0.5">
+
+      <p v-if="startDate && endDate && mode !== 'oneway' && !showCalendar" class="text-[10px] text-gray-400 font-medium mt-0.5">
         {{ nightCount }} night{{ nightCount !== 1 ? 's' : '' }}
       </p>
     </div>
 
-    <!-- ── Single Teleport: backdrop + card as SIBLINGS so backdrop-blur cannot bleed into the card ── -->
-    <Teleport to="body">
-      <Transition name="fade-overlay">
-        <div v-if="showCalendar">
-
-          <!-- Dark backdrop — z-[100010], click to dismiss -->
-          <div
-            class="fixed inset-0 z-[100010] bg-black/60 backdrop-blur-[4px]"
-            @click="closeCalendar"
-          />
-
-          <!-- Calendar card — z-[100011], sibling of backdrop so blur cannot reach it -->
-          <div
-            :style="panelStyle"
-            class="fixed z-[100011] bg-white overflow-hidden select-none transition-all duration-300 shadow-2xl flex flex-col"
-            :class="[
-              isMobile ? 'inset-0 w-full h-full rounded-none' : 'inset-x-0 w-[580px] rounded-2xl'
-            ]"
-            @click.stop
+    <!-- ── Calendar Dropdown Panel ── -->
+    <Transition name="loc-drop">
+      <div
+        v-show="showCalendar"
+        class="absolute left-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-100 shadow-2xl overflow-hidden flex flex-col"
+        :class="[isMobile ? 'fixed inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[520px]']"
+        style="background-color: #ffffff !important;"
+        @mousedown.stop
+      >
+        <!-- Month nav header -->
+        <div class="flex items-center justify-between px-4 py-4 border-b border-gray-50/50">
+          <button
+            @click="prevMonth"
+            :disabled="isAtMinMonth"
+            class="h-8 w-8 rounded-lg border border-gray-100 flex items-center justify-center transition-all"
+            :class="isAtMinMonth ? 'opacity-20 cursor-not-allowed' : 'hover:bg-gray-50 active:scale-95'"
           >
+            <ChevronLeftIcon class="h-4 w-4 text-gray-500" />
+          </button>
 
-            <!-- Mobile Header (Close/Back) -->
-            <div v-if="isMobile" class="flex items-center justify-between px-6 pt-6 pb-2 border-b border-gray-50 mb-2">
-              <button @click="closeCalendar" class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors">
-                <ChevronLeftIcon class="h-6 w-6 text-gray-900" />
-              </button>
-              <div class="text-center">
-                 <h2 class="text-base font-bold text-gray-900 leading-none">Select dates</h2>
-                 <p class="text-[10px] font-bold text-gray-400 tracking-widest mt-1 uppercase">{{ mode === 'oneway' ? 'One-way' : 'Round-trip' }}</p>
-              </div>
-              <div class="w-10"></div>
-            </div>
-
-            <!-- ── Month nav header ──────────────────────────────────────── -->
-            <div class="flex items-center justify-between px-4 sm:px-6 py-4">
-              <button
-                @click="prevMonth"
-                :disabled="isAtMinMonth"
-                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center transition-colors"
-                :class="isAtMinMonth ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50'"
-              >
-                <ChevronLeftIcon v-if="!isMobile" class="h-4 w-4 text-gray-500" />
-                <span v-else class="text-xs font-bold text-gray-500">Prev</span>
-              </button>
-
-              <div class="flex-1 grid gap-4 text-center" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
-                <p class="text-base font-bold text-gray-900">{{ monthName(currentYear, currentMonth) }}</p>
-                <p v-if="!isMobile" class="text-base font-bold text-gray-900">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
-              </div>
-
-              <button
-                @click="nextMonth"
-                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
-              >
-                <ChevronRightIcon v-if="!isMobile" class="h-4 w-4 text-gray-500" />
-                <span v-else class="text-xs font-bold text-gray-500">Next</span>
-              </button>
-            </div>
-
-            <!-- ── Two-month grid ────────────────────────────────────────── -->
-            <div class="flex-1 overflow-y-auto px-4 pb-4 grid gap-0" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
-
-              <!-- Left month -->
-              <div :class="!isMobile ? 'pr-4 border-r border-gray-100' : ''">
-                <div class="grid grid-cols-7 mb-2">
-                  <div
-                    v-for="d in dayHeaders" :key="`lh-${d}`"
-                    class="text-center text-[11px] font-bold text-gray-400 py-1"
-                  >{{ d }}</div>
-                </div>
-                <div class="grid grid-cols-7">
-                  <template v-for="(cell, i) in leftCells" :key="`l-${i}`">
-                    <!-- Empty filler for offset -->
-                    <div v-if="cell === null" class="h-9" />
-
-                    <!-- Day wrapper (carries the range-strip bg) -->
-                    <div
-                      v-else
-                      class="flex items-center justify-center h-9"
-                      :class="rangeWrapClass(cell)"
-                      @mouseover="!isPast(cell) && (hoverDate = cell)"
-                      @mouseleave="hoverDate = null"
-                      @click="selectDate(cell)"
-                    >
-                      <span
-                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
-                        :class="dayClass(cell)"
-                      >{{ cellDay(cell) }}</span>
-                    </div>
-                  </template>
-                </div>
-              </div>
-
-              <!-- Right month (Hidden on mobile) -->
-              <div v-if="!isMobile" class="pl-4">
-                <div class="grid grid-cols-7 mb-2">
-                  <div
-                    v-for="d in dayHeaders" :key="`rh-${d}`"
-                    class="text-center text-[11px] font-bold text-gray-400 py-1"
-                  >{{ d }}</div>
-                </div>
-                <div class="grid grid-cols-7">
-                  <template v-for="(cell, i) in rightCells" :key="`r-${i}`">
-                    <div v-if="cell === null" class="h-9" />
-
-                    <div
-                      v-else
-                      class="flex items-center justify-center h-9"
-                      :class="rangeWrapClass(cell)"
-                      @mouseover="!isPast(cell) && (hoverDate = cell)"
-                      @mouseleave="hoverDate = null"
-                      @click="selectDate(cell)"
-                    >
-                      <span
-                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
-                        :class="dayClass(cell)"
-                      >{{ cellDay(cell) }}</span>
-                    </div>
-                  </template>
-                </div>
-              </div>
-
-              <!-- Extra month for mobile if they want to scroll more -->
-              <div v-if="isMobile" class="mt-8">
-                <div class="text-center mb-4">
-                  <p class="text-base font-bold text-gray-900">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
-                </div>
-                <div class="grid grid-cols-7 mb-2">
-                  <div
-                    v-for="d in dayHeaders" :key="`mh-${d}`"
-                    class="text-center text-[11px] font-bold text-gray-400 py-1"
-                  >{{ d }}</div>
-                </div>
-                <div class="grid grid-cols-7">
-                  <template v-for="(cell, i) in rightCells" :key="`m-${i}`">
-                    <div v-if="cell === null" class="h-9" />
-                    <div
-                      v-else
-                      class="flex items-center justify-center h-9"
-                      :class="rangeWrapClass(cell)"
-                      @mouseover="!isPast(cell) && (hoverDate = cell)"
-                      @mouseleave="hoverDate = null"
-                      @click="selectDate(cell)"
-                    >
-                      <span
-                        class="h-9 w-9 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-100"
-                        :class="dayClass(cell)"
-                      >{{ cellDay(cell) }}</span>
-                    </div>
-                  </template>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- ── Footer ────────────────────────────────────────────────── -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-6 sm:py-4 border-t border-gray-100 bg-white sticky bottom-0">
-              <div class="flex items-center gap-2 text-sm text-gray-500 font-medium text-center sm:text-left">
-                <InformationCircleIcon class="h-4 w-4 shrink-0 hidden sm:block" />
-                <span v-if="!startDate">
-                  Select {{ mode === 'oneway' ? 'departure' : 'check-in' }}
-                </span>
-                <span v-else-if="mode !== 'oneway' && !endDate">
-                  Select check-out
-                </span>
-                <span v-else class="text-gray-900 text-xs sm:text-sm font-bold">
-                  {{ mode === 'oneway' ? formatDisplay(startDate) : `${formatDisplay(startDate)} – ${formatDisplay(endDate!)}` }}
-                </span>
-              </div>
-
-              <div class="flex items-center gap-3 w-full sm:w-auto">
-                <button
-                  v-if="startDate"
-                  @click="clearDates"
-                  class="flex-1 sm:flex-none text-xs sm:text-sm font-bold text-gray-500 hover:text-gray-700 px-3 py-3 sm:py-2.5 rounded-xl hover:bg-gray-100 transition-colors"
-                >
-                  Clear
-                </button>
-                <button
-                  @click="done"
-                  :disabled="!startDate || (mode !== 'oneway' && !endDate)"
-                  class="flex-[2] sm:flex-none px-6 sm:px-8 py-4 sm:py-2.5 bg-gray-900 text-white rounded-xl text-sm font-bold
-                         disabled:opacity-40 disabled:cursor-not-allowed
-                         hover:bg-black transition-colors active:scale-95 shadow-sm"
-                >
-                  Confirm {{ mode === 'roundtrip' && startDate && endDate ? nightCount + ' nights' : '' }}
-                </button>
-              </div>
-            </div>
-
+          <div class="flex-1 flex items-center justify-center gap-4 text-center">
+            <p class="text-[13px] font-bold text-gray-900">{{ monthName(currentYear, currentMonth) }}</p>
+            <p v-if="!isMobile" class="text-[13px] font-bold text-gray-900">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
           </div>
 
+          <button
+            @click="nextMonth"
+            class="h-8 w-8 rounded-lg border border-gray-100 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all"
+          >
+            <ChevronRightIcon class="h-4 w-4 text-gray-500" />
+          </button>
         </div>
-      </Transition>
-    </Teleport>
+
+        <!-- Two-month grid (Compact) -->
+        <div class="overflow-y-auto px-4 py-4 grid gap-8" :class="isMobile ? 'grid-cols-1' : 'grid-cols-2'">
+          <!-- Month grid (Reuseable template) -->
+          <div v-for="(cells, mIdx) in [leftCells, rightCells].slice(0, isMobile ? 1 : 2)" :key="mIdx">
+            <div class="grid grid-cols-7 mb-2">
+              <div v-for="d in dayHeaders" :key="d" class="text-center text-[9px] font-black text-gray-300 uppercase tracking-widest py-1">{{ d }}</div>
+            </div>
+            <div class="grid grid-cols-7">
+              <template v-for="(cell, i) in cells" :key="i">
+                <div v-if="cell === null" class="h-8" />
+                <div
+                  v-else
+                  class="flex items-center justify-center h-8 relative"
+                  :class="rangeWrapClass(cell)"
+                  @mouseover="!isPast(cell) && (hoverDate = cell)"
+                  @mouseleave="hoverDate = null"
+                  @click="selectDate(cell)"
+                >
+                  <span
+                    class="h-8 w-8 flex items-center justify-center rounded-lg text-[12px] font-bold transition-all duration-75"
+                    :class="dayClass(cell)"
+                  >{{ cellDay(cell) }}</span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-between gap-4 px-5 py-4 border-t border-gray-50 bg-gray-50/30">
+          <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <span v-if="!startDate">Select Date</span>
+            <span v-else-if="mode !== 'oneway' && !endDate">Select Return</span>
+            <span v-else class="text-gray-900">{{ mode === 'oneway' ? 'Confirmed' : nightCount + ' Nights' }}</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button v-if="startDate" @click="clearDates" class="text-[11px] font-bold text-gray-400 hover:text-gray-900 px-3 py-2 transition-colors">Clear</button>
+            <button @click="closeCalendar" class="px-5 py-2 bg-gray-900 text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95">Done</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
 
   </div>
 </template>
@@ -238,82 +125,49 @@ import {
   CalendarDaysIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  InformationCircleIcon,
 } from '@heroicons/vue/24/outline'
 
-// ── Props & Emits ─────────────────────────────────────────────────────────────
 const props = defineProps({
   departure: { type: String, default: '' },
   return:    { type: String, default: '' },
   mode:      { type: String as () => 'oneway' | 'roundtrip', default: 'roundtrip' },
 })
 
-const emit = defineEmits<{
-  'update:departure': [v: string]
-  'update:return':    [v: string]
-  focus: []
-  close: []
-}>()
+const emit = defineEmits(['update:departure', 'update:return', 'focus', 'close'])
 
-// ── Refs ──────────────────────────────────────────────────────────────────────
 const pickerRef    = ref<HTMLElement | null>(null)
 const showCalendar = ref(false)
-const panelStyle   = ref<Record<string, string>>({})
 const hoverDate    = ref<string | null>(null)
 const isMobile     = ref(false)
 
-const checkMobile = () => {
-  if (typeof window !== 'undefined') {
-    isMobile.value = window.innerWidth < 768
-    if (isMobile.value) {
-      panelStyle.value = {}
-    }
-  }
-}
-
-// Today as ISO string 'YYYY-MM-DD'
 const _today = new Date()
 _today.setHours(0, 0, 0, 0)
 const todayStr = toISO(_today)
 
-// Internal state (ISO strings)
 const startDate = ref<string | null>(props.departure || null)
 const endDate   = ref<string | null>(props.return    || null)
 
-// Month navigation — starts at current month
 const currentMonth = ref(_today.getMonth())
 const currentYear  = ref(_today.getFullYear())
 
-// ── Computed ──────────────────────────────────────────────────────────────────
 const nextMonthIndex = computed(() => (currentMonth.value + 1) % 12)
-const nextMonthYear  = computed(() =>
-  currentMonth.value === 11 ? currentYear.value + 1 : currentYear.value
-)
-
+const nextMonthYear  = computed(() => currentMonth.value === 11 ? currentYear.value + 1 : currentYear.value)
 const leftCells  = computed(() => buildCells(currentYear.value, currentMonth.value))
 const rightCells = computed(() => buildCells(nextMonthYear.value, nextMonthIndex.value))
 
 const nightCount = computed(() => {
   if (!startDate.value || !endDate.value) return 0
-  return Math.round(
-    (new Date(endDate.value).getTime() - new Date(startDate.value).getTime()) / 86_400_000
-  )
+  return Math.round((new Date(endDate.value).getTime() - new Date(startDate.value).getTime()) / 86_400_000)
 })
 
-const isAtMinMonth = computed(() =>
-  currentYear.value === _today.getFullYear() && currentMonth.value === _today.getMonth()
-)
+const isAtMinMonth = computed(() => currentYear.value === _today.getFullYear() && currentMonth.value === _today.getMonth())
 
-// ── Pure helper functions ─────────────────────────────────────────────────────
 function toISO(d: Date): string {
-  const y  = d.getFullYear()
-  const m  = String(d.getMonth() + 1).padStart(2, '0')
-  const dd = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${dd}`
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 function buildCells(year: number, month: number): (string | null)[] {
-  const firstDay  = new Date(year, month, 1).getDay()     // 0–6
+  const firstDay  = new Date(year, month, 1).getDay()
   const daysCount = new Date(year, month + 1, 0).getDate()
   const cells: (string | null)[] = Array(firstDay).fill(null)
   for (let d = 1; d <= daysCount; d++) {
@@ -322,142 +176,72 @@ function buildCells(year: number, month: number): (string | null)[] {
   return cells
 }
 
-const dayHeaders = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
 function monthName(year: number, month: number): string {
   return new Date(year, month, 1).toLocaleString('default', { month: 'long', year: 'numeric' })
 }
 
-function formatDisplay(iso: string): string {
+function formatDisplayCompact(iso: string): string {
   if (!iso) return ''
-  const parts = iso.split('-').map(Number)
-  if (parts.length !== 3) return ''
-  const [y, m, d] = parts
-  return new Date(y!, m! - 1, d!).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-  })
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y!, m! - 1, d!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-function cellDay(iso: string): string {
-  const parts = iso.split('-')
-  return String(parseInt(parts[2] || '0', 10))
-}
+function cellDay(iso: string): string { return String(parseInt(iso.split('-')[2] || '0', 10)) }
+function isPast(iso: string): boolean { return iso < todayStr }
 
-function isPast(iso: string): boolean {
-  return iso < todayStr
-}
-
-// ── Range / selection state helpers ──────────────────────────────────────────
 function effectiveEnd(): string | null {
   if (props.mode === 'oneway') return null
   if (endDate.value) return endDate.value
-  // Preview end via hover when user has picked start and is hovering a future date
-  if (startDate.value && hoverDate.value && hoverDate.value > startDate.value) {
-    return hoverDate.value
-  }
+  if (startDate.value && hoverDate.value && hoverDate.value > startDate.value) return hoverDate.value
   return null
 }
 
-function isStartDay(iso: string): boolean {
-  return !!startDate.value && iso === startDate.value
-}
-
-function isEndDay(iso: string): boolean {
-  return !!endDate.value && iso === endDate.value
-}
-
+function isStartDay(iso: string): boolean { return !!startDate.value && iso === startDate.value }
+function isEndDay(iso: string): boolean { return !!endDate.value && iso === endDate.value }
 function inRange(iso: string): boolean {
-  if (props.mode === 'oneway') return false
   const end = effectiveEnd()
   if (!startDate.value || !end) return false
   return iso > startDate.value && iso < end
 }
 
-// ── CSS class builders ────────────────────────────────────────────────────────
-
-/**
- * Wrapper div class — provides the blue-50 strip between start and end.
- * The wrapper is full-width within the grid cell so the strip is seamless.
- */
 function rangeWrapClass(iso: string): string {
-  if (isPast(iso)) return 'cursor-not-allowed'
-
-  const s   = isStartDay(iso)
-  const e   = isEndDay(iso)
-  const end = effectiveEnd()
-  const inR = inRange(iso)
-
-  if (s && end && iso < end) {
-    return 'bg-gray-100 rounded-l-full cursor-pointer'
-  }
-  if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) {
-    return 'bg-gray-100 rounded-r-full cursor-pointer'
-  }
-  if (inR) {
-    return 'bg-gray-100 cursor-pointer'
-  }
-  return 'cursor-pointer'
+  if (isPast(iso)) return 'cursor-not-allowed opacity-30'
+  const s = isStartDay(iso), e = isEndDay(iso), end = effectiveEnd(), inR = inRange(iso)
+  if (s && end && iso < end) return 'bg-gray-100 rounded-l-lg'
+  if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) return 'bg-gray-100 rounded-r-lg'
+  if (inR) return 'bg-gray-100'
+  return ''
 }
 
-/**
- * Inner span class — the filled circle for selected, ring for today, etc.
- */
 function dayClass(iso: string): string {
-  if (isPast(iso)) return 'text-gray-200 cursor-not-allowed'
-
-  if (isStartDay(iso) || isEndDay(iso)) {
-    return 'bg-gray-900 text-white shadow-md'
-  }
-  if (inRange(iso)) {
-    return 'text-gray-900 font-semibold hover:bg-gray-200'
-  }
-  if (iso === todayStr) {
-    return 'text-gray-900 border-2 border-gray-900/30 hover:bg-gray-900 hover:text-white'
-  }
-  return 'text-gray-700 font-semibold hover:bg-gray-100 hover:text-gray-900'
+  if (isPast(iso)) return 'text-gray-300'
+  if (isStartDay(iso) || isEndDay(iso)) return 'bg-gray-900 text-white shadow-sm'
+  if (inRange(iso)) return 'text-gray-900'
+  if (iso === todayStr) return 'text-blue-600 border border-blue-100'
+  return 'text-gray-600 hover:bg-gray-50'
 }
 
-// ── Date selection logic ──────────────────────────────────────────────────────
 function selectDate(iso: string) {
   if (isPast(iso)) return
-
   if (props.mode === 'oneway') {
-    startDate.value = iso
-    endDate.value   = null
-    emit('update:departure', iso)
-    closeCalendar()
-    return
+    startDate.value = iso; endDate.value = null
+    emit('update:departure', iso); closeCalendar(); return
   }
-
-  // Roundtrip: two-click flow
-  // Reset if: nothing selected yet, both already selected, or clicking before start
   if (!startDate.value || (startDate.value && endDate.value) || iso < startDate.value) {
-    startDate.value = iso
-    endDate.value   = null
-    hoverDate.value = null
-    emit('update:departure', iso)
-    emit('update:return', '')
-    return
+    startDate.value = iso; endDate.value = null; hoverDate.value = null
+    emit('update:departure', iso); emit('update:return', ''); return
   }
-
-  // Clicking same date as start — treat as reset
   if (iso === startDate.value) {
-    startDate.value = null
-    endDate.value   = null
-    emit('update:departure', '')
-    emit('update:return', '')
-    return
+    startDate.value = null; endDate.value = null
+    emit('update:departure', ''); emit('update:return', ''); return
   }
-
-  // Second click: confirm end date
   endDate.value = iso
-  emit('update:departure', startDate.value)
-  emit('update:return', iso)
-  // Brief delay so the user sees the completed range, then close
-  setTimeout(() => closeCalendar(), 200)
+  emit('update:departure', startDate.value); emit('update:return', iso)
+  setTimeout(() => closeCalendar(), 150)
 }
 
-// ── Month navigation ──────────────────────────────────────────────────────────
 function prevMonth() {
   if (isAtMinMonth.value) return
   if (currentMonth.value === 0) { currentMonth.value = 11; currentYear.value-- }
@@ -469,93 +253,34 @@ function nextMonth() {
   else currentMonth.value++
 }
 
-// ── Open / Close ──────────────────────────────────────────────────────────────
-function updatePosition() {
-  if (isMobile.value) return
-  const el = pickerRef.value
-  if (!el) return
-  const rect       = el.getBoundingClientRect()
-  const panelWidth = 580
-  let   left       = rect.left
-  if (left + panelWidth > window.innerWidth - 8) left = window.innerWidth - panelWidth - 8
-  panelStyle.value = {
-    top:  `${rect.bottom + 8}px`,
-    left: `${Math.max(8, left)}px`,
-  }
-}
+const toggleCalendar = () => { if (showCalendar.value) closeCalendar(); else openCalendar() }
+function openCalendar() { showCalendar.value = true; emit('focus') }
+function closeCalendar() { showCalendar.value = false; hoverDate.value = null; emit('close') }
+function clearDates() { startDate.value = null; endDate.value = null; hoverDate.value = null; emit('update:departure', ''); emit('update:return', '') }
 
-function openCalendar() {
-  checkMobile()
-  updatePosition()
-  showCalendar.value = true
-  emit('focus')
-}
-
-function closeCalendar() {
-  showCalendar.value = false
-  hoverDate.value    = null
-  emit('close')
-}
-
-function clearDates() {
-  startDate.value = null
-  endDate.value   = null
-  hoverDate.value = null
-  emit('update:departure', '')
-  emit('update:return', '')
-}
-
-function done() {
-  emit('update:departure', startDate.value ?? '')
-  if (props.mode !== 'oneway') emit('update:return', endDate.value ?? '')
-  closeCalendar()
-}
-
-// ── Sync external prop changes ────────────────────────────────────────────────
+const handleClickOutside = (e: MouseEvent) => { if (pickerRef.value && !pickerRef.value.contains(e.target as Node)) closeCalendar() }
 watch(() => props.departure, v => { startDate.value = v || null })
 watch(() => props.return,    v => { endDate.value   = v || null })
+const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
 
-// ── Lifecycle ─────────────────────────────────────────────────────────────────
-onMounted(()  => {
+onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  window.addEventListener('scroll', updatePosition, true)
+  window.addEventListener('mousedown', handleClickOutside)
 })
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
-  window.removeEventListener('scroll', updatePosition, true)
+  window.removeEventListener('mousedown', handleClickOutside)
 })
 </script>
 
 <style scoped>
-/*
-  Transition targets the wrapper <div v-if="showCalendar">.
-  Backdrop (z-[10010]) and card (z-[10011]) are siblings — backdrop-blur
-  is isolated to the backdrop element and cannot bleed into the card.
-*/
-.fade-overlay-enter-active {
-  transition: opacity 0.2s ease;
+.loc-drop-enter-active, .loc-drop-leave-active {
+  transition: all 0.1s ease-out;
 }
-.fade-overlay-leave-active {
-  transition: opacity 0.18s ease;
-}
-.fade-overlay-enter-from,
-.fade-overlay-leave-to {
+.loc-drop-enter-from, .loc-drop-leave-to {
   opacity: 0;
-}
-
-/* Card slide up on mobile, pop on desktop */
-.fade-overlay-enter-active .fixed.z-\[10011\] {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-}
-.fade-overlay-enter-from .fixed.z-\[10011\] {
-  transform: translateY(100%);
-  opacity: 0;
-}
-@media (min-width: 768px) {
-  .fade-overlay-enter-from .fixed.z-\[10011\] {
-    transform: translateY(-10px) scale(0.97);
-    opacity: 0;
-  }
+  transform: translateY(-4px);
 }
 </style>
+" ,Description:

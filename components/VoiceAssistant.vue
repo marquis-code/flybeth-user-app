@@ -131,7 +131,7 @@
           <button 
             @click="isRecording ? stopRecording() : startRecording()"
             :disabled="sessionStatus === 'connecting' || isThinking"
-            class="w-full py-4 rounded-full  text-[11px] uppercase tracking-[0.2em] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-brand-blue/5"
+            class="w-full py-4 rounded-full  text-[11px] uppercase  transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-brand-blue/5"
             :class="isRecording ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-brand-blue text-white hover:scale-[1.01] active:scale-[0.98]'"
           >
             <span v-if="sessionStatus === 'connecting'">Connecting...</span>

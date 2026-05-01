@@ -1,21 +1,41 @@
 <template>
   <div class="min-h-screen bg-white overflow-x-hidden relative">
     <!-- Hero Section — Clean & Professional -->
-    <div class="relative w-full pb-8 lg:pb-20 overflow-hidden">
-      <!-- Background with elegant gradient overlay -->
-      <div class="absolute inset-0 z-0 text-3xl tracking-tight text-white leading-snug">
-        <img src="https://flybeth.s3.us-east-2.amazonaws.com/flight-booking/general/happy-trips.jpg" class="w-full h-full object-cover object-top" alt="Hero Background" />
-        <div class="absolute inset-0 bg-gradient-to-b from-[#0f172a]/80 via-[#0f172a]/60 to-[#f8fafc]"></div>
-      </div>
-      
+    <div class="relative w-full pb-8 lg:pb-20 z-20">
+      <!-- Background with elegant light sky/cloud theme -->
+      <!-- <div class="absolute inset-0 z-0 h-[800px] overflow-hidden pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-b from-sky-50 via-white/40 to-white"></div>
+        <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-100/30 blur-[120px] rounded-full animate-pulse"></div>
+        <div class="absolute bottom-[20%] left-[-5%] w-[400px] h-[400px] bg-sky-200/20 blur-[100px] rounded-full animate-bounce-slow"></div>
+      </div> -->
+      <div class="absolute inset-0 z-0 h-[800px] overflow-hidden pointer-events-none">
+      <!-- ✅ NEW: Real background image -->
+      <img 
+        src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=1920" 
+        class="absolute inset-0 w-full h-full object-cover object-center"
+        alt=""
+      />
+      <!-- Overlay gradient sits on top of the image -->
+      <div class="absolute inset-0 bg-gradient-to-b from-sky-900/60 via-sky-800/30 to-white"></div>
+      <!-- Keep the orbs but tone them down -->
+      <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-400/10 blur-[120px] rounded-full"></div>
+        <div class="absolute bottom-[20%] left-[-5%] w-[400px] h-[400px] bg-sky-300/10 blur-[100px] rounded-full"></div>
+    </div>
+          
       <div class="relative z-10 pt-32 lg:pt-48 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
-        <!-- Minimal title -->
         <div class="mb-8 lg:mb-10 flex flex-col items-center w-full max-w-3xl mx-auto text-center">
-           <p class="text-[10px] font-bold  tracking-[0.4em] text-white/50 mb-3">Search · Compare · Book</p>
-           <h1 class="text-2xl lg:text-4xl  tracking-tight text-white leading-snug">
+  <!-- ✅ white text for contrast against image -->
+  <p class="text-[10px] font-bold tracking-[0.4em] text-white/60 mb-3 uppercase">Search · Compare · Book</p>
+  <h1 class="text-3xl lg:text-5xl font-black tracking-tighter text-white leading-[1.1] drop-shadow-sm">
+    {{ heroTitle }}
+  </h1>
+</div>
+        <!-- <div class="mb-8 lg:mb-10 flex flex-col items-center w-full max-w-3xl mx-auto text-center">
+           <p class="text-[10px] font-bold tracking-[0.4em] text-black mb-3 uppercase">Search · Compare · Book</p>
+           <h1 class="text-3xl lg:text-5xl font-black tracking-tighter text-neutral-900 leading-[1.1]">
              {{ heroTitle }}
            </h1>
-        </div>
+        </div> -->
         
         <!-- Search Widget -->
         <div class="w-full max-w-5xl mx-auto">
@@ -24,7 +44,7 @@
               :class="[
                 isWidgetSticky 
                   ? 'fixed top-[65px] left-0 right-0 z-[9999] bg-white shadow-xl py-0 px-0 rounded-b-[2rem]' 
-                  : 'relative rounded-[2rem] shadow-xl'
+                  : 'relative rounded-[2rem] shadow-xl z-20'
               ]"
               class="transition-all duration-700 ease-in-out"
             >
@@ -43,7 +63,7 @@
     </div>
 
     <!-- Trust Bar — Compact & Clean -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
         <div class="flex items-start gap-4 group">
           <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 flex-shrink-0">
@@ -136,7 +156,7 @@
     </div> -->
 
              <section class="py-14 bg-white border-b border-neutral-100 overflow-hidden relative">
-      <p class="text-center text-xs font-bold text-neutral-400  tracking-widest mb-8">Trusted by leading travel brands worldwide</p>
+      <p class="text-center text-base font-bold text-neutral-900  tracking-widest mb-8">Trusted by leading travel brands worldwide</p>
       <div class="flex items-center space-x-16 animate-scroll-logos">
         <div v-for="n in 2" :key="n" class="flex items-center space-x-16 flex-shrink-0">
           <img v-for="(p, idx) in partners" :key="idx" :src="p.logo" class="h-10 lg:h-12 object-contain opacity-80 hover:opacity-100 transition-all cursor-pointer" :alt="p.name" />

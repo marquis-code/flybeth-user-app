@@ -34,7 +34,7 @@
         <span v-else>Verify Identity</span>
       </button>
       
-      <p class="text-center text-[10px]  text-gray-400 uppercase tracking-[0.2em]">
+      <p class="text-center text-[10px]  text-gray-400 uppercase ">
         Didn't receive the code?
         <button type="button" @click="handleResend" class="text-brand-green hover:underline ml-1">Resend</button>
       </p>

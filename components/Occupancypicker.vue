@@ -1,94 +1,82 @@
 <template>
-  <div class="relative w-full" ref="pickerRef">
+  <div class="relative w-full h-full" ref="pickerRef">
     <!-- Trigger Field -->
     <div
-      @click="openPicker"
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none"
+      @mousedown.prevent="togglePicker"
+      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
+      :class="showPicker ? 'bg-blue-50/30 ring-2 ring-gray-900/5' : 'hover:bg-gray-50/60'"
     >
-      <p class="text-[11px] text-brand-gray/40 font-bold tracking-wide mb-0.5 group-hover:text-gray-900 transition-colors">
+      <p 
+        class="text-[10px] font-bold tracking-[0.05em] mb-0.5 transition-colors uppercase"
+        :class="showPicker ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-900'"
+      >
         {{ label }}
       </p>
       <div class="flex items-center gap-2">
-        <UserGroupIcon class="h-5 w-5 text-gray-400 shrink-0" />
-        <span class="text-[14px] font-semibold text-gray-900">{{ summary }}</span>
+        <UserGroupIcon class="h-4 w-4 shrink-0 transition-colors" :class="showPicker ? 'text-gray-900' : 'text-gray-300'" />
+        <span class="text-[14px] font-bold truncate" :class="summary ? 'text-gray-900' : 'text-gray-400'">
+          {{ summary }}
+        </span>
       </div>
     </div>
 
-    <!-- Dark Backdrop -->
-    <Teleport to="body">
-      <Transition name="fade-overlay">
-        <div
-          v-if="showPicker"
-          class="fixed inset-0 bg-black/50 z-[10010]"
-          @click="closePicker"
-        />
-      </Transition>
-    </Teleport>
-
-    <!-- Picker Panel -->
-    <Teleport to="body">
-      <Transition name="picker-pop">
-        <div
-          v-if="showPicker"
-          :style="panelStyle"
-          class="fixed z-[10011] bg-white rounded-2xl shadow-[0_8px_48px_rgba(0,0,0,0.2)] border border-gray-100 overflow-hidden"
-          :class="[
-            isMobile ? 'inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[320px]'
-          ]"
-          @click.stop
-        >
-          <div class="px-5 py-5 space-y-5">
-            <!-- Rows -->
-            <div
-              v-for="row in rows"
-              :key="row.key"
-              class="flex items-center justify-between"
-            >
-              <div>
-                <p class="text-sm font-bold text-gray-800">{{ row.label }}</p>
-                <p v-if="row.note" class="text-xs text-gray-400">{{ row.note }}</p>
-              </div>
-              <div class="flex items-center gap-4">
-                <button
-                  @click="decrement(row.key)"
-                  :disabled="local[row.key] <= row.min"
-                  class="h-8 w-8 rounded-full border-2 flex items-center justify-center text-base font-bold transition-all"
-                  :class="local[row.key] <= row.min
-                    ? 'border-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'border-red-400 text-red-400 hover:bg-red-50'"
-                >
-                  −
-                </button>
-                <span class="w-5 text-center text-base font-bold text-gray-800">{{ local[row.key] }}</span>
-                <button
-                  @click="increment(row.key)"
-                  :disabled="local[row.key] >= row.max"
-                  class="h-8 w-8 rounded-full border-2 flex items-center justify-center text-base font-bold transition-all"
-                  :class="local[row.key] >= row.max
-                    ? 'border-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'border-gray-900 text-gray-900 hover:bg-gray-100'"
-                >
-                  +
-                </button>
-              </div>
+    <!-- Picker Dropdown Panel -->
+    <Transition name="loc-drop">
+      <div
+        v-show="showPicker"
+        class="absolute right-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-100 shadow-2xl overflow-hidden"
+        :class="[isMobile ? 'fixed inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[320px]']"
+        style="background-color: #ffffff !important;"
+        @mousedown.stop
+      >
+        <div class="px-5 py-5 space-y-5">
+          <!-- Rows -->
+          <div
+            v-for="row in rows"
+            :key="row.key"
+            class="flex items-center justify-between"
+          >
+            <div>
+              <p class="text-[13px] font-bold text-gray-900">{{ row.label }}</p>
+              <p v-if="row.note" class="text-[10px] text-gray-400 font-medium">{{ row.note }}</p>
             </div>
+            <div class="flex items-center gap-4">
+              <button
+                @mousedown.prevent="decrement(row.key)"
+                :disabled="local[row.key] <= row.min"
+                class="h-8 w-8 rounded-lg border border-gray-100 flex items-center justify-center text-sm font-bold transition-all"
+                :class="local[row.key] <= row.min
+                  ? 'opacity-20 cursor-not-allowed'
+                  : 'text-gray-900 hover:bg-gray-50 active:scale-90'"
+              >
+                −
+              </button>
+              <span class="w-4 text-center text-[13px] font-bold text-gray-900">{{ local[row.key] }}</span>
+              <button
+                @mousedown.prevent="increment(row.key)"
+                :disabled="local[row.key] >= row.max"
+                class="h-8 w-8 rounded-lg border border-gray-100 flex items-center justify-center text-sm font-bold transition-all"
+                :class="local[row.key] >= row.max
+                  ? 'opacity-20 cursor-not-allowed'
+                  : 'text-gray-900 hover:bg-gray-50 active:scale-90'"
+              >
+                +
+              </button>
+            </div>
+          </div>
 
-            <!-- Children note -->
-            <p v-if="showChildNote" class="text-[11px] text-gray-400 leading-relaxed -mt-2">
-              Add your child's age at check-in for the best deals and assistance. Each hotel has unique policies.
-            </p>
+          <!-- Children note -->
+          <p v-if="showChildNote" class="text-[10px] text-gray-400 font-medium leading-relaxed -mt-2">
+            Each hotel has unique child policies. Ages at check-in ensure best deals.
+          </p>
 
-            <!-- Done Button -->
-            <button
-              @click="done"
-              class="w-full bg-gray-900 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-black transition-colors"
-            >
-              Confirm
-            </button>
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2 pt-2 border-t border-gray-50">
+             <button @click="closePicker" class="flex-1 py-3 bg-gray-900 text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95">Done</button>
           </div>
         </div>
-      </Transition>
-    </Teleport>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -96,15 +84,12 @@
 import { ref, computed, watch, onMounted, onUnmounted, reactive } from 'vue'
 import { UserGroupIcon } from '@heroicons/vue/24/outline'
 
-// ─── Props ────────────────────────────────────────────────────────────────────
 const props = defineProps({
   label:    { type: String,  default: 'Guests & Rooms' },
   rooms:    { type: Number,  default: 1 },
   adults:   { type: Number,  default: 2 },
   children: { type: Number,  default: 0 },
-  /** 'hotel' | 'flight' | 'package' — controls which rows appear */
   variant:  { type: String,  default: 'hotel' },
-  /** flight-specific extras */
   infantsOnLap:  { type: Number, default: 0 },
   infantsInSeat: { type: Number, default: 0 },
 })
@@ -115,7 +100,6 @@ const emit = defineEmits([
   'focus', 'close'
 ])
 
-// ─── Local copy ───────────────────────────────────────────────────────────────
 const local = reactive({
   rooms:         props.rooms,
   adults:        props.adults,
@@ -124,7 +108,6 @@ const local = reactive({
   infantsInSeat: props.infantsInSeat,
 })
 
-// ─── Row definitions ──────────────────────────────────────────────────────────
 const rows = computed(() => {
   if (props.variant === 'flight') {
     return [
@@ -134,14 +117,6 @@ const rows = computed(() => {
       { key: 'infantsInSeat', label: 'Infants in Seat',   note: 'Under 2',       min: 0, max: 4 },
     ]
   }
-  if (props.variant === 'package') {
-    return [
-      { key: 'rooms',    label: 'Rooms',    note: '',          min: 1, max: 8 },
-      { key: 'adults',   label: 'Adults',   note: '',          min: 1, max: 8 },
-      { key: 'children', label: 'Children', note: 'Ages 0–17', min: 0, max: 8 },
-    ]
-  }
-  // hotel (default)
   return [
     { key: 'rooms',    label: 'Rooms',    note: '',          min: 1, max: 8 },
     { key: 'adults',   label: 'Adults',   note: '',          min: 1, max: 8 },
@@ -149,72 +124,28 @@ const rows = computed(() => {
   ]
 })
 
-const showChildNote = computed(() =>
-  props.variant === 'hotel' && local.children > 0
-)
+const showChildNote = computed(() => props.variant === 'hotel' && local.children > 0)
 
-// ─── Summary text ─────────────────────────────────────────────────────────────
 const summary = computed(() => {
   if (props.variant === 'flight') {
     const total = local.adults + local.children + local.infantsOnLap + local.infantsInSeat
     return `${total} Passenger${total > 1 ? 's' : ''}`
   }
   const guests = local.adults + local.children
-  if (props.variant === 'package') return `${local.rooms} Room${local.rooms > 1 ? 's' : ''}, ${guests} Guest${guests > 1 ? 's' : ''}`
-  return `${local.adults} Adult${local.adults > 1 ? 's' : ''}${local.rooms > 1 ? `, ${local.rooms} Rooms` : ', 1 Room'}`
+  return `${local.adults} Adult${local.adults > 1 ? 's' : ''}, ${local.rooms} Room${local.rooms > 1 ? 's' : ''}`
 })
 
-// ─── Counter actions ──────────────────────────────────────────────────────────
-const increment = (key: string) => {
-  const row = rows.value.find(r => r.key === key)
-  if (!row) return
-  if ((local as any)[key] < row.max) (local as any)[key]++
-}
+const increment = (key: string) => { if ((local as any)[key] < 10) (local as any)[key]++ }
+const decrement = (key: string) => { if ((local as any)[key] > 0) (local as any)[key]-- }
 
-const decrement = (key: string) => {
-  const row = rows.value.find(r => r.key === key)
-  if (!row) return
-  if ((local as any)[key] > row.min) (local as any)[key]--
-}
-
-// ─── Panel state & position ───────────────────────────────────────────────────
 const pickerRef  = ref<HTMLElement | null>(null)
 const showPicker = ref(false)
-const panelStyle = ref<Record<string, string>>({})
 const isMobile   = ref(false)
 
-const checkMobile = () => {
-  if (typeof window !== 'undefined') {
-    isMobile.value = window.innerWidth < 768
-  }
-}
-
-const updatePosition = () => {
-  if (isMobile.value) return
-  const el = pickerRef.value
-  if (!el) return
-  const rect = el.getBoundingClientRect()
-  let left = rect.right - 360
-  if (left < 8) left = 8
-  panelStyle.value = {
-    top:  `${rect.bottom + 8}px`,
-    left: `${left}px`,
-  }
-}
-
-const openPicker = () => {
-  checkMobile()
-  updatePosition()
-  showPicker.value = true
-  emit('focus')
-}
-
-const closePicker = () => { 
-  showPicker.value = false 
-  emit('close')
-}
-
-const done = () => {
+const togglePicker = () => { if (showPicker.value) closePicker(); else openPicker() }
+const openPicker = () => { checkMobile(); showPicker.value = true; emit('focus') }
+const closePicker = () => {
+  showPicker.value = false
   emit('update:rooms',    local.rooms)
   emit('update:adults',   local.adults)
   emit('update:children', local.children)
@@ -222,43 +153,30 @@ const done = () => {
     emit('update:infantsOnLap',  local.infantsOnLap)
     emit('update:infantsInSeat', local.infantsInSeat)
   }
-  closePicker()
+  emit('close')
 }
 
-// ─── Sync props → local ───────────────────────────────────────────────────────
-watch(() => props.rooms,         v => { local.rooms         = v })
-watch(() => props.adults,        v => { local.adults        = v })
-watch(() => props.children,      v => { local.children      = v })
-watch(() => props.infantsOnLap,  v => { local.infantsOnLap  = v })
-watch(() => props.infantsInSeat, v => { local.infantsInSeat = v })
+const handleClickOutside = (e: MouseEvent) => { if (pickerRef.value && !pickerRef.value.contains(e.target as Node)) closePicker() }
+const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
 
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  window.addEventListener('scroll', updatePosition, true)
+  window.addEventListener('mousedown', handleClickOutside)
 })
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
-  window.removeEventListener('scroll', updatePosition, true)
+  window.removeEventListener('mousedown', handleClickOutside)
 })
 </script>
 
 <style scoped>
-.fade-overlay-enter-active, .fade-overlay-leave-active { transition: opacity 0.2s ease; }
-.fade-overlay-enter-from, .fade-overlay-leave-to { opacity: 0; }
-
-.picker-pop-enter-active { transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
-.picker-pop-leave-active { transition: all 0.15s ease; }
-.picker-pop-enter-from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-.picker-pop-leave-to   { opacity: 0; transform: translateY(-4px) scale(0.99); }
+.loc-drop-enter-active, .loc-drop-leave-active {
+  transition: all 0.1s ease-out;
+}
+.loc-drop-enter-from, .loc-drop-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
 </style>
-
-<style scoped>
-.fade-overlay-enter-active, .fade-overlay-leave-active { transition: opacity 0.2s ease; }
-.fade-overlay-enter-from, .fade-overlay-leave-to { opacity: 0; }
-
-.picker-pop-enter-active { transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
-.picker-pop-leave-active { transition: all 0.15s ease; }
-.picker-pop-enter-from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-.picker-pop-leave-to   { opacity: 0; transform: translateY(-4px) scale(0.99); }
-</style>
+" ,Description:

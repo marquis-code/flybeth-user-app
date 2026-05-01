@@ -15,7 +15,7 @@
         <h3 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tighter leading-tight">
           Unlock <span class="text-blue-600">Flybeth</span> <br class="sm:hidden" /> Wallet Benefits
         </h3>
-        <p class="text-gray-400 font-bold text-[9px] tracking-[0.2em] uppercase">
+        <p class="text-gray-400 font-bold text-[9px]  uppercase">
           The smartest way to pay for your travels
         </p>
       </div>

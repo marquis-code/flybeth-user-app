@@ -57,7 +57,7 @@
 
         <!-- Footer -->
         <div class="mt-10 pt-6 border-t border-gray-100">
-          <p class="text-sm text-brand-gray/40  uppercase tracking-[0.2em]">
+          <p class="text-sm text-brand-gray/40  uppercase ">
             © {{ new Date().getFullYear() }} Flybeth &nbsp;•&nbsp; {{ $t('authLayout.travelIntelligence') }}
           </p>
         </div>

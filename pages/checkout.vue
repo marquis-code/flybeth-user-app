@@ -14,7 +14,7 @@
   />
 
 
-  <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-gray-50/30">
+  <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-gray-50/30 overflow-x-hidden">
     
     <!-- Premium Header -->
     <header class="bg-neutral-900 border-b border-white/5 py-8 relative overflow-hidden">
@@ -24,7 +24,7 @@
         <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-sky-500/5 blur-[60px] rounded-full"></div>
       </div>
 
-      <div class="ck-wrap relative z-10 flex items-center justify-between">
+      <div class="ck-wrap mx-auto relative z-10 flex items-center justify-between">
         <button @click="handleGoBack" class="flex items-center gap-2 group text-white/40 hover:text-white transition-all text-sm font-bold">
           <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
             <ChevronLeft class="h-4 w-4" />
@@ -55,120 +55,123 @@
 
     <!-- Refined Stepper -->
     <div class="bg-white border-b border-gray-100 py-6">
-       <div class="ck-wrap">
+       <div class="ck-wrap mx-auto">
           <CheckoutStepper :currentStep="currentStep" :steps="['Review', 'Travelers', 'Extras', 'Payment']" />
        </div>
     </div>
 
-    <main class="ck-main py-10">
-      <div class="ck-wrap">
-        <div class="flex flex-col lg:flex-row gap-8 items-start">
-          
-          <div class="flex-grow w-full space-y-8">
-            <!-- Step 0: Review -->
-            <div v-if="currentStep === 0" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
-              <div class="p-3 md:p-12 border-b border-gray-50 bg-gray-50/30">
-                 <h2 class="text-2xl  text-gray-900 tracking-tight">Review selection</h2>
-                 <p class="text-gray-400 font-medium text-sm mt-1">Confirm your trip specifics before adding traveler data.</p>
-              </div>
-              <div class="p-3 md:p-12">
-                <CheckoutFlightDetails
-                  v-if="bookingDetails.type === 'flight'"
-                  :flightOffer="priceDetailed"
-                  @continue="goToStep(1)"
-                />
-                <CheckoutTransferDetails
-                  v-if="bookingDetails.type === 'transfer'"
-                  :name="bookingDetails.name"
-                  :provider="bookingDetails.provider"
-                  @continue="goToStep(1)"
-                />
-                <CheckoutStayDetails
-                  v-if="bookingDetails.type === 'stay'"
-                  :stay="priceDetailed"
-                  :currency-symbol="currencySymbol"
-                  @continue="goToStep(1)"
-                />
-              </div>
+   <main class="ck-main">
+  <div class="ck-wrap mx-auto">
+    <!-- Replace the flex div and its two children's class attributes -->
+    <div class="ck-content-row">
+      
+      <!-- Main column: was flex-grow w-full (causes overflow), now ck-main-col -->
+      <div class="ck-main-col space-y-8">
+        <!-- Step 0: Review -->
+        <div v-if="currentStep === 0" class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden animate-in">
+          <div class="p-6 md:p-10 border-b border-gray-50 bg-gray-50/30">
+            <h2 class="text-2xl text-gray-900 tracking-tight">Review selection</h2>
+            <p class="text-gray-400 font-medium text-sm mt-1">Confirm your trip specifics before adding traveler data.</p>
+          </div>
+          <div class="p-4 md:p-6">
+            <CheckoutFlightDetails
+              v-if="bookingDetails.type === 'flight'"
+              :flightOffer="priceDetailed"
+              @continue="goToStep(1)"
+            />
+            <CheckoutTransferDetails
+              v-if="bookingDetails.type === 'transfer'"
+              :name="bookingDetails.name"
+              :provider="bookingDetails.provider"
+              @continue="goToStep(1)"
+            />
+            <CheckoutStayDetails
+              v-if="bookingDetails.type === 'stay'"
+              :stay="priceDetailed"
+              :currency-symbol="currencySymbol"
+              @continue="goToStep(1)"
+            />
+          </div>
+        </div>
+
+        <!-- Step 1: Traveler -->
+        <div v-if="currentStep === 1" class="animate-in">
+          <CheckoutTravellerForm 
+            v-model="travellerData" 
+            @continue="handleTravellerContinue" 
+            @email-blur="handleEmailBlur"
+          />
+        </div>
+
+        <!-- Step 2: Extras -->
+        <div v-if="currentStep === 2" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
+          <CheckoutTripCustomization
+            :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
+            :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
+            :traveller="travellerData"
+            :totalPrice="displayPrices.total"
+            v-model:selectedAddOns="selectedAddOns"
+            v-model:selectedSeats="selectedSeats"
+            @update:seatPrice="val => seatPrice = val"
+            @continue="goToStep(3)"
+            @back="goToStep(1)"
+          />
+        </div>
+
+        <!-- Step 3: Payment -->
+        <div v-if="currentStep === 3" class="animate-in space-y-6">
+          <div class="flex gap-4 p-4 bg-sky-50 border border-sky-100 rounded-2xl items-center">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-sky-500 shadow-sm flex-shrink-0">
+              <ShieldCheck class="h-5 w-5" />
             </div>
-
-            <!-- Step 1: Traveler -->
-            <div v-if="currentStep === 1" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
-              <CheckoutTravellerForm 
-                v-model="travellerData" 
-                @continue="handleTravellerContinue" 
-                @email-blur="handleEmailBlur"
-              />
-            </div>
-
-            <!-- Step 2: Extras -->
-            <div v-if="currentStep === 2" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
-              <CheckoutTripCustomization
-                :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
-                :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
-                :traveller="travellerData"
-                :totalPrice="displayPrices.total"
-                v-model:selectedAddOns="selectedAddOns"
-                v-model:selectedSeats="selectedSeats"
-                @update:seatPrice="val => seatPrice = val"
-                @continue="goToStep(3)"
-                @back="goToStep(1)"
-              />
-            </div>
-
-                <div v-if="currentStep === 3" class="animate-in space-y-6">
-                  <div class="flex gap-4 p-4 bg-sky-50 border border-sky-100 rounded-2xl items-center max-w-xl">
-                      <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-sky-500 shadow-sm flex-shrink-0">
-                        <ShieldCheck class="h-5 w-5" />
-                      </div>
-                      <div class="space-y-0.5">
-                         <p class="text-sm font-black text-sky-900 tracking-tight">Security Verification</p>
-                         <p class="text-[10px] text-sky-700/60 font-bold leading-none">Your transaction is protected by multi-layer encryption.</p>
-                      </div>
-                  </div>
-
-                  <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
-                <CheckoutPayment 
-                  ref="paymentRef"
-                  :total-amount="displayPrices.total" 
-                  :currency-symbol="currencySymbol"
-                  :currency="priceDetailed?.currency"
-                  :processing="paymentProcessing"
-                  :flight-offer="priceDetailed"
-                  @complete-payment="handlePayment"
-                  @change-currency="handleCurrencySelect"
-                />
-              </div>
+            <div class="space-y-0.5">
+              <p class="text-sm font-black text-sky-900 tracking-tight">Security Verification</p>
+              <p class="text-[10px] text-sky-700/60 font-bold leading-none">Your transaction is protected by multi-layer encryption.</p>
             </div>
           </div>
 
-          <!-- Sidebar -->
-          <div class="w-full lg:w-[400px] flex-shrink-0">
-            <div class="sticky top-12">
-              <CheckoutSidebar
-                :flight="bookingDetails.type === 'flight' ? priceDetailed : null"
-                :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
-                :passengerCount="1"
-                :baseFare="displayPrices.base"
-                :taxes="displayPrices.tax"
-                :discount="0"
-                :serviceCharge="displayPrices.serviceCharge"
-                :addOns="selectedAddOns"
-                :selectedSeats="selectedSeats"
-                :seatPrice="seatPrice"
-                :currency="currencySymbol"
-                :showPayButton="currentStep === 3"
-                :bundledStay="bundledStay"
-                @pay-now="handlePayNow"
-                @hold-now="handleHold"
-                @apply-promo="handleApplyPromo"
-              />
-            </div>
+          <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+            <CheckoutPayment 
+              ref="paymentRef"
+              :total-amount="displayPrices.total" 
+              :currency-symbol="currencySymbol"
+              :currency="priceDetailed?.currency"
+              :processing="paymentProcessing"
+              :flight-offer="priceDetailed"
+              @complete-payment="handlePayment"
+              @change-currency="handleCurrencySelect"
+            />
           </div>
-
         </div>
       </div>
-    </main>
+
+      <!-- Sidebar column: was w-full lg:w-[400px] flex-shrink-0, now ck-sidebar-col -->
+      <div class="ck-sidebar-col">
+        <div class="sticky top-12">
+          <CheckoutSidebar
+            :flight="bookingDetails.type === 'flight' ? priceDetailed : null"
+            :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
+            :passengerCount="1"
+            :baseFare="displayPrices.base"
+            :taxes="displayPrices.tax"
+            :discount="0"
+            :serviceCharge="displayPrices.serviceCharge"
+            :addOns="selectedAddOns"
+            :selectedSeats="selectedSeats"
+            :seatPrice="seatPrice"
+            :currency="currencySymbol"
+            :showPayButton="currentStep === 3"
+            :bundledStay="bundledStay"
+            @pay-now="handlePayNow"
+            @hold-now="handleHold"
+            @apply-promo="handleApplyPromo"
+          />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
 </div>
 </template>
 
@@ -226,20 +229,21 @@ const priceDetailed = ref<any>(null)
 const bundledStay = ref<any>(null)
 
 const travellerData = ref({
-  title: 'mr',
-  firstName: '',
-  lastName: '',
-  middleName: '',
-  email: '',
-  phone: '',
-  phoneCountryCode: '+234',
-  gender: 'male',
-  dateOfBirth: '',
-  nationality: 'NG',
-  passportNumber: '',
-  passportExpiry: '',
-  passportCountry: '',
-  saveForFuture: false,
+  travelers: [{
+    title: 'Mr',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    gender: 'Male',
+    nationality: 'Nigeria',
+    passportNumber: '',
+    passportExpiry: '',
+  }],
+  contact: {
+    email: '',
+    phone: '',
+    phoneCountryCode: '+234',
+  }
 })
 
 // Persistence Key
@@ -279,11 +283,11 @@ const clearCheckoutState = () => {
 // Prefill from user profile if logged in and empty
 const prefillFromUser = () => {
     const u = useUser().user.value
-    if (u && !travellerData.value.firstName) {
-        travellerData.value.firstName = u.firstName || ''
-        travellerData.value.lastName = u.lastName || ''
-        travellerData.value.email = u.email || ''
-        travellerData.value.phone = u.phone || ''
+    if (u && travellerData.value.travelers.length === 1 && !travellerData.value.travelers[0].firstName) {
+        travellerData.value.travelers[0].firstName = u.firstName || ''
+        travellerData.value.travelers[0].lastName = u.lastName || ''
+        travellerData.value.contact.email = u.email || ''
+        travellerData.value.contact.phone = u.phone || ''
     }
 }
 
@@ -500,7 +504,11 @@ const handleTravellerContinue = async () => {
     showBrandedLoader.value = true
     loaderStatus.value = 'Setting up travel identity...'
     try {
-      await ensureDuffelIdentity(travellerData.value)
+      await ensureDuffelIdentity({
+        ...travellerData.value.travelers[0],
+        email: travellerData.value.contact.email,
+        phone: travellerData.value.contact.phone
+      })
     } catch (err: any) {
       if (err?.response?.status === 401) { openAuthModal(); return }
     }
@@ -533,21 +541,21 @@ const handlePayment = async (paymentInfo: any) => {
   try {
     const payload: any = {
       contactDetails: {
-        email: travellerData.value.email,
-        phone: travellerData.value.phone,
-        name: `${travellerData.value.firstName} ${travellerData.value.lastName}`,
-        state: travellerData.value.nationality
+        email: travellerData.value.contact.email,
+        phone: travellerData.value.contact.phone,
+        name: `${travellerData.value.travelers[0].firstName} ${travellerData.value.travelers[0].lastName}`,
+        state: travellerData.value.travelers[0].nationality
       },
       currency: priceDetailed.value?.currency || 'USD',
       paymentModel: paymentInfo.paymentModel || 'pay_now',
       paymentProvider: paymentInfo.provider,
       paymentMetadata: paymentInfo,
-      passengerDetails: [{
-        ...travellerData.value,
-        gender: (travellerData.value.gender || 'male').toLowerCase(),
-        title: (travellerData.value.title || 'mr').toLowerCase(),
+      passengerDetails: travellerData.value.travelers.map(t => ({
+        ...t,
+        gender: (t.gender || 'male').toLowerCase(),
+        title: (t.title || 'mr').toLowerCase(),
         type: 'adult'
-      }],
+      })),
       pricing: {
         baseFare: priceDetailed.value?.price || bookingDetails.value.price || 0,
         taxes: (priceDetailed.value?.price || bookingDetails.value.price || 0) * 0.12, // Standard flight tax estimation
@@ -694,6 +702,46 @@ watch([currentStep, travellerData, selectedSeats, selectedAddOns], () => { saveC
   .ck-wrap {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+}
+
+
+/* ADD these to <style scoped> */
+.ck-main {
+  width: 100%;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+/* Ensure the inner flex row is fully constrained */
+.ck-content-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: flex-start;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .ck-content-row {
+    flex-direction: row;
+  }
+}
+
+.ck-main-col {
+  flex: 1 1 0%;
+  min-width: 0;          /* ← THE critical fix: prevents flex child overflow */
+  width: 100%;
+}
+
+.ck-sidebar-col {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .ck-sidebar-col {
+    width: 340px;        /* ← slightly narrower so main content breathes */
   }
 }
 </style>

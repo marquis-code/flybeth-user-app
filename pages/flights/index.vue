@@ -440,6 +440,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useSearchFlights } from '@/composables/modules/flights/useSearchFlights'
 import { useFetchPopularFlights } from '@/composables/modules/flights/useFetchPopularFlights'
 import { useTripPurpose } from '@/composables/modules/flights/useTripPurpose'
+import { flightsApi } from '@/api_factory/modules/flights'
 import FlightGroup from '@/components/FlightGroup.vue'
 
 const { loading, flights, searchFlights } = useSearchFlights()
@@ -719,10 +720,26 @@ const selectFlight = (flight: any) => {
   navigateTo({ path: '/checkout', query: { type: 'flight', id: String(flight.offerId||flight._id||flight.id||'unknown'), name: String(flight.flightNumbers?.[0]||`${flight.airline} flight`), price: String(flight.priceWithCommission||flight.price||0), provider } })
 }
 
-onMounted(() => {
+onMounted(async () => {
   const route = useRoute()
-  if (!route.query.origin && !route.query.destination) {
-    searchQuery.value = { origin: 'LHR', destination: 'DXB', departureDate: new Date(Date.now() + 14*86400000).toISOString().split('T')[0], passengers: 1 }
+  
+  if (route.query.sid) {
+    try {
+      loading.value = true
+      const { data } = await flightsApi.getSearchSession(route.query.sid as string)
+      if (data?.searchQuery) {
+        searchQuery.value = { ...searchQuery.value, ...data.searchQuery }
+        fromQuery.value = searchQuery.value.origin
+        toQuery.value = searchQuery.value.destination
+        handleSearch()
+      }
+    } catch (err) {
+      console.error('Failed to load search session:', err)
+    } finally {
+      loading.value = false
+    }
+  } else if (!route.query.origin && !route.query.destination) {
+    searchQuery.value = { origin: 'LHR', destination: 'DXB', departureDate: new Date(Date.now() + 14*86400000).toISOString().split('T')[0], adults: 1, children: 0, infants: 0, cabinClass: 'economy' }
     fromQuery.value = 'London (LHR)'
     toQuery.value = 'Dubai (DXB)'
     handleSearch()
