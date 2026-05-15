@@ -1,0 +1,1 @@
+import{ao as s,as as i,ap as r}from"./C6_Y-kqv.js";const m=s({cast(e){return typeof e=="string"&&(e={name:e}),e},defaults:{"@type":"ListItem"},resolve(e,t){return typeof e.item=="string"?e.item=i(t.meta.host,e.item):typeof e.item=="object"&&(e.item=r(e.item,t)),e}});export{m as listItemResolver};
