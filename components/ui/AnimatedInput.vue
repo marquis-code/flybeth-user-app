@@ -6,8 +6,8 @@
         :class="[
           'absolute transition-all duration-300 ease-in-out pointer-events-none z-10',
           isFocused || modelValue ? 
-            'text-xs text-gray-500 left-3 top-2' : 
-            `text-base text-gray-500 left-3 ${type === 'textarea' ? 'top-4' : 'top-1/2 transform -translate-y-1/2'}`
+            'text-xs text-black left-3 top-2' : 
+            `text-base text-black left-3 ${type === 'textarea' ? 'top-4' : 'top-1/2 transform -translate-y-1/2'}`
         ]"
       >
         {{ label }}
@@ -22,7 +22,7 @@
         :readonly="readonly"
         :rows="rows"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-white border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300 resize-none',
+          'w-full py-3 pt-6 px-3 bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300 resize-none',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
           (hasError || (errorMessage && showError)) ? 'border ring-red-500 border-red-500' : ''
@@ -43,7 +43,7 @@
         :readonly="readonly || type === 'date' || type === 'time' || type === 'datetime-local'"
         :autocomplete="autocomplete"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-white border border-gray-300 focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
+          'w-full py-3 pt-6 px-3 bg-white border border-gray-200 focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
           (type === 'date' || type === 'time' || type === 'datetime-local') ? 'cursor-pointer' : '',
@@ -59,7 +59,7 @@
         v-if="type === 'password'"
         type="button" 
         @click="togglePasswordVisibility" 
-        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors z-20"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-black hover:text-black transition-colors z-20"
       >
         <svg v-if="showPassword" width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
@@ -95,13 +95,13 @@
         @click="closeDatePicker"
       >
         <div 
-          class="bg-white rounded-[2rem] shadow-2xl w-full max-w-[340px] overflow-hidden transform border border-gray-100"
+          class="bg-white rounded-[2rem] shadow-2xl w-full max-w-[340px] overflow-hidden transform border border-gray-200"
           @click.stop
         >
           <!-- Compact Header -->
-          <div class="bg-gray-900 p-6 text-white text-center">
-            <h3 class="text-[10px]  uppercase  opacity-60 mb-1">Select Schedule</h3>
-            <p class="text-lg  tracking-tight">
+          <div class="bg-black p-6 text-white text-center">
+            <h3 class="text-sm  uppercase  opacity-60 mb-1">Select Schedule</h3>
+            <p class="text-lg  ">
               {{ selectedDate ? formatDateDisplay(selectedDate) : 'Availability Calendar' }}
             </p>
           </div>
@@ -112,7 +112,7 @@
               <button 
                 type="button" 
                 @click.stop="prevMonth" 
-                class="p-2.5 hover:bg-gray-50 rounded-xl transition-all border border-transparent hover:border-gray-100"
+                class="p-2.5 hover:bg-white rounded-xl transition-all border border-transparent hover:border-gray-200"
               >
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                   <path d="M15 18l-6-6 6-6"/>
@@ -120,7 +120,7 @@
               </button>
               
               <div class="flex gap-2">
-                <span class="text-[11px]  uppercase tracking-widest text-gray-900">
+                <span class="text-[11px]  uppercase  text-black">
                   {{ months[currentMonth] }} {{ currentYear }}
                 </span>
               </div>
@@ -128,7 +128,7 @@
               <button 
                 type="button" 
                 @click.stop="nextMonth" 
-                class="p-2.5 hover:bg-gray-50 rounded-xl transition-all border border-transparent hover:border-gray-100"
+                class="p-2.5 hover:bg-white rounded-xl transition-all border border-transparent hover:border-gray-200"
               >
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                   <path d="M9 18l6-6-6-6"/>
@@ -138,7 +138,7 @@
             
             <!-- Calendar Grid -->
             <div class="grid grid-cols-7 gap-1 mb-2">
-              <div v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="text-center text-[9px]  text-gray-400 py-1">{{ d }}</div>
+              <div v-for="d in ['S','M','T','W','T','F','S']" :key="d" class="text-center text-[9px]  text-black py-1">{{ d }}</div>
             </div>
             
             <div class="grid grid-cols-7 gap-1">
@@ -149,9 +149,9 @@
                 :disabled="!day.isCurrentMonth"
                 :class="[
                   'aspect-square flex items-center justify-center text-[11px] font-bold rounded-xl transition-all',
-                  day.isCurrentMonth ? 'hover:bg-gray-900 hover:text-white cursor-pointer' : 'text-gray-100 pointer-events-none',
-                  day.isToday && !day.isSelected ? 'text-gray-900 border border-gray-900' : '',
-                  day.isSelected ? 'bg-gray-900 text-white shadow-lg' : ''
+                  day.isCurrentMonth ? 'hover:bg-black hover:text-white cursor-pointer' : 'text-black pointer-events-none',
+                  day.isToday && !day.isSelected ? 'text-black border border-gray-200' : '',
+                  day.isSelected ? 'bg-black text-white shadow-lg' : ''
                 ]"
                 @click.stop="selectDay(day)"
               >
@@ -165,14 +165,14 @@
              <button 
               type="button" 
               @click.stop="setToday" 
-              class="flex-1 py-3 text-[9px]  uppercase tracking-widest border border-gray-100 hover:bg-gray-50 rounded-xl transition-all"
+              class="flex-1 py-3 text-[9px]  uppercase  border border-gray-200 hover:bg-white rounded-xl transition-all"
             >
               Today
             </button>
             <button 
               type="button" 
               @click.stop="clearDateValue" 
-              class="flex-1 py-3 text-[9px]  uppercase tracking-widest bg-gray-900 text-white rounded-xl transition-all hover:bg-black shadow-lg shadow-gray-200"
+              class="flex-1 py-3 text-[9px]  uppercase  bg-black text-white rounded-xl transition-all hover:bg-black shadow-lg shadow-gray-200"
             >
               Clear
             </button>
@@ -213,7 +213,7 @@
           <div class="p-8">
             <div class="flex items-center justify-center gap-6 mb-8">
               <div class="flex flex-col items-center">
-                <button type="button" @click.stop="incHour" class="p-3 hover:bg-gray-100 rounded-xl mb-3 transition-all group">
+                <button type="button" @click.stop="incHour" class="p-3 hover:bg-black rounded-xl mb-3 transition-all group">
                   <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="group-hover:scale-110 transition-transform">
                     <path d="M18 15l-6-6-6 6"/>
                   </svg>
@@ -225,19 +225,19 @@
                   @focus="handleFocusSelect" 
                   @click.stop 
                   maxlength="2"
-                  class="w-20 text-center text-4xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-2xl py-4 focus:outline-none focus:ring-4 focus:ring-[#033958]/20 transition-all bg-gray-50"
+                  class="w-20 text-center text-4xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-2xl py-4 focus:outline-none focus:ring-4 focus:ring-[#033958]/20 transition-all bg-white"
                 />
-                <button type="button" @click.stop="decHour" class="p-3 hover:bg-gray-100 rounded-xl mt-3 transition-all group">
+                <button type="button" @click.stop="decHour" class="p-3 hover:bg-black rounded-xl mt-3 transition-all group">
                   <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="group-hover:scale-110 transition-transform">
                     <path d="M6 9l6 6 6-6"/>
                   </svg>
                 </button>
               </div>
               
-              <span class="text-5xl font-bold text-gray-500 select-none">:</span>
+              <span class="text-5xl font-bold text-black select-none">:</span>
               
               <div class="flex flex-col items-center">
-                <button type="button" @click.stop="incMin" class="p-3 hover:bg-gray-100 rounded-xl mb-3 transition-all group">
+                <button type="button" @click.stop="incMin" class="p-3 hover:bg-black rounded-xl mb-3 transition-all group">
                   <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="group-hover:scale-110 transition-transform">
                     <path d="M18 15l-6-6-6 6"/>
                   </svg>
@@ -249,9 +249,9 @@
                   @focus="handleFocusSelect" 
                   @click.stop 
                   maxlength="2"
-                  class="w-20 text-center text-4xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-2xl py-4 focus:outline-none focus:ring-4 focus:ring-[#033958]/20 transition-all bg-gray-50"
+                  class="w-20 text-center text-4xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-2xl py-4 focus:outline-none focus:ring-4 focus:ring-[#033958]/20 transition-all bg-white"
                 />
-                <button type="button" @click.stop="decMin" class="p-3 hover:bg-gray-100 rounded-xl mt-3 transition-all group">
+                <button type="button" @click.stop="decMin" class="p-3 hover:bg-black rounded-xl mt-3 transition-all group">
                   <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="group-hover:scale-110 transition-transform">
                     <path d="M6 9l6 6 6-6"/>
                   </svg>
@@ -267,7 +267,7 @@
                   'flex-1 px-6 py-4 text-lg font-bold rounded-2xl transition-all transform',
                   selectedPeriod === 'AM' 
                     ? 'bg-[#033958] text-white shadow-lg scale-105' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-black text-black hover:bg-black'
                 ]"
               >
                 AM
@@ -279,7 +279,7 @@
                   'flex-1 px-6 py-4 text-lg font-bold rounded-2xl transition-all transform',
                   selectedPeriod === 'PM' 
                     ? 'bg-[#033958] text-white shadow-lg scale-105' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-black text-black hover:bg-black'
                 ]"
               >
                 PM
@@ -299,7 +299,7 @@
               <button 
                 type="button" 
                 @click.stop="clearTimeValue"
-                class="px-5 py-2.5 text-sm text-gray-600 hover:text-gray-800 font-semibold hover:bg-gray-100 rounded-xl transition-all"
+                class="px-5 py-2.5 text-sm text-black hover:text-black font-semibold hover:bg-black rounded-xl transition-all"
               >
                 Clear
               </button>
@@ -352,20 +352,20 @@
               </h4>
               
               <div class="flex items-center justify-between mb-4">
-                <button type="button" @click.stop="prevMonth" class="p-2 hover:bg-gray-100 rounded-xl">
+                <button type="button" @click.stop="prevMonth" class="p-2 hover:bg-black rounded-xl">
                   <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M15 18l-6-6 6-6"/>
                   </svg>
                 </button>
                 <div class="flex gap-2">
-                  <select v-model="currentMonth" @click.stop class="px-3 py-2 bg-gray-50 border-2 border-transparent hover:border-[#033958] rounded-xl font-bold text-sm">
+                  <select v-model="currentMonth" @click.stop class="px-3 py-2 bg-white border-2 border-transparent hover:border-[#033958] rounded-xl font-bold text-sm">
                     <option v-for="(m, i) in months" :key="i" :value="i">{{ m.slice(0,3) }}</option>
                   </select>
-                  <select v-model="currentYear" @click.stop class="px-3 py-2 bg-gray-50 border-2 border-transparent hover:border-[#033958] rounded-xl font-bold text-sm">
+                  <select v-model="currentYear" @click.stop class="px-3 py-2 bg-white border-2 border-transparent hover:border-[#033958] rounded-xl font-bold text-sm">
                     <option v-for="y in yearRange" :key="y" :value="y">{{ y }}</option>
                   </select>
                 </div>
-                <button type="button" @click.stop="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl">
+                <button type="button" @click.stop="nextMonth" class="p-2 hover:bg-black rounded-xl">
                   <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M9 18l6-6-6-6"/>
                   </svg>
@@ -373,7 +373,7 @@
               </div>
               
               <div class="grid grid-cols-7 gap-1 mb-2">
-                <div v-for="d in weekDays" :key="d" class="text-center text-xs font-bold text-gray-500 py-1">{{ d }}</div>
+                <div v-for="d in weekDays" :key="d" class="text-center text-xs font-bold text-black py-1">{{ d }}</div>
               </div>
               <div class="grid grid-cols-7 gap-1 mb-4">
                 <button 
@@ -396,7 +396,7 @@
               
               <div class="flex items-center justify-center gap-4 mb-6">
                 <div class="flex flex-col items-center">
-                  <button type="button" @click.stop="incHour" class="p-2 hover:bg-gray-100 rounded-lg mb-2">
+                  <button type="button" @click.stop="incHour" class="p-2 hover:bg-black rounded-lg mb-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M18 15l-6-6-6 6"/>
                     </svg>
@@ -408,17 +408,17 @@
                     @focus="handleFocusSelect" 
                     @click.stop 
                     maxlength="2"
-                    class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-gray-50"
+                    class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-white"
                   />
-                  <button type="button" @click.stop="decHour" class="p-2 hover:bg-gray-100 rounded-lg mt-2">
+                  <button type="button" @click.stop="decHour" class="p-2 hover:bg-black rounded-lg mt-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M6 9l6 6 6-6"/>
                     </svg>
                   </button>
                 </div>
-                <span class="text-4xl font-bold text-gray-500">:</span>
+                <span class="text-4xl font-bold text-black">:</span>
                 <div class="flex flex-col items-center">
-                  <button type="button" @click.stop="incMin" class="p-2 hover:bg-gray-100 rounded-lg mb-2">
+                  <button type="button" @click.stop="incMin" class="p-2 hover:bg-black rounded-lg mb-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M18 15l-6-6-6 6"/>
                     </svg>
@@ -430,9 +430,9 @@
                     @focus="handleFocusSelect" 
                     @click.stop 
                     maxlength="2"
-                    class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-gray-50"
+                    class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-white"
                   />
-                  <button type="button" @click.stop="decMin" class="p-2 hover:bg-gray-100 rounded-lg mt-2">
+                  <button type="button" @click.stop="decMin" class="p-2 hover:bg-black rounded-lg mt-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M6 9l6 6 6-6"/>
                     </svg>
@@ -444,14 +444,14 @@
                 <button 
                   type="button" 
                   @click.stop="setPeriod('AM')"
-                  :class="['flex-1 px-4 py-6 text-base font-bold rounded-xl transition-all', selectedPeriod === 'AM' ? 'bg-[#033958] text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+                  :class="['flex-1 px-4 py-6 text-base font-bold rounded-xl transition-all', selectedPeriod === 'AM' ? 'bg-[#033958] text-white shadow-lg' : 'bg-black text-black hover:bg-black']"
                 >
                   AM
                 </button>
                 <button 
                   type="button" 
                   @click.stop="setPeriod('PM')"
-                  :class="['flex-1 px-4 py-6 text-base font-bold rounded-xl transition-all', selectedPeriod === 'PM' ? 'bg-[#033958] text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+                  :class="['flex-1 px-4 py-6 text-base font-bold rounded-xl transition-all', selectedPeriod === 'PM' ? 'bg-[#033958] text-white shadow-lg' : 'bg-black text-black hover:bg-black']"
                 >
                   PM
                 </button>
@@ -471,7 +471,7 @@
               <button 
                 type="button" 
                 @click.stop="clearDTValue"
-                class="px-5 py-2.5 text-sm text-gray-600 font-semibold hover:bg-gray-100 rounded-xl transition-all"
+                class="px-5 py-2.5 text-sm text-black font-semibold hover:bg-black rounded-xl transition-all"
               >
                 Clear
               </button>
@@ -656,7 +656,7 @@ function generateCalendar(compareDate: Date | null): CalendarDay[] {
 function getDayClass(day: CalendarDay) {
   return [
     'aspect-square p-2 text-sm font-semibold rounded-xl transition-all relative',
-    day.isCurrentMonth ? 'hover:bg-gray-100 hover:scale-105 cursor-pointer' : 'text-gray-500 opacity-40 cursor-not-allowed',
+    day.isCurrentMonth ? 'hover:bg-black hover:scale-105 cursor-pointer' : 'text-black opacity-40 cursor-not-allowed',
     day.isToday && !day.isSelected ? 'bg-blue-50 text-[#033958] ring-2 ring-[#033958] ring-inset font-bold' : '',
     day.isSelected ? 'bg-[#033958] text-white shadow-lg scale-105' : ''
   ]
@@ -665,7 +665,7 @@ function getDayClass(day: CalendarDay) {
 function getDTDayClass(day: CalendarDay) {
   return [
     'aspect-square p-2 text-xs font-medium rounded-lg transition-all',
-    day.isCurrentMonth ? 'hover:bg-gray-100 cursor-pointer' : 'text-gray-500 opacity-30 cursor-not-allowed',
+    day.isCurrentMonth ? 'hover:bg-black cursor-pointer' : 'text-black opacity-30 cursor-not-allowed',
     day.isToday && !day.isSelected ? 'border-2 border-[#033958] text-[#033958] font-bold' : '',
     day.isSelected ? 'bg-[#033958] text-white shadow-md' : ''
   ]

@@ -7,9 +7,9 @@
           <img src="@/assets/img/logo.png" class="w-auto h-10 transition-transform group-hover:scale-105" alt="logo" />
         </NuxtLink>
         <div class="flex items-center space-x-8">
-           <NuxtLink to="/help" class="text-xs font-bold text-neutral-400 uppercase tracking-widest hover:text-brand-blue transition-colors" exact-active-class="text-brand-blue">Center</NuxtLink>
-           <NuxtLink to="/help/knowledgebase" class="text-xs font-bold text-neutral-400 uppercase tracking-widest hover:text-brand-blue transition-colors" active-class="text-brand-blue">Knowledgebase</NuxtLink>
-           <NuxtLink to="/help/tickets" class="text-xs font-bold text-neutral-400 uppercase tracking-widest hover:text-brand-blue transition-colors" active-class="text-brand-blue">My Support</NuxtLink>
+           <NuxtLink to="/help" class="text-xs font-bold text-neutral-400 uppercase  hover:text-brand-blue transition-colors" exact-active-class="text-brand-blue">Center</NuxtLink>
+           <NuxtLink to="/help/knowledgebase" class="text-xs font-bold text-neutral-400 uppercase  hover:text-brand-blue transition-colors" active-class="text-brand-blue">Knowledgebase</NuxtLink>
+           <NuxtLink to="/help/tickets" class="text-xs font-bold text-neutral-400 uppercase  hover:text-brand-blue transition-colors" active-class="text-brand-blue">My Support</NuxtLink>
            <button class="px-6 py-2.5 bg-brand-blue text-white rounded-full text-xs font-bold shadow-lg shadow-brand-blue/20 hover:scale-105 transition-all">Live Chat</button>
         </div>
       </div>

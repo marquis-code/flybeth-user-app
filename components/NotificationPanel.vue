@@ -2,10 +2,10 @@
   <div class="notification-panel" v-bind="$attrs">
     <div class="bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[500px] w-80 sm:w-96">
       <!-- Header -->
-      <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+      <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between bg-white sticky top-0 z-10">
         <div>
-          <h3 class="text-[14px] font-bold text-gray-900">Notifications</h3>
-          <p class="text-[10px] text-gray-400 font-medium mt-0.5">{{ notifications.length }} updates received</p>
+          <h3 class="text-[14px] font-bold text-black">Notifications</h3>
+          <p class="text-sm text-black font-medium mt-0.5">{{ notifications.length }} updates received</p>
         </div>
         <button 
           v-if="notifications.length > 0"
@@ -17,13 +17,13 @@
       </div>
 
       <!-- List -->
-      <div class="flex-1 overflow-y-auto bg-gray-50/30 custom-scrollbar">
+      <div class="flex-1 overflow-y-auto bg-white/30 custom-scrollbar">
         <div v-if="notifications.length === 0" class="flex flex-col items-center justify-center py-12 px-6 text-center">
-          <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-            <Bell class="w-6 h-6 text-gray-300" />
+          <div class="w-12 h-12 bg-black rounded-full flex items-center justify-center mb-3">
+            <Bell class="w-6 h-6 text-black" />
           </div>
-          <p class="text-sm font-bold text-gray-900">All caught up!</p>
-          <p class="text-xs text-gray-400 mt-1">When you receive updates about your bookings or support, they'll appear here.</p>
+          <p class="text-sm font-bold text-black">All caught up!</p>
+          <p class="text-xs text-black mt-1">When you receive updates about your bookings or support, they'll appear here.</p>
         </div>
 
         <div v-else class="divide-y divide-gray-100">
@@ -34,17 +34,17 @@
           >
             <div class="flex gap-3">
               <div 
-                class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-gray-100"
+                class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-gray-200"
                 :class="getTypeStyles(n.type)"
               >
                 <component :is="getTypeIcon(n.type)" class="w-5 h-5" />
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-2">
-                  <p class="text-sm font-bold text-gray-900 truncate">{{ n.title || 'Support Update' }}</p>
-                  <span class="text-[10px] font-medium text-gray-400 whitespace-nowrap">{{ formatTime(n.timestamp || new Date()) }}</span>
+                  <p class="text-sm font-bold text-black truncate">{{ n.title || 'Support Update' }}</p>
+                  <span class="text-sm font-medium text-black whitespace-nowrap">{{ formatTime(n.timestamp || new Date()) }}</span>
                 </div>
-                <p class="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">{{ n.message || n.content }}</p>
+                <p class="text-xs text-black mt-1 leading-relaxed line-clamp-2">{{ n.message || n.content }}</p>
               </div>
             </div>
           </div>
@@ -52,8 +52,8 @@
       </div>
 
       <!-- Footer -->
-      <div v-if="notifications.length > 0" class="px-5 py-3 border-t border-gray-100 bg-white text-center">
-        <button class="text-[11px] font-bold text-gray-400 hover:text-gray-900 transition-colors">
+      <div v-if="notifications.length > 0" class="px-5 py-3 border-t border-gray-200 bg-white text-center">
+        <button class="text-[11px] font-bold text-black hover:text-black transition-colors">
           View all activity
         </button>
       </div>

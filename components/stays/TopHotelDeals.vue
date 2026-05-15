@@ -1,6 +1,6 @@
 <template>
   <div class="mb-12">
-    <h3 class="text-2xl font-bold text-gray-900 mb-6  tracking-tight">Top hotel deals in {{ destinationName }}</h3>
+    <h3 class="text-2xl font-bold text-black mb-6  ">Top hotel deals in {{ destinationName }}</h3>
     
     <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <StaySkeleton v-for="i in 4" :key="i" />
@@ -15,29 +15,29 @@
           @click="handleBookNow(hotel)"
         >
           <!-- Image -->
-          <div class="h-48 relative overflow-hidden bg-gray-100 flex-shrink-0">
+          <div class="h-48 relative overflow-hidden bg-black flex-shrink-0">
             <img :src="hotel.image" :alt="hotel.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div class="absolute inset-0 bg-black/10 transition-opacity"></div>
             <div class="absolute top-1/2 -translate-y-1/2 right-2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-               <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+               <svg class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </div>
           </div>
           
           <!-- Content -->
           <div class="p-5 flex-1 flex flex-col justify-between">
             <div class="mb-4">
-              <p class="text-xs text-gray-500 mb-1 font-bold">{{ hotel.city }}</p>
-              <h4 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2" :title="hotel.name">{{ hotel.name }}</h4>
+              <p class="text-xs text-black mb-1 font-bold">{{ hotel.city }}</p>
+              <h4 class="text-sm font-bold text-black leading-snug line-clamp-2" :title="hotel.name">{{ hotel.name }}</h4>
             </div>
             
             <div class="flex items-end justify-between mt-auto">
               <div class="flex flex-col">
-                 <span class="text-[10px] text-gray-500 font-bold tracking-wide leading-none mb-1">From</span>
-                 <p class="text-sm font-bold text-gray-900 leading-none">${{ hotel.price }} <span class="text-xs text-gray-500 font-normal">/ night*</span></p>
+                 <span class="text-sm text-black font-bold  leading-none mb-1">From</span>
+                 <p class="text-sm font-bold text-black leading-none">${{ hotel.price }} <span class="text-xs text-black font-normal">/ night*</span></p>
               </div>
               <button 
                 @click.stop="handleBookNow(hotel)"
-                class="px-4 py-2 bg-gray-900 text-white hover:bg-gray-700 transition-colors text-xs font-bold rounded-md tracking-wide"
+                class="px-4 py-2 bg-black text-white hover:bg-black transition-colors text-xs font-bold rounded-md "
               >
                 Book now
               </button>
@@ -45,7 +45,7 @@
           </div>
         </div>
       </div>
-      <p class="text-[9px] text-gray-400 mt-2">*All rates above were last found on: {{ currentDate }} UTC</p>
+      <p class="text-[9px] text-black mt-2">*All rates above were last found on: {{ currentDate }} UTC</p>
     </div>
 
     <!-- Empty State -->

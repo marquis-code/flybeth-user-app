@@ -2,17 +2,17 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
       <div class="flex flex-col gap-3">
-        <h2 class="text-4xl  text-gray-900 tracking-tight">Find Great Deals by City</h2>
-        <p class="text-sm font-bold text-gray-400 max-w-lg leading-relaxed">
+        <h2 class="text-4xl  text-black ">Find Great Deals by City</h2>
+        <p class="text-sm font-bold text-black max-w-lg leading-relaxed">
           Explore curated savings across top destinations. Select a city to discover the best flights, premier stays, and car rentals.
         </p>
       </div>
       <div class="flex gap-2">
-         <button @click="scroll('left')" class="p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all">
-            <ChevronLeftIcon class="h-5 w-5 text-gray-400" />
+         <button @click="scroll('left')" class="p-3 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <ChevronLeftIcon class="h-5 w-5 text-black" />
          </button>
-         <button @click="scroll('right')" class="p-3 rounded-full bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all">
-            <ChevronRightIcon class="h-5 w-5 text-gray-400" />
+         <button @click="scroll('right')" class="p-3 rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <ChevronRightIcon class="h-5 w-5 text-black" />
          </button>
       </div>
     </div>
@@ -23,26 +23,26 @@
         :key="city.name" 
         class="flex-shrink-0 w-[400px] snap-start"
       >
-        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden group h-[520px] flex flex-col">
+        <div class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden group h-[520px] flex flex-col">
           <!-- City Image Header -->
           <div class="h-48 relative overflow-hidden flex-shrink-0">
             <img :src="city.image" :alt="city.name" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <div class="absolute bottom-6 left-8">
               <h3 class="text-2xl  text-white leading-none">{{ city.name }}</h3>
-              <p class="text-[10px] text-white/70 uppercase tracking-widest mt-1 font-bold">Starting from ${{ Math.min(...Object.values(city.deals).flat().map((d: any) => d.price)) }}</p>
+              <p class="text-sm text-white/70 uppercase  mt-1 font-bold">Starting from ${{ Math.min(...Object.values(city.deals).flat().map((d: any) => d.price)) }}</p>
             </div>
           </div>
 
           <!-- Internal Tabs -->
           <div class="flex-1 p-8 flex flex-col">
-            <div class="flex gap-6 mb-8 border-b border-gray-50">
+            <div class="flex gap-6 mb-8 border-b border-gray-200">
               <button 
                 v-for="tab in ['Flights', 'Hotels', 'Cars']" 
                 :key="tab"
                 @click="activeTabs[city.name] = tab"
-                class="pb-4 text-[10px] font-bold uppercase tracking-widest transition-all relative"
-                :class="activeTabs[city.name] === tab ? 'text-brand-blue' : 'text-gray-400 hover:text-gray-900'"
+                class="pb-4 text-sm font-bold uppercase  transition-all relative"
+                :class="activeTabs[city.name] === tab ? 'text-brand-blue' : 'text-black hover:text-black'"
               >
                 {{ tab }}
                 <div v-show="activeTabs[city.name] === tab" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full animate-grow"></div>
@@ -56,15 +56,15 @@
                   v-for="deal in ((city.deals as any)[(activeTabs[city.name] as string).toLowerCase()] || [])" 
                   :key="deal.label"
                   @click="selectDeal(activeTabs[city.name] as string, deal, city.name)"
-                  class="flex items-center justify-between p-4 rounded-2xl bg-gray-50/50 hover:bg-brand-blue/5 border border-transparent hover:border-brand-blue/10 transition-all cursor-pointer group/item"
+                  class="flex items-center justify-between p-4 rounded-2xl bg-white/50 hover:bg-brand-blue/5 border border-transparent hover:border-brand-blue/10 transition-all cursor-pointer group/item"
                 >
                   <div class="flex flex-col gap-0.5">
-                    <span class="text-xs font-bold text-gray-900 group-hover/item:text-brand-blue transition-colors">{{ deal.label }}</span>
-                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ activeTabs[city.name] === 'Flights' ? 'One Way' : 'Per Night' }}</span>
+                    <span class="text-xs font-bold text-black group-hover/item:text-brand-blue transition-colors">{{ deal.label }}</span>
+                    <span class="text-sm text-black font-bold uppercase ">{{ activeTabs[city.name] === 'Flights' ? 'One Way' : 'Per Night' }}</span>
                   </div>
                   <div class="flex items-center gap-3">
-                    <span class="text-sm  text-gray-900">${{ deal.price }}</span>
-                    <div class="h-6 w-6 rounded-full bg-white border border-gray-100 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity">
+                    <span class="text-sm  text-black">${{ deal.price }}</span>
+                    <div class="h-6 w-6 rounded-full bg-white border border-gray-200 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity">
                       <ChevronRightIcon class="h-3 w-3 text-brand-blue" />
                     </div>
                   </div>
@@ -74,7 +74,7 @@
             
             <button 
               @click="toggleAllDeals(city.name)"
-              class="mt-6 w-full py-4 text-[10px] flex items-center justify-center gap-2 border border-brand-blue/10 rounded-xl font-bold uppercase tracking-widest text-brand-blue hover:bg-brand-blue hover:text-white transition-all active:scale-95"
+              class="mt-6 w-full py-4 text-sm flex items-center justify-center gap-2 border border-brand-blue/10 rounded-xl font-bold uppercase  text-brand-blue hover:bg-brand-blue hover:text-white transition-all active:scale-95"
             >
               See all {{ city.name }} deals
             </button>

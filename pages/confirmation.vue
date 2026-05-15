@@ -21,25 +21,32 @@
         <h1 class="success-title">{{ statusTitle }}</h1>
         <p class="success-subtitle">{{ statusMessage }}</p>
 
-        <!-- Booking Details -->
-        <div class="booking-details">
-          <div v-if="bookingRef" class="detail-row">
-            <span class="detail-label">Booking Reference</span>
-            <span class="detail-value highlight">{{ bookingRef }}</span>
-          </div>
-          <div v-if="orderId" class="detail-row">
-            <span class="detail-label">Order ID</span>
-            <span class="detail-value">{{ orderId }}</span>
-          </div>
-          <div v-if="paymentStatus" class="detail-row">
-            <span class="detail-label">Payment Status</span>
-            <span class="detail-value" :class="statusClass">{{ displayPaymentStatus }}</span>
-          </div>
+        <div v-if="isAuthorizing" class="authorizing-overlay">
+          <div class="spinner"></div>
+          <p>Authorizing your payment...</p>
         </div>
+        
+        <div v-else>
+          <!-- Booking Details -->
+          <div class="booking-details">
+            <div v-if="bookingRef" class="detail-row">
+              <span class="detail-label">Booking Reference</span>
+              <span class="detail-value highlight">{{ bookingRef }}</span>
+            </div>
+            <div v-if="orderId" class="detail-row">
+              <span class="detail-label">Order ID</span>
+              <span class="detail-value">{{ orderId }}</span>
+            </div>
+            <div v-if="paymentStatus" class="detail-row">
+              <span class="detail-label">Payment Status</span>
+              <span class="detail-value" :class="statusClass">{{ displayPaymentStatus }}</span>
+            </div>
+          </div>
 
-        <p class="email-notice">
-          We've sent a confirmation email with your booking details. Please check your inbox.
-        </p>
+          <p class="email-notice">
+            We've sent a confirmation email with your booking details. Please check your inbox.
+          </p>
+        </div>
 
         <!-- Actions -->
         <div class="action-buttons">
@@ -55,14 +62,36 @@
 import { computed, onMounted } from 'vue'
 import { useTracking } from '@/composables/core/useTracking'
 
+import { paymentsApi } from '@/api_factory/modules/payments'
+
 const route = useRoute()
 const { trackAction } = useTracking()
 
 const bookingRef = computed(() => (route.query.pnr as string) || '')
 const orderId = computed(() => (route.query.orderId as string) || '')
-const paymentStatus = computed(() => (route.query.status as string) || 'booked')
+const paymentStatus = ref((route.query.status as string) || 'booked')
+const checkoutToken = computed(() => (route.query.checkout_token as string) || (route.query.token as string) || (route.query.reference as string) || '')
+const provider = computed(() => (route.query.provider as string) || '')
+const isAuthorizing = ref(false)
 
-onMounted(() => {
+onMounted(async () => {
+  if (paymentStatus.value === 'success' && checkoutToken.value && provider.value) {
+    isAuthorizing.value = true
+    try {
+      await paymentsApi.authorizeBnpl({
+        bookingId: orderId.value,
+        provider: provider.value,
+        checkoutToken: checkoutToken.value
+      })
+      paymentStatus.value = 'success'
+    } catch (error) {
+      console.error('Failed to authorize BNPL payment:', error)
+      paymentStatus.value = 'pending_payment'
+    } finally {
+      isAuthorizing.value = false
+    }
+  }
+
   trackAction('booking_completed', {
     pnr: bookingRef.value,
     orderId: orderId.value,
@@ -308,5 +337,28 @@ const viewBooking = () => {
 
 .btn-secondary:hover {
   background: rgba(13, 29, 173, 0.05);
+}
+
+.authorizing-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(13, 29, 173, 0.1);
+  border-left-color: #0D1DAD;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

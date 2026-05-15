@@ -3,17 +3,17 @@
     <!-- Trigger Input -->
     <div 
       @click="toggleCalendar"
-      class="flex items-center gap-4 p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] cursor-pointer hover:border-brand-blue/30 hover:shadow-lg transition-all duration-500 group"
+      class="flex items-center gap-4 p-5 bg-white rounded-[1.5rem] border border-gray-200 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] cursor-pointer hover:border-brand-blue/30 hover:shadow-lg transition-all duration-500 group"
       :class="{ 'ring-4 ring-brand-blue/5 border-brand-blue shadow-xl': isOpen }"
     >
       <div class="p-3 border border-brand-blue/10 rounded-2xl bg-brand-blue/5 group-hover:bg-brand-blue group-hover:text-white transition-all duration-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" :class="isOpen ? 'text-white' : 'text-gray-900 transition-colors group-hover:text-white'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" :class="isOpen ? 'text-white' : 'text-black transition-colors group-hover:text-white'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       </div>
       <div class="flex flex-col">
-        <span class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-0.5 opacity-70">{{ label }}</span>
-        <span class="text-base font-bold text-gray-900 tracking-tight">
+        <span class="text-[11px] uppercase  text-brand-gray  mb-0.5 opacity-70">{{ label }}</span>
+        <span class="text-base font-bold text-black ">
           {{ formattedValue }}
         </span>
       </div>
@@ -23,20 +23,20 @@
     <Transition name="calendar-pop">
       <div 
         v-if="isOpen"
-        class="absolute z-[100] mt-4 bg-white rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-100 p-8 min-w-[320px] lg:min-w-[700px] transform origin-top-left"
+        class="absolute z-[100] mt-4 bg-white rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-200 p-8 min-w-[320px] lg:min-w-[700px] transform origin-top-left"
         :class="popoverPosition"
       >
         <div class="flex flex-col lg:flex-row gap-12">
           <!-- Calendar Month -->
           <div class="flex-1">
              <div class="flex items-center justify-between mb-8">
-                <button @click="prevMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
+                <button @click="prevMonth" class="p-2 hover:bg-black rounded-xl transition-all text-black hover:text-black">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h3 class="text-sm  text-gray-900 uppercase tracking-widest">{{ formatMonthYear(currentMonth) }}</h3>
-                <button v-if="!isDesktop" @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
+                <h3 class="text-sm  text-black uppercase ">{{ formatMonthYear(currentMonth) }}</h3>
+                <button v-if="!isDesktop" @click="nextMonth" class="p-2 hover:bg-black rounded-xl transition-all text-black hover:text-black">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" />
                   </svg>
@@ -45,7 +45,7 @@
              </div>
 
              <div class="grid grid-cols-7 mb-4">
-                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px]  text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
+                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px]  text-black uppercase  text-center">{{ day }}</span>
              </div>
 
              <div class="grid grid-cols-7 gap-1 relative">
@@ -61,7 +61,7 @@
                   <!-- Range Background -->
                   <div 
                     v-if="isInRange(getDateObj(currentMonth, day))"
-                    class="absolute inset-y-1 bg-gray-100"
+                    class="absolute inset-y-1 bg-black"
                     :class="getRangeBgClasses(getDateObj(currentMonth, day))"
                   ></div>
 
@@ -80,8 +80,8 @@
           <div v-if="isDesktop" class="flex-1">
              <div class="flex items-center justify-between mb-8">
                 <div class="w-8"></div>
-                <h3 class="text-sm  text-gray-900 uppercase tracking-widest">{{ formatMonthYear(nextMonthDate) }}</h3>
-                <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-gray-400 hover:text-gray-900">
+                <h3 class="text-sm  text-black uppercase ">{{ formatMonthYear(nextMonthDate) }}</h3>
+                <button @click="nextMonth" class="p-2 hover:bg-black rounded-xl transition-all text-black hover:text-black">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" />
                   </svg>
@@ -89,7 +89,7 @@
              </div>
 
              <div class="grid grid-cols-7 mb-4">
-                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px]  text-gray-400 uppercase tracking-widest text-center">{{ day }}</span>
+                <span v-for="day in ['S','M','T','W','T','F','S']" :key="day" class="text-[9px]  text-black uppercase  text-center">{{ day }}</span>
              </div>
 
              <div class="grid grid-cols-7 gap-1 relative">
@@ -105,7 +105,7 @@
                   <!-- Range Background -->
                   <div 
                     v-if="isInRange(getDateObj(nextMonthDate, day))"
-                    class="absolute inset-y-1 bg-gray-100"
+                    class="absolute inset-y-1 bg-black"
                     :class="getRangeBgClasses(getDateObj(nextMonthDate, day))"
                   ></div>
 
@@ -122,10 +122,10 @@
         </div>
 
         <!-- Compact Footer -->
-        <div class="mt-10 pt-6 border-t border-gray-100 flex items-center justify-end gap-4">
+        <div class="mt-10 pt-6 border-t border-gray-200 flex items-center justify-end gap-4">
           <button 
             @click="isOpen = false"
-            class="px-8 py-3 bg-gray-900 text-white text-[10px]  uppercase  rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
+            class="px-8 py-3 bg-black text-white text-sm  uppercase  rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
           >
             Apply Selection
           </button>
@@ -271,11 +271,11 @@ const getDayClasses = (date: Date) => {
   const isSelectedSingle = props.mode === 'single' && isSameDate(date, props.modelValue as Date)
 
   if (isStart || isEnd || isSelectedSingle) {
-    classes.push('bg-gray-900 text-white shadow-lg scale-105')
+    classes.push('bg-black text-white shadow-lg scale-105')
   } else if (isInRange(date)) {
-    classes.push('text-gray-900')
+    classes.push('text-black')
   } else {
-    classes.push('text-gray-900 hover:bg-gray-50')
+    classes.push('text-black hover:bg-white')
   }
 
   const today = new Date()
@@ -364,7 +364,7 @@ const nextMonth = () => {
   transform: translateY(20px) scale(0.95);
 }
 
-.grid-cols-7 > div > .bg-gray-100 {
+.grid-cols-7 > div > .bg-black {
   height: 2.25rem;
   top: 50%;
   transform: translateY(-50%);

@@ -1,25 +1,25 @@
 <template>
-  <div class="duffel-card-form space-y-4 lg:p-4 bg-white rounded-xl lg:border lg:border-gray-100 animate-fade-in">
+  <div class="duffel-card-form space-y-4 lg:p-4 bg-white rounded-xl lg:border lg:border-gray-200 animate-fade-in">
     <div class="flex items-center gap-2 mb-2">
       <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white">
         <Lock class="w-4 h-4" />
       </div>
-      <h3 class="text-sm font-bold text-gray-800 tracking-wider">Secure Payment Card</h3>
+      <h3 class="text-sm font-bold text-black ">Secure Payment Card</h3>
     </div>
 
     <div class="grid grid-cols-1 gap-4">
       <div class="space-y-1">
-        <label class="text-[10px] font-bold text-gray-400 tracking-widest pl-1">Cardholder Name</label>
+        <label class="text-sm font-bold text-black  pl-1">Cardholder Name</label>
         <input 
           v-model="cardData.name"
           type="text" 
           placeholder="AS WRITTEN ON CARD"
-          class="w-full h-12 px-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-medium"
+          class="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-medium"
         />
       </div>
 
       <div class="space-y-1">
-        <label class="text-[10px] font-bold text-gray-400 tracking-widest pl-1">Card Number</label>
+        <label class="text-sm font-bold text-black  pl-1">Card Number</label>
         <div class="relative">
           <input 
             v-model="cardData.number"
@@ -27,7 +27,7 @@
             placeholder="0000 0000 0000 0000"
             maxlength="19"
             @input="formatCardNumber"
-            class="w-full h-12 px-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-medium tracking-widest"
+            class="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-medium "
           />
           <div class="absolute right-3 top-1/2 -translate-y-1/2 flex gap-2">
              <img src="@/assets/icons/master-card.svg" class="h-4" />
@@ -38,32 +38,32 @@
 
       <div class="grid grid-cols-2 gap-4">
         <div class="space-y-1">
-          <label class="text-[10px] font-bold text-gray-400 tracking-widest pl-1">Expiry Date</label>
+          <label class="text-sm font-bold text-black  pl-1">Expiry Date</label>
           <input 
             v-model="cardData.expiry"
             type="text" 
             placeholder="MM / YY"
             maxlength="7"
             @input="formatExpiry"
-            class="w-full h-12 px-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-medium text-center"
+            class="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-medium text-center"
           />
         </div>
         <div class="space-y-1">
-          <label class="text-[10px] font-bold text-gray-400 tracking-widest pl-1">CVV / CVC</label>
+          <label class="text-sm font-bold text-black  pl-1">CVV / CVC</label>
           <input 
             v-model="cardData.cvv"
             type="text" 
             placeholder="•••"
             maxlength="4"
             autocomplete="cc-csc"
-            class="w-full h-12 px-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-bold text-center tracking-widest"
+            class="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-bold text-center "
           />
         </div>
       </div>
 
       <!-- Billing Address -->
       <div class="space-y-3 pt-2">
-        <p class="text-[10px]  text-gray-400 tracking-widest uppercase pl-1">Billing Address</p>
+        <p class="text-sm  text-black  uppercase pl-1">Billing Address</p>
         
         <div class="grid grid-cols-1 gap-3">
           <input 
@@ -71,14 +71,14 @@
             v-model="cardData.address_line_1" 
             type="text" 
             placeholder="Address Line 1 (Google Autocomplete)" 
-            class="w-full h-11 px-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm" 
+            class="w-full h-11 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm" 
           />
           <input 
             ref="address2Ref"
             v-model="cardData.address_line_2" 
             type="text" 
             placeholder="Address Line 2 (Optional)" 
-            class="w-full h-11 px-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm" 
+            class="w-full h-11 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm" 
           />
         </div>
 
@@ -112,26 +112,26 @@
             v-model="cardData.address_postal_code" 
             type="text" 
             placeholder="Postal / Zip Code" 
-            class="w-full h-11 px-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm" 
+            class="w-full h-11 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm" 
           />
         </div>
       </div>
 
-      <div class="pt-4 border-t border-gray-50 flex items-center gap-3">
+      <div class="pt-4 border-t border-gray-200 flex items-center gap-3">
          <label class="flex items-center gap-3 cursor-pointer group">
            <input 
              type="checkbox" 
              v-model="cardData.multi_use"
              class="custom-checkbox"
            />
-           <span class="text-xs font-bold text-gray-600 group-hover:text-gray-900 transition-colors">Remember this card for future use</span>
+           <span class="text-xs font-bold text-black group-hover:text-black transition-colors">Remember this card for future use</span>
          </label>
       </div>
     </div>
 
     <div class="flex items-center gap-2 pt-2 opacity-50">
-      <Lock class="w-3 h-3 text-gray-400" />
-      <span class="text-[9px] font-bold text-gray-400 tracking-tighter uppercase">PCI-DSS Secure Vault | 256-bit Encryption</span>
+      <Lock class="w-3 h-3 text-black" />
+      <span class="text-[9px] font-bold text-black er uppercase">PCI-DSS Secure Vault | 256-bit Encryption</span>
     </div>
   </div>
 </template>

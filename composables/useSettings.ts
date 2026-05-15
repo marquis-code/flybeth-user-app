@@ -138,7 +138,18 @@ export function useSettings() {
         // Convert from USD base using admin-configured rate
         const converted = num * (currentCurrency.value.rate || 1)
         
-        return `${currentCurrency.value.symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        try {
+            // Robust localized formatting using Intl API
+            return new Intl.NumberFormat(undefined, { 
+                style: 'currency', 
+                currency: currentCurrency.value.code,
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 2 
+            }).format(converted)
+        } catch (e) {
+            // Fallback if currency code is invalid
+            return `${currentCurrency.value.symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        }
     }
 
     // Auto-fetch on first use (client-side only)

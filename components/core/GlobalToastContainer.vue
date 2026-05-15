@@ -4,7 +4,7 @@
       <div 
         v-for="toast in toasts" 
         :key="toast.id"
-        class="pointer-events-auto flex items-start gap-4 p-4 pr-6 bg-white rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] border border-gray-100 min-w-[320px] max-w-[440px] animate-in"
+        class="pointer-events-auto flex items-start gap-4 p-4 pr-6 bg-white rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.15)] border border-gray-200 min-w-[320px] max-w-[440px] animate-in"
       >
         <div 
           class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -14,11 +14,11 @@
         </div>
         
         <div class="flex-1 pt-0.5">
-          <h3 class="text-sm  text-gray-900 leading-tight mb-1">{{ toast.title }}</h3>
-          <p class="text-[13px] font-medium text-gray-500 leading-relaxed">{{ toast.message }}</p>
+          <h3 class="text-sm  text-black leading-tight mb-1">{{ toast.title }}</h3>
+          <p class="text-[13px] font-medium text-black leading-relaxed">{{ toast.message }}</p>
         </div>
 
-        <button @click="removeToast(toast.id)" class="text-gray-300 hover:text-gray-500 transition-colors pt-0.5">
+        <button @click="removeToast(toast.id)" class="text-black hover:text-black transition-colors pt-0.5">
           <X class="h-4 w-4" />
         </button>
       </div>

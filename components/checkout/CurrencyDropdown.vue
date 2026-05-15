@@ -13,9 +13,9 @@
     </button>
 
     <Transition name="slide-up">
-      <div v-if="isOpen" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[500] origin-top-right">
-        <div class="p-4 border-b border-gray-50 bg-gray-50/50">
-          <p class="text-[10px]  text-gray-400 tracking-widest uppercase">Select Currency</p>
+      <div v-if="isOpen" class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden z-[500] origin-top-right">
+        <div class="p-4 border-b border-gray-200 bg-white/50">
+          <p class="text-sm  text-black  uppercase">Select Currency</p>
         </div>
         
         <div class="max-h-80 overflow-y-auto custom-scrollbar p-2 grid grid-cols-2 gap-1">
@@ -24,21 +24,21 @@
             :key="currency.code"
             @click="select(currency.code)"
             class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group group-hover:shadow-sm"
-            :class="currentCurrency === currency.code ? 'bg-blue-600 text-white shadow-md' : 'hover:bg-gray-50 text-gray-700'"
+            :class="currentCurrency === currency.code ? 'bg-blue-600 text-white shadow-md' : 'hover:bg-white text-black'"
           >
-            <div class="w-6 h-4 overflow-hidden rounded-sm border border-gray-100 flex-shrink-0">
+            <div class="w-6 h-4 overflow-hidden rounded-sm border border-gray-200 flex-shrink-0">
               <img :src="`https://flagcdn.com/w40/${currency.countryCode.toLowerCase()}.png`" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col items-start leading-tight">
-               <span class="text-xs font-bold tracking-tight">{{ currency.code }}</span>
+               <span class="text-xs font-bold ">{{ currency.code }}</span>
                <span class="text-[9px] font-medium opacity-60 truncate max-w-[80px]">{{ currency.name }}</span>
             </div>
           </button>
         </div>
 
-        <div class="p-4 bg-gray-50/80 flex items-center justify-center gap-2">
+        <div class="p-4 bg-white/80 flex items-center justify-center gap-2">
            <ShieldCheck class="w-3 h-3 text-emerald-600" />
-           <span class="text-[9px] font-bold text-gray-400 tracking-tighter uppercase">100% Secure Conversion</span>
+           <span class="text-[9px] font-bold text-black er uppercase">100% Secure Conversion</span>
         </div>
       </div>
     </Transition>

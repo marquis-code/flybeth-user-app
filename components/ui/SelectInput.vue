@@ -6,7 +6,7 @@
           :for="inputId"
           :class="[
             'absolute transition-all duration-300 ease-in-out pointer-events-none z-10',
-            isFocused || modelValue ? 'text-xs text-gray-500 left-3 top-2' : 'text-base text-gray-500 left-3 top-1/2 transform -translate-y-1/2'
+            isFocused || modelValue ? 'text-xs text-black left-3 top-2' : 'text-base text-black left-3 top-1/2 transform -translate-y-1/2'
           ]"
         >
           {{ label }}
@@ -16,7 +16,7 @@
         <div
           @click="toggleDropdown"
           :class="[
-            'w-full py-4 pt-6 px-3 bg-white border border-gray-300 flex justify-between items-center cursor-pointer',
+            'w-full py-4 pt-6 px-3 bg-white border border-gray-200 flex justify-between items-center cursor-pointer',
             'focus:outline-none focus:ring-1 focus:ring-[#3BAB22] focus:border-[#3BAB22] transition-all duration-300',
             roundedClasses,
             disabled ? 'opacity-50 cursor-not-allowed' : '',
@@ -46,13 +46,13 @@
   
         <div
           v-if="showDropdown"
-          class="absolute z-[10000000] mt-1 w-full bg-white rounded-2xl border border-gray-300 overflow-hidden"
+          class="absolute z-[10000000] mt-1 w-full bg-white rounded-2xl border border-gray-200 overflow-hidden"
         >
           <!-- Search Input -->
-          <div class="p-2 border-b-[0.5px] border-gray-50 sticky top-0 bg-white">
+          <div class="p-2 border-b-[0.5px] border-gray-200 sticky top-0 bg-white">
             <div class="relative">
               <svg 
-                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" 
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-black" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -65,7 +65,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search..."
-                class="w-full pl-9 pr-3 py-3 border-[0.5px] border-gray-300 rounded-lg focus:border-[0.5px] focus:border-[#3BAB22] outline-none text-sm"
+                class="w-full pl-9 pr-3 py-3 border-[0.5px] border-gray-200 rounded-lg focus:border-[0.5px] focus:border-[#3BAB22] outline-none text-sm"
                 @click.stop
               />
             </div>
@@ -77,7 +77,7 @@
               v-for="(option, index) in filteredOptions"
               :key="index"
               @click="selectOption(option)"
-              class="p-3 font-medium hover:bg-gray-25 m-1 rounded-lg cursor-pointer transition-colors text-sm text-[#1A1A1B]"
+              class="p-3 font-medium hover:bg-black m-1 rounded-lg cursor-pointer transition-colors text-sm text-[#1A1A1B]"
             >
               <!-- Custom option slot -->
               <slot v-if="slots.default" :option="option" :index="index" />
@@ -90,7 +90,7 @@
             <!-- No results message -->
             <div 
               v-if="filteredOptions.length === 0" 
-              class="p-4 text-center text-sm text-gray-500"
+              class="p-4 text-center text-sm text-black"
             >
               No results found for "{{ searchQuery }}"
             </div>

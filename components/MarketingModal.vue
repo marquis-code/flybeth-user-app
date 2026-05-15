@@ -8,10 +8,10 @@
         <!-- Close Button (Always visible) -->
         <button 
           @click="$emit('close')" 
-          class="absolute top-4 right-4 sm:top-6 sm:right-6 z-[999999] h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-xl hover:bg-white active:scale-95 transition-all group ring-4 ring-black/5"
+          class="absolute top-4 right-4 sm:top-6 sm:right-6 z-[999999] h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center rounded-full bg-white/90 backdrop-blur shadow-xl hover:bg-white active:scale-95 transition-all group ring-4 ring-gray-200/5"
           aria-label="Close modal"
         >
-          <X class="h-5 w-5 sm:h-6 sm:w-6 text-gray-900 transition-transform duration-300 group-hover:rotate-90" />
+          <X class="h-5 w-5 sm:h-6 sm:w-6 text-black transition-transform duration-300 group-hover:rotate-90" />
         </button>
 
         <div class="flex flex-col md:flex-row flex-1 overflow-y-auto sm:overflow-visible custom-scrollbar">
@@ -29,10 +29,10 @@
               <!-- Badge -->
               <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 mb-6 border border-white/10">
                 <div class="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse"></div>
-                <span class="text-[10px] font-bold text-white/90 uppercase ">Live Support</span>
+                <span class="text-sm font-bold text-white/90 uppercase ">Live Support</span>
               </div>
 
-              <h3 class="text-2xl sm:text-[28px] font-bold text-white leading-[1.2] mb-4 tracking-tight">
+              <h3 class="text-2xl sm:text-[28px] font-bold text-white leading-[1.2] mb-4 ">
                 Need help<br class="hidden sm:block"/>finding the<br/>
                 <span class="text-[#F48221]">perfect deal?</span>
               </h3>
@@ -53,7 +53,7 @@
                 </div>
               </div>
               <div class="hidden xs:block">
-                <p class="text-[9px] font-bold text-white/50 uppercase tracking-wider">Trusted by</p>
+                <p class="text-[9px] font-bold text-white/50 uppercase ">Trusted by</p>
                 <p class="text-[11px] font-bold text-white">40,000+ Africa travelers</p>
               </div>
             </div>
@@ -64,7 +64,7 @@
             
             <!-- Benefits List -->
             <div>
-              <p class="text-[10px] font-bold text-gray-400 font-sans uppercase  mb-6">Why call us?</p>
+              <p class="text-sm font-bold text-black font-sans uppercase  mb-6">Why call us?</p>
               <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-1 gap-y-6 xs:gap-x-4">
                 <div 
                   v-for="(benefit, idx) in benefits" 
@@ -77,8 +77,8 @@
                     <component :is="benefit.icon" class="h-4.5 w-4.5" />
                   </div>
                   <div>
-                    <p class="text-xs sm:text-sm font-bold text-gray-900 leading-tight">{{ benefit.title }}</p>
-                    <p class="text-[10px] text-gray-400 mt-1 sm:mt-0.5 leading-tight">{{ benefit.subtitle }}</p>
+                    <p class="text-xs sm:text-sm font-bold text-black leading-tight">{{ benefit.title }}</p>
+                    <p class="text-sm text-black mt-1 sm:mt-0.5 leading-tight">{{ benefit.subtitle }}</p>
                   </div>
                 </div>
               </div>
@@ -97,7 +97,7 @@
                   </div>
                   <div>
                     <p class="text-[8px] sm:text-[9px] font-bold text-white/50 uppercase  mb-0.5">Call us now</p>
-                    <p class="text-xs sm:text-sm font-bold text-white tabular-nums tracking-wide">+1 844 FLYBETH (359-2384)</p>
+                    <p class="text-xs sm:text-sm font-bold text-white tabular-nums ">+1 844 FLYBETH (359-2384)</p>
                   </div>
                 </div>
                 <div class="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-white/10 flex items-center justify-center group-hover:translate-x-1 transition-transform">
@@ -109,14 +109,14 @@
               <div class="flex flex-col sm:flex-row gap-3">
                 <button 
                   @click="$emit('close')"
-                  class="flex-1 flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 rounded-2xl px-5 py-4 sm:py-3.5 transition-all duration-300 group"
+                  class="flex-1 flex items-center justify-center gap-2 bg-white hover:bg-black rounded-2xl px-5 py-4 sm:py-3.5 transition-all duration-300 group"
                 >
-                  <ChatBubbleLeftEllipsisIcon class="h-4 w-4 text-gray-400 group-hover:text-[#003580] transition-colors" />
-                  <span class="text-xs font-bold text-gray-500 group-hover:text-gray-900 transition-colors">Chat online</span>
+                  <ChatBubbleLeftEllipsisIcon class="h-4 w-4 text-black group-hover:text-[#003580] transition-colors" />
+                  <span class="text-xs font-bold text-black group-hover:text-black transition-colors">Chat online</span>
                 </button>
               </div>
 
-              <p class="text-center text-[9px] text-gray-400 font-bold uppercase tracking-[0.15em] pt-1">
+              <p class="text-center text-[9px] text-black font-bold uppercase  pt-1">
                 Available 24/7 · No booking fees · Price match guarantee
               </p>
             </div>

@@ -16,29 +16,29 @@
 
       <!-- Body -->
       <div class="p-10 text-center">
-        <h2 class="text-3xl font-bold text-gray-900 mb-4 tracking-tight">We have secured your selected hotel</h2>
+        <h2 class="text-3xl font-bold text-black mb-4 ">We have secured your selected hotel</h2>
         
         <!-- Price summary -->
         <div v-if="selectedRoom?.rates?.[0]?.priceWithCommission" class="mb-6">
-          <div class="text-sm text-gray-500 font-medium">Total price</div>
-          <div class="text-3xl font-bold text-gray-900">${{ Math.round(selectedRoom.rates[0].priceWithCommission) }}</div>
+          <div class="text-sm text-black font-medium">Total price</div>
+          <div class="text-3xl font-bold text-black">${{ Math.round(selectedRoom.rates[0].priceWithCommission) }}</div>
         </div>
 
-        <div class="flex items-center justify-center text-gray-600 mb-10 gap-2">
+        <div class="flex items-center justify-center text-black mb-10 gap-2">
            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-           <span class="text-sm font-bold opacity-80 tracking-wide">Add flight to get bundle discount and earn Flybeth points</span>
+           <span class="text-sm font-bold opacity-80 ">Add flight to get bundle discount and earn Flybeth points</span>
         </div>
 
         <div class="space-y-4">
             <button 
               @click="handleContinueWithoutFlight" 
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 rounded-xl transition-all shadow-xl shadow-green-100 active:scale-[0.98] tracking-wide text-sm"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 rounded-xl transition-all shadow-xl shadow-green-100 active:scale-[0.98]  text-sm"
             >
               Continue without flight
             </button>
             <button 
               @click="handleAddFlight"
-              class="w-full text-gray-900 font-bold py-4 hover:underline transition-all tracking-wide text-xs"
+              class="w-full text-black font-bold py-4 hover:underline transition-all  text-xs"
             >
               Add flight to booking
             </button>

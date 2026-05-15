@@ -107,7 +107,7 @@
       </div>
     </div>
 
-    <div class="ck-sb-divider !border-solid border-gray-100"></div>
+    <div class="ck-sb-divider !border-solid border-gray-200"></div>
 
     <!-- Total -->
     <div class="ck-sb-total-wrap">

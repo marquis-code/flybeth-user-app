@@ -9,10 +9,10 @@
       <button 
         type="button" 
         @click="showDropdown = !showDropdown"
-        class="flex items-center gap-2 px-4 bg-white border border-gray-300 border-r-0 rounded-l-2xl hover:bg-gray-50 transition-all text-sm font-bold text-gray-900 min-w-[100px] justify-center"
+        class="flex items-center gap-2 px-4 bg-white border border-gray-200 border-r-0 rounded-l-2xl hover:bg-white transition-all text-sm font-bold text-black min-w-[100px] justify-center"
       >
         <span class="text-lg">{{ selectedCountry.flag }}</span>
-        <span class="text-xs  text-gray-900">{{ selectedCountry.dialCode }}</span>
+        <span class="text-xs  text-black">{{ selectedCountry.dialCode }}</span>
         <svg class="h-3 w-3 text-brand-gray/40 transition-transform" :class="{ 'rotate-180': showDropdown }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
         </svg>
@@ -24,20 +24,20 @@
         :placeholder="placeholder || '812 345 6789'"
         :value="phoneNumber"
         @input="onPhoneInput"
-        class="flex-grow px-5 py-4 bg-white border border-gray-300 border-l-0 rounded-r-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue transition-all duration-500 font-bold text-gray-900 placeholder-brand-gray/30"
+        class="flex-grow px-5 py-4 bg-white border border-gray-200 border-l-0 rounded-r-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue transition-all duration-500 font-bold text-black placeholder-brand-gray/30"
       />
     </div>
 
     <!-- Dropdown -->
     <Transition name="dropdown">
-      <div v-if="showDropdown" class="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(13,29,173,0.2)] border border-gray-50 overflow-hidden">
+      <div v-if="showDropdown" class="absolute z-50 mt-2 w-full bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(13,29,173,0.2)] border border-gray-200 overflow-hidden">
         <!-- Search -->
-        <div class="p-3 border-b border-gray-50">
+        <div class="p-3 border-b border-gray-200">
           <input 
             v-model="searchQuery" 
             type="text" 
             placeholder="Search countries..." 
-            class="w-full px-4 py-3 bg-gray-50 rounded-xl text-sm font-bold text-gray-900 placeholder-brand-gray/30 focus:outline-none focus:ring-2 focus:ring-brand-blue/10"
+            class="w-full px-4 py-3 bg-white rounded-xl text-sm font-bold text-black placeholder-brand-gray/30 focus:outline-none focus:ring-2 focus:ring-brand-blue/10"
           />
         </div>
         <!-- Country List -->
@@ -51,7 +51,7 @@
             :class="{ 'bg-brand-blue/5': selectedCountry.code === country.code }"
           >
             <span class="text-lg">{{ country.flag }}</span>
-            <span class="flex-grow text-sm font-bold text-gray-900">{{ country.name }}</span>
+            <span class="flex-grow text-sm font-bold text-black">{{ country.name }}</span>
             <span class="text-xs  text-brand-gray/40">{{ country.dialCode }}</span>
           </button>
         </div>

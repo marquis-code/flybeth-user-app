@@ -119,7 +119,7 @@
                 @click="isClassOpen = !isClassOpen" 
                 class="sw-field-inner w-full text-left bg-transparent border-none p-0 outline-none group"
               >
-                <span class="sw-fld-lbl group-hover:text-gray-900 transition-colors">Class</span>
+                <span class="sw-fld-lbl group-hover:text-black transition-colors">Class</span>
                 <div class="flex items-center justify-between gap-1 mt-1">
                   <span class="sw-fld-val sw-fld-val--trunc">{{ currentCabinLabel }}</span>
                   <ChevronDown class="sw-ico-xs sw-ico-muted transition-transform duration-200" :class="isClassOpen ? 'rotate-180' : ''" />
@@ -140,7 +140,7 @@
                       class="sw-drop-item"
                       :class="flightTravelers.cabinClass === opt.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'"
                     >
-                      <span class="text-[14px] font-semibold" :class="flightTravelers.cabinClass === opt.value ? 'text-white' : 'text-gray-900'">{{ opt.label }}</span>
+                      <span class="text-[14px] font-semibold" :class="flightTravelers.cabinClass === opt.value ? 'text-white' : 'text-black'">{{ opt.label }}</span>
                       <Check v-if="flightTravelers.cabinClass === opt.value" class="sw-ico-sm text-green-500" />
                     </div>
                   </div>
@@ -160,16 +160,16 @@
 
         <!-- Recent Searches -->
         <div v-if="recentSearches.length > 0" class="mt-4 flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-top-2">
-          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+          <span class="text-xs font-medium text-gray-500 flex items-center gap-1.5">
             <History class="w-3 h-3" />
             Recent
           </span>
           <div v-for="s in recentSearches" :key="s._id" 
-            class="group flex items-center gap-2 bg-gray-50 border border-gray-100 hover:border-gray-900 px-3 py-1.5 rounded-full transition-all cursor-pointer"
+            class="group flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-200 px-3 py-1.5 rounded-full transition-all cursor-pointer"
             @click="applyRecentSearch(s)"
           >
-            <span class="text-[11px] font-bold text-gray-700">{{ s.origin }} → {{ s.destination }}</span>
-            <button @click.stop="removeSearch(s._id)" class="text-gray-300 hover:text-rose-500 transition-colors">
+            <span class="text-[11px] font-bold text-black">{{ s.origin }} → {{ s.destination }}</span>
+            <button @click.stop="removeSearch(s._id)" class="text-black hover:text-rose-500 transition-colors">
               <X class="w-3 h-3" />
             </button>
           </div>
@@ -1250,7 +1250,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 ═══════════════════════════════════════════════════ */
 .sw-rows { display: flex; flex-direction: column; gap: 10px; }
 .sw-multi-leg { display: flex; flex-direction: column; gap: 4px; }
-.sw-leg-lbl { font-size: 11px; font-weight: 700; color: #9ca3af;  letter-spacing: 0.05em; text-transform: uppercase; }
+.sw-leg-lbl { font-size: 11px; font-weight: 700; color: #9ca3af;  letter-spacing: 0.05em; }
 .sw-add-btn {
   display: flex;
   align-items: center;

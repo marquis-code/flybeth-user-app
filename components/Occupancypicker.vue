@@ -4,17 +4,17 @@
     <div
       @mousedown.prevent="togglePicker"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
-      :class="showPicker ? 'bg-blue-50/30 ring-2 ring-gray-900/5' : 'hover:bg-gray-50/60'"
+      :class="showPicker ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
     >
       <p 
-        class="text-[10px] font-bold tracking-[0.05em] mb-0.5 transition-colors uppercase"
-        :class="showPicker ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-900'"
+        class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
+        :class="showPicker ? 'text-black' : 'text-black group-hover:text-black'"
       >
         {{ label }}
       </p>
       <div class="flex items-center gap-2">
-        <UserGroupIcon class="h-4 w-4 shrink-0 transition-colors" :class="showPicker ? 'text-gray-900' : 'text-gray-300'" />
-        <span class="text-[14px] font-bold truncate" :class="summary ? 'text-gray-900' : 'text-gray-400'">
+        <UserGroupIcon class="h-4 w-4 shrink-0 transition-colors" :class="showPicker ? 'text-black' : 'text-black'" />
+        <span class="text-[13px] font-bold truncate" :class="summary ? 'text-black' : 'text-black'">
           {{ summary }}
         </span>
       </div>
@@ -24,7 +24,7 @@
     <Transition name="loc-drop">
       <div
         v-show="showPicker"
-        class="absolute right-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-100 shadow-2xl overflow-hidden"
+        class="absolute right-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-200 shadow-2xl overflow-hidden"
         :class="[isMobile ? 'fixed inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[320px]']"
         style="background-color: #ffffff !important;"
         @mousedown.stop
@@ -37,28 +37,28 @@
             class="flex items-center justify-between"
           >
             <div>
-              <p class="text-[13px] font-bold text-gray-900">{{ row.label }}</p>
-              <p v-if="row.note" class="text-[10px] text-gray-400 font-medium">{{ row.note }}</p>
+              <p class="text-[13px] font-bold text-black">{{ row.label }}</p>
+              <p v-if="row.note" class="text-sm text-black font-medium">{{ row.note }}</p>
             </div>
             <div class="flex items-center gap-4">
               <button
                 @mousedown.prevent="decrement(row.key)"
                 :disabled="local[row.key] <= row.min"
-                class="h-8 w-8 rounded-lg border border-gray-100 flex items-center justify-center text-sm font-bold transition-all"
+                class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold transition-all"
                 :class="local[row.key] <= row.min
                   ? 'opacity-20 cursor-not-allowed'
-                  : 'text-gray-900 hover:bg-gray-50 active:scale-90'"
+                  : 'text-black hover:bg-white active:scale-90'"
               >
                 −
               </button>
-              <span class="w-4 text-center text-[13px] font-bold text-gray-900">{{ local[row.key] }}</span>
+              <span class="w-4 text-center text-[13px] font-bold text-black">{{ local[row.key] }}</span>
               <button
                 @mousedown.prevent="increment(row.key)"
                 :disabled="local[row.key] >= row.max"
-                class="h-8 w-8 rounded-lg border border-gray-100 flex items-center justify-center text-sm font-bold transition-all"
+                class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold transition-all"
                 :class="local[row.key] >= row.max
                   ? 'opacity-20 cursor-not-allowed'
-                  : 'text-gray-900 hover:bg-gray-50 active:scale-90'"
+                  : 'text-black hover:bg-white active:scale-90'"
               >
                 +
               </button>
@@ -66,13 +66,13 @@
           </div>
 
           <!-- Children note -->
-          <p v-if="showChildNote" class="text-[10px] text-gray-400 font-medium leading-relaxed -mt-2">
+          <p v-if="showChildNote" class="text-sm text-black font-medium leading-relaxed -mt-2">
             Each hotel has unique child policies. Ages at check-in ensure best deals.
           </p>
 
           <!-- Action Buttons -->
-          <div class="flex items-center gap-2 pt-2 border-t border-gray-50">
-             <button @click="closePicker" class="flex-1 py-3 bg-gray-900 text-white rounded-xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95">Done</button>
+          <div class="flex items-center gap-2 pt-2 border-t border-gray-200">
+             <button @click="closePicker" class="flex-1 py-3 bg-black text-white rounded-xl text-[12px] font-bold hover:bg-gray-900 transition-all active:scale-95">Done</button>
           </div>
         </div>
       </div>

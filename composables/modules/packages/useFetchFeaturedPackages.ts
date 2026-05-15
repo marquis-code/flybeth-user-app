@@ -7,8 +7,8 @@ export const useFetchFeaturedPackages = () => {
     const fetchFeaturedPackages = async () => {
         try {
             const { data } = await packagesApi.getFeatured();
-            featuredPackages.value = data;
-            return data;
+            featuredPackages.value = data.data || [];
+            return data.data;
         } catch (error) {
             console.error('Error fetching featured packages:', error);
         }

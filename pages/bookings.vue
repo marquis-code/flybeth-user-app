@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-white">
     <!-- Header -->
     <div class="bg-brand-blue shadow-lg">
       <div class="max-w-4xl mx-auto px-4 py-6 flex items-center gap-4">
@@ -17,20 +17,20 @@
 
     <div class="max-w-4xl mx-auto px-4 py-10">
       <!-- PNR Search -->
-      <div class="bg-white rounded-2xl border border-gray-100 p-6 mb-6 shadow-sm">
-        <h2 class="text-sm font-bold text-gray-900 tracking-widest mb-4 ">Find booking by reference</h2>
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
+        <h2 class="text-sm font-bold text-black  mb-4 ">Find booking by reference</h2>
         <div class="flex gap-3">
           <input
             v-model="pnrInput"
             type="text"
-            class="flex-1 px-4 py-3 rounded-xl border border-gray-200 font-bold text-gray-900 uppercase focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
+            class="flex-1 px-4 py-3 rounded-xl border border-gray-200 font-bold text-black uppercase focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all"
             placeholder="Enter PNR / Booking Reference"
             @keyup.enter="searchByPnr"
           />
           <button
             @click="searchByPnr"
             :disabled="loading || !pnrInput"
-            class="px-6 py-3 bg-brand-blue text-white rounded-xl text-sm font-bold tracking-wider hover:bg-brand-blue/90 disabled:opacity-50 transition-all"
+            class="px-6 py-3 bg-brand-blue text-white rounded-xl text-sm font-bold  hover:bg-brand-blue/90 disabled:opacity-50 transition-all"
           >
             <span v-if="loading" class="flex items-center gap-2">
               <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
       <!-- Loading -->
       <div v-if="loading" class="flex flex-col items-center py-24 gap-4">
         <div class="w-12 h-12 rounded-full border-4 border-brand-blue/20 border-t-brand-blue animate-spin"></div>
-        <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Retrieving booking...</p>
+        <p class="text-sm font-bold text-black uppercase ">Retrieving booking...</p>
       </div>
 
       <!-- Not Found -->
@@ -57,8 +57,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 class="text-xl  text-gray-900 mb-2">Booking Not Found</h2>
-        <p class="text-gray-400 font-bold text-sm">We could not find a booking with reference <span class="text-gray-900 ">{{ route.query.pnr }}</span>. Please check the reference and try again.</p>
+        <h2 class="text-xl  text-black mb-2">Booking Not Found</h2>
+        <p class="text-black font-bold text-sm">We could not find a booking with reference <span class="text-black ">{{ route.query.pnr }}</span>. Please check the reference and try again.</p>
       </div>
 
       <!-- Booking Details -->
@@ -74,77 +74,77 @@
         >
           <div class="flex items-center gap-3">
             <div :class="['w-3 h-3 rounded-full', booking.status === 'confirmed' ? 'bg-green-500' : booking.status === 'cancelled' ? 'bg-red-500' : 'bg-amber-500 animate-pulse']"></div>
-            <span :class="['text-sm  uppercase tracking-widest', booking.status === 'confirmed' ? 'text-green-700' : booking.status === 'cancelled' ? 'text-red-700' : 'text-amber-700']">
+            <span :class="['text-sm  uppercase ', booking.status === 'confirmed' ? 'text-green-700' : booking.status === 'cancelled' ? 'text-red-700' : 'text-amber-700']">
               {{ booking.status }}
             </span>
           </div>
           <div class="text-right">
-            <p class="text-sm  text-gray-400 uppercase tracking-widest">Booking Reference</p>
-            <p class="text-xl  text-gray-900">{{ booking.pnr }}</p>
+            <p class="text-sm  text-black uppercase ">Booking Reference</p>
+            <p class="text-xl  text-black">{{ booking.pnr }}</p>
           </div>
         </div>
 
         <!-- Flight Info -->
-        <div v-if="booking.flights?.length" class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 class="text-sm  uppercase text-gray-400 tracking-widest mb-4">Flight Details</h3>
+        <div v-if="booking.flights?.length" class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+          <h3 class="text-sm  uppercase text-black  mb-4">Flight Details</h3>
           <div v-for="(flt, idx) in booking.flights" :key="idx" class="flex items-center justify-between gap-4">
             <div class="text-center">
-              <p class="text-2xl  text-gray-900">{{ flt.flight?.departure?.iataCode || '—' }}</p>
-              <p class="text-sm font-bold text-gray-400">Origin</p>
+              <p class="text-2xl  text-black">{{ flt.flight?.departure?.iataCode || '—' }}</p>
+              <p class="text-sm font-bold text-black">Origin</p>
             </div>
             <div class="flex-1 flex flex-col items-center gap-1">
-              <div class="w-full h-[2px] bg-gray-100 relative">
+              <div class="w-full h-[2px] bg-black relative">
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </div>
               </div>
-              <span class="text-sm  text-gray-400 uppercase">{{ flt.class || 'Economy' }}</span>
+              <span class="text-sm  text-black uppercase">{{ flt.class || 'Economy' }}</span>
             </div>
             <div class="text-center">
-              <p class="text-2xl  text-gray-900">{{ flt.flight?.arrival?.iataCode || '—' }}</p>
-              <p class="text-sm font-bold text-gray-400">Destination</p>
+              <p class="text-2xl  text-black">{{ flt.flight?.arrival?.iataCode || '—' }}</p>
+              <p class="text-sm font-bold text-black">Destination</p>
             </div>
           </div>
         </div>
 
         <!-- Traveller Info -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 class="text-sm  uppercase text-gray-400 tracking-widest mb-4">Contact Information</h3>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+          <h3 class="text-sm  uppercase text-black  mb-4">Contact Information</h3>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <p class="text-sm  text-gray-400 uppercase tracking-wider">Full Name</p>
-              <p class="font-bold text-gray-900">{{ booking.contactDetails?.firstName }} {{ booking.contactDetails?.lastName }}</p>
+              <p class="text-sm  text-black uppercase ">Full Name</p>
+              <p class="font-bold text-black">{{ booking.contactDetails?.firstName }} {{ booking.contactDetails?.lastName }}</p>
             </div>
             <div>
-              <p class="text-sm  text-gray-400 uppercase tracking-wider">Email</p>
-              <p class="font-bold text-gray-900">{{ booking.contactDetails?.email }}</p>
+              <p class="text-sm  text-black uppercase ">Email</p>
+              <p class="font-bold text-black">{{ booking.contactDetails?.email }}</p>
             </div>
             <div>
-              <p class="text-sm  text-gray-400 uppercase tracking-wider">Phone</p>
-              <p class="font-bold text-gray-900">{{ booking.contactDetails?.phone }}</p>
+              <p class="text-sm  text-black uppercase ">Phone</p>
+              <p class="font-bold text-black">{{ booking.contactDetails?.phone }}</p>
             </div>
             <div>
-              <p class="text-sm  text-gray-400 uppercase tracking-wider">Booked On</p>
-              <p class="font-bold text-gray-900">{{ formatDate(booking.bookedAt || booking.createdAt) }}</p>
+              <p class="text-sm  text-black uppercase ">Booked On</p>
+              <p class="font-bold text-black">{{ formatDate(booking.bookedAt || booking.createdAt) }}</p>
             </div>
           </div>
         </div>
 
         <!-- Pricing -->
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <h3 class="text-sm  uppercase text-gray-400 tracking-widest mb-4">Fare Summary</h3>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+          <h3 class="text-sm  uppercase text-black  mb-4">Fare Summary</h3>
           <div class="space-y-2">
-            <div class="flex justify-between text-sm font-bold text-gray-600">
+            <div class="flex justify-between text-sm font-bold text-black">
               <span>Base Fare</span>
               <span>{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.baseFare) }}</span>
             </div>
-            <div class="flex justify-between text-sm font-bold text-gray-600">
+            <div class="flex justify-between text-sm font-bold text-black">
               <span>Taxes</span>
               <span>{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.taxes) }}</span>
             </div>
-            <div class="border-t border-dashed border-gray-100 pt-2 flex justify-between  text-gray-900">
+            <div class="border-t border-dashed border-gray-200 pt-2 flex justify-between  text-black">
               <span>Total</span>
               <span class="text-xl">{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.totalAmount) }}</span>
             </div>
@@ -159,7 +159,7 @@
           </div>
           <button
             @click="handlePayment"
-            class="px-6 py-3 mt-4 md:mt-0 bg-orange-500 text-white rounded-xl  text-sm uppercase tracking-wider hover:bg-orange-600 transition-all shadow-lg shadow-orange-200 whitespace-nowrap"
+            class="px-6 py-3 mt-4 md:mt-0 bg-orange-500 text-white rounded-xl  text-sm uppercase  hover:bg-orange-600 transition-all shadow-lg shadow-orange-200 whitespace-nowrap"
           >
             Complete Payment
           </button>
@@ -174,7 +174,7 @@
           <button
             @click="handleCancelTransfer(booking)"
             :disabled="cancelling"
-            class="px-6 py-3 mt-4 md:mt-0 bg-red-600 text-white rounded-xl  text-sm uppercase tracking-wider hover:bg-red-700 transition-all shadow-lg shadow-red-200 whitespace-nowrap disabled:opacity-50"
+            class="px-6 py-3 mt-4 md:mt-0 bg-red-600 text-white rounded-xl  text-sm uppercase  hover:bg-red-700 transition-all shadow-lg shadow-red-200 whitespace-nowrap disabled:opacity-50"
           >
             <span v-if="cancelling">Cancelling...</span>
             <span v-else>Cancel Transfer</span>

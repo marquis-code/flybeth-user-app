@@ -3,13 +3,13 @@
     <!-- Check-in Trigger -->
     <div 
       @click="openPicker('checkIn')"
-      class="w-full lg:w-48 bg-white px-6 py-3 border-r border-gray-100 hover:bg-gray-50 transition-all cursor-pointer"
+      class="w-full lg:w-48 bg-white px-6 py-3 border-r border-gray-200 hover:bg-white transition-all cursor-pointer"
     >
-      <div class="flex items-center text-sm font-bold text-gray-500 tracking-wide mb-1.5">
+      <div class="flex items-center text-sm font-bold text-black  mb-1.5">
         Check-in 
         <svg class="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{'rotate-180': isOpen}"><path d="m6 9 6 6 6-6"/></svg>
       </div>
-      <div class="font-bold text-gray-900 leading-none">
+      <div class="font-bold text-black leading-none">
         {{ formatDate(checkInDate) }}
       </div>
     </div>
@@ -17,35 +17,35 @@
     <!-- Check-out Trigger -->
     <div 
       @click="openPicker('checkOut')"
-      class="w-full lg:w-48 bg-white px-6 py-3 border-r border-gray-100 hover:bg-gray-50 transition-all cursor-pointer"
+      class="w-full lg:w-48 bg-white px-6 py-3 border-r border-gray-200 hover:bg-white transition-all cursor-pointer"
     >
-      <div class="flex items-center text-sm font-bold text-gray-500 tracking-wide mb-1.5">
+      <div class="flex items-center text-sm font-bold text-black  mb-1.5">
         Check-out
         <svg class="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{'rotate-180': isOpen}"><path d="m6 9 6 6 6-6"/></svg>
       </div>
-      <div class="font-bold text-gray-900 leading-none">
+      <div class="font-bold text-black leading-none">
         {{ formatDate(checkOutDate) }}
       </div>
     </div>
 
     <!-- Dropdown Calendar -->
-    <div v-if="isOpen" class="absolute top-full left-1/2 -translate-x-1/2 mt-4 z-[200] bg-white rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-100 p-8 w-[92vw] sm:w-[340px] md:min-w-[700px] flex flex-col gap-8 transform origin-top">
+    <div v-if="isOpen" class="absolute top-full left-1/2 -translate-x-1/2 mt-4 z-[200] bg-white rounded-[2rem] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.15)] border border-gray-200 p-8 w-[92vw] sm:w-[340px] md:min-w-[700px] flex flex-col gap-8 transform origin-top">
         
         <!-- Mobile Close Button -->
-        <button @click="isOpen = false" class="md:hidden absolute top-4 right-4 h-8 w-8 flex items-center justify-center text-gray-400 bg-gray-50 rounded-full z-20">
+        <button @click="isOpen = false" class="md:hidden absolute top-4 right-4 h-8 w-8 flex items-center justify-center text-black bg-white rounded-full z-20">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
         <!-- Controls -->
         <div class="flex justify-between items-center px-2">
-           <button @click.stop="previousMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-100">
+           <button @click.stop="previousMonth" class="p-2 hover:bg-black rounded-xl transition-all border border-transparent hover:border-gray-200">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
            </button>
-           <div class="flex gap-4 md:gap-40 text-gray-900  tracking-widest text-[10px] uppercase">
+           <div class="flex gap-4 md:gap-40 text-black   text-sm uppercase">
              <span>{{ getMonthName(currentDateLeft) }} {{ currentDateLeft.getFullYear() }}</span>
              <span class="hidden md:inline">{{ getMonthName(currentDateRight) }} {{ currentDateRight.getFullYear() }}</span>
            </div>
-           <button @click.stop="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-100">
+           <button @click.stop="nextMonth" class="p-2 hover:bg-black rounded-xl transition-all border border-transparent hover:border-gray-200">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
            </button>
         </div>
@@ -53,7 +53,7 @@
         <div class="flex flex-col md:flex-row gap-10">
           <!-- Left Month -->
           <div class="flex-1">
-             <div class="grid grid-cols-7 text-center text-[9px]  text-gray-400 uppercase tracking-widest mb-4">
+             <div class="grid grid-cols-7 text-center text-[9px]  text-black uppercase  mb-4">
                 <div v-for="d in ['S','M','T','W','T','F','S']" :key="d">{{ d }}</div>
              </div>
              <div class="grid grid-cols-7 gap-1 relative">
@@ -67,8 +67,8 @@
                 >
                     <div v-if="day.date" class="h-full w-full rounded-xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
                        {{ day.date }}
-                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
-                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
+                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-black text-white text-[6px]  px-1.5 py-0.5 rounded-full  uppercase z-30">IN</div>
+                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-black text-white text-[6px]  px-1.5 py-0.5 rounded-full  uppercase z-30">OUT</div>
                     </div>
                  </div>
               </div>
@@ -76,7 +76,7 @@
 
            <!-- Right Month (Desktop Only) -->
            <div class="hidden md:block flex-1">
-              <div class="grid grid-cols-7 text-center text-[9px]  text-gray-400 uppercase tracking-widest mb-4">
+              <div class="grid grid-cols-7 text-center text-[9px]  text-black uppercase  mb-4">
                 <div v-for="d in ['S','M','T','W','T','F','S']" :key="d">{{ d }}</div>
               </div>
               <div class="grid grid-cols-7 gap-1 relative">
@@ -90,8 +90,8 @@
                  >
                     <div v-if="day.date" class="h-full w-full rounded-xl flex items-center justify-center relative transition-all" :class="getDayClass(day)">
                        {{ day.date }}
-                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">IN</div>
-                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[6px]  px-1.5 py-0.5 rounded-full tracking-widest uppercase z-30">OUT</div>
+                       <div v-if="isStartDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-black text-white text-[6px]  px-1.5 py-0.5 rounded-full  uppercase z-30">IN</div>
+                       <div v-if="isEndDate(day.fullDate)" class="absolute -top-3 left-1/2 -translate-x-1/2 bg-black text-white text-[6px]  px-1.5 py-0.5 rounded-full  uppercase z-30">OUT</div>
                     </div>
                  </div>
               </div>
@@ -204,15 +204,15 @@ const isDateInRange = (date: Date | null) => {
 };
 
 const getDayCellClass = (day: any) => [
-    isDateInRange(day.fullDate) ? 'bg-gray-900/5' : '',
+    isDateInRange(day.fullDate) ? 'bg-black' : '',
     !day.date ? 'pointer-events-none' : ''
 ];
 
 const getDayClass = (day: any) => [
-    isStartDate(day.fullDate) || isEndDate(day.fullDate) ? 'bg-gray-900 text-white shadow-lg scale-110' : '',
-    isHoverEndDate(day.fullDate) && !checkOutDate.value ? 'bg-gray-900/40 text-white' : '',
-    !isStartDate(day.fullDate) && !isEndDate(day.fullDate) && !isHoverEndDate(day.fullDate) ? 'text-gray-900 ' : '',
-    !isSelectable(day.fullDate) ? 'text-gray-200 pointer-events-none' : 'hover:bg-gray-100'
+    isStartDate(day.fullDate) || isEndDate(day.fullDate) ? 'bg-black text-white shadow-lg scale-110' : '',
+    isHoverEndDate(day.fullDate) && !checkOutDate.value ? 'bg-black text-white' : '',
+    !isStartDate(day.fullDate) && !isEndDate(day.fullDate) && !isHoverEndDate(day.fullDate) ? 'text-black ' : '',
+    !isSelectable(day.fullDate) ? 'text-black pointer-events-none' : 'hover:bg-black'
 ];
 
 const handleDateHover = (date: Date | null) => {

@@ -7,21 +7,21 @@
     >
       <label
         :class="[
-          'absolute transition-all duration-300 ease-in-out pointer-events-none z-10 text-brand-gray/40 font-bold tracking-wide',
-          open || modelValue ? 'text-[10px] left-4 top-2' : 'text-sm left-11 top-1/2 -translate-y-1/2'
+          'absolute transition-all duration-300 ease-in-out pointer-events-none z-10 text-brand-gray/40 font-bold ',
+          open || modelValue ? 'text-sm left-4 top-2' : 'text-sm left-11 top-1/2 -translate-y-1/2'
         ]"
       >{{ label }}</label>
       <div
         :class="[
-          'w-full px-4 bg-white border border-gray-300 rounded-2xl cursor-pointer transition-all duration-300 min-h-[68px] flex items-center',
-          open ? 'ring-2 ring-gray-900 border-gray-900' : 'hover:border-gray-300',
+          'w-full px-4 bg-white border border-gray-200 rounded-2xl cursor-pointer transition-all duration-300 min-h-[68px] flex items-center',
+          open ? 'ring-2 ring-gray-200 border-gray-200' : 'hover:border-gray-200',
           hasError ? 'ring-red-500 border-red-500' : ''
         ]"
       >
         <div class="flex items-center gap-3">
            <Calendar class="h-4 w-4 text-brand-blue/60 shrink-0" />
-           <span v-if="modelValue" class="font-semibold text-gray-900 text-sm tracking-tight">{{ displayDate }}</span>
-           <span v-else-if="open" class="text-gray-400 text-sm font-semibold tracking-tight">Select date</span>
+           <span v-if="modelValue" class="font-semibold text-black text-sm ">{{ displayDate }}</span>
+           <span v-else-if="open" class="text-black text-sm font-semibold ">Select date</span>
         </div>
       </div>
     </div>
@@ -46,15 +46,15 @@
             <div class="flex items-center justify-between px-6 pt-5 pb-3">
               <button
                 @click="prevMonth"
-                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-white transition-colors"
               >
-                <ChevronLeft class="h-4 w-4 text-gray-500" />
+                <ChevronLeft class="h-4 w-4 text-black" />
               </button>
 
               <div class="flex-1 text-center">
                 <button 
                   @click="viewMode = viewMode === 'year' ? 'calendar' : 'year'"
-                  class="text-base font-bold text-gray-900 hover:text-[#0D1DAD] transition-colors flex items-center justify-center gap-1 mx-auto"
+                  class="text-base font-bold text-black hover:text-[#0D1DAD] transition-colors flex items-center justify-center gap-1 mx-auto"
                 >
                   {{ monthLabels[leftMonth] }} {{ leftYear }}
                   <ChevronDown class="h-4 w-4" :class="{ 'rotate-180': viewMode === 'year' }" />
@@ -63,9 +63,9 @@
 
               <button
                 @click="nextMonth"
-                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                class="h-9 w-9 rounded-full border border-gray-200 flex items-center justify-center hover:bg-white transition-colors"
               >
-                <ChevronRight class="h-4 w-4 text-gray-500" />
+                <ChevronRight class="h-4 w-4 text-black" />
               </button>
             </div>
 
@@ -80,7 +80,7 @@
                     type="button"
                     @click="selectYear(year)"
                     class="py-3 text-[13px] font-bold rounded-xl transition-all border"
-                    :class="year === leftYear ? 'bg-[#0D1DAD] text-white border-[#0D1DAD]' : 'bg-white text-gray-500 border-gray-100 hover:border-[#0D1DAD]'"
+                    :class="year === leftYear ? 'bg-[#0D1DAD] text-white border-[#0D1DAD]' : 'bg-white text-black border-gray-200 hover:border-[#0D1DAD]'"
                    >
                      {{ year }}
                    </button>
@@ -90,7 +90,7 @@
               <!-- Days Grid -->
               <div v-else>
                 <div class="grid grid-cols-7 mb-1 opacity-60">
-                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="text-center text-[11px] font-bold text-gray-500 py-1">{{ d }}</div>
+                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="text-center text-[11px] font-bold text-black py-1">{{ d }}</div>
                 </div>
                 <div class="grid grid-cols-7">
                   <template v-for="(day, i) in leftDays" :key="i">
@@ -105,7 +105,7 @@
                         :class="[
                           day.isSelected ? 'bg-[#0D1DAD] text-white shadow-md' : 
                           day.isToday ? 'text-[#0D1DAD] border-2 border-[#0D1DAD]/10 hover:bg-[#0D1DAD]/5' : 
-                          'text-gray-700 hover:bg-gray-100'
+                          'text-black hover:bg-black'
                         ]"
                       >
                         {{ day.date }}
@@ -117,11 +117,11 @@
             </div>
 
             <!-- Footer -->
-            <div class="flex items-center justify-between gap-4 px-6 py-4 border-t border-gray-100 bg-gray-50/60 mt-auto">
+            <div class="flex items-center justify-between gap-4 px-6 py-4 border-t border-gray-200 bg-white/60 mt-auto">
                <button
                   v-if="modelValue"
                   @click="clearValue"
-                  class="text-sm font-bold text-gray-500 hover:text-gray-700 px-3 py-2 rounded-xl transition-colors"
+                  class="text-sm font-bold text-black hover:text-black px-3 py-2 rounded-xl transition-colors"
                 >
                   Clear
                 </button>

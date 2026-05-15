@@ -1,12 +1,12 @@
 <template>
   <div class="apple-pay-wrapper">
     <!-- Not available message -->
-    <div v-if="!isSupported && !loading" class="text-center text-xs text-gray-400 py-3 font-bold">
+    <div v-if="!isSupported && !loading" class="text-center text-xs text-black py-3 font-bold">
       Apple Pay is not available on this device or browser.
     </div>
 
     <!-- Loading -->
-    <div v-else-if="loading" class="h-12 bg-gray-100 animate-pulse rounded-xl"></div>
+    <div v-else-if="loading" class="h-12 bg-black animate-pulse rounded-xl"></div>
 
     <!-- Apple Pay Button -->
     <div v-else-if="isSupported">
@@ -15,7 +15,7 @@
         type="button"
         @click="requestPayment"
         :disabled="processing"
-        :class="['w-full h-14 rounded-xl flex items-center justify-center gap-3 transition-all font-bold tracking-wide', processing ? 'bg-gray-800 cursor-not-allowed opacity-70' : 'bg-black hover:bg-gray-900 active:scale-[0.98]']"
+        :class="['w-full h-14 rounded-xl flex items-center justify-center gap-3 transition-all font-bold ', processing ? 'bg-black cursor-not-allowed opacity-70' : 'bg-black hover:bg-black active:scale-[0.98]']"
       >
         <span v-if="!processing" class="flex items-center gap-2 text-white text-base font-semibold">
           <!-- Apple Pay logo SVG -->

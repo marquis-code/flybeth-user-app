@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 group">
+  <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-200 group">
     <div class="flex flex-col md:flex-row h-full">
       <!-- Activity Image -->
       <div class="md:w-64 h-48 md:h-auto relative overflow-hidden">
@@ -8,7 +8,7 @@
         />
         <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
           <StarIcon class="h-3 w-3 text-[#FFC107] fill-current" />
-          <span class="text-sm  text-gray-900">{{ activity.reviews?.summary?.averageRating || '4.8' }}</span>
+          <span class="text-sm  text-black">{{ activity.reviews?.summary?.averageRating || '4.8' }}</span>
         </div>
       </div>
 
@@ -20,11 +20,11 @@
               {{ activity.content?.category || 'Activity' }}
             </span>
             <div class="text-right">
-              <p class="text-sm text-brand-gray/40 font-bold uppercase tracking-widest">From</p>
-              <p class="text-xl  text-gray-900 tracking-tighter">{{ formatPrice(activity.amountsFrom?.[0]) }}</p>
+              <p class="text-sm text-brand-gray/40 font-bold uppercase ">From</p>
+              <p class="text-xl  text-black er">{{ formatPrice(activity.amountsFrom?.[0]) }}</p>
             </div>
           </div>
-          <h3 class="text-xl  text-gray-900 leading-tight group-hover:text-brand-green transition-colors">
+          <h3 class="text-xl  text-black leading-tight group-hover:text-brand-green transition-colors">
             {{ activity.content?.name }}
           </h3>
           <p class="text-xs text-brand-gray/60 font-medium line-clamp-2 leading-relaxed">
@@ -32,18 +32,18 @@
           </p>
         </div>
 
-        <div class="mt-6 flex items-center justify-between border-t border-gray-50 pt-4">
+        <div class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
           <div class="flex items-center gap-4">
              <div class="flex items-center gap-1.5 grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
-                <ClockIcon class="h-4 w-4 text-gray-900" />
-                <span class="text-sm font-bold text-gray-900 uppercase">{{ activity.content?.duration?.value }} {{ activity.content?.duration?.unit }}</span>
+                <ClockIcon class="h-4 w-4 text-black" />
+                <span class="text-sm font-bold text-black uppercase">{{ activity.content?.duration?.value }} {{ activity.content?.duration?.unit }}</span>
              </div>
              <div class="flex items-center gap-1.5 grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
-                <TicketIcon class="h-4 w-4 text-gray-900" />
-                <span class="text-sm font-bold text-gray-900 uppercase">Mobile Ticket</span>
+                <TicketIcon class="h-4 w-4 text-black" />
+                <span class="text-sm font-bold text-black uppercase">Mobile Ticket</span>
              </div>
           </div>
-          <UiBaseButton variant="primary" @click="$emit('select', activity)" class="!bg-brand-blue !rounded-xl px-8 font-bold uppercase tracking-widest">
+          <UiBaseButton variant="primary" @click="$emit('select', activity)" class="!bg-brand-blue !rounded-xl px-8 font-bold uppercase ">
             Book Now
           </UiBaseButton>
         </div>

@@ -5,21 +5,21 @@
         <!-- Close Button -->
         <button 
           @click="$emit('close')" 
-          class="absolute top-5 right-5 p-2 rounded-full hover:bg-gray-100 transition-colors z-[60] group"
+          class="absolute top-5 right-5 p-2 rounded-full hover:bg-black transition-colors z-[60] group"
         >
-          <XMarkIcon class="h-5 w-5 text-gray-400 group-hover:text-gray-900 transition-colors" />
+          <XMarkIcon class="h-5 w-5 text-black group-hover:text-black transition-colors" />
         </button>
 
         <!-- Compact Header & Tab Switcher -->
-        <div class="pt-8 px-8 pb-4 border-b border-gray-50">
-          <h2 class="text-xs  text-gray-400 uppercase  mb-6">Preferences</h2>
-          <div class="flex bg-gray-100 p-1.5 rounded-2xl">
+        <div class="pt-8 px-8 pb-4 border-b border-gray-200">
+          <h2 class="text-xs  text-black uppercase  mb-6">Preferences</h2>
+          <div class="flex bg-black p-1.5 rounded-2xl">
             <button 
               v-for="tab in ['language', 'currency']" 
               :key="tab"
               @click="currentTab = tab"
-              class="flex-1 py-3 text-[10px]  uppercase  rounded-xl transition-all duration-500"
-              :class="currentTab === tab ? 'bg-white text-brand-blue shadow-sm' : 'text-gray-400 hover:text-gray-600'"
+              class="flex-1 py-3 text-sm  uppercase  rounded-xl transition-all duration-500"
+              :class="currentTab === tab ? 'bg-white text-brand-blue shadow-sm' : 'text-black hover:text-black'"
             >
               {{ $t(`settings.${tab}`) }}
             </button>
@@ -36,12 +36,12 @@
                 :key="locale.code"
                 @click="changeLocale(locale.code)"
                 class="flex items-center gap-3 p-3 rounded-2xl border-2 transition-all relative group"
-                :class="currentLocale === locale.code ? 'border-brand-blue bg-brand-blue/5' : 'border-gray-100 hover:border-brand-blue/50 hover:bg-gray-50'"
+                :class="currentLocale === locale.code ? 'border-brand-blue bg-brand-blue/5' : 'border-gray-200 hover:border-brand-blue/50 hover:bg-white'"
               >
-                <img :src="getLocaleFlag(locale.code)" class="h-6 w-8 object-cover rounded shadow-sm border border-gray-100" />
+                <img :src="getLocaleFlag(locale.code)" class="h-6 w-8 object-cover rounded shadow-sm border border-gray-200" />
                 <div class="text-left overflow-hidden">
-                  <div class="text-[11px] font-bold text-gray-900 truncate">{{ locale.name }}</div>
-                  <div class="text-[9px] text-gray-400 uppercase tracking-widest">{{ locale.iso }}</div>
+                  <div class="text-[11px] font-bold text-black truncate">{{ locale.name }}</div>
+                  <div class="text-[9px] text-black uppercase ">{{ locale.iso }}</div>
                 </div>
                 <!-- Selection Indicator -->
                 <div v-if="currentLocale === locale.code" class="ml-auto shrink-0">
@@ -61,11 +61,11 @@
                 :key="currency.code"
                 @click="setCurrency(currency.code)"
                 class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all group relative"
-                :class="currentCurrency.code === currency.code ? 'border-brand-blue bg-brand-blue/5' : 'border-gray-100 hover:border-brand-blue/50 hover:bg-gray-50'"
+                :class="currentCurrency.code === currency.code ? 'border-brand-blue bg-brand-blue/5' : 'border-gray-200 hover:border-brand-blue/50 hover:bg-white'"
               >
-                <img :src="currency.flag" class="h-4 w-6 object-cover rounded shadow-sm mb-2 border border-gray-100" />
-                <div class="text-[11px] font-bold text-gray-900">{{ currency.code }}</div>
-                <div class="text-[10px] text-gray-400 font-bold tracking-widest">{{ currency.symbol }}</div>
+                <img :src="currency.flag" class="h-4 w-6 object-cover rounded shadow-sm mb-2 border border-gray-200" />
+                <div class="text-[11px] font-bold text-black">{{ currency.code }}</div>
+                <div class="text-sm text-black font-bold ">{{ currency.symbol }}</div>
                 
                 <div v-if="currentCurrency.code === currency.code" class="absolute top-2 right-2">
                    <CheckIcon class="h-3 w-3 text-brand-blue" />
@@ -76,13 +76,13 @@
         </div>
 
         <!-- Compact Footer Action -->
-        <div class="px-8 py-5 bg-gray-50/50 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-           <p class="text-[9px]  text-gray-400 uppercase tracking-widest text-center sm:text-left">
+        <div class="px-8 py-5 bg-white/50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+           <p class="text-[9px]  text-black uppercase  text-center sm:text-left">
              {{ currentTab === 'language' ? 'Settings will update UI strings' : 'Settings will update price data' }}
            </p>
            <button 
              @click="$emit('close')" 
-             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-[10px]  uppercase  rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all "
+             class="w-full sm:w-auto px-10 py-3 bg-brand-blue text-white text-sm  uppercase  rounded-full shadow-xl shadow-brand-blue/20 hover:scale-105 active:scale-95 transition-all "
            >
               {{ $t('settings.applyChanges') }}
            </button>

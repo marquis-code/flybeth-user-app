@@ -12,12 +12,12 @@
             <div class="h-8 w-8 bg-[#0084ff]/10 rounded-lg flex items-center justify-center">
               <svg class="w-4 h-4 text-[#0084ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
-            <span class="text-[10px] font-bold text-[#0084ff]  ">Things to do</span>
+            <span class="text-sm font-bold text-[#0084ff]  ">Things to do</span>
           </div>
-          <h2 class="text-3xl font-bold text-gray-900 tracking-tight mb-2">Discover Activities & Experiences</h2>
-          <p class="text-sm text-gray-500 max-w-lg">Unforgettable tours, excursions, and things to do at your destination — powered by local experts.</p>
+          <h2 class="text-3xl font-bold text-black  mb-2">Discover Activities & Experiences</h2>
+          <p class="text-sm text-black max-w-lg">Unforgettable tours, excursions, and things to do at your destination — powered by local experts.</p>
         </div>
-        <NuxtLink to="/things-to-do" class="flex items-center gap-2 text-[#0084ff] text-xs font-bold  tracking-widest hover:underline transition-all group shrink-0">
+        <NuxtLink to="/things-to-do" class="flex items-center gap-2 text-[#0084ff] text-xs font-bold   hover:underline transition-all group shrink-0">
           View all activities
           <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </NuxtLink>
@@ -25,7 +25,7 @@
 
       <!-- Loading State -->
       <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div v-for="i in 4" :key="i" class="rounded-2xl bg-gray-100 animate-pulse h-[380px]"></div>
+        <div v-for="i in 4" :key="i" class="rounded-2xl bg-black animate-pulse h-[380px]"></div>
       </div>
 
       <!-- Activities Grid -->
@@ -34,11 +34,11 @@
         <div 
           v-for="(activity, idx) in activities.slice(0, 4)"
           :key="activity.experienceId || idx"
-          class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 group cursor-pointer flex flex-col"
+          class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 group cursor-pointer flex flex-col"
           @click="goToActivity(activity)"
         >
           <!-- Image -->
-          <div class="h-48 bg-gray-100 overflow-hidden relative">
+          <div class="h-48 bg-black overflow-hidden relative">
             <img 
               v-if="activity.photos?.[0]" 
               :src="activity.photos[0]" 
@@ -50,13 +50,13 @@
             </div>
             <!-- Provider badge -->
             <div class="absolute top-3 left-3">
-              <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-[8px] font-bold text-gray-700  tracking-wider border border-white/30 shadow-sm">
+              <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-[8px] font-bold text-black   border border-white/30 shadow-sm">
                 {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : activity.provider }}
               </span>
             </div>
             <!-- Duration badge -->
             <div v-if="activity.minimumDuration" class="absolute bottom-3 right-3">
-              <span class="px-2 py-1 bg-black/50 backdrop-blur-md rounded-md text-[8px] font-bold text-white  tracking-wider flex items-center gap-1">
+              <span class="px-2 py-1 bg-black/50 backdrop-blur-md rounded-md text-[8px] font-bold text-white   flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 {{ activity.minimumDuration }}
               </span>
@@ -65,28 +65,28 @@
 
           <!-- Content -->
           <div class="p-5 flex-1 flex flex-col">
-            <h4 class="text-sm font-bold text-gray-900 leading-snug mb-2 line-clamp-2 group-hover:text-[#0084ff] transition-colors">{{ activity.name }}</h4>
+            <h4 class="text-sm font-bold text-black leading-snug mb-2 line-clamp-2 group-hover:text-[#0084ff] transition-colors">{{ activity.name }}</h4>
             
-            <p v-if="activity.shortDescription" class="text-[11px] text-gray-500 leading-relaxed line-clamp-2 mb-4">{{ activity.shortDescription }}</p>
+            <p v-if="activity.shortDescription" class="text-[11px] text-black leading-relaxed line-clamp-2 mb-4">{{ activity.shortDescription }}</p>
 
             <!-- Rating -->
             <div v-if="activity.rating" class="flex items-center gap-1.5 mb-4">
               <div class="flex">
-                <svg v-for="s in 5" :key="s" class="w-3.5 h-3.5" :class="s <= Math.round(activity.rating) ? 'text-amber-400' : 'text-gray-200'" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg v-for="s in 5" :key="s" class="w-3.5 h-3.5" :class="s <= Math.round(activity.rating) ? 'text-amber-400' : 'text-black'" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
               </div>
-              <span class="text-[10px] font-bold text-gray-500">{{ activity.rating.toFixed(1) }}</span>
+              <span class="text-sm font-bold text-black">{{ activity.rating.toFixed(1) }}</span>
             </div>
 
             <!-- Price & CTA -->
-            <div class="mt-auto flex items-end justify-between pt-3 border-t border-gray-50">
+            <div class="mt-auto flex items-end justify-between pt-3 border-t border-gray-200">
               <div>
-                <span class="text-[9px] text-gray-400 font-bold  tracking-widest block mb-0.5">From</span>
-                <span class="text-lg font-bold text-gray-900">${{ Math.round(activity.price || 0) }}</span>
-                <span class="text-[10px] text-gray-400 font-medium"> / person</span>
+                <span class="text-[9px] text-black font-bold   block mb-0.5">From</span>
+                <span class="text-lg font-bold text-black">${{ Math.round(activity.price || 0) }}</span>
+                <span class="text-sm text-black font-medium"> / person</span>
               </div>
               <button 
                 @click.stop="goToActivity(activity)"
-                class="px-3 py-2 bg-[#0084ff]/10 text-[#0084ff] text-[10px] font-bold rounded-lg hover:bg-[#0084ff] hover:text-white transition-all  tracking-wider"
+                class="px-3 py-2 bg-[#0084ff]/10 text-[#0084ff] text-sm font-bold rounded-lg hover:bg-[#0084ff] hover:text-white transition-all  "
               >
                 Explore
               </button>
@@ -99,12 +99,12 @@
         <div class="text-center mt-10">
           <NuxtLink 
             to="/things-to-do"
-            class="inline-flex items-center gap-2.5 bg-black text-white font-bold px-10 py-4 rounded-xl transition-all shadow-lg shadow-blue-200/50 active:scale-[0.98]  tracking-widest text-sm group"
+            class="inline-flex items-center gap-2.5 bg-black text-white font-bold px-10 py-4 rounded-xl transition-all shadow-lg shadow-blue-200/50 active:scale-[0.98]   text-sm group"
           >
             View {{ totalCount > 4 ? totalCount - 4 : '' }} More Experiences
             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </NuxtLink>
-          <p class="text-xs text-gray-400 mt-3">Discover tours, excursions and more at your destination</p>
+          <p class="text-xs text-black mt-3">Discover tours, excursions and more at your destination</p>
         </div>
       </div>
 

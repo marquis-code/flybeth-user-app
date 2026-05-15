@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col items-center justify-center py-16 px-6 text-center select-none bg-white rounded-3xl border border-gray-50 max-w-2xl mx-auto shadow-sm">
+  <div class="flex flex-col items-center justify-center py-16 px-6 text-center select-none bg-white rounded-3xl border border-gray-200 max-w-2xl mx-auto shadow-sm">
     <!-- Sophisticated Icon Container -->
     <div class="relative mb-8">
-      <div class="w-20 h-20 rounded-2xl bg-gray-50 flex items-center justify-center relative z-10 border border-gray-100">
-        <component :is="computedIcon" class="h-8 w-8 text-gray-900 opacity-80" />
+      <div class="w-20 h-20 rounded-2xl bg-white flex items-center justify-center relative z-10 border border-gray-200">
+        <component :is="computedIcon" class="h-8 w-8 text-black opacity-80" />
       </div>
       <!-- Subtle Decorative Element -->
       <div class="absolute -inset-4 bg-gradient-to-tr from-brand-blue/5 to-transparent rounded-full blur-xl -z-0"></div>
@@ -11,10 +11,10 @@
 
     <!-- Text Content -->
     <div class="space-y-3 max-w-sm">
-      <h3 class="text-lg  text-gray-900  ">
+      <h3 class="text-base text-black">
         {{ title || 'No Results' }}
       </h3>
-      <p class="text-[11px] font-bold text-gray-400 leading-relaxed  tracking-widest">
+      <p class="text-[13px] font-bold text-black leading-relaxed">
         {{ message || 'Try adjusting your filters for better results.' }}
       </p>
     </div>
@@ -23,7 +23,7 @@
     <div v-if="actionLabel" class="mt-8">
       <button 
         @click="$emit('action')" 
-        class="px-8 py-3 bg-gray-900 text-white rounded-xl text-[10px]   hover:bg-black transition-all active:scale-[0.98] shadow-lg shadow-gray-200"
+        class="px-8 py-3 bg-black text-white rounded-xl text-sm   hover:bg-black transition-all active:scale-[0.98] shadow-lg shadow-gray-200"
       >
         {{ actionLabel }}
       </button>

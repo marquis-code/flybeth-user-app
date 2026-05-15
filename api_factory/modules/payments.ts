@@ -10,6 +10,9 @@ export const paymentsApi = {
     getByBooking(bookingId: string) {
         return GATEWAY_ENDPOINT_WITH_AUTH.get(`/payments/booking/${bookingId}`);
     },
+    authorizeBnpl(data: { bookingId: string; provider: string; checkoutToken: string; amount?: number; currency?: string }) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/payments/bnpl/authorize", data);
+    },
 
     /**
      * Get active bank accounts for manual payment

@@ -10,7 +10,7 @@
 
       <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
          <div class="max-w-3xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            <h1 class="text-3xl md:text-4xl  text-neutral-900 tracking-tight leading-[1.1]">
+            <h1 class="text-3xl md:text-4xl  text-neutral-900  leading-[1.1]">
                We're here to help you<br/>
                <span class="text-brand-blue">travel with confidence.</span>
             </h1>
@@ -88,7 +88,7 @@
     <section class="max-w-5xl mx-auto px-6 py-20 bg-white">
        <div class="text-center mb-20 space-y-4">
           <h2 class="text-4xl  text-neutral-900">Frequently Asked Questions</h2>
-          <p class="text-neutral-400 font-bold tracking-widest uppercase text-xs">Quick answers to your travel needs</p>
+          <p class="text-neutral-400 font-bold  uppercase text-xs">Quick answers to your travel needs</p>
        </div>
        <div class="space-y-6">
           <div v-for="faq in faqs" :key="faq.q" class="bg-neutral-50 border border-neutral-100 rounded-3xl p-8 hover:bg-white hover:shadow-xl transition-all duration-500 group cursor-pointer">

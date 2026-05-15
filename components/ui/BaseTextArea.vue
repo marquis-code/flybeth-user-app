@@ -3,7 +3,7 @@
     <label 
       v-if="label" 
       :for="id" 
-      class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70 "
+      class="text-[11px] uppercase  text-brand-gray  mb-2 px-1 opacity-70 "
     >
       {{ label }}
     </label>
@@ -13,7 +13,7 @@
         :value="modelValue"
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         :class="[
-          'block w-full bg-white border border-gray-100 rounded-[2rem] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all duration-500 font-bold text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue focus:shadow-xl px-8 py-6 text-sm tracking-tight min-h-[150px] resize-none'
+          'block w-full bg-white border border-gray-200 rounded-[2rem] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all duration-500 font-bold text-black placeholder:text-black focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue focus:shadow-xl px-8 py-6 text-sm  min-h-[150px] resize-none'
         ]"
         v-bind="$attrs"
       ></textarea>

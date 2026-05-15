@@ -21,14 +21,14 @@
 
     <!-- Overlay Interface -->
     <Transition name="fade-slide">
-      <div v-if="showOverlay" class="absolute bottom-20 right-0 w-[400px] max-h-[600px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100/50 flex flex-col overflow-hidden backdrop-blur-xl">
+      <div v-if="showOverlay" class="absolute bottom-20 right-0 w-[400px] max-h-[600px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-200 flex flex-col overflow-hidden backdrop-blur-xl">
         <!-- Header -->
         <div class="p-8 bg-brand-blue text-white">
           <h3 class="text-xl   flex items-center gap-3">
             Flybeth Voice Assistant
             <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
           </h3>
-          <p class="text-xs font-bold text-white/50 tracking-tight mt-1 ">Real-time conversational booking</p>
+          <p class="text-xs font-bold text-white/50  mt-1 ">Real-time conversational booking</p>
         </div>
 
         <!-- Chat History -->
@@ -37,7 +37,7 @@
                :class="['flex', msg.role === 'user' ? 'justify-end' : 'justify-start']">
             <div :class="[
               'max-w-[85%] p-4 rounded-3xl text-sm font-medium shadow-sm',
-              msg.role === 'user' ? 'bg-brand-blue text-white rounded-tr-none' : 'bg-gray-50 text-gray-900 rounded-tl-none border border-gray-100'
+              msg.role === 'user' ? 'bg-brand-blue text-white rounded-tr-none' : 'bg-white text-black rounded-tl-none border border-gray-200'
             ]">
               {{ msg.text }}
             </div>
@@ -52,7 +52,7 @@
           
           <!-- AI Thinking Indicator -->
           <div v-if="isThinking" class="flex justify-start">
-            <div class="bg-gray-50 p-4 rounded-3xl rounded-tl-none border border-gray-100 flex gap-1">
+            <div class="bg-white p-4 rounded-3xl rounded-tl-none border border-gray-200 flex gap-1">
               <span class="w-1.5 h-1.5 bg-brand-blue/40 rounded-full animate-bounce"></span>
               <span class="w-1.5 h-1.5 bg-brand-blue/40 rounded-full animate-bounce [animation-delay:0.2s]"></span>
               <span class="w-1.5 h-1.5 bg-brand-blue/40 rounded-full animate-bounce [animation-delay:0.4s]"></span>
@@ -62,41 +62,41 @@
           <!-- Flight Results Preview -->
           <div v-if="latestResults.length" class="space-y-4 mt-6">
              <div class="flex items-center gap-2 px-2">
-                <span class="text-sm  uppercase text-gray-900 tracking-widest">Available Options</span>
+                <span class="text-sm  uppercase text-black ">Available Options</span>
                 <div class="flex-1 h-[1px] bg-brand-blue/10"></div>
              </div>
-             <div v-for="flight in latestResults" :key="flight.offerId" class="p-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-md hover:border-brand-blue transition-all group overflow-hidden relative">
+             <div v-for="flight in latestResults" :key="flight.offerId" class="p-5 bg-white border border-gray-200 rounded-[2rem] shadow-sm hover:shadow-md hover:border-brand-blue transition-all group overflow-hidden relative">
                 <div class="absolute top-0 right-0 p-3">
                    <span class="px-2 py-1 bg-brand-green/10 text-brand-green text-[8px]  rounded-full uppercase">Verified</span>
                 </div>
                 <div class="flex justify-between items-start mb-4">
                   <div>
                     <div class="text-sm  uppercase text-brand-gray/40 mb-1 leading-none">{{ flight.airline }}</div>
-                    <div class="text-[11px] font-bold text-gray-900">{{ flight.flightNumbers?.join(', ') }}</div>
+                    <div class="text-[11px] font-bold text-black">{{ flight.flightNumbers?.join(', ') }}</div>
                   </div>
                   <div class="text-right">
                     <div class="text-xs text-brand-gray/40 font-bold mb-1">Price</div>
-                    <div class="text-xl  text-gray-900 leading-none">${{ flight.priceWithCommission }}</div>
+                    <div class="text-xl  text-black leading-none">${{ flight.priceWithCommission }}</div>
                   </div>
                 </div>
                 
                 <div class="flex items-center justify-between gap-4 mt-2">
                    <div class="text-center">
-                      <div class="text-lg  text-gray-900 leading-none">{{ flight.origin }}</div>
-                      <div class="text-[9px] font-bold text-gray-400 mt-1">Origin</div>
+                      <div class="text-lg  text-black leading-none">{{ flight.origin }}</div>
+                      <div class="text-[9px] font-bold text-black mt-1">Origin</div>
                    </div>
                    
                    <div class="flex-1 flex flex-col items-center gap-1 group-hover:px-2 transition-all">
-                      <div class="text-[8px]  text-gray-900 uppercase">{{ flight.duration }}m</div>
+                      <div class="text-[8px]  text-black uppercase">{{ flight.duration }}m</div>
                       <div class="w-full h-[2px] bg-brand-blue/10 relative rounded-full overflow-hidden">
                         <div class="absolute inset-0 bg-brand-blue/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                       </div>
-                      <div class="text-[8px]  text-gray-900 uppercase">{{ flight.stops === 0 ? 'Direct' : `${flight.stops} Stop` }}</div>
+                      <div class="text-[8px]  text-black uppercase">{{ flight.stops === 0 ? 'Direct' : `${flight.stops} Stop` }}</div>
                    </div>
 
                    <div class="text-center">
-                      <div class="text-lg  text-gray-900 leading-none">{{ flight.destination }}</div>
-                      <div class="text-[9px] font-bold text-gray-400 mt-1">Dest</div>
+                      <div class="text-lg  text-black leading-none">{{ flight.destination }}</div>
+                      <div class="text-[9px] font-bold text-black mt-1">Dest</div>
                    </div>
                 </div>
              </div>
@@ -105,7 +105,7 @@
 
         <!-- Debug Perspective Toggle -->
         <div v-if="debugLogs.length" class="px-8 pb-4">
-          <button @click="showDebug = !showDebug" class="text-[9px]  uppercase tracking-widest text-brand-gray/40 hover:text-gray-900 flex items-center gap-2">
+          <button @click="showDebug = !showDebug" class="text-[9px]  uppercase  text-brand-gray/40 hover:text-black flex items-center gap-2">
             {{ showDebug ? 'Hide Console' : 'Show Debug Console' }}
             <span :class="{'rotate-180': showDebug}" class="transition-transform">▼</span>
           </button>
@@ -117,13 +117,13 @@
         </div>
 
         <!-- Footer Control -->
-        <div class="p-8 border-t border-gray-50 bg-gray-50/50">
+        <div class="p-8 border-t border-gray-200 bg-white/50">
           <div class="flex items-center justify-between mb-4">
              <div class="flex gap-1 h-4 items-center">
                 <div v-for="i in 5" :key="i" class="w-1 bg-brand-blue rounded-full" 
                      :style="{ height: isRecording ? `${Math.random() * 100}%` : '20%', transition: 'height 0.1s' }"></div>
              </div>
-             <span class="text-sm  text-brand-gray/40 uppercase tracking-widest">
+             <span class="text-sm  text-brand-gray/40 uppercase ">
                {{ isThinking ? 'AI is processing...' : (isRecording ? 'Listening...' : 'Ready to help') }}
              </span>
           </div>

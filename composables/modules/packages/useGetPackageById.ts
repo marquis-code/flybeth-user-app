@@ -9,8 +9,8 @@ export const useGetPackageById = () => {
         loading.value = true;
         try {
             const { data } = await packagesApi.getById(id);
-            selectedPackage.value = data;
-            return data;
+            selectedPackage.value = data.data;
+            return data.data;
         } catch (error) {
             console.error('Error fetching package details:', error);
         } finally {

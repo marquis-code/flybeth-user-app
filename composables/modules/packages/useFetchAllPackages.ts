@@ -9,8 +9,8 @@ export const useFetchAllPackages = () => {
         loading.value = true;
         try {
             const { data } = await packagesApi.getAll(params);
-            packages.value = data;
-            return data;
+            packages.value = data.data || [];
+            return data.data;
         } catch (error) {
             console.error('Error fetching packages:', error);
         } finally {

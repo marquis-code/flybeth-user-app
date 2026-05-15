@@ -3,24 +3,24 @@
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 group/header">
       <div class="flex items-center gap-3 whitespace-nowrap">
         <Armchair class="w-6 h-6 text-blue-600" />
-        <h3 class="text-xl md:text-2xl font-black text-gray-900 tracking-tighter">
+        <h3 class="text-xl md:text-2xl font-black text-black er">
           Select Your Seat
         </h3>
       </div>
 
       <!-- Legend (Compact) -->
-      <div class="flex flex-wrap items-center gap-4 px-4 py-2.5 bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div class="flex flex-wrap items-center gap-4 px-4 py-2.5 bg-white rounded-xl border border-gray-200 shadow-sm">
         <div class="flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-blue-600"></div>
-          <span class="text-[9px] font-black text-gray-400 tracking-widest uppercase">Available</span>
+          <span class="text-[9px] font-black text-black  uppercase">Available</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-          <span class="text-[9px] font-black text-gray-400 tracking-widest uppercase">Selected</span>
+          <span class="text-[9px] font-black text-black  uppercase">Selected</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-gray-200"></div>
-          <span class="text-[9px] font-black text-gray-400 tracking-widest uppercase">Occupied</span>
+          <div class="w-2.5 h-2.5 rounded-full bg-black"></div>
+          <span class="text-[9px] font-black text-black  uppercase">Occupied</span>
         </div>
       </div>
     </div>
@@ -28,31 +28,31 @@
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-32 space-y-6">
       <div class="relative w-16 h-16">
-        <div class="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
         <div class="absolute inset-0 border-4 border-t-blue-600 rounded-full animate-spin"></div>
       </div>
       <div class="text-center">
-        <p class="text-sm  text-gray-900 ">Mapping Aircraft Cabin</p>
-        <p class="text-[10px] font-bold text-gray-400 tracking-widest mt-2">Retrieving real-time availability...</p>
+        <p class="text-sm  text-black ">Mapping Aircraft Cabin</p>
+        <p class="text-sm font-bold text-black  mt-2">Retrieving real-time availability...</p>
       </div>
     </div>
 
     <!-- Main Content -->
     <div v-else-if="seatmaps.length" class="space-y-6">
       <!-- Main Selection Bar -->
-      <div class="w-full flex items-center justify-between p-6 bg-white border border-gray-100 rounded-[2rem] text-gray-900 shadow-sm relative overflow-hidden group">
+      <div class="w-full flex items-center justify-between p-6 bg-white border border-gray-200 rounded-[2rem] text-black shadow-sm relative overflow-hidden group">
         <div class="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
         
         <!-- Selection Info -->
         <div class="flex items-center gap-4 relative z-10">
-          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-black border border-gray-200">
             <User class="w-5 h-5" />
           </div>
           <div class="min-w-0">
-            <p class="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-1">Traveler Selection</p>
+            <p class="text-[9px] font-bold text-black  uppercase mb-1">Traveler Selection</p>
             <div class="flex items-center gap-2">
-              <span class="text-base font-bold text-gray-900 truncate">{{ passengers.firstName }} {{ passengers.lastName }}</span>
-              <div v-if="selectedSeats[0]" class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-bold rounded-lg border border-emerald-100 tracking-widest uppercase">
+              <span class="text-base font-bold text-black truncate">{{ passengers.firstName }} {{ passengers.lastName }}</span>
+              <div v-if="selectedSeats[0]" class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-bold rounded-lg border border-emerald-100  uppercase">
                 SEAT {{ selectedSeats[0].designator }}
               </div>
             </div>
@@ -61,14 +61,14 @@
  
         <!-- Pricing -->
         <div class="text-right relative z-10">
-          <p class="text-[9px] font-bold text-gray-400 tracking-widest uppercase mb-1">Seat Surcharge</p>
-          <span class="text-2xl font-black text-[#0D1DAD] tracking-tight">{{ formatPrice(totalSeatPrice) }}</span>
+          <p class="text-[9px] font-bold text-black  uppercase mb-1">Seat Surcharge</p>
+          <span class="text-2xl font-black text-[#0D1DAD] ">{{ formatPrice(totalSeatPrice) }}</span>
         </div>
       </div>
 
       <!-- Bottom Section: Full Width Aircraft Cabin -->
       <div class="w-full">
-        <div class="w-full  mx-auto bg-white rounded-[3rem] border-2 border-gray-100 shadow-2xl shadow-blue-50/50 overflow-hidden flex flex-col items-center">
+        <div class="w-full  mx-auto bg-white rounded-[3rem] border-2 border-gray-200 shadow-2xl shadow-blue-50/50 overflow-hidden flex flex-col items-center">
 
 
 
@@ -98,7 +98,7 @@
                     >
                       <!-- Row Number Left -->
                       <div class="w-8 sm:w-10 flex-shrink-0 text-right pr-1">
-                        <span class="text-xs sm:text-sm  text-gray-300 group-hover:text-blue-500 transition-colors">{{ row.number }}</span>
+                        <span class="text-xs sm:text-sm  text-black group-hover:text-blue-500 transition-colors">{{ row.number }}</span>
                       </div>
 
                       <!-- Sections with Aisle Gap -->
@@ -119,16 +119,16 @@
                                       ? 'bg-emerald-500 border-emerald-400 text-white shadow-xl shadow-emerald-200 scale-110 -translate-y-0.5 z-10'
                                       : isSeatAvailable(element)
                                         ? 'bg-white border-blue-100 text-blue-600 hover:border-blue-600 hover:scale-105 hover:bg-blue-50 hover:shadow-lg hover:shadow-blue-100/50 active:scale-95'
-                                        : 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
+                                        : 'bg-white border-gray-200 text-black cursor-not-allowed'
                                   ]"
                                 >
                                   <Armchair class="h-5 w-5 sm:h-6 sm:w-6 mb-0.5" />
-                                  <span class="text-[10px] sm:text-xs  leading-none tracking-tighter">{{ element.designator }}</span>
+                                  <span class="text-sm sm:text-xs  leading-none er">{{ element.designator }}</span>
 
                                   <!-- Price tooltip -->
                                   <div
                                     v-if="isSeatAvailable(element) && !isSeatSelectedByActivePlayer(element)"
-                                    class="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-[8px]  rounded-lg shadow-2xl opacity-0 group-hover/seat:opacity-100 transition-all pointer-events-none whitespace-nowrap z-30"
+                                    class="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 bg-black text-white text-[8px]  rounded-lg shadow-2xl opacity-0 group-hover/seat:opacity-100 transition-all pointer-events-none whitespace-nowrap z-30"
                                   >
                                     +{{ formatPrice(parseFloat(element.available_services[0].total_amount)) }}
                                   </div>
@@ -137,7 +137,7 @@
 
                               <div v-else-if="element.type === 'empty'" class="w-10 h-10 sm:w-12 sm:h-12"></div>
 
-                              <div v-else class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-gray-200">
+                              <div v-else class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-black">
                                 <Info v-if="element.type !== 'empty'" class="h-4 w-4 opacity-20" />
                               </div>
                             </div>
@@ -147,7 +147,7 @@
 
                       <!-- Row Number Right (mirror) -->
                       <div class="w-8 sm:w-10 flex-shrink-0 text-left pl-1">
-                        <span class="text-xs sm:text-sm  text-gray-300 group-hover:text-blue-500 transition-colors">{{ row.number }}</span>
+                        <span class="text-xs sm:text-sm  text-black group-hover:text-blue-500 transition-colors">{{ row.number }}</span>
                       </div>
                     </div>
                   </div>
@@ -158,9 +158,9 @@
             <!-- Bottom Gradient Fade & Scroll Indicator -->
             <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none z-10 flex flex-col items-center justify-end pb-8">
                <div class="flex flex-col items-center gap-2 animate-bounce transition-opacity duration-500 group-hover:opacity-10">
-                  <span class="text-xs   tracking-[0.4em] text-gray-300">Scroll for more</span>
-                  <div class="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center shadow-sm">
-                    <ChevronDown class="w-4 h-4 text-gray-400" />
+                  <span class="text-xs    text-black">Scroll for more</span>
+                  <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+                    <ChevronDown class="w-4 h-4 text-black" />
                   </div>
                </div>
             </div>
@@ -170,25 +170,25 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="flex flex-col items-center justify-center py-24 rounded-3xl border-2 border-dashed border-gray-100 bg-gray-50">
+    <div v-else class="flex flex-col items-center justify-center py-24 rounded-3xl border-2 border-dashed border-gray-200 bg-white">
       <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm mb-4">
-        <Armchair class="w-8 h-8 text-gray-300" />
+        <Armchair class="w-8 h-8 text-black" />
       </div>
-      <p class="text-xs font-black text-gray-900 tracking-tight">No Seat Map Available</p>
-      <p class="text-[9px] font-bold text-gray-400 tracking-widest mt-1 text-center px-4">Seat selection is not supported for this flight.</p>
-      <button @click="$emit('continue')" class="mt-6 px-6 h-10 bg-gray-900 text-white rounded-xl text-[9px] font-black tracking-widest uppercase">Skip Selection</button>
+      <p class="text-xs font-black text-black ">No Seat Map Available</p>
+      <p class="text-[9px] font-bold text-black  mt-1 text-center px-4">Seat selection is not supported for this flight.</p>
+      <button @click="$emit('continue')" class="mt-6 px-6 h-10 bg-black text-white rounded-xl text-[9px] font-black  uppercase">Skip Selection</button>
     </div>
 
     <!-- Navigation -->
-    <div v-if="!isEmbedded" class="mt-10 flex items-center justify-between border-t border-gray-100 pt-8">
-      <button @click="$emit('back')" class="group flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-12 sm:h-14 rounded-2xl hover:bg-gray-50 transition-all">
-        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border border-gray-200 group-hover:border-gray-900 transition-colors flex-shrink-0">
+    <div v-if="!isEmbedded" class="mt-10 flex items-center justify-between border-t border-gray-200 pt-8">
+      <button @click="$emit('back')" class="group flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-12 sm:h-14 rounded-2xl hover:bg-white transition-all">
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border border-gray-200 group-hover:border-gray-200 transition-colors flex-shrink-0">
           <ChevronRight class="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-180" />
         </div>
-        <span class="text-[9px] sm:text-[10px]    text-gray-400 group-hover:text-gray-900 hidden xs:block">Previous Review</span>
+        <span class="text-[9px] sm:text-sm    text-black group-hover:text-black hidden xs:block">Previous Review</span>
       </button>
 
-      <button @click="$emit('continue')" class="group relative bg-gray-900 text-white px-8 sm:px-12 py-3.5 rounded-lg text-[10px] sm:text-[11px]    shadow-2xl hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden">
+      <button @click="$emit('continue')" class="group relative bg-black text-white px-8 sm:px-12 py-3.5 rounded-lg text-sm sm:text-[11px]    shadow-2xl hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-white/10 to-blue-600/0 -translate-x-full group-hover:animate-shimmer"></div>
         <span class="relative z-10 flex items-center gap-2 sm:gap-3">
           Finalize Selection

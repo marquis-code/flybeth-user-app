@@ -64,7 +64,7 @@
               <div class="w-8 h-8 rounded-full bg-neutral-900 text-white text-xs font-black flex items-center justify-center">
                 {{ index + 1 }}
               </div>
-              <span class="text-sm font-black text-neutral-900 tracking-tight">Traveler {{ index + 1 }}</span>
+              <span class="text-sm font-black text-neutral-900 ">Traveler {{ index + 1 }}</span>
            </div>
            <button 
              v-if="travelers.length > 1" 
@@ -187,14 +187,14 @@
        <div class="flex flex-col gap-3 mb-4">
           <label v-if="isLoggedIn" class="ck-tf-terms">
              <input type="checkbox" v-model="saveForFuture" class="ck-tf-chk custom-checkbox" />
-             <span class="font-bold text-gray-800">Save traveler information for future bookings</span>
+             <span class="font-bold text-black">Save traveler information for future bookings</span>
           </label>
           <div v-else class="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl mb-2 flex items-center gap-3">
              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
              </div>
              <div>
-                <p class="text-[11px] font-black text-blue-900  tracking-widest">Guest Mode Active</p>
+                <p class="text-[11px] font-black text-blue-900  ">Guest Mode Active</p>
                 <p class="text-sm text-blue-700/70 font-medium">You're booking without an account. We'll send your ticket to the email below.</p>
              </div>
           </div>

@@ -16,7 +16,7 @@
           <Ticket class="w-10 h-10 text-[#0D1DAD]" />
         </div>
 
-        <h2 class="text-3xl font-black text-neutral-900 mb-4 tracking-tight leading-tight">
+        <h2 class="text-3xl font-black text-neutral-900 mb-4  leading-tight">
           How would you like to <br/>
           <span class="text-primary">secure your booking?</span>
         </h2>
@@ -33,7 +33,7 @@
           >
             <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <User class="w-5 h-5 text-white" />
-            <span class="text-white  text-sm tracking-wider">Sign in to your account</span>
+            <span class="text-white  text-sm ">Sign in to your account</span>
           </button>
 
           <!-- Glassmorphism Guest Button -->
@@ -42,7 +42,7 @@
             class="group w-full py-3.5 bg-neutral-200 border-2 border-neutral-200 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 hover:bg-neutral-100 hover:border-neutral-200"
           >
             <Zap class="w-5 h-5 text-neutral-400 group-hover:text-primary transition-colors" />
-            <span class="text-neutral-600 font-bold text-sm tracking-wide">Continue as guest</span>
+            <span class="text-neutral-600 font-bold text-sm ">Continue as guest</span>
           </button>
         </div>
 

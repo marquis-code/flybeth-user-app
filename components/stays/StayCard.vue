@@ -1,10 +1,10 @@
 <template>
   <div 
-    class="stay-card bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-700 mb-6 flex flex-col md:flex-row h-full md:h-[280px] group cursor-pointer"
+    class="stay-card bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-700 mb-6 flex flex-col md:flex-row h-full md:h-[280px] group cursor-pointer"
     @click="$emit('select', stay)"
   >
     <!-- Image Section -->
-    <div class="md:w-[32%] relative overflow-hidden h-64 md:h-auto bg-gray-50 flex items-center justify-center shrink-0">
+    <div class="md:w-[32%] relative overflow-hidden h-64 md:h-auto bg-white flex items-center justify-center shrink-0">
       <img 
         v-if="stay.photos?.[0] || stay.image"
         :src="stay.photos?.[0] || stay.image" 
@@ -12,15 +12,15 @@
         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
       />
       <!-- Premium Empty State -->
-      <div v-else class="flex flex-col items-center justify-center text-gray-200 p-8 text-center bg-gray-50 h-full w-full">
+      <div v-else class="flex flex-col items-center justify-center text-black p-8 text-center bg-white h-full w-full">
         <svg class="w-12 h-12 mb-3 opacity-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
-        <p class="text-xs  tracking-wide opacity-50">No preview available</p>
+        <p class="text-xs   opacity-50">No preview available</p>
       </div>
       <!-- Type Badge (Minimalist) -->
       <div class="absolute top-5 left-5">
-        <span class="inline-flex items-center px-4 py-2 rounded-xl bg-white/95 backdrop-blur-md text-gray-900 text-xs  border border-gray-100 shadow-xl tracking-wide">
+        <span class="inline-flex items-center px-4 py-2 rounded-xl bg-white/95 backdrop-blur-md text-black text-xs  border border-gray-200 shadow-xl ">
           {{ stay.type || 'Hotel' }}
         </span>
       </div>
@@ -31,13 +31,13 @@
       <!-- Left Info -->
       <div class="flex-1 min-w-0 flex flex-col">
         <div class="mb-6">
-          <h3 class="text-2xl  text-gray-900 leading-tight mb-2 group-hover:text-gray-600 transition-colors line-clamp-2 tracking-tight">
+          <h3 class="text-2xl  text-black leading-tight mb-2 group-hover:text-black transition-colors line-clamp-2 ">
             {{ stay.name }}
           </h3>
           
-          <div class="flex items-center text-gray-400 mt-2">
-            <svg class="w-4 h-4 mr-2 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            <span class="text-sm font-bold tracking-wide line-clamp-1 opacity-70 group-hover:opacity-100 transition-opacity">
+          <div class="flex items-center text-black mt-2">
+            <svg class="w-4 h-4 mr-2 text-black shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span class="text-sm font-bold  line-clamp-1 opacity-70 group-hover:opacity-100 transition-opacity">
               <span v-if="stay.location?.address">{{ stay.location?.address }}, </span>{{ stay.location?.city || 'City' }}
             </span>
           </div>
@@ -45,35 +45,35 @@
 
         <div v-if="visibleAmenities.length > 0" class="mb-6">
           <div class="flex flex-wrap gap-2.5">
-            <div v-for="amenity in visibleAmenities" :key="amenity.label" class="flex items-center text-xs  text-gray-500 bg-gray-50 px-3 py-2 rounded-xl border border-gray-100 tracking-wide">
-              <span class="w-4 h-4 flex items-center justify-center mr-2 text-gray-400 group-hover:text-gray-600 transition-colors" v-html="amenity.icon"></span>
+            <div v-for="amenity in visibleAmenities" :key="amenity.label" class="flex items-center text-xs  text-black bg-white px-3 py-2 rounded-xl border border-gray-200 ">
+              <span class="w-4 h-4 flex items-center justify-center mr-2 text-black group-hover:text-black transition-colors" v-html="amenity.icon"></span>
               {{ amenity.label }}
             </div>
           </div>
         </div>
 
-        <div class="mt-auto flex flex-wrap gap-x-6 gap-y-3 pt-6 border-t border-gray-50">
-          <div class="flex items-center text-xs  text-gray-900 tracking-wide">
+        <div class="mt-auto flex flex-wrap gap-x-6 gap-y-3 pt-6 border-t border-gray-200">
+          <div class="flex items-center text-xs  text-black ">
             <svg class="w-4 h-4 mr-2 text-emerald-500 stroke-[4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
             Instant confirm
           </div>
-          <div class="flex items-center text-xs  text-gray-900 tracking-wide opacity-50">
-            <svg class="w-4 h-4 mr-2 text-gray-500 stroke-[4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <div class="flex items-center text-xs  text-black  opacity-50">
+            <svg class="w-4 h-4 mr-2 text-black stroke-[4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
             Best price match
           </div>
         </div>
       </div>
 
       <!-- Price & Rating Side -->
-      <div class="md:w-[220px] md:border-l border-gray-50 md:pl-8 flex flex-col justify-between items-center md:items-end">
+      <div class="md:w-[220px] md:border-l border-gray-200 md:pl-8 flex flex-col justify-between items-center md:items-end">
         <div class="w-full flex md:flex-col justify-between items-center md:items-end gap-4 mb-6">
-          <div class="flex items-center bg-gray-50 text-gray-900 px-4 py-2.5 rounded-xl border border-gray-100">
+          <div class="flex items-center bg-white text-black px-4 py-2.5 rounded-xl border border-gray-200">
             <span class="text-sm  mr-2">{{ (stay.rating || 5.0).toFixed(1) }}</span>
-            <span class="text-xs  tracking-wide opacity-60">Rating</span>
+            <span class="text-xs   opacity-60">Rating</span>
           </div>
           <div class="flex flex-col items-end">
-            <div class="text-xs text-gray-500  tracking-wide mb-2">Price from</div>
-            <div class="text-4xl  text-gray-900 leading-none tracking-tighter">
+            <div class="text-xs text-black   mb-2">Price from</div>
+            <div class="text-4xl  text-black leading-none er">
               ${{ Math.round(stay.priceWithCommission || stay.cheapestPrice || 0) }}
             </div>
           </div>
@@ -81,7 +81,7 @@
 
         <button 
           @click.stop="$emit('select', stay)"
-          class="w-full bg-gray-900 hover:bg-gray-700 text-white  h-16 rounded-2xl transition-all duration-300 shadow-xl shadow-gray-900/10 active:scale-[0.98] text-sm tracking-wide flex items-center justify-center gap-3 group/btn"
+          class="w-full bg-black hover:bg-black text-white  h-16 rounded-2xl transition-all duration-300 shadow-xl shadow-gray-900/10 active:scale-[0.98] text-sm  flex items-center justify-center gap-3 group/btn"
         >
           View details
           <svg class="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>

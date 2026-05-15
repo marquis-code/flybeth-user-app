@@ -221,7 +221,7 @@
                 </div>
                 <div class="fp-pax-divider"></div>
                 <div class="fp-pax-class">
-                  <span class="fp-pax-sub tracking-wider font-bold mb-2 block">Cabin Class</span>
+                  <span class="fp-pax-sub  font-bold mb-2 block">Cabin Class</span>
                   <div class="fp-pax-class-grid">
                     <button v-for="c in ['economy','premium_economy','business','first']" :key="c" @click="searchQuery.cabinClass = c" class="fp-class-chip" :class="{ 'fp-class-chip--on': searchQuery.cabinClass === c }">
                       {{ c.replace('_',' ') }}

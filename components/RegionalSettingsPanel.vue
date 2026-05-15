@@ -1,64 +1,48 @@
 <template>
-  <div class="regional-settings-panel bg-white border border-gray-200 rounded-2xl shadow-[0_30px_60px_-12px_rgba(0,0,0,0.15)] w-[320px] overflow-hidden flex flex-col">
-    <!-- Tab Switcher -->
-    <div class="px-5 pt-5 pb-3 bg-gray-50/50 border-b border-gray-100">
-      <div class="flex bg-gray-200/50 p-1 rounded-xl">
-        <button 
-          v-for="tab in ['language', 'currency']" 
-          :key="tab"
-          @click="currentTab = tab"
-          class="flex-1 py-1.5 text-[10px]  uppercase tracking-[0.1em] rounded-lg transition-all"
-          :class="currentTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
-        >
-          {{ tab }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Scrollable Content -->
-    <div class="p-4 overflow-y-auto max-h-[360px] custom-scrollbar">
-      <!-- Language Selection -->
-      <div v-if="currentTab === 'language'" class="animate-fade-in grid grid-cols-1 gap-1">
+  <div class="regional-settings-panel bg-white border border-gray-200 rounded-2xl shadow-[0_30px_60px_-12px_rgba(0,0,0,0.15)] w-[800px] overflow-hidden flex flex-col p-6 max-h-[85vh] overflow-y-auto custom-scrollbar">
+    
+    <!-- Language Section -->
+    <div class="mb-8">
+      <h3 class="text-lg font-semibold text-black mb-4">{{ $t('language') || 'Language' }}</h3>
+      <div class="grid grid-cols-2 gap-x-8 gap-y-4">
         <button 
           v-for="loc in locales" 
           :key="loc.code"
           @click="changeLocale(loc.code)"
-          class="flex items-center gap-3 p-2.5 rounded-xl transition-all group"
-          :class="currentLocale === loc.code ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50'"
+          class="flex items-center gap-3 p-3 rounded-xl transition-all group border text-left"
+          :class="currentLocale === loc.code ? 'border-brand-blue bg-blue-50 text-brand-blue shadow-sm' : 'border-transparent hover:bg-gray-50 text-black'"
         >
-          <img :src="getLocaleFlag(loc.code)" class="h-4 w-6 object-cover rounded-sm border border-gray-200/50 shadow-sm" />
-          <div class="flex flex-col items-start">
-             <span class="text-xs font-bold leading-none">{{ loc.name }}</span>
-             <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">{{ loc.iso }}</span>
+          <img :src="getLocaleFlag(loc.code)" class="h-5 w-7 object-cover rounded shadow-sm border border-gray-200" />
+          <div class="flex flex-col">
+             <span class="text-sm font-medium leading-none">{{ getLocalizedCountryName(loc.code) }} - {{ loc.name }}</span>
           </div>
           <div v-if="currentLocale === loc.code" class="ml-auto">
-             <Check class="w-3.5 h-3.5" />
+             <Check class="w-4 h-4" />
           </div>
         </button>
       </div>
+    </div>
 
-      <!-- Currency Selection -->
-      <div v-if="currentTab === 'currency'" class="animate-fade-in grid grid-cols-3 gap-2">
+    <hr class="border-gray-200 mb-8" />
+
+    <!-- Currency Section -->
+    <div>
+      <h3 class="text-lg font-semibold text-black mb-4">{{ $t('currency') || 'Currency' }}</h3>
+      <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
         <button 
           v-for="currencyData in currencies" 
           :key="currencyData.code"
           @click="setCurrency(currencyData.code)"
-          class="flex flex-col items-center justify-center p-3 rounded-xl border transition-all gap-1.5"
-          :class="currentCurrency.code === currencyData.code ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm' : 'border-gray-50 hover:border-gray-200 hover:bg-gray-50 text-gray-600'"
+          class="flex items-center gap-2 p-2 rounded-xl transition-all border group"
+          :class="currentCurrency.code === currencyData.code ? 'border-brand-blue bg-blue-50 text-brand-blue shadow-sm' : 'border-transparent hover:bg-gray-50 text-black'"
         >
-          <img :src="currencyData.flag" class="h-3 w-5 object-cover rounded-sm border border-gray-100" />
-          <span class="text-[10px]  tracking-tight">{{ currencyData.code }}</span>
-          <span class="text-[9px] font-medium opacity-60">{{ currencyData.symbol }}</span>
+          <img :src="currencyData.flag" class="h-3.5 w-5 object-cover rounded-sm border border-gray-200 shrink-0" />
+          <span class="text-[13px] font-medium">{{ currencyData.code }}</span>
+          <span class="text-[11px] font-medium text-gray-400 bg-gray-100 rounded-full px-1.5 py-0.5 ml-auto group-hover:bg-gray-200 transition-colors" :class="currentCurrency.code === currencyData.code ? 'bg-blue-100 text-brand-blue' : ''">{{ currencyData.symbol }}</span>
         </button>
       </div>
     </div>
 
-    <!-- Footer -->
-    <div class="p-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-center gap-2">
-       <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Global Flybeth</span>
-       <div class="w-1 h-1 rounded-full bg-gray-200"></div>
-       <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">v2.0</span>
-    </div>
   </div>
 </template>
 
@@ -68,7 +52,6 @@ import { Check } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useSettings, localeToCurrency } from '@/composables/useSettings'
 
-const currentTab = ref('language')
 const { locale: currentLocale, locales, setLocale } = useI18n() as any
 const { currentCurrency, currencies, setCurrency } = useSettings()
 
@@ -83,7 +66,7 @@ const changeLocale = async (code: string) => {
 const getLocaleFlag = (code: string) => {
   const flags: Record<string, string> = {
     'en': 'https://flagcdn.com/us.svg',
-    'es': 'https://flagcdn.com/es.svg',
+    'es': 'https://flagcdn.com/us.svg', // Based on image: 'Estados Unidos - Español'
     'fr': 'https://flagcdn.com/fr.svg',
     'de': 'https://flagcdn.com/de.svg',
     'ar': 'https://flagcdn.com/sa.svg',
@@ -97,17 +80,28 @@ const getLocaleFlag = (code: string) => {
   }
   return flags[code] || flags['en']
 }
+
+const getLocalizedCountryName = (code: string) => {
+  const names: Record<string, string> = {
+    'en': 'United States',
+    'es': 'Estados Unidos', // As seen in image
+    'fr': 'France',
+    'de': 'Deutschland',
+    'ar': 'المملكة العربية السعودية',
+    'zh': '中国',
+    'ja': '日本',
+    'pt': 'Brasil',
+    'it': 'Italia',
+    'ko': '대한민국',
+    'tr': 'Türkiye',
+    'hi': 'भारत'
+  }
+  return names[code] || 'United States'
+}
 </script>
 
 <style scoped>
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.custom-scrollbar::-webkit-scrollbar { width: 3px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 </style>

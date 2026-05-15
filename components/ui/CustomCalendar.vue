@@ -1,22 +1,22 @@
 <template>
-  <div class="calendar-container bg-white text-gray-900 h-full flex flex-col font-sans select-none overflow-hidden">
+  <div class="calendar-container bg-white text-black h-full flex flex-col font-sans select-none overflow-hidden">
     <!-- Calendar Header -->
-    <header class="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white sticky top-0 z-[60]">
+    <header class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white sticky top-0 z-[60]">
       <div class="flex items-center gap-2">
         <button 
           @click="goToToday"
-          class="px-4 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-sm font-semibold transition-colors border border-gray-200"
+          class="px-4 py-1.5 rounded-lg bg-white hover:bg-white text-sm font-semibold transition-colors border border-gray-200"
         >
           Today
         </button>
         <div class="flex items-center bg-white rounded-lg overflow-hidden border border-gray-200 ml-1">
-          <button @click="navigate(-1)" class="p-2 hover:bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors">
+          <button @click="navigate(-1)" class="p-2 hover:bg-white text-black hover:text-black transition-colors">
             <ChevronLeft :size="18" />
           </button>
           <div class="relative">
             <button 
               @click.stop="toggleDatePicker" 
-              class="px-4 py-1.5 min-w-[150px] text-sm font-semibold hover:bg-gray-50 flex items-center justify-center gap-2 border-x border-gray-200 transition-colors"
+              class="px-4 py-1.5 min-w-[150px] text-sm font-semibold hover:bg-white flex items-center justify-center gap-2 border-x border-gray-200 transition-colors"
             >
               {{ formattedCurrentRange }}
               <ChevronDown :size="14" class="transition-transform duration-200" :class="{ 'rotate-180': isDatePickerOpen }" />
@@ -40,12 +40,12 @@
                   @select="selectDate"
                 />
               </div>
-              <div class="mt-6 pt-4 border-t border-gray-100 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              <div class="mt-6 pt-4 border-t border-gray-200 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
                 <button 
                   v-for="shortcut in dateShortcuts" 
                   :key="shortcut.label"
                   @click="useShortcut(shortcut)"
-                  class="px-3 py-1.5 rounded-full bg-white hover:bg-gray-50 text-[11px] font-bold text-gray-500 hover:text-gray-900 whitespace-nowrap border border-gray-200 transition-colors"
+                  class="px-3 py-1.5 rounded-full bg-white hover:bg-white text-[11px] font-bold text-black hover:text-black whitespace-nowrap border border-gray-200 transition-colors"
                 >
                   {{ shortcut.label }}
                 </button>
@@ -53,7 +53,7 @@
               </div>
             </div>
           </div>
-          <button @click="navigate(1)" class="p-2 hover:bg-gray-50 text-gray-400 hover:text-gray-900 transition-colors">
+          <button @click="navigate(1)" class="p-2 hover:bg-white text-black hover:text-black transition-colors">
             <ChevronRight :size="18" />
           </button>
         </div>
@@ -62,7 +62,7 @@
       <div class="flex items-center gap-1 md:gap-3">
         <button 
           @click="$emit('toggle-maximize')" 
-          class="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+          class="p-2 text-black hover:text-black hover:bg-white rounded-lg transition-colors"
           title="Toggle Full Screen"
         >
           <Maximize2 v-if="!isMaximized" :size="18" />
@@ -72,17 +72,17 @@
         <div class="relative h-9">
           <button 
             @click.stop="isViewSelectorOpen = !isViewSelectorOpen"
-            class="h-full px-4 rounded-lg bg-white hover:bg-gray-50 border border-gray-200 text-sm font-semibold flex items-center gap-2 min-w-[90px] transition-colors"
+            class="h-full px-4 rounded-lg bg-white hover:bg-white border border-gray-200 text-sm font-semibold flex items-center gap-2 min-w-[90px] transition-colors"
           >
-            {{ currentViewLabel }} <ChevronDown :size="14" class="text-gray-400" />
+            {{ currentViewLabel }} <ChevronDown :size="14" class="text-black" />
           </button>
           
-          <div v-if="isViewSelectorOpen" v-click-outside="() => isViewSelectorOpen = false" class="absolute right-0 top-full mt-2 w-52 bg-white border border-gray-100 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-1 z-[100]">
+          <div v-if="isViewSelectorOpen" v-click-outside="() => isViewSelectorOpen = false" class="absolute right-0 top-full mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-1 z-[100]">
             <button 
               v-for="v in views" :key="v.id"
               @click="setView(v.id)"
-              class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
-              :class="{ 'bg-gray-50 text-gray-900 font-bold': currentView === v.id }"
+              class="w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg hover:bg-white transition-colors text-black"
+              :class="{ 'bg-white text-black font-bold': currentView === v.id }"
             >
               <component :is="v.icon" :size="16" />
               {{ v.label }}
@@ -99,32 +99,32 @@
     <!-- Main Content Area -->
     <main class="flex-grow flex flex-col relative overflow-hidden">
       <!-- Business Header Subtitle -->
-      <div class="flex flex-col items-center py-5 bg-white border-b border-gray-100 gap-1 z-10 relative">
-        <div class="w-14 h-14 rounded-full border border-gray-100 p-0.5 overflow-hidden flex-shrink-0 bg-white shadow-sm">
+      <div class="flex flex-col items-center py-5 bg-white border-b border-gray-200 gap-1 z-10 relative">
+        <div class="w-14 h-14 rounded-full border border-gray-200 p-0.5 overflow-hidden flex-shrink-0 bg-white shadow-sm">
            <div class="w-full h-full rounded-full flex items-center justify-center bg-primary p-1 overflow-hidden">
               <img src="@/assets/img/logo.png" alt="Business Logo" class="w-full bg-primary h-full object-contain">
            </div>
         </div>
-        <button class="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors mt-1">
+        <button class="flex items-center gap-1.5 text-xs font-bold text-black hover:text-black transition-colors mt-1">
           Lola April
         </button>
       </div>
 
       <div class="flex-grow overflow-auto scrollbar-thin relative" ref="mainScroll">
         <!-- Month View -->
-        <div v-if="currentView === 'month'" class="h-full flex flex-col min-w-[1000px] bg-white text-gray-900">
-           <div class="grid grid-cols-7 border-b border-gray-100 sticky top-0 bg-white z-20">
-             <div v-for="d in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="d" class="py-2.5 text-center text-base  text-gray-400 uppercase tracking-widest border-r border-gray-100 last:border-0">{{ d }}</div>
+        <div v-if="currentView === 'month'" class="h-full flex flex-col min-w-[1000px] bg-white text-black">
+           <div class="grid grid-cols-7 border-b border-gray-200 sticky top-0 bg-white z-20">
+             <div v-for="d in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="d" class="py-2.5 text-center text-base  text-black uppercase  border-r border-gray-200 last:border-0">{{ d }}</div>
            </div>
            <div class="flex-grow grid grid-cols-7 grid-rows-6 min-h-[800px]">
              <div 
                v-for="d in monthDays" :key="d.date.getTime()"
-               class="border-r border-b border-gray-100 p-2 flex flex-col gap-1 overflow-hidden transition-all last:border-r-0 hover:bg-gray-50/50 group/day"
+               class="border-r border-b border-gray-200 p-2 flex flex-col gap-1 overflow-hidden transition-all last:border-r-0 hover:bg-white/50 group/day"
                :class="{ 'opacity-30': !d.isCurrentMonth, 'bg-blue-50/30': d.isToday }"
              >
                <div class="flex justify-between items-center mb-1">
                  <span class="text-xs font-bold" :class="{ 'bg-blue-600 text-white w-7 h-7 flex items-center justify-center rounded-full shadow-lg shadow-blue-600/30': d.isToday }">{{ d.date.getDate() }}</span>
-                 <span v-if="d.appointments.length" class="text-base font-bold text-gray-600 group-hover/day:text-gray-400">{{ d.appointments.length }}</span>
+                 <span v-if="d.appointments.length" class="text-base font-bold text-black group-hover/day:text-black">{{ d.appointments.length }}</span>
                </div>
                <div class="flex flex-col gap-1">
                 <div 
@@ -135,7 +135,7 @@
                 >
                   <span class="opacity-60">{{ apt.startTime }}</span> {{ apt.clientName }}
                 </div>
-                <div v-if="d.appointments.length > 4" class="text-base text-gray-600 font-bold pl-1 hover:text-gray-400 cursor-default">+{{ d.appointments.length - 4 }} more</div>
+                <div v-if="d.appointments.length > 4" class="text-base text-black font-bold pl-1 hover:text-black cursor-default">+{{ d.appointments.length - 4 }} more</div>
                </div>
              </div>
            </div>
@@ -144,21 +144,21 @@
         <!-- Day/3-Day/Week Grid View -->
         <div v-else class="flex flex-col min-w-full h-full bg-white">
            <!-- Headers -->
-           <div class="flex sticky top-0 z-[40] bg-white border-b border-gray-100 pl-16">
+           <div class="flex sticky top-0 z-[40] bg-white border-b border-gray-200 pl-16">
               <div 
                 v-for="day in visibleDays" :key="day.getTime()"
-                class="flex-1 min-w-[200px] border-r border-gray-100 py-3 flex flex-col items-center gap-0.5"
+                class="flex-1 min-w-[200px] border-r border-gray-200 py-3 flex flex-col items-center gap-0.5"
                 :class="{ 'bg-blue-50/30': isToday(day) }"
               >
-                <span class="text-base  text-gray-400 uppercase tracking-widest">{{ formatDayOfWeek(day) }} {{ day.getDate() }} {{ formatMonthShort(day) }}</span>
+                <span class="text-base  text-black uppercase ">{{ formatDayOfWeek(day) }} {{ day.getDate() }} {{ formatMonthShort(day) }}</span>
               </div>
            </div>
 
            <div class="flex relative flex-grow overflow-visible">
               <!-- Time Sidebar -->
-              <div class="w-16 flex-shrink-0 bg-white border-r border-gray-100 z-30">
-                <div v-for="hour in 24" :key="hour-1" class="h-24 border-b border-gray-100/50 relative px-2">
-                  <span class="text-xl  text-gray-400 absolute top-[-7px] leading-none uppercase tracking-tighter">
+              <div class="w-16 flex-shrink-0 bg-white border-r border-gray-200 z-30">
+                <div v-for="hour in 24" :key="hour-1" class="h-24 border-b border-gray-200 relative px-2">
+                  <span class="text-xl  text-black absolute top-[-7px] leading-none uppercase er">
                     {{ formatHour(hour - 1) }}
                   </span>
                 </div>
@@ -168,15 +168,15 @@
               <div class="flex flex-grow relative overflow-visible h-fit min-h-full">
                  <!-- Background Lines -->
                  <div class="absolute inset-0 z-0 pointer-events-none">
-                    <div v-for="hour in 24" :key="hour-1" class="h-24 border-b border-gray-100/50 relative">
-                       <div class="absolute top-1/2 left-0 right-0 border-t border-gray-100/10"></div>
+                    <div v-for="hour in 24" :key="hour-1" class="h-24 border-b border-gray-200 relative">
+                       <div class="absolute top-1/2 left-0 right-0 border-t border-gray-200"></div>
                     </div>
                  </div>
 
                  <!-- Columns -->
                   <div 
                     v-for="day in visibleDays" :key="day.getTime()"
-                    class="flex-1 min-w-[200px] border-r border-gray-100 relative h-[2304px]"
+                    class="flex-1 min-w-[200px] border-r border-gray-200 relative h-[2304px]"
                     :class="{ 'bg-blue-50/[0.05]': isToday(day) }"
                   >
                     <!-- Current Time Line -->
@@ -196,15 +196,15 @@
                       :style="getAppointmentStyle(apt)"
                       @click.stop="$emit('select-appointment', apt)"
                     >
-                      <div class="flex justify-between items-start mb-1 text-[11px]  tracking-tight flex-wrap gap-1">
+                      <div class="flex justify-between items-start mb-1 text-[11px]   flex-wrap gap-1">
                         <span class="opacity-80">{{ apt.startTime }} - {{ apt.endTime }}</span>
                         <div class="flex items-center gap-1">
                            <span class="opacity-40 uppercase text-[9px]">{{ apt.status }}</span>
                            <Tag :size="10" class="opacity-40" />
                         </div>
                       </div>
-                      <div class="text-[12px]  truncate text-gray-900 mb-0.5 uppercase tracking-wide">{{ apt.clientName }}</div>
-                      <div class="text-[11px] font-bold opacity-80 leading-tight flex items-center gap-1.5 mt-1 text-gray-700">
+                      <div class="text-[12px]  truncate text-black mb-0.5 uppercase ">{{ apt.clientName }}</div>
+                      <div class="text-[11px] font-bold opacity-80 leading-tight flex items-center gap-1.5 mt-1 text-black">
                         <span class="w-1.5 h-1.5 rounded-full shrink-0" :style="{ backgroundColor: apt.color }"></span>
                         <span class="truncate">{{ apt.serviceName }}</span>
                       </div>
@@ -548,23 +548,23 @@ const DatePickerPanel = {
   template: `
     <div class="flex-1 select-none">
       <div class="flex items-center justify-center mb-6">
-        <h4 class=" text-[13px] uppercase tracking-widest text-gray-900">{{ monthName }} {{ year }}</h4>
+        <h4 class=" text-[13px] uppercase  text-black">{{ monthName }} {{ year }}</h4>
       </div>
       <div class="grid grid-cols-7 gap-1">
-        <div v-for="d in ['M', 'T', 'W', 'T', 'F', 'S', 'S']" :key="d" class="text-base  text-gray-400 text-center py-2">{{ d }}</div>
+        <div v-for="d in ['M', 'T', 'W', 'T', 'F', 'S', 'S']" :key="d" class="text-base  text-black text-center py-2">{{ d }}</div>
         <button 
           v-for="day in days" :key="day.getTime()"
           @click="$emit('select', day)"
-          class="w-10 h-10 flex items-center justify-center rounded-xl text-[12px] font-bold transition-all hover:bg-gray-50 relative"
+          class="w-10 h-10 flex items-center justify-center rounded-xl text-[12px] font-bold transition-all hover:bg-white relative"
           :class="{
-            'text-gray-500 pointer-events-none': !isSameMonth(day),
-            'text-gray-700': isSameMonth(day) && !isToday(day) && !isSelected(day),
+            'text-black pointer-events-none': !isSameMonth(day),
+            'text-black': isSameMonth(day) && !isToday(day) && !isSelected(day),
             'bg-[#005967] text-white shadow-lg shadow-[#005967]/30': isToday(day),
             'ring-2 ring-[#005967]/50 text-[#005967]': isSelected(day) && !isToday(day)
           }"
         >
           {{ day.getDate() }}
-          <div v-if="hasAppointments(day) && !isToday(day) && !isSelected(day)" class="absolute bottom-1.5 w-1 h-1 rounded-full bg-gray-300"></div>
+          <div v-if="hasAppointments(day) && !isToday(day) && !isSelected(day)" class="absolute bottom-1.5 w-1 h-1 rounded-full bg-black"></div>
         </button>
       </div>
     </div>

@@ -1,105 +1,467 @@
 <template>
-  <footer class="bg-white border-t border-gray-100 pt-24 pb-12 font-body">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-        <!-- Brand Info -->
-        <div class="space-y-6">
-          <NuxtLink to="/" class="inline-block">
-            <img src="@/assets/img/logo.png" class="h-10 w-auto" alt="Flybeth Logo" />
-          </NuxtLink>
-          <p class="text-sm text-gray-500 leading-relaxed max-w-xs">
-            <strong>FLYBETH LLC</strong><br>
-            1880 S Dairy Ashford Rd, Suite 207, Houston, TX 77077 United States.<br>
-            <span class="block mt-2 font-bold text-brand-blue">+1 844 FLYBETH (359-2384)</span>
-            <span class="block text-brand-orange font-medium">Hello@flybeth.com</span>
-          </p>
-          <div class="flex gap-4">
-              <img src="@/assets/icons/instagram.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
-              <img src="@/assets/icons/facebook.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
-              <img src="@/assets/icons/twitter.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
-              <img src="@/assets/icons/linkedin.svg" class="h-6 w-6 rounded-2xl hover:scale-110 transition-all" />
-            <!-- <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-brand-blue/10 hover:text-brand-blue transition-all">
-              <span class="sr-only">Facebook</span>
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
-            </a>
-            <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-brand-blue/10 hover:text-brand-blue transition-all">
-              <span class="sr-only">Instagram</span>
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.715.013 3.68.057 1.05.048 1.767.216 2.391.459a4.803 4.803 0 011.696 1.104 4.803 4.803 0 011.104 1.696c.243.624.411 1.341.459 2.391.044.965.057 1.25.057 3.68s-.013 2.715-.057 3.68c-.048 1.05-.216 1.767-.459 2.391a4.803 4.803 0 01-1.104 1.696 4.803 4.803 0 01-1.696 1.104c-.624.243-1.341.411-2.391.459-.965.044-1.25.057-3.68.057s-2.715-.013-3.68-.057c-1.05-.048-1.767-.216-2.391-.459a4.803 4.803 0 01-1.696-1.104 4.803 4.803 0 01-1.104-1.696c-.243-.624-.411-1.341-.459-2.391-.044-.965-.057-1.25-.057-3.68s.013-2.715.057-3.68c.048-1.05.216-1.767.459-2.391a4.803 4.803 0 011.104-1.696 4.803 4.803 0 011.696-1.104c.624-.243 1.341-.411 2.391-.459.965-.044 1.25-.057 3.68-.057H12.315zM12 2c-2.43 0-2.715.013-3.68.057-1.05.048-1.767.216-2.391.459a4.803 4.803 0 00-1.696 1.104A4.803 4.803 0 003.328 5.61c-.243.624-.411 1.341-.459 2.391C2.825 8.965 2.812 9.25 2.812 11.685s.013 2.715.057 3.68c.048 1.05.216 1.767.459 2.391a4.803 4.803 0 001.104 1.696 4.803 4.803 0 001.696 1.104c.624.243 1.341.411 2.391.459.965.044 1.25.057 3.68.057s2.715-.013 3.68-.057c1.05-.048 1.767-.216 2.391-.459a4.803 4.803 0 001.696-1.104 4.803 4.803 0 001.104-1.696c.243-.624.411-1.341.459-2.391.044-.965.057-1.25.057-3.68s-.013-2.715-.057-3.68c-.048-1.05-.216-1.767-.459-2.391a4.803 4.803 0 00-1.104-1.696 4.803 4.803 0 00-1.696-1.104c-.624-.243-1.341-.411-2.391-.459C15.03 2.013 14.745 2 12.315 2H12z"/><path d="M12 5.865a5.82 5.82 0 100 11.64 5.82 5.82 0 000-11.64zm0 9.64a3.82 3.82 0 110-7.64 3.82 3.82 0 010 7.64z"/><path d="M18.056 4.545a1.36 1.36 0 11-2.72 0 1.36 1.36 0 012.72 0z"/></svg>
-            </a> -->
+  <footer class="bg-[#0b1686] text-white font-sans">
+    
+    <!-- 2. Expert Planner Banner -->
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 pt-10 pb-4">
+        <div class="relative w-full rounded-[4rem] sm:rounded-full bg-white border border-gray-200 overflow-hidden flex flex-col sm:flex-row items-center shadow-sm hover:shadow-md transition-shadow pr-4 sm:pr-8 group">
+          <!-- Left Image (Pill shaped constraint) -->
+          <div class="relative w-full sm:w-[40%] h-48 sm:h-32 shrink-0 rounded-[4rem] sm:rounded-l-full sm:rounded-r-none overflow-hidden">
+             <img src="https://images.unsplash.com/photo-1493246318656-5bfd4cfb29b8?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Kayaking" />
+          </div>
+          
+          <!-- Overlapping Circular Avatar -->
+          <div class="absolute top-1/2 left-1/2 sm:left-[40%] transform -translate-x-1/2 sm:-translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-100 z-20">
+             <div class="w-16 h-16 rounded-full overflow-hidden bg-[#0b1686] flex items-center justify-center">
+               <!-- Placeholder for agent face -->
+               <img src="https://i.pravatar.cc/150?img=47" class="w-full h-full object-cover" />
+             </div>
+          </div>
+
+          <!-- Content Right -->
+          <div class="flex-1 py-8 sm:py-0 pl-4 pr-4 sm:pl-16 sm:pr-4 flex flex-col sm:flex-row items-center justify-between w-full gap-6 text-center sm:text-left z-10">
+             <div class="flex flex-col gap-1.5">
+               <h3 class="text-xl font-bold text-black">Your trip. Designed by our 24/7 travel experts</h3>
+               <p class="text-sm text-gray-500 font-medium">Enjoy personalized planning with real human support. Call Our Travel Experts 24/7. Call <span class="font-bold text-brand-blue">1-844-FLYBETH</span> and say <span class="font-bold text-green-600">CALL10</span> to save.</p>
+             </div>
+             <a href="tel:18443592384" class="bg-[#1e1e96] hover:bg-[#15156a] text-white px-8 py-3 rounded-full text-sm font-bold transition-colors shadow-md shrink-0">Call us</a>
           </div>
         </div>
+    </div>
 
-        <!-- Links Grid -->
-        <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
-          <div>
-            <h4 class="text-xs font-bold text-gray-900 uppercase tracking-widest mb-6">Explore</h4>
-            <ul class="space-y-4">
-              <li><NuxtLink to="/flights" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Flights</NuxtLink></li>
-              <li><NuxtLink to="/stays" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Hotels</NuxtLink></li>
-              <li><NuxtLink to="/cars" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Car Rentals</NuxtLink></li>
-              <li><NuxtLink to="/packages" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Vacation Packages</NuxtLink></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-gray-900 uppercase tracking-widest mb-6">Support</h4>
-            <ul class="space-y-4">
-              <li><NuxtLink to="/help" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Help Center</NuxtLink></li>
-              <li><NuxtLink to="/terms" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Terms of Service</NuxtLink></li>
-              <li><NuxtLink to="/privacy-policy" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Privacy Policy</NuxtLink></li>
-              <li><NuxtLink to="/contact" class="text-sm text-gray-500 hover:text-brand-blue transition-colors">Contact Us</NuxtLink></li>
-            </ul>
-          </div>
-          <div class="col-span-2 md:col-span-1">
-            <h4 class="text-xs font-bold text-gray-900 uppercase tracking-widest mb-6">Newsletter</h4>
-            <p class="text-sm text-gray-500 mb-4">Get the latest deals and travel tips delivered to your inbox.</p>
-            <form @submit.prevent class="relative">
-              <input v-model="email"  type="email" placeholder="Your email address" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-brand-blue/20 outline-none text-sm" />
-              <button @click="handleNewsletterSubscribe" :disabled="newsletterLoading || !email"  class="absolute right-2 top-2 bottom-2 px-4 bg-brand-blue text-white rounded-lg text-xs font-bold hover:bg-[#0a168a] transition-all">{{ newsletterLoading ? "Joining..." : "Join" }}</button>
-            </form>
+    <!-- ── Top bar ──────────────────────────────────────── -->
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center py-6 border-b border-white/10">
+        <h2 class="text-[1.35rem] font-bold mb-4 md:mb-0">Easy Access</h2>
+        <div class="flex items-center gap-4">
+          <span class="font-bold text-[1.1rem]">Connect with Us</span>
+          <div class="flex gap-3">
+            <a v-for="icon in socialIcons" :key="icon.alt" href="#"
+              class="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 hover:bg-white/10 transition-colors">
+              <img :src="icon.src" :alt="icon.alt" class="h-4 w-4" />
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Bottom Bar -->
-      <div class="pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-          © 2026 FLYBETH LLC. All rights reserved.
+      <!-- ── Questions ──────────────────────────────────── -->
+      <div class="py-5 border-b border-white/10">
+        <p class="text-[1.05rem] font-bold">
+          Have Questions?
+          <span class="font-normal text-white/80"> Call us 24/7 </span>
+          <a href="tel:18443592384" class="hover:underline">1-844-FLYBETH</a>
         </p>
-        <!-- <div class="flex gap-8">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-4 w-auto grayscale opacity-40" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-6 w-auto grayscale opacity-40" />
-          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="h-4 w-auto grayscale opacity-40" />
-        </div> -->
+      </div>
+
+      <!-- ── Quick Links Accordion Panel ───────────────── -->
+      <div class="flex py-8 border-b border-white/10 gap-0">
+
+        <!-- Left sidebar -->
+        <nav class="w-64 shrink-0 border-r border-white/10 pr-0">
+          <!-- "Quick Links" header item -->
+          <button
+            @click="setTab(null)"
+            class="w-full flex items-center justify-between px-4 py-3 mb-1 rounded-lg font-bold text-[13px] transition-all"
+            :class="activeTab === null ? 'bg-white text-[#0b1686]' : 'text-white hover:bg-white/10'"
+          >
+            Quick Links
+            <ChevronRight class="h-4 w-4 shrink-0" />
+          </button>
+
+          <!-- Tab items -->
+          <button
+            v-for="tab in quickLinkTabs"
+            :key="tab.id"
+            @click="tab.id === 'privacy' ? openPrivacyDrawer() : setTab(tab.id)"
+            class="w-full flex items-center justify-between px-4 py-3 mb-0.5 rounded-lg text-[13px] font-semibold transition-all text-left"
+            :class="activeTab === tab.id ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'"
+          >
+            <span>{{ tab.label }}</span>
+            <component
+              :is="tab.id === 'privacy' ? ShieldCheck : ChevronRight"
+              class="h-4 w-4 shrink-0"
+              :class="tab.id === 'privacy' ? 'text-blue-300' : ''"
+            />
+          </button>
+        </nav>
+
+        <!-- Right content panel -->
+        <div class="flex-1 pl-10 min-h-[200px]">
+          <!-- Default: show all quick-link categories as pill buttons -->
+          <template v-if="activeTab === null">
+            <p class="text-[13px] text-white/60 mb-5">Select a category from the left to explore destinations, airlines, routes and more.</p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="tab in quickLinkTabs.filter(t => t.id !== 'privacy')"
+                :key="tab.id"
+                @click="setTab(tab.id)"
+                class="px-5 py-2 rounded-full text-[12px] font-bold bg-white/10 hover:bg-white/20 transition-colors border border-white/10"
+              >
+                {{ tab.label }}
+              </button>
+            </div>
+          </template>
+
+          <!-- Active tab content -->
+          <template v-else-if="activeTab && tabContent[activeTab]">
+            <p class="text-[12px] text-white/60 mb-5 italic">{{ tabContent[activeTab].description }}</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2.5">
+              <NuxtLink
+                v-for="(link, i) in tabContent[activeTab].links"
+                :key="i"
+                :to="link.path"
+                class="text-[12px] font-medium text-white/75 hover:text-white hover:underline truncate transition-colors"
+              >
+                {{ link.name }}
+              </NuxtLink>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- ── Main link columns ───────────────────────────── -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 py-10">
+        <div v-for="col in linkColumns" :key="col.title">
+          <h4 class="font-bold text-[13px] mb-4 tracking-wide uppercase text-white/50">{{ col.title }}</h4>
+          <ul class="space-y-2.5">
+            <li v-for="item in col.links" :key="item.label">
+              <NuxtLink
+                v-if="item.to"
+                :to="item.to"
+                class="text-[12px] text-white/75 font-medium hover:text-white hover:underline transition-colors"
+              >{{ item.label }}</NuxtLink>
+              <a v-else href="#" class="text-[12px] text-white/75 font-medium hover:text-white hover:underline transition-colors">{{ item.label }}</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
+
+    <!-- ── Dark bottom bar ─────────────────────────────── -->
+    <div class="bg-[#040d4f] w-full">
+      <div class="py-8 flex flex-wrap justify-center items-center gap-6 lg:gap-10 border-b border-white/10">
+        <img src="@/assets/img/partnerships.webp" alt="Partnerships" />
+      </div>
+      <div class="text-center text-[12px] text-white/50 py-6 pb-16 md:pb-6 max-w-7xl mx-auto px-6">
+        <p>
+          © {{ new Date().getFullYear() }} FLYBETH LLC. All rights reserved.
+          <NuxtLink to="/privacy-policy" class="underline hover:text-white">Privacy Policy</NuxtLink>
+          and agree to our
+          <NuxtLink to="/terms" class="underline hover:text-white">Terms and Conditions</NuxtLink>.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── Privacy / Cookie Drawer ─────────────────────── -->
+    <Teleport to="body">
+      <!-- Backdrop -->
+      <Transition name="fade">
+        <div
+          v-if="privacyOpen"
+          class="fixed inset-0 bg-black/50 z-40"
+          @click="privacyOpen = false"
+        />
+      </Transition>
+
+      <!-- Drawer -->
+      <Transition name="slide">
+        <div
+          v-if="privacyOpen"
+          class="fixed right-0 top-0 h-full w-[340px] bg-white text-gray-800 z-50 shadow-2xl overflow-y-auto flex flex-col"
+        >
+          <!-- Header -->
+          <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+            <h2 class="font-bold text-[15px]">Cookie Preferences / Opt-Out Rights</h2>
+            <button @click="privacyOpen = false" class="text-gray-400 hover:text-gray-700 transition-colors">
+              <X class="h-5 w-5" />
+            </button>
+          </div>
+
+          <!-- Body -->
+          <div class="px-5 py-4 flex-1 text-[12.5px] leading-relaxed">
+            <p class="text-gray-600 mb-4">
+              Must slide "right" to opt-out under each toggle, then click "Save" at the bottom.
+              Cookie opt-outs are stored per-browser and per-website.
+            </p>
+            <div class="flex gap-3 mb-5 text-[11.5px] text-[#0b1686] font-semibold flex-wrap">
+              <a href="#" class="hover:underline">Privacy Policy</a>
+              <span class="text-gray-300">|</span>
+              <a href="#" class="hover:underline">Subject Rights Request</a>
+              <span class="text-gray-300">|</span>
+              <a href="#" class="hover:underline">Do Not Sell or Share My Personal Information</a>
+            </div>
+
+            <!-- Cookie toggles -->
+            <div v-for="cookie in cookieCategories" :key="cookie.id" class="mb-6 pb-6 border-b border-gray-100 last:border-0">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-[13px]">{{ cookie.label }}</span>
+                <!-- Toggle -->
+                <button
+                  @click="cookie.enabled = !cookie.enabled"
+                  class="relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
+                  :class="cookie.enabled ? 'bg-green-500' : 'bg-gray-300'"
+                  :aria-checked="cookie.enabled"
+                  role="switch"
+                >
+                  <span
+                    class="inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200"
+                    :class="cookie.enabled ? 'translate-x-5' : 'translate-x-0'"
+                  />
+                </button>
+              </div>
+              <p class="text-gray-500 text-[11.5px] leading-relaxed mb-2">{{ cookie.description }}</p>
+              <button class="text-[11.5px] text-[#0b1686] font-semibold hover:underline">View Disclosures</button>
+            </div>
+          </div>
+
+          <!-- Footer save -->
+          <div class="px-5 pb-6 pt-3 border-t border-gray-100 sticky bottom-0 bg-white">
+            <button
+              @click="savePrivacyChoices"
+              class="w-full bg-[#0b1686] text-white py-3 rounded-lg font-bold text-[14px] hover:bg-[#0a1270] transition-colors"
+            >
+              Save
+            </button>
+            <p class="text-center text-[11px] text-gray-400 mt-2">Powered by Osano</p>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
   </footer>
 </template>
 
 <script setup lang="ts">
-import { useCustomToast } from '@/composables/core/useCustomToast';
-import { useNewsletter } from '@/composables/modules/support/useNewsletter';
-const { loading: newsletterLoading, subscribe: subscribeNewsletter } = useNewsletter();
-const { showToast } = useCustomToast();
-const email = ref('');
+import { ref, reactive } from 'vue';
+import { ShieldCheck, ChevronRight, X } from 'lucide-vue-next';
 
-const handleNewsletterSubscribe = async () => {
-  if (!email.value) {
-    showToast({
-      title: 'Email Required',
-      message: 'Please enter a valid email address to join.',
-      toastType: 'error'
-    });
-    return;
-  }
-  const success = await subscribeNewsletter(email.value, 'landing-page');
-  if (success) {
-    email.value = '';
-  }
+// ── State ─────────────────────────────────────────────────
+const activeTab = ref<string | null>(null);
+const privacyOpen = ref(false);
+
+function setTab(id: string | null) {
+  activeTab.value = activeTab.value === id ? null : id;
+}
+
+function openPrivacyDrawer() {
+  privacyOpen.value = true;
+}
+
+function savePrivacyChoices() {
+  // persist choices here
+  privacyOpen.value = false;
+}
+
+// ── Social icons ──────────────────────────────────────────
+const socialIcons = [
+  { src: '@/assets/img/icons/facebook.svg', alt: 'Facebook' },
+  { src: '@/assets/img/icons/twitter.svg', alt: 'X (Twitter)' },
+  { src: '@/assets/img/icons/instagram.svg', alt: 'Instagram' },
+  { src: '@/assets/img/icons/tiktok.svg', alt: 'TikTok' },
+];
+
+// ── Quick Links sidebar tabs ──────────────────────────────
+const quickLinkTabs = [
+  { id: 'airlines',         label: 'Popular Airlines' },
+  { id: 'routes',           label: 'Popular Flight Routes' },
+  { id: 'us-destinations',  label: 'Top U.S. Destinations' },
+  { id: 'intl-destinations',label: 'Top International Destinations' },
+  { id: 'privacy',          label: 'Your Privacy Choices' },
+];
+
+// ── Tab panel content ─────────────────────────────────────
+const tabContent: Record<string, { description: string; links: { name: string; path: string }[] }> = {
+  airlines: {
+    description: 'Explore our cheap airfare options by carrier, with over 500 options to choose from.',
+    links: [
+      { name: 'Aeromexico',           path: '/airlines/aeromexico' },
+      { name: 'Air Canada',           path: '/airlines/air-canada' },
+      { name: 'Air France',           path: '/airlines/air-france' },
+      { name: 'Alaska Airlines',      path: '/airlines/alaska-airlines' },
+      { name: 'American Airlines',    path: '/airlines/american-airlines' },
+      { name: 'China Eastern Airlines',path: '/airlines/china-eastern' },
+      { name: 'Copa Airlines',        path: '/airlines/copa' },
+      { name: 'Emirates',             path: '/airlines/emirates' },
+      { name: 'Etihad Airways',       path: '/airlines/etihad' },
+      { name: 'EVA Air',              path: '/airlines/eva-air' },
+      { name: 'Frontier Airlines',    path: '/airlines/frontier' },
+      { name: 'Hawaiian Airlines',    path: '/airlines/hawaiian' },
+      { name: 'LATAM Airlines',       path: '/airlines/latam' },
+      { name: 'Lufthansa',            path: '/airlines/lufthansa' },
+      { name: 'Air Europa',           path: '/airlines/air-europa' },
+      { name: 'Spirit Airlines',      path: '/airlines/spirit' },
+      { name: 'Turkish Airlines',     path: '/airlines/turkish' },
+      { name: 'United Airlines',      path: '/airlines/united' },
+      { name: 'Volaris Airlines',     path: '/airlines/volaris' },
+      { name: 'Virgin Atlantic',      path: '/airlines/virgin-atlantic' },
+    ],
+  },
+  routes: {
+    description: 'Book one of our most popular flight routes with three easy clicks.',
+    links: [
+      { name: 'Atlanta to Ft Lauderdale',     path: '/routes/atl-to-fll' },
+      { name: 'Chicago to Las Vegas',         path: '/routes/ord-to-las' },
+      { name: 'Ft Lauderdale to New York',    path: '/routes/fll-to-nyc' },
+      { name: 'Los Angeles to Las Vegas',     path: '/routes/lax-to-las' },
+      { name: 'New York to Ft Lauderdale',    path: '/routes/nyc-to-fll' },
+      { name: 'New York to London',           path: '/routes/nyc-to-lon' },
+      { name: 'New York to Los Angeles',      path: '/routes/nyc-to-lax' },
+      { name: 'New York to Miami',            path: '/routes/nyc-to-mia' },
+      { name: 'Philadelphia to Orlando',      path: '/routes/phl-to-mco' },
+      { name: 'San Francisco to Los Angeles', path: '/routes/sfo-to-lax' },
+      { name: 'Los Angeles to Tokyo',         path: '/routes/lax-to-tyo' },
+      { name: 'London to Dubai',              path: '/routes/lon-to-dxb' },
+    ],
+  },
+  'us-destinations': {
+    description: 'Find cheap airline tickets to popular U.S. destinations from coast to coast.',
+    links: [
+      { name: 'Atlanta',      path: '/destinations/atlanta' },
+      { name: 'Baltimore',    path: '/destinations/baltimore' },
+      { name: 'Boston',       path: '/destinations/boston' },
+      { name: 'Chicago',      path: '/destinations/chicago' },
+      { name: 'Dallas',       path: '/destinations/dallas' },
+      { name: 'Denver',       path: '/destinations/denver' },
+      { name: 'Ft Lauderdale',path: '/destinations/ft-lauderdale' },
+      { name: 'Honolulu',     path: '/destinations/honolulu' },
+      { name: 'Houston',      path: '/destinations/houston' },
+      { name: 'Las Vegas',    path: '/destinations/las-vegas' },
+      { name: 'Los Angeles',  path: '/destinations/los-angeles' },
+      { name: 'Miami',        path: '/destinations/miami' },
+      { name: 'New York',     path: '/destinations/new-york' },
+      { name: 'Orlando',      path: '/destinations/orlando' },
+      { name: 'Philadelphia', path: '/destinations/philadelphia' },
+      { name: 'Phoenix',      path: '/destinations/phoenix' },
+      { name: 'San Diego',    path: '/destinations/san-diego' },
+      { name: 'San Francisco',path: '/destinations/san-francisco' },
+      { name: 'Seattle',      path: '/destinations/seattle' },
+      { name: 'Tampa',        path: '/destinations/tampa' },
+    ],
+  },
+  'intl-destinations': {
+    description: 'Get cheap air travel to global destinations in Europe, Asia and beyond.',
+    links: [
+      { name: 'Amsterdam',    path: '/destinations/amsterdam' },
+      { name: 'Bangkok',      path: '/destinations/bangkok' },
+      { name: 'Barcelona',    path: '/destinations/barcelona' },
+      { name: 'Cancun',       path: '/destinations/cancun' },
+      { name: 'Dublin',       path: '/destinations/dublin' },
+      { name: 'Frankfurt',    path: '/destinations/frankfurt' },
+      { name: 'Guadalajara',  path: '/destinations/guadalajara' },
+      { name: 'Lima',         path: '/destinations/lima' },
+      { name: 'London',       path: '/destinations/london' },
+      { name: 'Madrid',       path: '/destinations/madrid' },
+      { name: 'Mexico City',  path: '/destinations/mexico-city' },
+      { name: 'Nassau',       path: '/destinations/nassau' },
+      { name: 'Paris',        path: '/destinations/paris' },
+      { name: 'Puerto Vallarta',path: '/destinations/puerto-vallarta' },
+      { name: 'Rome',         path: '/destinations/rome' },
+      { name: 'San Jose',     path: '/destinations/san-jose' },
+      { name: 'Sydney',       path: '/destinations/sydney' },
+      { name: 'Toronto',      path: '/destinations/toronto' },
+      { name: 'Vancouver',    path: '/destinations/vancouver' },
+      { name: 'Manila',       path: '/destinations/manila' },
+    ],
+  },
 };
 
-// Professional Footer
+// ── Main link columns ─────────────────────────────────────
+const linkColumns = [
+  {
+    title: 'Book',
+    links: [
+      { label: 'Cheap Flights',       to: '/flights' },
+      { label: 'Cheap Hotels',        to: '/stays' },
+      { label: 'Car Rentals',         to: '/cars' },
+      { label: 'Vacation Packages',   to: '/packages' },
+      { label: 'Group Travel',        to: '/group-travel' },
+      { label: 'Save & Earn $',       to: '/rewards' },
+    ],
+  },
+  {
+    title: 'Traveler Tools',
+    links: [
+      { label: 'Check My Booking',    to: '/bookings' },
+      { label: 'Customer Support',    to: '/help' },
+      { label: 'Online Check-in',     to: '/online-check-in' },
+      { label: 'Airline Baggage Fees',to: '/baggage-fees' },
+      { label: 'Check Flight Status', to: '/flight-status' },
+      { label: 'Travel Blog',         to: '/travel-blog' },
+    ],
+  },
+  {
+    title: 'About Flybeth',
+    links: [
+      { label: 'About Us',            to: '/about' },
+      { label: 'Press Room',          to: null },
+      { label: 'Careers',             to: null },
+      { label: 'Affiliate Program',   to: null },
+      { label: 'Client Testimonial',  to: null },
+      { label: 'Advertise with Us',   to: null },
+      { label: 'Newsletter',          to: null },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { label: 'Privacy Policy',             to: '/privacy-policy' },
+      { label: 'Cookie Policy',              to: null },
+      { label: 'Price Match Promise',        to: null },
+      { label: 'Terms & Conditions',         to: '/terms' },
+      { label: 'Taxes & Fees',               to: null },
+      { label: 'Our Service Fees',           to: null },
+      { label: 'Post-Ticketing Fees',        to: null },
+      { label: 'Consumer Health Data Notice',to: null },
+    ],
+  },
+];
+
+// ── Cookie categories (drawer) ────────────────────────────
+const cookieCategories = reactive([
+  {
+    id: 'essential',
+    label: 'Essential',
+    enabled: true,
+    description: 'Strictly necessary for our website to function properly — login, load balancing, fraud detection, navigation, and form filling. You can block these in your browser but some site features will break.',
+  },
+  {
+    id: 'advertising',
+    label: 'Targeted Advertising',
+    enabled: true,
+    description: 'Help us serve relevant ads on third-party properties, limit ad frequency, track ad performance, and prevent fraud. Processes device identifiers, IP address, geolocation, and browsing activity.',
+  },
+  {
+    id: 'personalization',
+    label: 'Personalization',
+    enabled: true,
+    description: 'Enable us to personalise your experience by building a user profile from your searches, bookings, demographics, and preferences so we can surface the most relevant deals.',
+  },
+  {
+    id: 'analytics',
+    label: 'Analytics',
+    enabled: true,
+    description: 'Provide insight into visit counts, page popularity, traffic sources, A/B testing, and session recordings — used solely to optimise our digital properties.',
+  },
+]);
 </script>
 
 <style scoped>
-/* Minimalist Premium Footer Styles */
+/* Drawer slide transition */
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
+/* Backdrop fade */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

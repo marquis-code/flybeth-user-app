@@ -43,7 +43,7 @@ input[type=number] {
   -moz-appearance: none;
   width: 1.25rem;
   height: 1.25rem;
-  border: 2px solid #d1d5db;
+  border: 2px solid #000000;
   border-radius: 0.375rem;
   background-color: white;
   cursor: pointer;

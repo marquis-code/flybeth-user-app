@@ -5,7 +5,7 @@
       variantClasses,
       sizeClasses,
       block ? 'w-full' : '',
-      'uppercase tracking-widest'
+      'uppercase '
     ]"
     v-bind="$attrs"
   >
@@ -40,11 +40,11 @@ const variantClasses = computed(() => {
     case 'green':
       return 'bg-brand-green text-white shadow-[0_10px_30px_-5px_rgba(50,180,4,0.3)] hover:shadow-brand-green/40 hover:scale-105 focus:ring-brand-green/20'
     case 'secondary':
-      return 'bg-brand-blue/5 text-gray-900 hover:bg-brand-blue/10 focus:ring-brand-blue/20 shadow-sm'
+      return 'bg-brand-blue/5 text-black hover:bg-brand-blue/10 focus:ring-brand-blue/20 shadow-sm'
     case 'outline':
-      return 'border-2 border-brand-blue/20 text-gray-900 bg-white hover:border-brand-blue hover:shadow-lg focus:ring-brand-blue/20'
+      return 'border-2 border-brand-blue/20 text-black bg-white hover:border-brand-blue hover:shadow-lg focus:ring-brand-blue/20'
     case 'ghost':
-      return 'text-brand-gray hover:bg-gray-100 focus:ring-gray-200'
+      return 'text-brand-gray hover:bg-black focus:ring-gray-200'
     case 'blue':
       return 'bg-brand-blue text-white shadow-[0_10px_30px_-5px_rgba(13,29,173,0.3)] hover:shadow-brand-blue/40 hover:scale-105 focus:ring-brand-blue/20'
     default:

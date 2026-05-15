@@ -2,7 +2,7 @@
   <div class="relative w-full font-body" ref="selectRef">
     <label 
       v-if="label" 
-      class="text-[11px] uppercase tracking-[0.15em] text-brand-gray  mb-2 px-1 opacity-70  block"
+      class="text-[11px] uppercase  text-brand-gray  mb-2 px-1 opacity-70  block"
     >
       {{ label }}
     </label>
@@ -10,23 +10,23 @@
     <!-- Trigger -->
     <div 
       @click="toggleDropdown"
-      class="flex items-center justify-between gap-4 p-5 bg-white rounded-[1.5rem] border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] cursor-pointer hover:border-brand-blue/30 hover:shadow-lg transition-all duration-500 group"
+      class="flex items-center justify-between gap-4 p-5 bg-white rounded-[1.5rem] border border-gray-200 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] cursor-pointer hover:border-brand-blue/30 hover:shadow-lg transition-all duration-500 group"
       :class="{ 'ring-4 ring-brand-blue/5 border-brand-blue shadow-xl': isOpen }"
     >
       <div class="flex items-center gap-4">
         <div v-if="icon" class="p-2.5 border border-brand-blue/10 rounded-xl bg-brand-blue/5 group-hover:bg-brand-blue group-hover:text-white transition-all duration-500">
-          <component :is="icon" class="h-5 w-5" :class="isOpen ? 'text-white' : 'text-gray-900'" />
+          <component :is="icon" class="h-5 w-5" :class="isOpen ? 'text-white' : 'text-black'" />
         </div>
         <div class="flex flex-col">
-          <span class="text-sm font-bold text-gray-900 tracking-tight">
+          <span class="text-sm font-bold text-black ">
             {{ selectedOptionLabel || placeholder }}
           </span>
         </div>
       </div>
       <svg 
         xmlns="http://www.w3.org/2000/svg" 
-        class="h-5 w-5 text-gray-900 group-hover:text-gray-900 transition-all duration-300" 
-        :class="{ 'rotate-180 text-gray-900': isOpen }"
+        class="h-5 w-5 text-black group-hover:text-black transition-all duration-300" 
+        :class="{ 'rotate-180 text-black': isOpen }"
         fill="none" viewBox="0 0 24 24" stroke="currentColor"
       >
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
@@ -37,7 +37,7 @@
     <Transition name="select-pop">
       <div 
         v-if="isOpen"
-        class="absolute z-[110] mt-3 w-full bg-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(13,29,173,0.15)] border border-gray-50 p-4 transform origin-top overflow-hidden"
+        class="absolute z-[110] mt-3 w-full bg-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(13,29,173,0.15)] border border-gray-200 p-4 transform origin-top overflow-hidden"
       >
         <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
           <div 
@@ -49,7 +49,7 @@
           >
             <span 
               class="text-sm font-bold transition-all duration-300"
-              :class="modelValue === option.value ? 'text-gray-900' : 'text-brand-gray/80 group-hover:text-gray-900'"
+              :class="modelValue === option.value ? 'text-black' : 'text-brand-gray/80 group-hover:text-black'"
             >
               {{ option.label }}
             </span>

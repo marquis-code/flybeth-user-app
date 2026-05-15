@@ -7,8 +7,8 @@
     >
       <slot :value="modelValue" :displayValue="modelValue">
         <div class="flex items-center gap-2 mt-1">
-          <ClockIcon class="w-4 h-4 text-gray-400" />
-          <span class="text-sm font-semibold text-gray-900">{{ modelValue || 'Select time' }}</span>
+          <ClockIcon class="w-4 h-4 text-black" />
+          <span class="text-sm font-semibold text-black">{{ modelValue || 'Select time' }}</span>
         </div>
       </slot>
     </div>
@@ -26,19 +26,19 @@
         <div
           ref="cardRef"
           :style="cardStyle"
-          class="fixed z-[1000011] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden"
+          class="fixed z-[1000011] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
         >
 
           <div class="flex h-[280px]">
             <!-- Hours Column -->
-            <div class="flex-1 overflow-y-auto custom-scrollbar bg-gray-50/50" ref="hourCol">
+            <div class="flex-1 overflow-y-auto custom-scrollbar bg-white/50" ref="hourCol">
               <div class="py-2">
                 <button
                   v-for="h in 24"
                   :key="h-1"
                   @click="selectHour(h-1)"
                   class="w-full py-2.5 text-sm font-medium transition-colors"
-                  :class="selectedHour === (h-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-gray-600 hover:bg-gray-100'"
+                  :class="selectedHour === (h-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-black hover:bg-black'"
                 >
                   {{ String(h-1).padStart(2, '0') }}
                 </button>
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Divider -->
-            <div class="w-px bg-gray-100 h-full"></div>
+            <div class="w-px bg-black h-full"></div>
 
             <!-- Minutes Column -->
             <div class="flex-1 overflow-y-auto custom-scrollbar" ref="minCol">
@@ -56,7 +56,7 @@
                   :key="m-1"
                   @click="selectMinute(m-1)"
                   class="w-full py-2.5 text-sm font-medium transition-colors"
-                  :class="selectedMinute === (m-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-gray-600 hover:bg-gray-100'"
+                  :class="selectedMinute === (m-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-black hover:bg-black'"
                 >
                   {{ String(m-1).padStart(2, '0') }}
                 </button>
@@ -65,7 +65,7 @@
           </div>
 
           <!-- Footer -->
-          <div class="p-3 border-t border-gray-50 bg-white">
+          <div class="p-3 border-t border-gray-200 bg-white">
             <button
               @click="confirmTime"
               class="w-full py-2 bg-[#0D1DAD] text-white rounded-xl text-sm font-bold shadow-sm active:scale-95 transition-transform"

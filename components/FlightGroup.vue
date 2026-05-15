@@ -1,19 +1,19 @@
 <template>
-  <div class="bg-white rounded-2xl overflow-hidden mb-4 border border-gray-100 transition-all duration-500 hover:border-gray-900">
+  <div class="bg-white rounded-2xl overflow-hidden mb-4 border border-gray-200 transition-all duration-500 hover:border-gray-200">
     <!-- Group Header (Airline Info) -->
-    <div class="bg-gray-50/30 px-6 py-4 flex items-center justify-between">
+    <div class="bg-white/30 px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <div class="h-9 w-9 rounded-lg bg-white p-1.5 border border-gray-100">
+        <div class="h-9 w-9 rounded-lg bg-white p-1.5 border border-gray-200">
           <img v-if="airlineLogo" :src="airlineLogo" :alt="airlineName" class="h-full w-full object-contain" />
-          <div v-else class="h-full w-full flex items-center justify-center bg-gray-50 rounded-lg">
-             <span class="text-gray-900 font-bold text-xs">{{ airlineName.slice(0, 2) }}</span>
+          <div v-else class="h-full w-full flex items-center justify-center bg-white rounded-lg">
+             <span class="text-black font-bold text-xs">{{ airlineName.slice(0, 2) }}</span>
           </div>
         </div>
-        <h3 class="font-bold text-gray-900 tracking-widest text-sm">{{ airlineName }}</h3>
+        <h3 class="font-bold text-black  text-sm">{{ airlineName }}</h3>
       </div>
       <div class="flex items-center gap-3">
-        <span class="text-sm font-bold text-brand-gray/30 tracking-widest">Starting from</span>
-        <span class="text-xl  text-gray-900">${{ cheapestPrice }}</span>
+        <span class="text-sm font-bold text-brand-gray/30 ">Starting from</span>
+        <span class="text-xl  text-black">${{ cheapestPrice }}</span>
       </div>
     </div>
 
@@ -30,14 +30,14 @@
     <button 
       v-if="otherOffers.length > 0"
       @click="isExpanded = !isExpanded"
-      class="w-full py-3.5 bg-gray-50/40 hover:bg-gray-50/80 transition-colors flex items-center justify-center gap-3 group"
+      class="w-full py-3.5 bg-white/40 hover:bg-white/80 transition-colors flex items-center justify-center gap-3 group"
     >
       <div class="flex -space-x-2">
-         <div v-for="i in Math.min(3, otherOffers.length)" :key="i" class="w-6 h-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center overflow-hidden">
+         <div v-for="i in Math.min(3, otherOffers.length)" :key="i" class="w-6 h-6 rounded-full border-2 border-white bg-black flex items-center justify-center overflow-hidden">
             <img v-if="airlineLogo" :src="airlineLogo" class="w-full h-full object-cover opacity-60" />
          </div>
       </div>
-      <span class="text-sm  text-brand-gray/60 tracking-widest group-hover:text-gray-900 transition-colors">
+      <span class="text-sm  text-brand-gray/60  group-hover:text-black transition-colors">
         {{ isExpanded ? 'Hide' : `+${otherOffers.length}` }} {{ airlineName }} flights
       </span>
       <ChevronDown 

@@ -4,12 +4,12 @@
     <!-- ── Trigger row ── -->
     <div
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl relative overflow-hidden"
-      :class="showDropdown ? 'bg-blue-50/30 ring-2 ring-gray-900/5' : 'hover:bg-gray-50/60'"
+      :class="showDropdown ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
       @mousedown.prevent="toggleDropdown"
     >
       <p
-        class="text-[10px] font-bold tracking-[0.05em] mb-0.5 transition-colors uppercase"
-        :class="showDropdown ? 'text-gray-900' : 'text-gray-400 group-hover:text-gray-900'"
+        class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
+        :class="showDropdown ? 'text-black' : 'text-black group-hover:text-black'"
       >
         {{ label }}
       </p>
@@ -17,14 +17,14 @@
       <!-- Display when closed -->
       <div v-show="!showDropdown" class="flex items-baseline gap-1.5 min-w-0 transition-opacity duration-75">
         <template v-if="selectedLocationName">
-          <span class="text-[14px] text-gray-900 leading-tight truncate font-bold">
+          <span class="text-[13px] text-black leading-tight truncate font-bold">
             {{ selectedLocationName }}
           </span>
-          <span class="text-[10px] text-gray-400 font-bold uppercase shrink-0">{{ modelValue }}</span>
+          <span class="text-xs text-black font-bold shrink-0">{{ modelValue }}</span>
         </template>
         <template v-else>
-          <MapPinIcon class="h-4 w-4 shrink-0 text-gray-300" />
-          <span class="text-[14px] text-gray-400 font-medium">
+          <MapPinIcon class="h-4 w-4 shrink-0 text-black" />
+          <span class="text-[13px] text-black font-medium">
             {{ placeholder || 'Select' }}
           </span>
         </template>
@@ -32,19 +32,19 @@
       
       <!-- Input when open (v-show for instant focus/appearance) -->
       <div v-show="showDropdown" class="flex items-center gap-2 transition-opacity duration-75">
-        <MagnifyingGlassIcon class="h-4 w-4 text-gray-900 shrink-0" />
+        <MagnifyingGlassIcon class="h-4 w-4 text-black shrink-0" />
         <input
           ref="searchInputRef"
           v-model="searchQuery"
           :placeholder="placeholder || 'Where to?'"
-          class="flex-1 bg-transparent outline-none text-[14px] font-bold text-gray-900 placeholder:text-gray-300 placeholder:font-normal"
+          class="flex-1 bg-transparent outline-none text-[13px] font-bold text-black placeholder:text-black placeholder:font-normal"
           @input="onSearchInput"
           @keydown.escape="closeDropdown"
           @mousedown.stop
         />
       </div>
 
-      <p v-show="selectedLocationSub && !showDropdown" class="text-[10px] text-gray-400 font-medium mt-0.5 truncate">
+      <p v-show="selectedLocationSub && !showDropdown" class="text-sm text-black font-medium mt-0.5 truncate">
         {{ selectedLocationSub }}
       </p>
     </div>
@@ -53,7 +53,7 @@
     <Transition name="loc-drop">
       <div
         v-show="showDropdown"
-        class="absolute left-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-100 shadow-2xl overflow-hidden"
+        class="absolute left-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-200 shadow-2xl overflow-hidden"
         :class="[isMobile ? 'fixed inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[360px]']"
         style="background-color: #ffffff !important;"
         @mousedown.stop
@@ -61,65 +61,65 @@
         <!-- Detect location (Compact) -->
         <div
           @click="detectLocation"
-          class="flex items-center gap-3 m-3 px-3 py-2 rounded-xl hover:bg-gray-50 cursor-pointer transition-all group/detect border border-gray-50 hover:border-gray-200"
+          class="flex items-center gap-3 m-3 px-3 py-2 rounded-xl hover:bg-white cursor-pointer transition-all group/detect border border-gray-200 hover:border-gray-200"
         >
-          <div class="h-7 w-7 rounded-lg bg-gray-100 group-hover/detect:bg-gray-900 flex items-center justify-center shrink-0 transition-colors">
-            <svg class="h-3.5 w-3.5 text-gray-400 group-hover/detect:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <div class="h-7 w-7 rounded-lg bg-black group-hover/detect:bg-black flex items-center justify-center shrink-0 transition-colors">
+            <svg class="h-3.5 w-3.5 text-black group-hover/detect:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
             </svg>
           </div>
           <div class="min-w-0">
-            <p class="text-[12px] font-bold text-gray-900">Detect my location</p>
-            <p class="text-[10px] text-gray-400 font-medium truncate">Find nearby airports</p>
+            <p class="text-[12px] font-bold text-black">Detect my location</p>
+            <p class="text-sm text-black font-medium truncate">Find nearby airports</p>
           </div>
         </div>
 
-        <div class="h-px bg-gray-50 mx-4" />
+        <div class="h-px bg-white mx-4" />
 
         <!-- ── Results ── -->
         <div v-show="results.length" class="max-h-[280px] overflow-y-auto py-1">
-          <p class="px-5 py-2 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+          <p class="px-5 py-2 text-xs font-black text-black">
             Results
           </p>
           <div
             v-for="res in results"
             :key="res.iataCode"
             @click="selectAmadeusResult(res)"
-            class="flex items-center gap-3 px-5 py-2 hover:bg-gray-50 cursor-pointer transition-colors group/item"
+            class="flex items-center gap-3 px-5 py-2 hover:bg-white cursor-pointer transition-colors group/item"
           >
-            <div class="h-7 w-7 rounded-lg bg-gray-50 flex items-center justify-center shrink-0 border border-transparent group-hover/item:border-gray-100">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="text-gray-400 group-hover/item:text-gray-900">
+            <div class="h-7 w-7 rounded-lg bg-white flex items-center justify-center shrink-0 border border-transparent group-hover/item:border-gray-200">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="text-black group-hover/item:text-black">
                 <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" fill="currentColor"/>
               </svg>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-[12px] font-bold text-gray-900 truncate">{{ res.address?.cityName || res.name }}</p>
-              <p class="text-[10px] text-gray-400 truncate">{{ res.name }}</p>
+              <p class="text-[12px] font-bold text-black truncate">{{ res.address?.cityName || res.name }}</p>
+              <p class="text-sm text-black truncate">{{ res.name }}</p>
             </div>
-            <span class="text-[10px] font-black text-gray-400">{{ res.iataCode }}</span>
+            <span class="text-sm font-black text-black">{{ res.iataCode }}</span>
           </div>
         </div>
 
         <!-- Popular destinations (Grid) -->
         <div v-show="!isLoading && !searchQuery" class="pb-2">
-          <p class="px-5 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+          <p class="px-5 py-3 text-xs font-black text-black">
             Popular
           </p>
-          <div class="grid grid-cols-2 gap-px bg-gray-50">
+          <div class="grid grid-cols-2 gap-px bg-white">
             <div
               v-for="dest in suggestions"
               :key="dest.iataCode"
               @click="selectSuggestion(dest)"
-              class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-50 cursor-pointer transition-all group/sug"
+              class="flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-white cursor-pointer transition-all group/sug"
             >
-              <div class="h-6 w-6 rounded bg-gray-50 group-hover/sug:bg-white flex items-center justify-center shrink-0 border border-transparent group-hover/sug:border-gray-100">
-                <MapPinIcon class="h-3.5 w-3.5 text-gray-400" />
+              <div class="h-6 w-6 rounded bg-white group-hover/sug:bg-white flex items-center justify-center shrink-0 border border-transparent group-hover/sug:border-gray-200">
+                <MapPinIcon class="h-3.5 w-3.5 text-black" />
               </div>
               <div class="min-w-0 flex-1">
-                <p class="text-[11px] font-bold text-gray-700 group-hover/sug:text-gray-900 truncate">
+                <p class="text-[11px] font-bold text-black group-hover/sug:text-black truncate">
                   {{ dest.city }}
                 </p>
-                <p class="text-[9px] text-gray-400 font-bold uppercase">{{ dest.iataCode }}</p>
+                <p class="text-[10px] text-black font-bold">{{ dest.iataCode }}</p>
               </div>
             </div>
           </div>
@@ -127,7 +127,7 @@
 
         <!-- Loading -->
         <div v-show="isLoading" class="py-10 text-center">
-          <div class="animate-spin h-4 w-4 border-2 border-gray-100 border-t-gray-900 rounded-full mx-auto mb-2" />
+          <div class="animate-spin h-4 w-4 border-2 border-gray-200 border-t-gray-900 rounded-full mx-auto mb-2" />
         </div>
       </div>
     </Transition>

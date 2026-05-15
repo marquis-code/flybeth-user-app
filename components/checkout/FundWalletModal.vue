@@ -1,58 +1,58 @@
 <template>
   <div v-if="show" class="fixed inset-0 z-[999999] bg-white animate-in slide-in-from-bottom duration-500 overflow-y-auto">
     <!-- Close Button -->
-    <button @click="$emit('close')" class="fixed top-8 right-8 w-11 h-11 rounded-full bg-gray-900 text-white flex items-center justify-center transition-all z-[1000000] shadow-2xl hover:scale-110 active:scale-95">
+    <button @click="$emit('close')" class="fixed top-8 right-8 w-11 h-11 rounded-full bg-black text-white flex items-center justify-center transition-all z-[1000000] shadow-2xl hover:scale-110 active:scale-95">
       <X class="w-6 h-6" />
     </button>
 
     <div class="min-h-screen w-full flex flex-col items-center justify-center p-6">
       <div class="relative w-full max-w-sm flex flex-col items-center">
         <div class="flex flex-col items-center mb-8 text-center">
-          <div class="w-12 h-12 rounded-2xl bg-gray-900 text-white flex items-center justify-center shadow-lg mb-4">
+          <div class="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center shadow-lg mb-4">
             <Wallet class="w-6 h-6" />
           </div>
-          <h3 class="text-xl font-black text-gray-900 tracking-tighter">Fund Wallet</h3>
-          <p class="text-gray-400 font-bold text-[8px]  tracking-widest mt-1">Instant replenishment</p>
+          <h3 class="text-xl font-black text-black er">Fund Wallet</h3>
+          <p class="text-black font-bold text-[8px]   mt-1">Instant replenishment</p>
         </div>
 
         <!-- Step 1: Amount & Method Selection -->
         <div v-if="step === 1" class="w-full space-y-6">
           <div class="space-y-2">
-            <label class="text-[8px] font-black text-gray-400  tracking-widest ml-1">Amount</label>
+            <label class="text-[8px] font-black text-black   ml-1">Amount</label>
             <div class="relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-black text-gray-300">{{ currencySymbol }}</span>
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-black text-black">{{ currencySymbol }}</span>
               <input 
                 :value="formattedAmount" 
                 @input="handleAmountInput"
                 type="text" 
                 placeholder="0.00"
-                class="w-full h-14 bg-gray-50 border border-gray-100 rounded-xl pl-10 pr-4 text-xl font-black text-gray-900 focus:bg-white transition-all outline-none"
+                class="w-full h-14 bg-white border border-gray-200 rounded-xl pl-10 pr-4 text-xl font-black text-black focus:bg-white transition-all outline-none"
               />
             </div>
             <div v-if="amount" class="flex items-center gap-2 ml-1">
               <div class="w-1 h-1 rounded-full bg-blue-500"></div>
-              <p class="text-[8px] font-black text-blue-600  tracking-widest">New Balance: {{ currencySymbol }}{{ formatNumber(parseFloat(amount) + (currentBalance || 0)) }}</p>
+              <p class="text-[8px] font-black text-blue-600  ">New Balance: {{ currencySymbol }}{{ formatNumber(parseFloat(amount) + (currentBalance || 0)) }}</p>
             </div>
           </div>
 
           <div class="space-y-2">
-             <label class="text-[8px] font-black text-gray-400  tracking-widest ml-1">Method</label>
+             <label class="text-[8px] font-black text-black   ml-1">Method</label>
              
              <button 
                @click="selectedMethod = 'paystack'"
                class="w-full p-3 rounded-xl border-2 transition-all flex items-center justify-between group"
-               :class="selectedMethod === 'paystack' ? 'border-gray-900 bg-gray-50' : 'border-gray-50 bg-white'"
+               :class="selectedMethod === 'paystack' ? 'border-gray-200 bg-white' : 'border-gray-200 bg-white'"
              >
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="selectedMethod === 'paystack' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="selectedMethod === 'paystack' ? 'bg-black text-white' : 'bg-black text-black'">
                     <CreditCard class="w-4 h-4" />
                   </div>
                   <div class="text-left">
-                    <span class="text-xs font-black text-gray-900 block tracking-tight">Paystack</span>
-                    <span class="text-[8px] font-bold text-gray-400  tracking-widest">Local NGN</span>
+                    <span class="text-xs font-black text-black block ">Paystack</span>
+                    <span class="text-[8px] font-bold text-black  ">Local NGN</span>
                   </div>
                 </div>
-                <div v-if="selectedMethod === 'paystack'" class="w-4 h-4 rounded-full bg-gray-900 flex items-center justify-center text-white">
+                <div v-if="selectedMethod === 'paystack'" class="w-4 h-4 rounded-full bg-black flex items-center justify-center text-white">
                   <Check class="w-2.5 h-2.5" />
                 </div>
              </button>
@@ -60,18 +60,18 @@
              <button 
                @click="selectedMethod = 'stripe'"
                class="w-full p-3 rounded-xl border-2 transition-all flex items-center justify-between group"
-               :class="selectedMethod === 'stripe' ? 'border-gray-900 bg-gray-50' : 'border-gray-50 bg-white'"
+               :class="selectedMethod === 'stripe' ? 'border-gray-200 bg-white' : 'border-gray-200 bg-white'"
              >
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="selectedMethod === 'stripe' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="selectedMethod === 'stripe' ? 'bg-black text-white' : 'bg-black text-black'">
                     <Globe class="w-4 h-4" />
                   </div>
                   <div class="text-left">
-                    <span class="text-xs font-black text-gray-900 block tracking-tight">Stripe</span>
-                    <span class="text-[8px] font-bold text-gray-400  tracking-widest">Intl USD</span>
+                    <span class="text-xs font-black text-black block ">Stripe</span>
+                    <span class="text-[8px] font-bold text-black  ">Intl USD</span>
                   </div>
                 </div>
-                <div v-if="selectedMethod === 'stripe'" class="w-4 h-4 rounded-full bg-gray-900 flex items-center justify-center text-white">
+                <div v-if="selectedMethod === 'stripe'" class="w-4 h-4 rounded-full bg-black flex items-center justify-center text-white">
                   <Check class="w-2.5 h-2.5" />
                 </div>
              </button>
@@ -79,18 +79,18 @@
              <button 
                @click="selectedMethod = 'bank'"
                class="w-full p-3 rounded-xl border-2 transition-all flex items-center justify-between group"
-               :class="selectedMethod === 'bank' ? 'border-gray-900 bg-gray-50' : 'border-gray-50 bg-white'"
+               :class="selectedMethod === 'bank' ? 'border-gray-200 bg-white' : 'border-gray-200 bg-white'"
              >
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="selectedMethod === 'bank' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="selectedMethod === 'bank' ? 'bg-black text-white' : 'bg-black text-black'">
                     <Building2 class="w-4 h-4" />
                   </div>
                   <div class="text-left">
-                    <span class="text-xs font-black text-gray-900 block tracking-tight">Manual</span>
-                    <span class="text-[8px] font-bold text-gray-400  tracking-widest">Deposit</span>
+                    <span class="text-xs font-black text-black block ">Manual</span>
+                    <span class="text-[8px] font-bold text-black  ">Deposit</span>
                   </div>
                 </div>
-                <div v-if="selectedMethod === 'bank'" class="w-4 h-4 rounded-full bg-gray-900 flex items-center justify-center text-white">
+                <div v-if="selectedMethod === 'bank'" class="w-4 h-4 rounded-full bg-black flex items-center justify-center text-white">
                   <Check class="w-2.5 h-2.5" />
                 </div>
              </button>
@@ -99,7 +99,7 @@
           <button 
             @click="handleNext"
             :disabled="!amount || !selectedMethod || loading"
-            class="w-full h-12 bg-gray-900 text-white rounded-xl font-black text-[9px] tracking-[0.3em]  hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center"
+            class="w-full h-12 bg-black text-white rounded-xl font-black text-[9px]   hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center"
           >
              <template v-if="loading">Processing...</template>
              <template v-else>Confirm Funding</template>
@@ -109,19 +109,19 @@
         <!-- Step 2: Details Flow -->
         <div v-if="step === 2" class="w-full space-y-6">
           <div v-if="selectedMethod === 'bank'" class="space-y-6">
-             <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 space-y-4">
+             <div class="p-5 bg-white rounded-2xl border border-gray-200 space-y-4">
                 <div v-for="bank in bankAccounts" :key="bank._id" class="space-y-3">
                    <div class="flex flex-col">
-                     <span class="text-[8px] font-black text-gray-400 ">Bank</span>
-                     <span class="text-xs font-black text-gray-900">{{ bank.bankName }}</span>
+                     <span class="text-[8px] font-black text-black ">Bank</span>
+                     <span class="text-xs font-black text-black">{{ bank.bankName }}</span>
                  </div>
                  <div class="flex flex-col">
-                   <span class="text-[8px] font-black text-gray-400 ">A/C Number</span>
-                   <span class="text-sm font-black text-gray-900 tracking-widest">{{ bank.accountNumber }}</span>
+                   <span class="text-[8px] font-black text-black ">A/C Number</span>
+                   <span class="text-sm font-black text-black ">{{ bank.accountNumber }}</span>
                  </div>
                  <div class="flex flex-col">
-                   <span class="text-[8px] font-black text-gray-400 ">Name</span>
-                   <span class="text-xs font-black text-gray-900">{{ bank.accountName }}</span>
+                   <span class="text-[8px] font-black text-black ">Name</span>
+                   <span class="text-xs font-black text-black">{{ bank.accountName }}</span>
                  </div>
               </div>
            </div>
@@ -130,11 +130,11 @@
              <button 
                @click="submitManualTransfer"
                :disabled="loading"
-               class="w-full h-12 bg-gray-900 text-white rounded-xl font-black text-[9px] tracking-[0.3em]  transition-all"
+               class="w-full h-12 bg-black text-white rounded-xl font-black text-[9px]   transition-all"
              >
                Verify Payment
              </button>
-             <button @click="step = 1" class="w-full text-xs rounded-lg py-4 bg-gray-100 font-black text-gray-900  tracking-widest hover:text-gray-900">Change Method</button>
+             <button @click="step = 1" class="w-full text-xs rounded-lg py-4 bg-black font-black text-black   hover:text-black">Change Method</button>
            </div>
         </div>
 
@@ -142,7 +142,7 @@
           <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4 animate-spin">
             <Globe class="w-5 h-5 text-blue-600" />
           </div>
-          <p class="text-[10px] font-black text-gray-900 ">Secure Redirecting...</p>
+          <p class="text-sm font-black text-black ">Secure Redirecting...</p>
         </div>
       </div>
      </div>

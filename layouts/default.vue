@@ -21,6 +21,7 @@
       @cancel="handleCancel"
     />
     <ChatWidget />
+    <StickyExpertTooltip :show="showExpertTooltip" />
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import { useAuth } from '@/composables/modules/auth/useAuth'
 import { useConfirmation } from '@/composables/core/useConfirmation'
 import ConfirmModal from '@/components/ConfirmModal.vue'
 import ChatWidget from '@/components/ChatWidget.vue'
+import StickyExpertTooltip from '@/components/StickyExpertTooltip.vue'
 
 const { visible, options, handleConfirm, handleCancel } = useConfirmation()
 const { isAuthModalVisible, closeAuthModal } = useAuth()
@@ -41,6 +43,20 @@ const showNavBar = computed(() => {
 })
 const isHomePage = computed(() => route.path === '/')
 const showSettings = ref(false)
+
+const showExpertTooltip = ref(false)
+
+const handleScroll = () => {
+  showExpertTooltip.value = window.scrollY > 600
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 
 // Provide showSettings to children so NavBar can toggle it
 provide('showSettings', showSettings)

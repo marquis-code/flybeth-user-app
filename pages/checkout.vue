@@ -13,8 +13,28 @@
     @confirm="handleManualConfirm"
   />
 
+  <!-- Klarna Widget Modal -->
+  <div v-if="showKlarnaWidget" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+    <div class="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-white/50">
+        <h3 class="text-xl font-bold text-black">Complete with Klarna</h3>
+        <button @click="closeKlarnaWidget" class="p-2 hover:bg-black rounded-full transition-colors">
+          <XIcon class="w-5 h-5 text-black" />
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto">
+        <div id="klarna-payments-container"></div>
+      </div>
+      <div class="p-6 border-t border-gray-200 bg-white/50 flex justify-end">
+        <button @click="authorizeKlarnaPayment" class="btn-primary" :disabled="isAuthorizingKlarna">
+          {{ isAuthorizingKlarna ? 'Authorizing...' : 'Confirm Order' }}
+        </button>
+      </div>
+    </div>
+  </div>
 
-  <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-gray-50/30 overflow-x-hidden">
+
+  <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-white/30 overflow-x-hidden">
     
     <!-- Premium Header -->
     <header class="bg-neutral-900 border-b border-white/5 py-8 relative overflow-hidden">
@@ -33,7 +53,7 @@
         </button>
 
         <div class="flex flex-col items-center">
-          <span class="text-2xl  text-white tracking-widest">Flybeth</span>
+          <span class="text-2xl  text-white ">Flybeth</span>
           <div class="flex items-center gap-1.5 mt-1">
             <Lock class="h-3 w-3 text-primary" />
             <span class="text-[9px]  tracking-[0.2em] text-white/30">AES-256 Encrypted</span>
@@ -43,10 +63,10 @@
         <div class="flex items-center gap-3">
           <div v-if="currentStep < 3" class="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
             <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
-            <span class="text-[10px]  text-white/50 tracking-widest whitespace-nowrap">Held for 14:59</span>
+            <span class="text-sm  text-white/50  whitespace-nowrap">Held for 14:59</span>
           </div>
           <div class="hidden md:flex flex-col items-end">
-             <span class="text-[10px]  text-white/20 tracking-widest">Support</span>
+             <span class="text-sm  text-white/20 ">Support</span>
              <span class="text-sm font-bold text-white/50">+1 800 FLYBETH</span>
           </div>
         </div>
@@ -54,7 +74,7 @@
     </header>
 
     <!-- Refined Stepper -->
-    <div class="bg-white border-b border-gray-100 py-6">
+    <div class="bg-white border-b border-gray-200 py-6">
        <div class="ck-wrap mx-auto">
           <CheckoutStepper :currentStep="currentStep" :steps="['Review', 'Travelers', 'Extras', 'Payment']" />
        </div>
@@ -68,10 +88,10 @@
       <!-- Main column: was flex-grow w-full (causes overflow), now ck-main-col -->
       <div class="ck-main-col space-y-8">
         <!-- Step 0: Review -->
-        <div v-if="currentStep === 0" class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden animate-in">
-          <div class="p-6 md:p-10 border-b border-gray-50 bg-gray-50/30">
-            <h2 class="text-2xl text-gray-900 tracking-tight">Review selection</h2>
-            <p class="text-gray-400 font-medium text-sm mt-1">Confirm your trip specifics before adding traveler data.</p>
+        <div v-if="currentStep === 0" class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden animate-in">
+          <div class="p-6 md:p-10 border-b border-gray-200 bg-white/30">
+            <h2 class="text-2xl text-black ">Review selection</h2>
+            <p class="text-black font-medium text-sm mt-1">Confirm your trip specifics before adding traveler data.</p>
           </div>
           <div class="p-4 md:p-6">
             <CheckoutFlightDetails
@@ -104,7 +124,7 @@
         </div>
 
         <!-- Step 2: Extras -->
-        <div v-if="currentStep === 2" class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in">
+        <div v-if="currentStep === 2" class="bg-white rounded-[2.5rem] border border-gray-200 shadow-sm overflow-hidden animate-in">
           <CheckoutTripCustomization
             :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
             :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
@@ -125,12 +145,12 @@
               <ShieldCheck class="h-5 w-5" />
             </div>
             <div class="space-y-0.5">
-              <p class="text-sm font-black text-sky-900 tracking-tight">Security Verification</p>
-              <p class="text-[10px] text-sky-700/60 font-bold leading-none">Your transaction is protected by multi-layer encryption.</p>
+              <p class="text-sm font-black text-sky-900 ">Security Verification</p>
+              <p class="text-sm text-sky-700/60 font-bold leading-none">Your transaction is protected by multi-layer encryption.</p>
             </div>
           </div>
 
-          <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+          <div class="bg-white rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden p-6 md:p-8">
             <CheckoutPayment 
               ref="paymentRef"
               :total-amount="displayPrices.total" 
@@ -177,7 +197,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { ChevronLeft, Lock, ShieldCheck } from 'lucide-vue-next'
+import { ChevronLeft, Lock, ShieldCheck, X as XIcon } from 'lucide-vue-next'
 import { useRoute, useRouter, navigateTo, useRuntimeConfig } from '#app'
 import { staysApi } from '~/api_factory/modules/stays'
 import { paymentsApi } from '~/api_factory/modules/payments'
@@ -222,6 +242,72 @@ const paymentProcessing = ref(false)
 const selectedAddOns = ref<{ id: string; name: string; price: number }[]>([])
 const selectedSeats = ref<any[]>([])
 const seatPrice = ref(0)
+
+// Klarna Integration State
+const showKlarnaWidget = ref(false)
+const isAuthorizingKlarna = ref(false)
+const klarnaClientToken = ref('')
+const klarnaOrderId = ref('')
+const klarnaPnr = ref('')
+
+const closeKlarnaWidget = () => {
+  showKlarnaWidget.value = false
+}
+
+const loadKlarnaSdk = (client_token: string) => {
+  return new Promise((resolve, reject) => {
+    if ((window as any).Klarna) {
+      initKlarna(client_token)
+      return resolve(true)
+    }
+    const script = document.createElement('script')
+    script.src = 'https://x.klarnacdn.net/kp/lib/v1/api.js'
+    script.async = true
+    script.onload = () => {
+      initKlarna(client_token)
+      resolve(true)
+    }
+    script.onerror = reject
+    document.head.appendChild(script)
+  })
+}
+
+const initKlarna = (client_token: string) => {
+  const Klarna = (window as any).Klarna
+  Klarna.Payments.init({ client_token })
+  Klarna.Payments.load({ container: '#klarna-payments-container', payment_method_category: 'pay_over_time' }, (res: any) => {
+    console.log('Klarna widget loaded', res)
+  })
+}
+
+const authorizeKlarnaPayment = () => {
+  isAuthorizingKlarna.value = true
+  const Klarna = (window as any).Klarna
+  if (!Klarna) {
+    showToast({ title: 'Error', message: 'Klarna SDK not found', toastType: 'error' })
+    isAuthorizingKlarna.value = false
+    return
+  }
+
+  Klarna.Payments.authorize({ payment_method_category: 'pay_over_time' }, async (res: any) => {
+    if (res.approved && res.authorization_token) {
+      try {
+         await paymentsApi.authorizeBnpl({
+           bookingId: klarnaOrderId.value,
+           provider: 'klarna',
+           checkoutToken: res.authorization_token
+         })
+         router.push(`/confirmation?pnr=${klarnaPnr.value}&status=success`)
+      } catch (err) {
+         showToast({ title: 'Payment Failed', message: 'Klarna authorization failed on backend', toastType: 'error' })
+         isAuthorizingKlarna.value = false
+      }
+    } else {
+      isAuthorizingKlarna.value = false
+      showToast({ title: 'Payment Not Approved', message: res.error?.message || 'Klarna declined the payment', toastType: 'error' })
+    }
+  })
+}
 
 const { loading: pricingLoading, pricingDetails, priceFlightOffer } = useFlightCheckout()
 const selectedFlight = ref<any>(null)
@@ -613,7 +699,55 @@ const handlePayment = async (paymentInfo: any) => {
     
     if (data && data.pnr) {
       clearCheckoutState()
-      router.push(`/booking-confirmation?pnr=${data.pnr}`)
+
+      // Handle BNPL or any payment that requires redirection
+      if (
+        [
+          "credpal",
+          "affirm",
+          "klarna",
+          "paypal_four",
+        ].includes(paymentInfo.provider)
+      ) {
+        loaderStatus.value = "Redirecting to payment gateway...";
+        try {
+          const initResponse = await paymentsApi.initialize({
+            bookingId: data._id,
+            provider: paymentInfo.provider,
+            callbackUrl: `${window.location.origin}/confirmation?pnr=${data.pnr}&orderId=${data._id}&status=success&provider=${paymentInfo.provider}`,
+          });
+          
+          if (initResponse.data && initResponse.data.url) {
+            if (initResponse.data.url === 'klarna_sdk' && initResponse.data.reference) {
+              // Handle Klarna SDK flow
+              showBrandedLoader.value = false;
+              klarnaClientToken.value = initResponse.data.reference;
+              klarnaOrderId.value = data._id;
+              klarnaPnr.value = data.pnr;
+              showKlarnaWidget.value = true;
+              
+              await loadKlarnaSdk(klarnaClientToken.value);
+              return;
+            } else {
+              // Standard redirect flow
+              window.location.href = initResponse.data.url;
+              return;
+            }
+          }
+        } catch (initErr: any) {
+          console.error("Payment initialization failed:", initErr);
+          showToast({
+            title: "Payment Error",
+            message: "Failed to initialize payment gateway. Please try again from your bookings page.",
+            toastType: "error",
+          });
+          // Still redirect to confirmation but with pending status
+          router.push(`/confirmation?pnr=${data.pnr}&status=pending_payment`);
+          return;
+        }
+      }
+
+      router.push(`/confirmation?pnr=${data.pnr}`)
     } else {
       throw new Error('Booking response was invalid')
     }
