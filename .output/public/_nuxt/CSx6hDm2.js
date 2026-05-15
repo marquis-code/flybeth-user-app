@@ -1,0 +1,1 @@
+import{u as r}from"./CWdldcVJ.js";import{aj as a,H as o}from"./Cpp09fk7.js";const s=a(e=>{const{token:t}=r();if(!t.value)return o({path:"/",query:{redirect:e.fullPath,requireLogin:"1"}})});export{s as default};
