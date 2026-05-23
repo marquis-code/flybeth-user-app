@@ -890,7 +890,7 @@ const currentOffers = computed(() => {
       installment: `₦${Math.floor(deal.classes[0]?.basePrice * 0.28).toLocaleString()}`,
       deal: deal.isFeatured,
       image: fallbackImages[Math.floor(Math.random() * fallbackImages.length)],
-      airlineLogo: `https://api.duffel.com/img/airlines/${deal.airline.slice(0, 2).to()}.png`
+      airlineLogo: `https://api.duffel.com/img/airlines/${deal.airline.slice(0, 2).toUpperCase()}.png`
     }));
   } else {
     const activeStays = Array.isArray(stays.value) ? stays.value : [];
@@ -1047,7 +1047,7 @@ const navigateToFlightSearch = (destination: string) => {
   const origin = userLocation.value?.cityCode || 'LOS';
   const query = {
     origin,
-    destination: destination.to().slice(0, 3), // Simple heuristic for demo
+    destination: destination.toUpperCase().slice(0, 3), // Simple heuristic for demo
     departureDate: new Date().toISOString().split('T')[0],
     adults: 1,
     cabinClass: 'ECONOMY'
@@ -1180,6 +1180,9 @@ const backgrounds: Record<string, BackgroundAsset> = {
     url: 'https://cdn.travelwings.com/assets/images/LP_banner_car_rentals_GH_f0a1352ff1.jpg' 
   }
 }
+
+// Slides data for carousel (auto-play / preview cards)
+const slides: { title: string; subtitle: string; image: string }[] = []
 
 const isWidgetFocused = ref(false)
 
@@ -1341,9 +1344,6 @@ const partners = [
 </script>
 
 <style>
-. {
-  
-}
 .font-body {
   font-family: 'Roboto', sans-serif;
 }

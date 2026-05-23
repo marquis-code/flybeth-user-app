@@ -4,8 +4,9 @@ export default defineNuxtConfig({
   ssr: false,
 
     nitro: {
+    preset: process.env.VERCEL ? 'vercel' : undefined,
     prerender: {
-      routes: ['/', '/404.html'],  // Changed: Added '/' to generate index.html
+      routes: ['/', '/404.html'],
       ignore: ['/dynamic-routes', '/api'],
       failOnError: false
     }

@@ -1,4 +1,4 @@
-import { GATEWAY_ENDPOINT, GATEWAY_ENDPOINT_WITH_AUTH } from "../axios.config";
+import { GATEWAY_ENDPOINT, GATEWAY_ENDPOINT_WITH_AUTH, rawBaseUrl } from "../axios.config";
 
 export const authApiFactory = {
     register(payload: any) {
@@ -29,6 +29,6 @@ export const authApiFactory = {
         return GATEWAY_ENDPOINT.post("/auth/social-login", payload);
     },
     googleLoginUrl() {
-        return `${import.meta.env.VITE_BASE_URL}/api/v1/auth/google`;
+        return `${rawBaseUrl}/api/v1/auth/google`;
     }
 };
