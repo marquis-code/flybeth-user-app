@@ -138,8 +138,8 @@
 
     <!-- ── Dark bottom bar ─────────────────────────────── -->
     <div class="bg-[#040d4f] w-full">
-      <div class="py-8 flex flex-wrap justify-center items-center gap-6 lg:gap-10 border-b border-white/10">
-        <img src="@/assets/img/partnerships.webp" alt="Partnerships" />
+      <div class="py-8 border-b border-white/10">
+        <FooterPartners />
       </div>
       <div class="text-center text-[12px] text-white/50 py-6 pb-16 md:pb-6 max-w-7xl mx-auto px-6">
         <p>
