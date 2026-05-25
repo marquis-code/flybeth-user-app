@@ -313,10 +313,10 @@
     <!-- 1. Matchday Banner (Grass) -->
     <div class="w-full bg-[#F8FAFC] pt-12 relative z-10">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="relative w-full h-24 sm:h-28 rounded-full overflow-hidden flex items-center justify-between px-6 sm:px-10 shadow-md group border border-gray-200">
+        <div class="relative w-full py-6 sm:py-0 sm:h-28 rounded-3xl sm:rounded-full overflow-hidden flex items-center justify-between px-6 sm:px-10 shadow-md group border border-gray-200">
           <img src="https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?auto=format&fit=crop&q=80&w=1920" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700" alt="Grass" />
           <div class="absolute inset-0 bg-green-900/30"></div>
-          <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between w-full gap-4">
+          <div class="relative z-10 flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full gap-4 text-center sm:text-left">
             <h3 class="text-white text-lg sm:text-2xl font-bold drop-shadow-md">Turn matchday into a getaway — score summer savings.</h3>
             <button class="bg-[#3b533b] hover:bg-[#2c3f2c] border border-white/40 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-full text-sm font-bold transition-colors shadow-lg whitespace-nowrap">Find Deals</button>
           </div>
