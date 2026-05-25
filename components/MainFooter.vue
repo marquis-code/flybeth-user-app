@@ -53,56 +53,33 @@
       </div>
 
       <!-- ── Quick Links Accordion Panel ───────────────── -->
-      <div class="flex py-8 border-b border-white/10 gap-0">
+      <div class="flex flex-col lg:flex-row py-8 border-b border-white/10 gap-6 lg:gap-0">
 
         <!-- Left sidebar -->
-        <nav class="w-64 shrink-0 border-r border-white/10 pr-0">
-          <!-- "Quick Links" header item -->
-          <button
-            @click="setTab(null)"
-            class="w-full flex items-center justify-between px-4 py-3 mb-1 rounded-lg font-bold text-[13px] transition-all"
-            :class="activeTab === null ? 'bg-white text-[#0b1686]' : 'text-white hover:bg-white/10'"
-          >
-            Quick Links
-            <ChevronRight class="h-4 w-4 shrink-0" />
-          </button>
-
-          <!-- Tab items -->
-          <button
-            v-for="tab in quickLinkTabs"
-            :key="tab.id"
-            @click="tab.id === 'privacy' ? openPrivacyDrawer() : setTab(tab.id)"
-            class="w-full flex items-center justify-between px-4 py-3 mb-0.5 rounded-lg text-[13px] font-semibold transition-all text-left"
-            :class="activeTab === tab.id ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'"
-          >
-            <span>{{ tab.label }}</span>
-            <component
-              :is="tab.id === 'privacy' ? ShieldCheck : ChevronRight"
-              class="h-4 w-4 shrink-0"
-              :class="tab.id === 'privacy' ? 'text-blue-300' : ''"
-            />
-          </button>
+        <nav class="w-full lg:w-64 shrink-0 lg:border-r border-white/10 lg:pr-0 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 custom-scrollbar">
+          <div class="flex flex-row lg:flex-col gap-2 lg:gap-0 min-w-max lg:min-w-0 px-1 lg:px-0">
+            <!-- Tab items -->
+            <button
+              v-for="tab in quickLinkTabs"
+              :key="tab.id"
+              @click="tab.id === 'privacy' ? openPrivacyDrawer() : setTab(tab.id)"
+              class="flex items-center justify-between px-4 py-3 lg:mb-0.5 rounded-lg text-[13px] font-semibold transition-all text-left shrink-0"
+              :class="activeTab === tab.id ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'"
+            >
+              <span>{{ tab.label }}</span>
+              <component
+                :is="tab.id === 'privacy' ? ShieldCheck : ChevronRight"
+                class="h-4 w-4 shrink-0 ml-3 hidden lg:block"
+                :class="tab.id === 'privacy' ? 'text-blue-300' : ''"
+              />
+            </button>
+          </div>
         </nav>
 
         <!-- Right content panel -->
-        <div class="flex-1 pl-10 min-h-[200px]">
-          <!-- Default: show all quick-link categories as pill buttons -->
-          <template v-if="activeTab === null">
-            <p class="text-[13px] text-white/60 mb-5">Select a category from the left to explore destinations, airlines, routes and more.</p>
-            <div class="flex flex-wrap gap-2">
-              <button
-                v-for="tab in quickLinkTabs.filter(t => t.id !== 'privacy')"
-                :key="tab.id"
-                @click="setTab(tab.id)"
-                class="px-5 py-2 rounded-full text-[12px] font-bold bg-white/10 hover:bg-white/20 transition-colors border border-white/10"
-              >
-                {{ tab.label }}
-              </button>
-            </div>
-          </template>
-
+        <div class="flex-1 lg:pl-10 min-h-[200px]">
           <!-- Active tab content -->
-          <template v-else-if="activeTab && tabContent[activeTab]">
+          <template v-if="activeTab && tabContent[activeTab]">
             <p class="text-[12px] text-white/60 mb-5 italic">{{ tabContent[activeTab].description }}</p>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2.5">
               <NuxtLink
@@ -119,7 +96,7 @@
       </div>
 
       <!-- ── Main link columns ───────────────────────────── -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 py-10">
+      <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-8 py-10">
         <div v-for="col in linkColumns" :key="col.title">
           <h4 class="font-bold text-[13px] mb-4 tracking-wide uppercase text-white/50">{{ col.title }}</h4>
           <ul class="space-y-2.5">
@@ -235,7 +212,7 @@ import { ref, reactive } from 'vue';
 import { ShieldCheck, ChevronRight, X } from 'lucide-vue-next';
 
 // ── State ─────────────────────────────────────────────────
-const activeTab = ref<string | null>(null);
+const activeTab = ref<string | null>('airlines');
 const privacyOpen = ref(false);
 
 function setTab(id: string | null) {
@@ -453,6 +430,15 @@ const cookieCategories = reactive([
 .slide-enter-from,
 .slide-leave-to {
   transform: translateX(100%);
+}
+
+/* Scrollbar hiding for horizontal scroll */
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Backdrop fade */
