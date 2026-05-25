@@ -195,7 +195,7 @@
           <div class="flex-1 py-8 sm:py-0 pl-4 pr-4 sm:pl-16 sm:pr-4 flex flex-col sm:flex-row items-center justify-between w-full gap-6 text-center sm:text-left z-10">
              <div class="flex flex-col gap-1.5">
                <h3 class="text-xl font-bold text-black">Your trip. Designed by our 24/7 travel experts</h3>
-               <p class="text-sm text-gray-500 font-medium">Enjoy personalized planning with real human support. Call Our Travel Experts 24/7. Call <span class="font-bold text-brand-blue">1-844-FLYBETH</span> and say <span class="font-bold text-green-600">CALL10</span> to save.</p>
+               <p class="text-sm text-gray-500 font-medium">Enjoy personalized planning with real human support. Call Our Travel Experts 24/7 at <span class="font-bold text-brand-blue">1-844-FLYBETH</span>.</p>
              </div>
              <a href="tel:18443592384" class="bg-[#1e1e96] hover:bg-[#15156a] text-white px-8 py-3 rounded-full text-sm font-bold transition-colors shadow-md shrink-0">Call us</a>
           </div>
@@ -658,7 +658,7 @@
        </div>
       </div> -->
     </section> 
-     <section class="py-24 bg-white relative z-0 overflow-hidden">
+     <!-- <section class="py-24 bg-white relative z-0 overflow-hidden">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         <article class="relative bg-white rounded-[3rem] p-10 lg:p-16 border border-gray-200 shadow-sm overflow-hidden group/article transition-all duration-700" :class="showLongSeo ? 'max-h-[2000px]' : 'max-h-[480px]'">
@@ -699,7 +699,7 @@
           </div>
         </article>
       </div>
-    </section> 
+    </section>  -->
 
     <!-- Footer Gradient Spacer -->
     <!-- <div class="h-32 bg-gradient-to-t from-gray-50 to-transparent"></div> -->

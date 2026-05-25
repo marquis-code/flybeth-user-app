@@ -21,7 +21,7 @@
           <div class="flex-1 py-8 sm:py-0 pl-4 pr-4 sm:pl-16 sm:pr-4 flex flex-col sm:flex-row items-center justify-between w-full gap-6 text-center sm:text-left z-10">
              <div class="flex flex-col gap-1.5">
                <h3 class="text-xl font-bold text-black">Your trip. Designed by our 24/7 travel experts</h3>
-               <p class="text-sm text-gray-500 font-medium">Enjoy personalized planning with real human support. Call Our Travel Experts 24/7. Call <span class="font-bold text-brand-blue">1-844-FLYBETH</span> and say <span class="font-bold text-green-600">CALL10</span> to save.</p>
+               <p class="text-sm text-gray-500 font-medium">Enjoy personalized planning with real human support. Call Our Travel Experts 24/7 at <span class="font-bold text-brand-blue">1-844-FLYBETH</span>.</p>
              </div>
              <a href="tel:18443592384" class="bg-[#1e1e96] hover:bg-[#15156a] text-white px-8 py-3 rounded-full text-sm font-bold transition-colors shadow-md shrink-0">Call us</a>
           </div>
@@ -210,6 +210,10 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { ShieldCheck, ChevronRight, X } from 'lucide-vue-next';
+import facebook from "@/assets/img/socials/facebook.png"
+import instagram from "@/assets/img/socials/instagram.avif"
+import facrbook from "@/assets/img/socials/facebook.png"
+import facrbook from "@/assets/img/socials/facebook.png"
 
 // ── State ─────────────────────────────────────────────────
 const activeTab = ref<string | null>('airlines');
