@@ -1,0 +1,160 @@
+{
+  "version": 3,
+  "overrides": {
+    "help/tickets/index.html": {
+      "path": "help/tickets"
+    },
+    "help/knowledgebase/index.html": {
+      "path": "help/knowledgebase"
+    },
+    "contact/index.html": {
+      "path": "contact"
+    },
+    "help/index.html": {
+      "path": "help"
+    },
+    "bookings/index.html": {
+      "path": "bookings"
+    },
+    "rewards/index.html": {
+      "path": "rewards"
+    },
+    "checkout/index.html": {
+      "path": "checkout"
+    },
+    "explore/index.html": {
+      "path": "explore"
+    },
+    "cars/index.html": {
+      "path": "cars"
+    },
+    "stays/index.html": {
+      "path": "stays"
+    },
+    "baggage-fees/index.html": {
+      "path": "baggage-fees"
+    },
+    "confirmation/index.html": {
+      "path": "confirmation"
+    },
+    "cruises/index.html": {
+      "path": "cruises"
+    },
+    "flights/index.html": {
+      "path": "flights"
+    },
+    "flight-status/index.html": {
+      "path": "flight-status"
+    },
+    "group-travel/index.html": {
+      "path": "group-travel"
+    },
+    "packages/index.html": {
+      "path": "packages"
+    },
+    "privacy-policy/index.html": {
+      "path": "privacy-policy"
+    },
+    "online-check-in/index.html": {
+      "path": "online-check-in"
+    },
+    "things-to-do/index.html": {
+      "path": "things-to-do"
+    },
+    "transfers/index.html": {
+      "path": "transfers"
+    },
+    "index.html": {
+      "path": ""
+    },
+    "terms/index.html": {
+      "path": "terms"
+    },
+    "auth/login/index.html": {
+      "path": "auth/login"
+    },
+    "dashboard/bookings/index.html": {
+      "path": "dashboard/bookings"
+    },
+    "auth/register/index.html": {
+      "path": "auth/register"
+    },
+    "auth/callback/index.html": {
+      "path": "auth/callback"
+    },
+    "auth/reset-password/index.html": {
+      "path": "auth/reset-password"
+    },
+    "auth/forgot-password/index.html": {
+      "path": "auth/forgot-password"
+    },
+    "auth/verify-otp/index.html": {
+      "path": "auth/verify-otp"
+    }
+  },
+  "routes": [
+    {
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      },
+      "src": "/_nuxt/builds/meta/(.*)"
+    },
+    {
+      "headers": {
+        "Content-Type": "application/xslt+xml"
+      },
+      "src": "/__sitemap__/style.xsl"
+    },
+    {
+      "headers": {
+        "cache-control": "public, max-age=1, immutable"
+      },
+      "src": "/_nuxt/builds/(.*)"
+    },
+    {
+      "headers": {
+        "Content-Type": "text/xml; charset=UTF-8",
+        "Cache-Control": "public, max-age=600, must-revalidate",
+        "X-Sitemap-Prerendered": "2026-05-25T02:14:17.926Z"
+      },
+      "src": "/sitemap.xml"
+    },
+    {
+      "headers": {
+        "X-Robots-Tag": "noindex"
+      },
+      "src": "/_nuxt"
+    },
+    {
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable",
+        "X-Robots-Tag": "noindex"
+      },
+      "src": "/_nuxt/(.*)"
+    },
+    {
+      "src": "/_nuxt/builds/meta(.*)",
+      "headers": {
+        "cache-control": "public,max-age=31536000,immutable"
+      },
+      "continue": true
+    },
+    {
+      "src": "/_nuxt/builds(.*)",
+      "headers": {
+        "cache-control": "public,max-age=31536000,immutable"
+      },
+      "continue": true
+    },
+    {
+      "src": "/_nuxt(.*)",
+      "headers": {
+        "cache-control": "public,max-age=31536000,immutable"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
+}

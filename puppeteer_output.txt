@@ -1,0 +1,10 @@
+SCRIPT_ERROR Error: Could not find Chrome (ver. 148.0.7778.167). This can occur if either
+ 1. you did not perform an installation before running the script (e.g. `npx puppeteer browsers install chrome`) or
+ 2. your cache path is incorrectly configured (which is: /Users/marquis/.cache/puppeteer).
+For (2), check out our guide on configuring puppeteer at https://pptr.dev/guides/configuration.
+    at ChromeLauncher.resolveExecutablePath (file:///Users/marquis/flybeth/user/node_modules/puppeteer-core/lib/puppeteer/node/BrowserLauncher.js:310:27)
+    at async ChromeLauncher.computeLaunchArguments (file:///Users/marquis/flybeth/user/node_modules/puppeteer-core/lib/puppeteer/node/ChromeLauncher.js:87:19)
+    at async ChromeLauncher.launch (file:///Users/marquis/flybeth/user/node_modules/puppeteer-core/lib/puppeteer/node/BrowserLauncher.js:55:28)
+    at async ChromeLauncher.launch (file:///Users/marquis/flybeth/user/node_modules/puppeteer-core/lib/puppeteer/node/ChromeLauncher.js:39:16)
+    at async PuppeteerNode.launch (file:///Users/marquis/flybeth/user/node_modules/puppeteer-core/lib/puppeteer/node/PuppeteerNode.js:120:16)
+    at async /Users/marquis/flybeth/user/test_blank.cjs:5:21
