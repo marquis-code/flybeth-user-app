@@ -3,8 +3,7 @@ import { defineNuxtConfig } from "nuxt/config";
 export default defineNuxtConfig({
   ssr: false,
 
-    nitro: {
-    preset: process.env.VERCEL ? 'vercel' : undefined,
+  nitro: {
     prerender: {
       routes: ['/', '/404.html'],
       ignore: ['/dynamic-routes', '/api'],
