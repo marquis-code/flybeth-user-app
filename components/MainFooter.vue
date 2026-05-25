@@ -212,8 +212,8 @@ import { ref, reactive } from 'vue';
 import { ShieldCheck, ChevronRight, X } from 'lucide-vue-next';
 import facebook from "@/assets/img/socials/facebook.png"
 import instagram from "@/assets/img/socials/instagram.avif"
-import facrbook from "@/assets/img/socials/facebook.png"
-import facrbook from "@/assets/img/socials/facebook.png"
+import twitter from "@/assets/img/socials/twitter.webp"
+import tiktok from "@/assets/img/socials/tiktok.avif"
 
 // ── State ─────────────────────────────────────────────────
 const activeTab = ref<string | null>('airlines');
@@ -234,10 +234,10 @@ function savePrivacyChoices() {
 
 // ── Social icons ──────────────────────────────────────────
 const socialIcons = [
-  { src: '@/assets/img/icons/facebook.svg', alt: 'Facebook' },
-  { src: '@/assets/img/icons/twitter.svg', alt: 'X (Twitter)' },
-  { src: '@/assets/img/icons/instagram.svg', alt: 'Instagram' },
-  { src: '@/assets/img/icons/tiktok.svg', alt: 'TikTok' },
+  { src: facebook, alt: 'Facebook' },
+  { src: twitter, alt: 'X (Twitter)' },
+  { src: instagram, alt: 'Instagram' },
+  { src: tiktok, alt: 'TikTok' },
 ];
 
 // ── Quick Links sidebar tabs ──────────────────────────────
