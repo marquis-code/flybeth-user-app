@@ -5,7 +5,7 @@
     <div
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl relative overflow-hidden"
       :class="showDropdown ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
-      @mousedown.prevent="toggleDropdown"
+      @click.stop="toggleDropdown"
     >
       <p
         class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
@@ -41,6 +41,7 @@
           @input="onSearchInput"
           @keydown.escape="closeDropdown"
           @mousedown.stop
+          @click.stop
         />
       </div>
 
@@ -53,11 +54,37 @@
     <Transition name="loc-drop">
       <div
         v-show="showDropdown"
-        class="absolute left-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-200 shadow-2xl overflow-hidden"
-        :class="[isMobile ? 'fixed inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[360px]']"
+        class="absolute left-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
+        :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[360px] rounded-2xl']"
         style="background-color: #ffffff !important;"
         @mousedown.stop
+        @click.stop
       >
+        <!-- Mobile Header with Close Button -->
+        <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">
+          <h3 class="text-base font-bold text-black">Select Location</h3>
+          <button @click="closeDropdown" class="p-2 -mr-2 text-black hover:bg-gray-100 rounded-full transition-colors">
+            <XMarkIcon class="w-6 h-6" />
+          </button>
+        </div>
+
+        <!-- Mobile Input -->
+        <div v-if="isMobile" class="px-4 pb-4 border-b border-gray-100 shrink-0">
+          <div class="flex items-center gap-2 bg-gray-50 px-3 py-3 rounded-xl border border-gray-200">
+            <MagnifyingGlassIcon class="h-5 w-5 text-gray-500 shrink-0" />
+            <input
+              ref="mobileSearchInputRef"
+              v-model="searchQuery"
+              :placeholder="placeholder || 'Where to?'"
+              class="flex-1 bg-transparent outline-none text-[15px] font-medium text-black placeholder:text-gray-500"
+              @input="onSearchInput"
+              @keydown.escape="closeDropdown"
+              @click.stop
+            />
+          </div>
+        </div>
+
+        <div class="overflow-y-auto flex-1">
         <!-- Detect location (Compact) -->
         <div
           @click="detectLocation"
@@ -100,6 +127,17 @@
           </div>
         </div>
 
+        <!-- Empty State -->
+        <div v-show="!isLoading && searchQuery.length >= 2 && results.length === 0" class="py-8 px-5 text-center flex flex-col items-center justify-center">
+          <div class="h-10 w-10 bg-gray-50 rounded-full flex items-center justify-center mb-2">
+            <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <p class="text-sm font-bold text-black">No locations found</p>
+          <p class="text-[12px] text-gray-500 mt-0.5">Try searching for a different city or airport</p>
+        </div>
+
         <!-- Popular destinations (Grid) -->
         <div v-show="!isLoading && !searchQuery" class="pb-2">
           <p class="px-5 py-3 text-xs font-black text-black">
@@ -129,6 +167,7 @@
         <div v-show="isLoading" class="py-10 text-center">
           <div class="animate-spin h-4 w-4 border-2 border-gray-200 border-t-gray-900 rounded-full mx-auto mb-2" />
         </div>
+        </div> <!-- End overflow-y-auto -->
       </div>
     </Transition>
 
@@ -152,6 +191,7 @@ const { locations: results, loading: isLoading, searchLocations, detectNearestAi
 
 const pickerRef       = ref<HTMLElement | null>(null)
 const searchInputRef  = ref<HTMLInputElement | null>(null)
+const mobileSearchInputRef = ref<HTMLInputElement | null>(null)
 const showDropdown    = ref(false)
 const isMobile        = ref(false)
 
@@ -191,7 +231,13 @@ const openDropdown = () => {
   showDropdown.value = true
   emit('focus')
   // With v-show, the element is already in DOM, so we can focus immediately
-  searchInputRef.value?.focus()
+  nextTick(() => {
+    if (isMobile.value) {
+      mobileSearchInputRef.value?.focus()
+    } else {
+      searchInputRef.value?.focus()
+    }
+  })
 }
 
 const closeDropdown = () => {
@@ -202,9 +248,12 @@ const closeDropdown = () => {
 }
 
 const selectAmadeusResult = (location: any) => {
-  const iataCode = location.iataCode || location.address?.cityCode
-  const cityName = location.address?.cityName || location.name
+  const iataCode = location.iataCode || location.address?.cityCode || location.id || location.code
+  if (!iataCode) return // Prevent selecting invalid locations
+
+  const cityName = location.address?.cityName || location.name || location.detailedName
   const sub      = `${location.name || ''}${location.subType === 'AIRPORT' ? ' Airport' : ''}`.trim()
+  
   locationCache.set(iataCode, { name: cityName, sub })
   selectedLocationName.value = cityName
   selectedLocationSub.value  = sub
@@ -237,7 +286,7 @@ const detectLocation = () => {
 }
 
 const handleClickOutside = (e: MouseEvent) => {
-  if (pickerRef.value && !pickerRef.value.contains(e.target as Node)) {
+  if (showDropdown.value && pickerRef.value && !pickerRef.value.contains(e.target as Node)) {
     closeDropdown()
   }
 }
@@ -260,12 +309,12 @@ const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  window.addEventListener('mousedown', handleClickOutside)
+  window.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
-  window.removeEventListener('mousedown', handleClickOutside)
+  window.removeEventListener('click', handleClickOutside)
 })
 </script>
 

@@ -149,12 +149,12 @@
             </div>
 
             <div class="tt-sb-block">
-              <p class="tt-sb-label">Max price <strong>${{ filters.priceRange[1] }}</strong></p>
+              <p class="tt-sb-label">Max price <strong>{{ formatPrice(filters.priceRange[1]) }}</strong></p>
               <div class="tt-range-wrap">
                 <input type="range" min="0" max="1000" step="10" v-model.number="filters.priceRange[1]" class="tt-range" />
                 <div class="tt-range-ends">
-                  <span>$0</span>
-                  <span>$1,000+</span>
+                  <span>{{ formatPrice(0) }}</span>
+                  <span>{{ formatPrice(1000) }}+</span>
                 </div>
               </div>
             </div>
@@ -241,7 +241,7 @@
                 <div class="tt-card-foot">
                   <div class="tt-card-price-grp">
                     <span class="tt-price-lbl">From</span>
-                    <span class="tt-price-val">{{ activity.currency || '$' }} {{ formatPrice(activity.price) }}</span>
+                    <span class="tt-price-val">{{ formatPrice(activity.price) }}</span>
                   </div>
                   <button class="tt-card-btn">Details →</button>
                 </div>
@@ -265,12 +265,14 @@
 definePageMeta({ layout: 'no-footer' })
 
 import { ref, onMounted, reactive, computed, nextTick, watch } from 'vue'
-import { useRoute } from '#app'
+import { useRoute, navigateTo } from '#app'
 import { useSearchActivities } from '@/composables/modules/experiences/useSearchActivities'
 import { flightsApi } from '@/api_factory/modules/flights'
+import { useSettings } from '@/composables/useSettings'
 
 const route = useRoute()
 const { loading, filteredActivitiesList, filters, searchActivities, activitiesList } = useSearchActivities()
+const { formatPrice } = useSettings()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
@@ -337,10 +339,7 @@ const selectCity = async (city: any) => {
   nextTick(() => openField('date'))
 }
 
-const formatPrice = (p: any) => {
-  const num = parseFloat(p); if (isNaN(num)) return '0.00'
-  return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
+// Replaced by useSettings formatPrice
 
 const stripHtml = (html: string) => {
   if (!html) return ''

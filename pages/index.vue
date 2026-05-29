@@ -49,7 +49,7 @@
               <div class="w-12 h-12 rounded-full bg-[#Eef2ff] flex items-center justify-center text-[#4F46E5]">
                 <GlobeAltIcon class="w-6 h-6" />
               </div>
-              <h4 class="font-bold text-black text-sm">20+ Years of Experience</h4>
+              <h4 class="font-bold text-black text-sm">15+ Years of Experience</h4>
               <p class="text-xs text-gray-500 font-medium">Helping 40M+ travelers worldwide<br/>Partnered with 1M+ verified hotels</p>
             </div>
             <!-- Card 2 -->
@@ -83,7 +83,7 @@
     <!-- <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
         <div class="flex items-start gap-4 group">
-          <div class="h-11 w-11 rounded-xl bg-black flex items-center justify-center text-black flex-shrink-0">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-black flex-shrink-0">
              <CurrencyDollarIcon class="h-5 w-5" />
           </div>
           <div>
@@ -93,7 +93,7 @@
         </div>
         
         <div class="flex items-start gap-4 group">
-          <div class="h-11 w-11 rounded-xl bg-black flex items-center justify-center text-black flex-shrink-0">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-black flex-shrink-0">
              <TrophyIcon class="h-5 w-5" />
           </div>
           <div>
@@ -103,7 +103,7 @@
         </div>
 
         <div class="flex items-start gap-4 group">
-          <div class="h-11 w-11 rounded-xl bg-black flex items-center justify-center text-black flex-shrink-0">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-black flex-shrink-0">
              <SparklesIcon class="h-5 w-5" />
           </div>
           <div>
@@ -113,7 +113,7 @@
         </div>
 
         <div class="flex items-start gap-4 group">
-          <div class="h-11 w-11 rounded-xl bg-black flex items-center justify-center text-black flex-shrink-0">
+          <div class="h-11 w-11 rounded-xl bg-gray-100 flex items-center justify-center text-black flex-shrink-0">
              <PhoneIcon class="h-5 w-5" />
           </div>
           <div>
@@ -138,7 +138,7 @@
              <p class="text-sm font-medium text-black leading-relaxed mb-auto pr-4">
                Earn points on every flight, hotel, and car rental. Redeem instantly to cover service fees or unlock exclusive discounts globally.
              </p>
-             <button class="bg-black text-white font-bold text-xs mt-8 px-6 py-3 rounded-xl hover:bg-black transition-all   self-start">
+             <button @click="$router.push('/rewards')" class="bg-black text-white font-bold text-xs mt-8 px-6 py-3 rounded-xl hover:bg-black transition-all   self-start">
                Join for Free
              </button>
           </div>
@@ -264,7 +264,7 @@
                   </div>
                   <div class="text-right">
                     <p class="text-white/60 text-[8px] font-bold  leading-none mb-1">Starting from</p>
-                    <p class="text-lg  text-white leading-none">${{ deal.price }}</p>
+                    <p class="text-lg  text-white leading-none">{{ formatPrice(deal.price) }}</p>
                   </div>
                </div>
             </div>
@@ -318,7 +318,7 @@
           <div class="absolute inset-0 bg-green-900/30"></div>
           <div class="relative z-10 flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full gap-4 text-center sm:text-left">
             <h3 class="text-white text-lg sm:text-2xl font-bold drop-shadow-md">Turn matchday into a getaway — score summer savings.</h3>
-            <button class="bg-[#3b533b] hover:bg-[#2c3f2c] border border-white/40 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-full text-sm font-bold transition-colors shadow-lg whitespace-nowrap">Find Deals</button>
+            <button @click="$router.push('/explore')" class="bg-[#3b533b] hover:bg-[#2c3f2c] border border-white/40 text-white px-6 sm:px-8 py-2 sm:py-3 rounded-full text-sm font-bold transition-colors shadow-lg whitespace-nowrap">Find Deals</button>
           </div>
         </div>
       </div>
@@ -362,7 +362,7 @@
               <div class="flex justify-between items-start mb-4">
                 <h4 class="text-xl  text-black leading-tight">{{ deal.city }}</h4>
                 <div class="text-right">
-                  <p class="text-xl  text-black leading-none">${{ deal.price }}</p>
+                  <p class="text-xl  text-black leading-none">{{ formatPrice(deal.price) }}</p>
                 </div>
               </div>
               <div class="mt-auto">
@@ -402,8 +402,8 @@
                <p class="text-[11px] text-gray-500 font-medium">Stack airline miles and Flybeth points. <a href="#" class="text-[#1e1e96] underline">Learn more</a></p>
              </div>
              <div class="flex flex-col gap-2 shrink-0 w-full sm:w-auto px-4 sm:px-0">
-               <button class="bg-[#1e1e96] hover:bg-[#15156a] text-white px-8 py-2 rounded-full text-[11px] font-bold transition-colors w-full">Book Hotels</button>
-               <button class="bg-[#1e1e96] hover:bg-[#15156a] text-white px-8 py-2 rounded-full text-[11px] font-bold transition-colors w-full">Book Cars</button>
+               <button @click="$router.push('/stays')" class="bg-[#1e1e96] hover:bg-[#15156a] text-white px-8 py-2 rounded-full text-[11px] font-bold transition-colors w-full">Book Hotels</button>
+               <button @click="$router.push('/cars')" class="bg-[#1e1e96] hover:bg-[#15156a] text-white px-8 py-2 rounded-full text-[11px] font-bold transition-colors w-full">Book Cars</button>
              </div>
           </div>
         </div>
@@ -455,7 +455,7 @@
                 <p class="text-white/70 text-sm font-bold">{{ dest.city }} • {{ dest.rating }} Stars</p>
                 <div class="text-right">
                   <p class="text-white/60 text-[8px] font-bold  leading-none mb-1">Starting from</p>
-                  <p class="text-white text-xs font-bold leading-none">${{ dest.price }}</p>
+                  <p class="text-white text-xs font-bold leading-none">{{ formatPrice(dest.price) }}</p>
                 </div>
               </div>
             </div>
@@ -470,7 +470,7 @@
 
         <div v-if="currentTab === 'Flights' || currentTab === 'Hotels' || showAllSections" class="mt-12 p-8 bg-white/40 backdrop-blur-xl rounded-[3rem] border border-white/20 shadow-2xl flex flex-col items-center justify-between gap-12 relative overflow-hidden group">
            <!-- Animated background elements -->
-           <div class="absolute -right-20 -top-20 w-80 h-80 bg-black rounded-full blur-3xl group-hover:bg-black transition-all duration-1000"></div>
+           <!-- <div class="absolute -right-20 -top-20 w-80 h-80 bg-black rounded-full blur-3xl group-hover:bg-black transition-all duration-1000"></div>
            <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-black rounded-full blur-3xl group-hover:bg-black transition-all duration-1000"></div>
            
            <div class="flex flex-col md:flex-row items-center gap-10 relative z-10 w-full">
@@ -488,7 +488,7 @@
                     Our AI has crunched the numbers for <span class="text-black underline decoration-gray-900/20 decoration-4 underline-offset-4">{{ userLocation?.city || 'your location' }}</span>. Explore the data to find your perfect getaway.
                  </p>
               </div>
-           </div>
+           </div> -->
 
            <!-- Statistics Dashboard -->
            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full relative z-10">
@@ -742,7 +742,12 @@ const handleSelectDeal = (deal: any) => {
     })
   }
 }
+import { useAuth } from '@/composables/modules/auth/useAuth';
 import { useSettings } from '@/composables/useSettings';
+
+const { formatPrice } = useSettings();
+
+const { token, isLoggedIn } = useAuth();
 import { useI18n } from 'vue-i18n';
 import { useMarketInsights } from '@/composables/modules/market-insights/useMarketInsights';
 import { useFetchFlightDeals } from '@/composables/modules/flights/useFetchFlightDeals';
@@ -1052,7 +1057,7 @@ const navigateToFlightSearch = (destination: string) => {
     adults: 1,
     cabinClass: 'ECONOMY'
   };
-  navigateTo({ path: '/checkout', query: { ...query, type: 'flight', provider: 'amadeus' } });
+  navigateTo({ path: '/checkout', query: { ...query, type: 'flight', provider: 'duffel' } });
 };
 
 const currentFareDeals = computed(() => {
@@ -1101,7 +1106,7 @@ const flightRecommendations = computed(() => {
       image: fallbackImages[idx % fallbackImages.length],
       isRoundTrip: !!deal.returnDate,
       offerId: deal.offerId || deal.id,
-      provider: deal.provider || 'amadeus',
+      provider: deal.provider || 'duffel',
       rawDeal: deal
     }));
   }

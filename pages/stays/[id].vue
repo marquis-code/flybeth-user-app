@@ -333,7 +333,7 @@
                     </div>
                   </div>
                   <div class="sd-room-price-col">
-                    <div class="sd-room-price">${{ Math.round(room.rates?.[0]?.priceWithCommission || 0).toLocaleString() }}</div>
+                    <div class="sd-room-price">{{ formatPrice(Math.round(room.rates?.[0]?.priceWithCommission || 0)) }}</div>
                     <div class="sd-room-per">for {{ diffDays }} night{{ diffDays !== 1 ? 's' : '' }}</div>
                     <div class="sd-room-incl">Taxes & fees included</div>
                   </div>
@@ -399,7 +399,7 @@
             <div class="sd-sum-room-name">{{ (selectedRoom as any).name }}</div>
 
             <div class="sd-sum-price-block">
-              <div class="sd-sum-price">${{ Math.round((selectedRoom as any).rates?.[0]?.priceWithCommission || 0).toLocaleString() }}</div>
+              <div class="sd-sum-price">{{ formatPrice(Math.round((selectedRoom as any).rates?.[0]?.priceWithCommission || 0)) }}</div>
               <div class="sd-sum-per">{{ nightCount }} night{{ nightCount !== 1 ? 's' : '' }} · {{ searchQuery.rooms }} room{{ searchQuery.rooms !== 1 ? 's' : '' }}</div>
             </div>
 
@@ -484,6 +484,9 @@ import { ref, computed, reactive, onMounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStayDetails } from '@/composables/modules/stays/useStayDetails'
 import SecuredHotelModal from '@/components/stays/SecuredHotelModal.vue'
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
 
 const route = useRoute()
 const router = useRouter()

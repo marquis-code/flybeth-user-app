@@ -38,14 +38,14 @@
 
         <!-- Controls -->
         <div class="flex justify-between items-center px-2">
-           <button @click.stop="previousMonth" class="p-2 hover:bg-black rounded-xl transition-all border border-transparent hover:border-gray-200">
+           <button @click.stop="previousMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-200">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
            </button>
            <div class="flex gap-4 md:gap-40 text-black   text-sm uppercase">
              <span>{{ getMonthName(currentDateLeft) }} {{ currentDateLeft.getFullYear() }}</span>
              <span class="hidden md:inline">{{ getMonthName(currentDateRight) }} {{ currentDateRight.getFullYear() }}</span>
            </div>
-           <button @click.stop="nextMonth" class="p-2 hover:bg-black rounded-xl transition-all border border-transparent hover:border-gray-200">
+           <button @click.stop="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all border border-transparent hover:border-gray-200">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
            </button>
         </div>
@@ -212,7 +212,7 @@ const getDayClass = (day: any) => [
     isStartDate(day.fullDate) || isEndDate(day.fullDate) ? 'bg-black text-white shadow-lg scale-110' : '',
     isHoverEndDate(day.fullDate) && !checkOutDate.value ? 'bg-black text-white' : '',
     !isStartDate(day.fullDate) && !isEndDate(day.fullDate) && !isHoverEndDate(day.fullDate) ? 'text-black ' : '',
-    !isSelectable(day.fullDate) ? 'text-black pointer-events-none' : 'hover:bg-black'
+    !isSelectable(day.fullDate) ? 'text-black pointer-events-none' : 'hover:bg-gray-100'
 ];
 
 const handleDateHover = (date: Date | null) => {

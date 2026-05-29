@@ -29,8 +29,8 @@
                    <p class="text-xs text-gray-500">Economy • Round Trip</p>
                  </div>
                  <div class="text-right">
-                   <p class="text-xs text-gray-500 line-through mb-0.5">$650</p>
-                   <p class="font-black text-brand-blue text-xl leading-none">$420</p>
+                   <p class="text-xs text-gray-500 line-through mb-0.5">{{ formatPrice(650) }}</p>
+                   <p class="font-black text-brand-blue text-xl leading-none">{{ formatPrice(420) }}</p>
                  </div>
                </div>
                <div class="mt-auto">
@@ -46,6 +46,10 @@
 </template>
 
 <script setup>
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
+
 const route = useRoute()
 const formatSlug = (slug) => {
   if (!slug) return '';

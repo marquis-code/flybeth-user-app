@@ -105,7 +105,7 @@
                         :class="[
                           day.isSelected ? 'bg-[#0D1DAD] text-white shadow-md' : 
                           day.isToday ? 'text-[#0D1DAD] border-2 border-[#0D1DAD]/10 hover:bg-[#0D1DAD]/5' : 
-                          'text-black hover:bg-black'
+                          'text-black hover:bg-gray-100'
                         ]"
                       >
                         {{ day.date }}

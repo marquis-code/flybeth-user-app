@@ -33,7 +33,7 @@
             <div class="flex items-end justify-between mt-auto">
               <div class="flex flex-col">
                  <span class="text-sm text-black font-bold  leading-none mb-1">From</span>
-                 <p class="text-sm font-bold text-black leading-none">${{ hotel.price }} <span class="text-xs text-black font-normal">/ night*</span></p>
+                 <p class="text-sm font-bold text-black leading-none">{{ formatPrice(hotel.price) }} <span class="text-xs text-black font-normal">/ night*</span></p>
               </div>
               <button 
                 @click.stop="handleBookNow(hotel)"
@@ -65,6 +65,9 @@ import { useRouter } from 'vue-router';
 import { staysApi } from '@/api_factory/modules/stays';
 import StaySkeleton from './StaySkeleton.vue';
 import EmptyState from '@/components/EmptyState.vue';
+import { useSettings } from '@/composables/useSettings';
+
+const { formatPrice } = useSettings();
 
 const props = defineProps<{
   destinationName: string;

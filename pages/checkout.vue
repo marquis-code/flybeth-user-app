@@ -13,12 +13,14 @@
     @confirm="handleManualConfirm"
   />
 
+  <BookingExpiredModal :visible="isBookingExpired" />
+
   <!-- Klarna Widget Modal -->
   <div v-if="showKlarnaWidget" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
     <div class="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
       <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-white/50">
         <h3 class="text-xl font-bold text-black">Complete with Klarna</h3>
-        <button @click="closeKlarnaWidget" class="p-2 hover:bg-black rounded-full transition-colors">
+        <button @click="closeKlarnaWidget" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
           <XIcon class="w-5 h-5 text-black" />
         </button>
       </div>
@@ -155,7 +157,7 @@
               ref="paymentRef"
               :total-amount="displayPrices.total" 
               :currency-symbol="currencySymbol"
-              :currency="priceDetailed?.currency"
+              :currency="currentCurrency.code"
               :processing="paymentProcessing"
               :flight-offer="priceDetailed"
               @complete-payment="handlePayment"
@@ -176,9 +178,9 @@
             :taxes="displayPrices.tax"
             :discount="0"
             :serviceCharge="displayPrices.serviceCharge"
-            :addOns="selectedAddOns"
+            :addOns="selectedAddOns.map(a => ({ ...a, price: a.price * (currentCurrency.rate || 1) }))"
             :selectedSeats="selectedSeats"
-            :seatPrice="seatPrice"
+            :seatPrice="seatPrice * (currentCurrency.rate || 1)"
             :currency="currencySymbol"
             :showPayButton="currentStep === 3"
             :bundledStay="bundledStay"
@@ -214,6 +216,7 @@ import ManualPaymentDetailsModal from '~/components/checkout/ManualPaymentDetail
 import CheckoutSidebar from '~/components/checkout/CheckoutSidebar.vue'
 import SeatSelection from '~/components/checkout/SeatSelection.vue'
 import CheckoutStayDetails from '~/components/checkout/CheckoutStayDetails.vue'
+import BookingExpiredModal from '~/components/checkout/BookingExpiredModal.vue'
 import { flightsApi } from '~/api_factory/modules/flights'
 import { transfersApi } from '~/api_factory/modules/transfers'
 import { bookingsApi } from '~/api_factory/modules/bookings'
@@ -222,10 +225,12 @@ import { useTracking } from '~/composables/core/useTracking'
 import { useAuth } from '~/composables/modules/auth/useAuth'
 import { useUser } from '~/composables/modules/auth/user'
 import { useCustomToast } from '~/composables/core/useCustomToast'
+import { useSettings } from '~/composables/useSettings'
 
 const { token, isLoggedIn, openAuthModal } = useAuth()
 const { showToast } = useCustomToast()
 const { ensureDuffelIdentity } = useDuffelIdentity()
+const { currentCurrency } = useSettings()
 
 definePageMeta({
   layout: 'no-footer'
@@ -236,7 +241,8 @@ const router = useRouter()
 
 // State
 const currentStep = ref(0)
-const showBrandedLoader = ref(true)
+const showBrandedLoader = ref(false)
+const isBookingExpired = ref(false)
 const loaderStatus = ref('Confirming best fare with airline...')
 const paymentProcessing = ref(false)
 const selectedAddOns = ref<{ id: string; name: string; price: number }[]>([])
@@ -394,13 +400,19 @@ const bookingDetails = computed(() => ({
   rooms: route.query.rooms ? Number(route.query.rooms) : 1,
 }))
 
+const currencySymbol = computed(() => {
+  return currentCurrency.value.symbol || '$'
+})
+
+const addOnsTotal = computed(() => selectedAddOns.value.reduce((sum, a) => sum + (a.price * (currentCurrency.value.rate || 1)), 0))
+
 // Price display
 const displayPrices = computed(() => {
   let base = 0
   let total = 0
   let tax = 0
   let serviceCharge = 0
-  let currency = 'USD'
+  const rate = currentCurrency.value.rate || 1
 
   if (priceDetailed.value) {
     total = priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
@@ -413,7 +425,6 @@ const displayPrices = computed(() => {
         serviceCharge = 0
         tax = total - base
     }
-    currency = priceDetailed.value.currency || 'USD'
   }
 
   if (bundledStay.value) {
@@ -423,13 +434,13 @@ const displayPrices = computed(() => {
   }
 
   // Calculate final aggregated total once
-  const finalTotal = total + seatPrice.value + addOnsTotal.value
+  let finalTotal = total + (seatPrice.value) + (selectedAddOns.value.reduce((sum, a) => sum + a.price, 0))
 
   return {
-    base,
-    tax,
-    serviceCharge,
-    total: finalTotal
+    base: base * rate,
+    tax: tax * rate,
+    serviceCharge: serviceCharge * rate,
+    total: finalTotal * rate
   }
 })
 
@@ -438,14 +449,6 @@ const isCurrencyModalVisible = ref(false)
 const isConversionLoading = ref(false)
 const isManualDetailsVisible = ref(false)
 const bankAccounts = ref([])
-
-const currencySymbol = computed(() => {
-  const map: any = { USD: '$', EUR: '€', GBP: '£', NGN: '₦', GHS: 'GH₵', ZAR: 'R', KES: 'KSh' }
-  return map[priceDetailed.value?.currency] || priceDetailed.value?.currency || '$'
-})
-
-const addOnsTotal = computed(() => selectedAddOns.value.reduce((sum, a) => sum + a.price, 0))
-
 // Normalization Helpers
 const parseDuration = (durationStr: string) => {
   if (!durationStr) return 0
@@ -584,30 +587,9 @@ const handleTravellerContinue = async () => {
   // Guest booking enabled: we don't block if not logged in.
   // We just proceed to the next step.
   
-  if (bookingDetails.value.provider === 'duffel') {
-    // If guest, ensureDuffelIdentity will use the data from the form
-    // Note: ensureDuffelIdentity might still fail if the backend requires auth for this endpoint,
-    // but we will try to proceed as guest.
-    showBrandedLoader.value = true
-    loaderStatus.value = 'Setting up travel identity...'
-    try {
-      await ensureDuffelIdentity({
-        ...travellerData.value.travelers[0],
-        email: travellerData.value.contact.email,
-        phone: travellerData.value.contact.phone
-      })
-    } catch (err: any) {
-      // If it's a 401 and we are not logged in, we might still want to proceed if guest booking is supported.
-      // For now, we only re-open auth modal if it's a clear auth failure on a protected route.
-      console.error('Duffel identity setup failed:', err)
-      if (err?.response?.status === 401 && isLoggedIn.value) { 
-        openAuthModal(); 
-        showBrandedLoader.value = false
-        return 
-      }
-    }
-    showBrandedLoader.value = false
-  }
+  // Duffel Identity is ONLY required if using the official @duffel/components Card Payment flow 
+  // which requires a component client token. Since we are using our custom checkout UI and paying 
+  // directly via the backend using Duffel Balance, we can entirely skip this 500-error prone step!
   goToStep(2)
 }
 
@@ -661,6 +643,8 @@ const handlePayment = async (paymentInfo: any) => {
       paymentMetadata: paymentInfo,
       passengerDetails: travellerData.value.travelers.map(t => ({
         ...t,
+        email: travellerData.value.contact.email || '',
+        phone: travellerData.value.contact.phone || '',
         gender: (t.gender || 'male').toLowerCase(),
         title: (t.title || 'mr').toLowerCase(),
         type: 'adult'
@@ -677,7 +661,7 @@ const handlePayment = async (paymentInfo: any) => {
       payload.flights = [{
         flightId: bookingDetails.value.id,
         class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
-        offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId,
+        offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId || priceDetailed.value?.id || bookingDetails.value.id,
         provider: bookingDetails.value.provider,
         passengerIds: []
       }]
@@ -828,10 +812,12 @@ onMounted(async () => {
       } catch (err: any) { 
         console.error('Pricing failed:', err)
         if (err.response?.status === 404) {
+          isBookingExpired.value = true
+        } else {
           showToast({ 
-            title: "Offer Expired", 
-            message: "This flight offer has expired. Please go back and select it again to get the latest pricing.", 
-            toastType: "info" 
+            title: "Pricing Error", 
+            message: "We couldn't confirm the latest price. Please try again.", 
+            toastType: "error" 
           })
         }
         priceDetailed.value = { ...selectedFlight.value, provider: bookingDetails.value.provider } 

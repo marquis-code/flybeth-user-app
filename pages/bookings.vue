@@ -138,15 +138,15 @@
           <div class="space-y-2">
             <div class="flex justify-between text-sm font-bold text-black">
               <span>Base Fare</span>
-              <span>{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.baseFare) }}</span>
+              <span>{{ formatPrice(booking.pricing?.baseFare) }}</span>
             </div>
             <div class="flex justify-between text-sm font-bold text-black">
               <span>Taxes</span>
-              <span>{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.taxes) }}</span>
+              <span>{{ formatPrice(booking.pricing?.taxes) }}</span>
             </div>
             <div class="border-t border-dashed border-gray-200 pt-2 flex justify-between  text-black">
               <span>Total</span>
-              <span class="text-xl">{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.totalAmount) }}</span>
+              <span class="text-xl">{{ formatPrice(booking.pricing?.totalAmount) }}</span>
             </div>
           </div>
         </div>
@@ -192,6 +192,7 @@ import { bookingsApi } from '@/api_factory/modules/bookings'
 import { transfersApi } from '@/api_factory/modules/transfers'
 import { useCustomToast } from '@/composables/core/useCustomToast'
 import { useConfirmation } from '@/composables/core/useConfirmation'
+import { useSettings } from '~/composables/useSettings'
 
 const { confirm } = useConfirmation()
 const { showToast } = useCustomToast()
@@ -204,7 +205,7 @@ const booking = ref<any>(null)
 const pnrInput = ref('')
 
 const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'
-const formatPrice = (p: number) => p?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'
+const { formatPrice } = useSettings()
 
 const searchByPnr = async () => {
   if (!pnrInput.value) return
@@ -230,7 +231,7 @@ const handlePayment = () => {
     query: {
       type: booking.value.type || 'flight',
       id: booking.value._id,
-      provider: booking.value.provider || 'amadeus',
+      provider: booking.value.provider || 'duffel',
     }
   })
 }
@@ -253,7 +254,7 @@ const handleCancelTransfer = async (bkg: any) => {
     const payload = {
       orderId: bkg.metadata?.orderId || bkg.orderId || bkg.id || bkg._id,
       confirmNbr: bkg.pnr || bkg.metadata?.confirmationNumber,
-      provider: bkg.provider || 'amadeus'
+      provider: bkg.provider || 'duffel'
     }
     
     await transfersApi.cancel(payload)

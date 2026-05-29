@@ -203,6 +203,9 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { Armchair, Info, ChevronRight, Minus, User, ChevronDown } from 'lucide-vue-next'
 import { flightsApi } from '~/api_factory/modules/flights'
+import { useSettings } from '~/composables/useSettings'
+
+const { formatPrice, currentCurrency } = useSettings()
 
 interface Seat {
   id: string;
@@ -287,10 +290,6 @@ const handleSeatClick = (element: any) => {
   emit('update:modelValue', services)
 }
 
-const formatPrice = (price: number) => (price || 0).toLocaleString(undefined, {
-  style: 'currency',
-  currency: props.flightOffer.currency || 'USD'
-})
 
 onMounted(fetchSeatmap)
 </script>

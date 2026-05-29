@@ -30,13 +30,13 @@
           <!-- Calendar Month -->
           <div class="flex-1">
              <div class="flex items-center justify-between mb-8">
-                <button @click="prevMonth" class="p-2 hover:bg-black rounded-xl transition-all text-black hover:text-black">
+                <button @click="prevMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-black">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 <h3 class="text-sm  text-black uppercase ">{{ formatMonthYear(currentMonth) }}</h3>
-                <button v-if="!isDesktop" @click="nextMonth" class="p-2 hover:bg-black rounded-xl transition-all text-black hover:text-black">
+                <button v-if="!isDesktop" @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-black">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" />
                   </svg>
@@ -81,7 +81,7 @@
              <div class="flex items-center justify-between mb-8">
                 <div class="w-8"></div>
                 <h3 class="text-sm  text-black uppercase ">{{ formatMonthYear(nextMonthDate) }}</h3>
-                <button @click="nextMonth" class="p-2 hover:bg-black rounded-xl transition-all text-black hover:text-black">
+                <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-xl transition-all text-black">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                     <path d="M9 5l7 7-7 7" />
                   </svg>

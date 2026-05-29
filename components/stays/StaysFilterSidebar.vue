@@ -32,8 +32,8 @@
           class="w-full h-1 bg-black rounded-lg appearance-none cursor-pointer accent-gray-900"
         />
         <div class="flex justify-between mt-6 text-sm  text-black ">
-          <span class="bg-white px-3 py-1.5 rounded-lg border border-gray-200">${{ minPrice }}</span>
-          <span class="bg-black text-white px-3 py-1.5 rounded-lg">${{ filters.maxPrice }}</span>
+          <span class="bg-white px-3 py-1.5 rounded-lg border border-gray-200">{{ formatPrice(minPrice) }}</span>
+          <span class="bg-black text-white px-3 py-1.5 rounded-lg">{{ formatPrice(filters.maxPrice) }}</span>
         </div>
       </div>
     </div>
@@ -92,6 +92,9 @@
 
 <script setup lang="ts">
 import { watch } from 'vue';
+import { useSettings } from '@/composables/useSettings';
+
+const { formatPrice } = useSettings();
 
 const props = defineProps({
   minPrice: { type: Number, default: 0 },

@@ -3,7 +3,7 @@
 
     <!-- ── Trigger ── -->
     <div
-      @mousedown.prevent="toggleCalendar"
+      @click.stop="toggleCalendar"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
       :class="showCalendar ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
     >
@@ -43,13 +43,23 @@
     <Transition name="loc-drop">
       <div
         v-show="showCalendar"
-        class="absolute left-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
-        :class="[isMobile ? 'fixed inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[520px]']"
+        class="absolute left-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
+        :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[520px] rounded-2xl']"
         style="background-color: #ffffff !important;"
         @mousedown.stop
+        @click.stop
       >
+        <!-- Mobile Header with Close Button -->
+        <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">
+          <h3 class="text-base font-bold text-black">{{ mode === 'oneway' ? 'Departure' : 'Check-in – Check-out' }}</h3>
+          <button @click="closeCalendar" class="p-2 -mr-2 text-black hover:bg-gray-100 rounded-full transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto flex flex-col">
         <!-- Month nav header -->
-        <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200 shrink-0">
           <button
             @click="prevMonth"
             :disabled="isAtMinMonth"
@@ -100,8 +110,10 @@
           </div>
         </div>
 
+        </div>
+
         <!-- Footer -->
-        <div class="flex items-center justify-between gap-4 px-5 py-4 border-t border-gray-200 bg-white/30">
+        <div class="flex items-center justify-between gap-4 px-5 py-4 border-t border-gray-200 bg-white/30 shrink-0">
           <div class="text-[11px] font-bold text-black">
             <span v-if="!startDate">Select Date</span>
             <span v-else-if="mode !== 'oneway' && !endDate">Select Return</span>
@@ -112,7 +124,7 @@
             <button v-if="startDate" @click="clearDates" class="text-[11px] font-bold text-black hover:text-black px-3 py-2 transition-colors">Clear</button>
             <button @click="closeCalendar" class="px-5 py-2 bg-black text-white rounded-xl text-[12px] font-bold hover:bg-gray-900 transition-all active:scale-95">Done</button>
           </div>
-        </div>
+        </div> <!-- End flex-1 container -->
       </div>
     </Transition>
 
@@ -258,7 +270,7 @@ function openCalendar() { showCalendar.value = true; emit('focus') }
 function closeCalendar() { showCalendar.value = false; hoverDate.value = null; emit('close') }
 function clearDates() { startDate.value = null; endDate.value = null; hoverDate.value = null; emit('update:departure', ''); emit('update:return', '') }
 
-const handleClickOutside = (e: MouseEvent) => { if (pickerRef.value && !pickerRef.value.contains(e.target as Node)) closeCalendar() }
+const handleClickOutside = (e: MouseEvent) => { if (showCalendar.value && pickerRef.value && !pickerRef.value.contains(e.target as Node)) closeCalendar() }
 watch(() => props.departure, v => { startDate.value = v || null })
 watch(() => props.return,    v => { endDate.value   = v || null })
 const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
@@ -266,11 +278,11 @@ const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  window.addEventListener('mousedown', handleClickOutside)
+  window.addEventListener('click', handleClickOutside, true)
 })
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
-  window.removeEventListener('mousedown', handleClickOutside)
+  window.removeEventListener('click', handleClickOutside, true)
 })
 </script>
 

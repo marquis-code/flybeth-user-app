@@ -59,9 +59,9 @@
             <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
               <div class="flex items-center gap-2 mb-3">
                 <span class="px-2.5 py-1 bg-[#0084ff]/10 rounded-md text-[9px] font-bold text-[#0084ff] uppercase ">
-                  {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : (activity.provider || 'Amadeus') }}
+                  {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : (activity.provider || 'Duffel') }}
                 </span>
-                <span v-if="activity.minimumDuration" class="px-2.5 py-1 bg-black rounded-md text-[9px] font-bold text-black uppercase  flex items-center gap-1">
+                <span v-if="activity.minimumDuration" class="px-2.5 py-1 bg-gray-100 rounded-md text-[9px] font-bold text-black uppercase  flex items-center gap-1">
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                   {{ activity.minimumDuration }}
                 </span>
@@ -117,8 +117,7 @@
               <div class="bg-gradient-to-br from-[#0a1628] to-[#1a2b3d] p-6 text-white">
                 <p class="text-sm font-bold uppercase  text-white/50 mb-1">Starting from</p>
                 <div class="flex items-baseline gap-1">
-                  <span class="text-3xl font-bold ">${{ Math.round(activity.price || 0) }}</span>
-                  <span class="text-sm font-medium text-white/60">{{ activity.currency || 'EUR' }}</span>
+                  <span class="text-3xl font-bold ">{{ formatPrice(activity.price || 0) }}</span>
                 </div>
                 <p class="text-sm text-white/40 mt-1">per person</p>
               </div>
@@ -201,6 +200,9 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { activitiesApi } from '@/api_factory/modules/activities';
+import { useSettings } from '@/composables/useSettings';
+
+const { formatPrice } = useSettings();
 
 const route = useRoute();
 const router = useRouter();
@@ -251,7 +253,7 @@ const handleBookInternal = () => {
 
 onMounted(async () => {
   const id = route.params.id as string;
-  const provider = (route.query.provider as string) || 'amadeus';
+  const provider = (route.query.provider as string) || 'duffel';
 
   loading.value = true;
   try {

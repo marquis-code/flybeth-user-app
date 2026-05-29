@@ -21,7 +21,7 @@
             </span>
             <div class="text-right">
               <p class="text-sm text-brand-gray/40 font-bold uppercase ">From</p>
-              <p class="text-xl  text-black er">{{ formatPrice(activity.amountsFrom?.[0]) }}</p>
+              <p class="text-xl  text-black er">{{ getFormattedPrice(activity.amountsFrom?.[0]) }}</p>
             </div>
           </div>
           <h3 class="text-xl  text-black leading-tight group-hover:text-brand-green transition-colors">
@@ -54,6 +54,9 @@
 
 <script setup lang="ts">
 import { StarIcon, ClockIcon, TicketIcon } from '@heroicons/vue/24/outline'
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
 
 const props = defineProps<{
   activity: any
@@ -61,8 +64,9 @@ const props = defineProps<{
 
 const emit = defineEmits(['select'])
 
-const formatPrice = (priceObj: any) => {
-  if (!priceObj) return '$0.00'
-  return `${priceObj.currency} ${priceObj.amount}`
+const getFormattedPrice = (priceObj: any) => {
+  if (!priceObj) return formatPrice(0)
+  // priceObj.amount should be standard USD base
+  return formatPrice(priceObj.amount)
 }
 </script>

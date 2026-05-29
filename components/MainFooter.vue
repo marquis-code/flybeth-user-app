@@ -208,8 +208,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { ShieldCheck, ChevronRight, X } from 'lucide-vue-next';
+import { flightsApi } from '@/api_factory/modules/flights';
 import facebook from "@/assets/img/socials/facebook.png"
 import instagram from "@/assets/img/socials/instagram.avif"
 import twitter from "@/assets/img/socials/twitter.webp"
@@ -250,31 +251,10 @@ const quickLinkTabs = [
 ];
 
 // ── Tab panel content ─────────────────────────────────────
-const tabContent: Record<string, { description: string; links: { name: string; path: string }[] }> = {
+const tabContent: Record<string, { description: string; links: { name: string; path: string }[] }> = reactive({
   airlines: {
-    description: 'Explore our cheap airfare options by carrier, with over 500 options to choose from.',
-    links: [
-      { name: 'Aeromexico',           path: '/airlines/aeromexico' },
-      { name: 'Air Canada',           path: '/airlines/air-canada' },
-      { name: 'Air France',           path: '/airlines/air-france' },
-      { name: 'Alaska Airlines',      path: '/airlines/alaska-airlines' },
-      { name: 'American Airlines',    path: '/airlines/american-airlines' },
-      { name: 'China Eastern Airlines',path: '/airlines/china-eastern' },
-      { name: 'Copa Airlines',        path: '/airlines/copa' },
-      { name: 'Emirates',             path: '/airlines/emirates' },
-      { name: 'Etihad Airways',       path: '/airlines/etihad' },
-      { name: 'EVA Air',              path: '/airlines/eva-air' },
-      { name: 'Frontier Airlines',    path: '/airlines/frontier' },
-      { name: 'Hawaiian Airlines',    path: '/airlines/hawaiian' },
-      { name: 'LATAM Airlines',       path: '/airlines/latam' },
-      { name: 'Lufthansa',            path: '/airlines/lufthansa' },
-      { name: 'Air Europa',           path: '/airlines/air-europa' },
-      { name: 'Spirit Airlines',      path: '/airlines/spirit' },
-      { name: 'Turkish Airlines',     path: '/airlines/turkish' },
-      { name: 'United Airlines',      path: '/airlines/united' },
-      { name: 'Volaris Airlines',     path: '/airlines/volaris' },
-      { name: 'Virgin Atlantic',      path: '/airlines/virgin-atlantic' },
-    ],
+    description: 'Explore our cheap airfare options by carrier, with over 500 options to choose from. (Loading...)',
+    links: [],
   },
   routes: {
     description: 'Book one of our most popular flight routes with three easy clicks.',
@@ -343,7 +323,7 @@ const tabContent: Record<string, { description: string; links: { name: string; p
       { name: 'Manila',       path: '/destinations/manila' },
     ],
   },
-};
+});
 
 // ── Main link columns ─────────────────────────────────────
 const linkColumns = [
@@ -423,6 +403,35 @@ const cookieCategories = reactive([
     description: 'Provide insight into visit counts, page popularity, traffic sources, A/B testing, and session recordings — used solely to optimise our digital properties.',
   },
 ]);
+
+// ── Fetch dynamic data ────────────────────────────────────
+const fetchAirlines = async () => {
+  try {
+    const { data } = await flightsApi.getDuffelAirlines({ limit: 20 });
+    if (data?.data && Array.isArray(data.data)) {
+      tabContent.airlines.description = 'Explore our cheap airfare options by carrier, with over 500 options to choose from.';
+      tabContent.airlines.links = data.data.map((airline: any) => ({
+        name: airline.name,
+        path: `/airlines/${airline.iata_code || airline.id}`
+      }));
+    }
+  } catch (err) {
+    console.error('Failed to fetch airlines for footer:', err);
+    tabContent.airlines.description = 'Explore our cheap airfare options by carrier, with over 500 options to choose from.';
+    tabContent.airlines.links = [
+      { name: 'American Airlines',    path: '/airlines/aa' },
+      { name: 'Delta Air Lines',      path: '/airlines/dl' },
+      { name: 'United Airlines',      path: '/airlines/ua' },
+      { name: 'Emirates',             path: '/airlines/ek' },
+      { name: 'Lufthansa',            path: '/airlines/lh' },
+      { name: 'Air France',           path: '/airlines/af' },
+    ];
+  }
+};
+
+onMounted(() => {
+  fetchAirlines();
+});
 </script>
 
 <style scoped>

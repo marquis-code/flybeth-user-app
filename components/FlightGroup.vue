@@ -1,103 +1,101 @@
 <template>
-  <div class="bg-white rounded-2xl overflow-hidden mb-4 border border-gray-200 transition-all duration-500 hover:border-gray-200">
-    <!-- Group Header (Airline Info) -->
-    <div class="bg-white/30 px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <div class="h-9 w-9 rounded-lg bg-white p-1.5 border border-gray-200">
-          <img v-if="airlineLogo" :src="airlineLogo" :alt="airlineName" class="h-full w-full object-contain" />
-          <div v-else class="h-full w-full flex items-center justify-center bg-white rounded-lg">
-             <span class="text-black font-bold text-xs">{{ airlineName.slice(0, 2) }}</span>
-          </div>
-        </div>
-        <h3 class="font-bold text-black  text-sm">{{ airlineName }}</h3>
-      </div>
+  <div class="bg-white rounded-2xl overflow-hidden mb-6 border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md">
+    <!-- Header: Price and Recommended Badge -->
+    <div class="bg-white px-5 sm:px-6 py-4 flex flex-wrap items-center justify-between border-b border-gray-100 gap-4">
       <div class="flex items-center gap-3">
-        <span class="text-sm font-bold text-brand-gray/30 ">Starting from</span>
-        <span class="text-xl  text-black">${{ cheapestPrice }}</span>
-      </div>
-    </div>
-
-    <!-- Main Offer (Cheapest/Best) -->
-    <div class="p-2">
-      <FlightCard 
-        :flight="bestOffer" 
-        class=" !border-none !rounded-2xl"
-        @select="$emit('select', $event)"
-      />
-    </div>
-
-    <!-- Multi-Offer Toggle -->
-    <button 
-      v-if="otherOffers.length > 0"
-      @click="isExpanded = !isExpanded"
-      class="w-full py-3.5 bg-white/40 hover:bg-white/80 transition-colors flex items-center justify-center gap-3 group"
-    >
-      <div class="flex -space-x-2">
-         <div v-for="i in Math.min(3, otherOffers.length)" :key="i" class="w-6 h-6 rounded-full border-2 border-white bg-black flex items-center justify-center overflow-hidden">
-            <img v-if="airlineLogo" :src="airlineLogo" class="w-full h-full object-cover opacity-60" />
-         </div>
-      </div>
-      <span class="text-sm  text-brand-gray/60  group-hover:text-black transition-colors">
-        {{ isExpanded ? 'Hide' : `+${otherOffers.length}` }} {{ airlineName }} flights
-      </span>
-      <ChevronDown 
-        class="h-4 w-4 text-brand-gray/40 transition-transform duration-500"
-        :class="isExpanded ? 'rotate-180' : ''"
-      />
-    </button>
-
-    <!-- Expanded Offers -->
-    <transition
-      enter-active-class="transition-all duration-500 ease-out"
-      leave-active-class="transition-all duration-500 ease-in"
-      enter-from-class="max-h-0 opacity-0"
-      enter-to-class="max-h-[2000px] opacity-100"
-      leave-from-class="max-h-[2000px] opacity-100"
-      leave-to-class="max-h-0 opacity-0"
-    >
-      <div v-if="isExpanded" class="px-4 pb-4 space-y-2 overflow-hidden">
-       <div v-for="offer in otherOffers" :key="offer.offerId" class="pt-2">
-          <FlightCard 
-            :flight="offer" 
-            class=" !border-none !rounded-xl !p-4"
-            @select="$emit('select', $event)"
-          />
+        <div v-if="isRecommended" class="bg-brand-green/10 text-brand-green text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wide">
+          <Star class="w-3.5 h-3.5 fill-current" />
+          Recommended
+        </div>
+        <div v-else class="text-sm font-semibold text-gray-500 flex items-center gap-2">
+          <Plane class="w-4 h-4 text-gray-400" />
+          Flight Offer
         </div>
       </div>
-    </transition>
+      
+      <div class="flex items-center gap-3 ml-auto">
+        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Price</span>
+        <span class="text-2xl font-bold text-black">{{ formattedPrice }}</span>
+      </div>
+    </div>
+
+    <!-- Slices (Outbound, Return, etc.) rendered as FlightCards -->
+    <div class="p-2 sm:p-3 space-y-2 bg-gray-50/50">
+      <FlightCard 
+        v-for="(slice, index) in slices" 
+        :key="index"
+        :flight="slice" 
+      />
+    </div>
+
+    <!-- Footer: Baggage & Next Step -->
+    <div class="bg-white px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 gap-4">
+      <!-- Summary / Baggage -->
+      <div class="flex items-center gap-5 w-full sm:w-auto">
+        <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
+          <Luggage class="w-4 h-4 text-gray-400" />
+          <span class="hidden sm:inline">Carry-on included</span>
+          <span class="sm:hidden">Carry-on</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
+          <Users class="w-4 h-4 text-gray-400" />
+          <span class="hidden sm:inline">{{ passengersCount }} Passengers</span>
+          <span class="sm:hidden">{{ passengersCount }} Pax</span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button 
+        @click="$emit('select', flight)"
+        class="w-full sm:w-auto bg-[#0D1DAD] hover:bg-[#002a66] text-white px-8 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2"
+      >
+        Next step
+        <ArrowRight class="w-4 h-4" />
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { ChevronDown } from 'lucide-vue-next'
+import { computed } from 'vue'
+import { Star, Plane, Luggage, Users, ArrowRight } from 'lucide-vue-next'
+import { useSettings } from '@/composables/useSettings'
+import FlightCard from './FlightCard.vue'
 
 const props = defineProps({
-  airlineName: { type: String, required: true },
-  airlineLogo: { type: String },
-  flights: { type: Array, required: true }
+  flight: { type: Object, required: true },
+  isRecommended: { type: Boolean, default: false },
+  passengersCount: { type: Number, default: 1 }
 })
 
 defineEmits(['select'])
 
-const isExpanded = ref(false)
+const { formatPrice } = useSettings()
 
-const bestOffer = computed(() => {
-  const flights = props.flights as any[]
-  if (!flights || !flights.length) return null
-  return [...flights].sort((a: any, b: any) => (a.priceWithCommission || a.price) - (b.priceWithCommission || b.price))[0]
+const formattedPrice = computed(() => {
+  const price = props.flight.priceWithCommission || props.flight.price || props.flight.total_amount
+  return formatPrice(price)
 })
 
-const otherOffers = computed(() => {
-  const best = bestOffer.value
-  const flights = props.flights as any[]
-  return flights.filter((f: any) => f !== best)
-})
-
-const cheapestPrice = computed(() => {
-  const best = bestOffer.value as any
-  if (!best) return '—'
-  const price = best.priceWithCommission || best.price
-  return typeof price === 'number' ? price.toLocaleString() : price
+const slices = computed(() => {
+  // If flight has 'slices' (Duffel format), return them, but attach flight-level details if needed
+  if (props.flight.slices && Array.isArray(props.flight.slices)) {
+    return props.flight.slices.map(slice => ({
+      ...slice,
+      airline: slice.segments?.[0]?.operating_carrier_name || props.flight.airline,
+      airlineLogo: props.flight.airlineLogo, // Will need logic if multiple airlines
+      departureTime: slice.segments?.[0]?.departing_at,
+      arrivalTime: slice.segments?.[slice.segments.length - 1]?.arriving_at,
+      origin: slice.segments?.[0]?.origin_name,
+      destination: slice.segments?.[slice.segments.length - 1]?.destination_name,
+      duration: slice.duration,
+      stops: slice.segments ? slice.segments.length - 1 : 0,
+      cabinClass: props.flight.cabinClass,
+      conditions: props.flight.conditions
+    }))
+  }
+  
+  // If it's Amadeus or flat object, just return an array with the flight itself
+  return [props.flight]
 })
 </script>

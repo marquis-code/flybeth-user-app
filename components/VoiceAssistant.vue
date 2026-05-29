@@ -76,7 +76,7 @@
                   </div>
                   <div class="text-right">
                     <div class="text-xs text-brand-gray/40 font-bold mb-1">Price</div>
-                    <div class="text-xl  text-black leading-none">${{ flight.priceWithCommission }}</div>
+                    <div class="text-xl  text-black leading-none">{{ formatPrice(flight.priceWithCommission) }}</div>
                   </div>
                 </div>
                 
@@ -150,6 +150,9 @@ import { useVoiceStreaming } from '~/composables/useVoiceStreaming';
 import { useRuntimeConfig } from '#app';
 import { useAuth } from '~/composables/modules/auth/useAuth';
 import { useCustomToast } from '~/composables/core/useCustomToast';
+import { useSettings } from '@/composables/useSettings';
+
+const { formatPrice } = useSettings();
 
 const { showToast } = useCustomToast();
 const { token } = useAuth();

@@ -81,7 +81,7 @@
             <div class="mt-auto flex items-end justify-between pt-3 border-t border-gray-200">
               <div>
                 <span class="text-[9px] text-black font-bold   block mb-0.5">From</span>
-                <span class="text-lg font-bold text-black">${{ Math.round(activity.price || 0) }}</span>
+                <span class="text-lg font-bold text-black">{{ formatPrice(Math.round(activity.price || 0)) }}</span>
                 <span class="text-sm text-black font-medium"> / person</span>
               </div>
               <button 
@@ -127,6 +127,9 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { activitiesApi } from '@/api_factory/modules/activities';
 import EmptyState from '@/components/EmptyState.vue';
+import { useSettings } from '@/composables/useSettings';
+
+const { formatPrice } = useSettings();
 
 const router = useRouter();
 const loading = ref(true);

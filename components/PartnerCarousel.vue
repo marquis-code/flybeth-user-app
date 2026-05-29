@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useUtilities } from '@/composables/modules/utilities/useUtilities'
+
 interface Partner {
   name: string
   logo: string
 }
 
-const partners: Partner[] = [
+const { loadingAirlines, airlines, fetchAirlines } = useUtilities()
+
+// Default partners to show while loading or if API fails
+const fallbackPartners: Partner[] = [
   { name: 'Aegean Airlines', logo: 'https://www.mondee.com/app/uploads/2023/11/AegeanLogo-1.png' },
   { name: 'Air Canada', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_2_air_canada_large.png' },
   { name: 'Air India', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_3_air_india_large.png' },
@@ -34,10 +40,26 @@ const partners: Partner[] = [
   { name: 'Wyndham Hotels & Resorts', logo: 'https://www.mondee.com/app/uploads/2023/11/c_partner_icon_23_wyndham_hotels_resorts_large.png' },
 ]
 
+const partners = computed<Partner[]>(() => {
+  if (airlines.value && airlines.value.length > 0) {
+    return airlines.value
+      .filter((a: any) => a.logo_symbol_url || a.logo_lockup_url)
+      .map((a: any) => ({
+        name: a.name,
+        logo: a.logo_symbol_url || a.logo_lockup_url
+      }))
+  }
+  return fallbackPartners
+})
+
 // Duplicate for seamless infinite scroll
-const duplicatedPartners = computed(() => [...partners, ...partners])
+const duplicatedPartners = computed(() => [...partners.value, ...partners.value])
 
 const isHovered = ref(false)
+
+onMounted(() => {
+  fetchAirlines()
+})
 </script>
 
 <template>

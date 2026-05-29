@@ -2,29 +2,36 @@
   <div class="fp-root" @mousedown="handleGlobalMousedown">
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="fp-hero">
+    <section class="fp-hero" :class="{'fp-hero--dest': searchQuery.destination}">
       <div class="fp-hero-bg">
-        <div class="fp-orb fp-orb--a"></div>
-        <div class="fp-orb fp-orb--b"></div>
+        <template v-if="searchQuery.destination">
+          <div class="fp-hero-image" :style="{ backgroundImage: 'url(https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop)' }"></div>
+          <div class="fp-hero-overlay"></div>
+        </template>
+        <template v-else>
+          <div class="fp-orb fp-orb--a"></div>
+          <div class="fp-orb fp-orb--b"></div>
+        </template>
       </div>
 
       <div class="fp-wrap">
 
         <!-- Dynamic headline -->
-        <div class="fp-headline">
-          <span class="fp-eyebrow">✦ Flight Search</span>
-          <h1 class="fp-h1">
-            <template v-if="searchQuery.origin && searchQuery.destination">
-              {{ searchQuery.origin }}
-              <em>→ {{ searchQuery.destination }}</em>
-            </template>
-            <template v-else-if="searchQuery.origin">
-              Flying from <em>{{ searchQuery.origin }}</em>
-            </template>
-            <template v-else>
-              Search<br><em>any flight.</em>
-            </template>
-          </h1>
+        <div class="fp-headline" :class="{'fp-headline--dest': searchQuery.destination}">
+          <template v-if="searchQuery.destination">
+            <h1 class="fp-h1 fp-h1--dest">Flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }}</h1>
+          </template>
+          <template v-else>
+            <span class="fp-eyebrow">✦ Flight Search</span>
+            <h1 class="fp-h1">
+              <template v-if="searchQuery.origin && !searchQuery.destination">
+                Flying from <em>{{ searchQuery.origin }}</em>
+              </template>
+              <template v-else>
+                Search<br><em>any flight.</em>
+              </template>
+            </h1>
+          </template>
         </div>
 
         <!-- ── SEARCH BAR ── -->
@@ -261,11 +268,44 @@
         </div>
       </Transition>
 
+      <!-- Destination Info Blocks -->
+      <div v-if="searchQuery.destination" class="fp-dest-features">
+        <div class="fp-df-grid">
+          <div class="fp-df-item">
+            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.61 6.61l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+            <h4 class="fp-df-h">Over 600 airlines</h4>
+            <p class="fp-df-p">Search and compare flights from over 600 global airlines to find the best deal.</p>
+          </div>
+          <div class="fp-df-item">
+            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <h4 class="fp-df-h">Fly now, pay later</h4>
+            <p class="fp-df-p">Spread the cost of your flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }} with flexible payment options.</p>
+          </div>
+          <div class="fp-df-item">
+            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <h4 class="fp-df-h">Book with confidence</h4>
+            <p class="fp-df-p">Secure your booking with ease, top-tier encryption, and 24/7 dedicated support.</p>
+          </div>
+        </div>
+
+        <div class="fp-df-paylater">
+          <div class="fp-df-pl-content">
+            <h2 class="fp-df-pl-h2">Buy flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }} and pay later</h2>
+            <p class="fp-df-pl-p">At Flybeth, you can book your flights and pay for them in flexible installments. Choose from Klarna, Afterpay, Affirm and more at checkout.</p>
+            <div class="fp-df-pl-badges">
+              <span class="fp-pl-badge" style="background:#FFA8B6;color:#000;">Klarna.</span>
+              <span class="fp-pl-badge" style="background:#B2FCE4;color:#000;">afterpay</span>
+              <span class="fp-pl-badge" style="background:#004CFF;color:#fff;">Affirm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Fare cards -->
       <div v-if="displayedFlights.length" class="fp-fares">
         <div v-for="f in fareTypes" :key="f.key" class="fp-fare" :class="{ 'fp-fare--on': activeFare === f.key }" @click="activeFare = f.key">
           <span class="fp-fare-tag" :class="`fp-fare-tag--${f.key}`">{{ f.badge }}</span>
-          <div class="fp-fare-price">${{ getMatrixPrice(f.key) }}</div>
+          <div class="fp-fare-price">{{ formatPrice(getMatrixPrice(f.key)) }}</div>
           <div class="fp-fare-label">{{ f.label }}</div>
         </div>
       </div>
@@ -294,7 +334,7 @@
               <tr v-for="sl in stopLabels" :key="sl">
                 <td class="fp-mstop">{{ sl }}</td>
                 <td v-for="al in airlineMeta" :key="al.name" class="fp-mcell" @click="jumpTo(al.name)">
-                  <span v-if="getMatrixPriceFor(al.name, sl)" class="fp-mprice">${{ getMatrixPriceFor(al.name, sl) }}</span>
+                  <span v-if="getMatrixPriceFor(al.name, sl)" class="fp-mprice">{{ formatPrice(getMatrixPriceFor(al.name, sl)) }}</span>
                   <span v-else class="fp-mdash">—</span>
                 </td>
               </tr>
@@ -333,12 +373,12 @@
             </div>
 
             <div class="fp-sb-block">
-              <p class="fp-sb-label">Max price <strong>${{ maxPriceFilter.toLocaleString() }}</strong></p>
+              <p class="fp-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}</strong></p>
               <div class="fp-range-wrap">
                 <input type="range" :min="minPrice" :max="maxPrice" step="1" v-model.number="maxPriceFilter" class="fp-range" />
                 <div class="fp-range-ends">
-                  <span>${{ minPrice.toLocaleString() }}</span>
-                  <span>${{ maxPrice.toLocaleString() }}</span>
+                  <span>{{ formatPrice(minPrice) }}</span>
+                  <span>{{ formatPrice(maxPrice) }}</span>
                 </div>
               </div>
             </div>
@@ -352,7 +392,7 @@
           <div v-if="displayedFlights.length" class="fp-toolbar">
             <span class="fp-rcount">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.61 6.61l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
-              {{ Object.values(filteredGrouped).flat().length }} flights found
+              {{ sortedFlights.length }} flights found
             </span>
             <div class="fp-toolbar-r">
               <div class="fp-sort-wrap" ref="sortRef">
@@ -401,7 +441,7 @@
           </div>
 
           <!-- No filter match -->
-          <div v-else-if="!loading && displayedFlights.length && Object.keys(filteredGrouped).length === 0" class="fp-empty">
+          <div v-else-if="!loading && displayedFlights.length && sortedFlights.length === 0" class="fp-empty">
             <div class="fp-empty-ico">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
             </div>
@@ -411,14 +451,16 @@
           </div>
 
           <!-- Results -->
-          <div v-if="Object.keys(filteredGrouped).length" class="fp-groups">
-            <FlightGroup v-for="(group, name) in filteredGrouped" :key="name"
-              :id="`group-${name}`"
-              :airlineName="String(name)"
-              :airlineLogo="group[0].airlineLogo"
-              :flights="group"
-              @select="selectFlight"
-            />
+          <div v-if="sortedFlights.length" class="fp-groups">
+            <template v-for="(flight, index) in sortedFlights" :key="flight.id || index">
+              <FlightGroup
+                :flight="flight"
+                :isRecommended="index === 0 && sortBy === 'price'"
+                :passengersCount="searchQuery.adults + searchQuery.children + searchQuery.infants"
+                @select="selectFlight"
+              />
+              <FlightAdCarousel v-if="(index + 1) % 2 === 0 && index < sortedFlights.length - 1" class="my-4 h-32" />
+            </template>
           </div>
         </div>
 
@@ -429,6 +471,9 @@
     <Transition name="fp-ov">
       <div v-if="mobileFilters" class="fp-overlay" @click.self="mobileFilters = false"></div>
     </Transition>
+
+    <!-- Availability Check Modal -->
+    <AvailabilityCheckModal :visible="checkingAvailability" />
 
   </div>
 </template>
@@ -442,10 +487,14 @@ import { useFetchPopularFlights } from '@/composables/modules/flights/useFetchPo
 import { useTripPurpose } from '@/composables/modules/flights/useTripPurpose'
 import { flightsApi } from '@/api_factory/modules/flights'
 import FlightGroup from '@/components/FlightGroup.vue'
+import FlightAdCarousel from '@/components/FlightAdCarousel.vue'
+import AvailabilityCheckModal from '@/components/AvailabilityCheckModal.vue'
+import { useSettings, localeToCurrency } from '@/composables/useSettings'
 
 const { loading, flights, searchFlights } = useSearchFlights()
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights()
 const { loading: purposeLoading, prediction, predictTripPurpose } = useTripPurpose()
+const { setCurrency, formatPrice } = useSettings()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
@@ -467,6 +516,7 @@ const activeAirlines = ref<string[]>([])
 const maxPriceFilter = ref(99999)
 const activeFare = ref('cheapest')
 const sortBy = ref('price')
+const checkingAvailability = ref(false)
 
 const searchQuery = ref({ origin: '', destination: '', departureDate: '', adults: 1, children: 0, infants: 0, cabinClass: 'economy' })
 const summary = computed(() => {
@@ -665,12 +715,12 @@ const getMatrixPrice = (type: string) => {
   const fl = displayedFlights.value
   if (!fl.length) return '—'
   const prices = fl.map((f: any) => f.priceWithCommission || f.price || 0)
-  if (type === 'cheapest') return Math.min(...prices).toLocaleString()
+  if (type === 'cheapest') return Math.min(...prices)
   if (type === 'fastest') {
     const f = [...fl].sort((a: any, b: any) => (a.duration||9999)-(b.duration||9999))[0]
-    return (f.priceWithCommission || f.price || 0).toLocaleString()
+    return (f.priceWithCommission || f.price || 0)
   }
-  return (fl[0].priceWithCommission || fl[0].price || 0).toLocaleString()
+  return (fl[0].priceWithCommission || fl[0].price || 0)
 }
 
 const getMatrixPriceFor = (airline: string, sl: string) => {
@@ -678,7 +728,7 @@ const getMatrixPriceFor = (airline: string, sl: string) => {
   const fl = filteredGrouped.value[airline] || []
   const f2 = fl.filter((f: any) => sc === 2 ? (f.stops||0) >= 2 : (f.stops||0) === sc)
   if (!f2.length) return null
-  return Math.min(...f2.map((f: any) => f.priceWithCommission || f.price || 0)).toLocaleString()
+  return Math.min(...f2.map((f: any) => f.priceWithCommission || f.price || 0))
 }
 
 const jumpTo = (airline: string) => {
@@ -713,54 +763,115 @@ const toggleAirline = (al: string) => {
 }
 const clearFilters = () => { activeStops.value = []; activeAirlines.value = []; maxPriceFilter.value = maxPrice.value }
 
-const selectFlight = (flight: any) => {
+const selectFlight = async (flight: any) => {
   if (!flight) return
-  try { sessionStorage.setItem('selectedFlight', JSON.stringify(flight)) } catch {}
-  const provider = flight.provider || (flight.slices ? 'duffel' : 'amadeus')
-  navigateTo({ path: '/checkout', query: { type: 'flight', id: String(flight.offerId||flight._id||flight.id||'unknown'), name: String(flight.flightNumbers?.[0]||`${flight.airline} flight`), price: String(flight.priceWithCommission||flight.price||0), provider } })
+  
+  // Show availability checking modal
+  checkingAvailability.value = true
+  
+  try {
+    // In a real flow, we might call an API here to re-validate the fare.
+    // For now we simulate the delay to show the nice Alternative Airlines loading state.
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    
+    sessionStorage.setItem('selectedFlight', JSON.stringify(flight))
+    const provider = flight.provider || 'duffel'
+    navigateTo({ path: '/checkout', query: { type: 'flight', id: String(flight.offerId||flight._id||flight.id||'unknown'), name: String(flight.flightNumbers?.[0]||`${flight.airline} flight`), price: String(flight.priceWithCommission||flight.price||0), provider } })
+  } catch (error) {
+    console.error('Fare validation failed', error)
+  } finally {
+    checkingAvailability.value = false
+  }
+}
+
+const loadFromQuery = (route: any) => {
+  if (route.query.origin) { searchQuery.value.origin = String(route.query.origin); fromQuery.value = lookupCity(String(route.query.origin)) }
+  if (route.query.destination) { searchQuery.value.destination = String(route.query.destination); toQuery.value = lookupCity(String(route.query.destination)) }
+  if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate)
+  
+  // Support both old 'passengers' and new granular props
+  if (route.query.adults) searchQuery.value.adults = parseInt(String(route.query.adults)) || 1
+  else if (route.query.passengers) searchQuery.value.adults = parseInt(String(route.query.passengers)) || 1
+  
+  if (route.query.children) searchQuery.value.children = parseInt(String(route.query.children)) || 0
+  if (route.query.infants) searchQuery.value.infants = parseInt(String(route.query.infants)) || 0
+  if (route.query.infantsOnLap || route.query.infantsInSeat) {
+    searchQuery.value.infants = (parseInt(String(route.query.infantsOnLap)) || 0) + (parseInt(String(route.query.infantsInSeat)) || 0)
+  }
+  
+  if (route.query.cabinClass) searchQuery.value.cabinClass = String(route.query.cabinClass)
+  else if (route.query.class) searchQuery.value.cabinClass = String(route.query.class)
+}
+
+const lookupCity = (code: string) => {
+  const ap = allAirports.find(a => a.code === code)
+  return ap ? `${ap.city} (${ap.code})` : code
 }
 
 onMounted(async () => {
   const route = useRoute()
   
+  // Auto currency detection
+  try {
+    const lang = navigator.language.split('-')[0]
+    const curCode = localeToCurrency[lang]
+    if (curCode) setCurrency(curCode)
+  } catch (e) {}
+
+  // Aggressively load parameters from URL first to prevent blank states
+  loadFromQuery(route)
+
   if (route.query.sid) {
     try {
       loading.value = true
       const { data } = await flightsApi.getSearchSession(route.query.sid as string)
       if (data?.searchQuery) {
         searchQuery.value = { ...searchQuery.value, ...data.searchQuery }
-        fromQuery.value = searchQuery.value.origin
-        toQuery.value = searchQuery.value.destination
-        handleSearch()
+        if (data.searchQuery.origin) fromQuery.value = lookupCity(data.searchQuery.origin)
+        if (data.searchQuery.destination) toQuery.value = lookupCity(data.searchQuery.destination)
       }
     } catch (err) {
       console.error('Failed to load search session:', err)
+      // Fallback: URL params are already loaded!
     } finally {
       loading.value = false
+      handleSearch()
     }
-  } else if (!route.query.origin && !route.query.destination) {
-    searchQuery.value = { origin: 'LHR', destination: 'DXB', departureDate: new Date(Date.now() + 14*86400000).toISOString().split('T')[0], adults: 1, children: 0, infants: 0, cabinClass: 'economy' }
-    fromQuery.value = 'London (LHR)'
-    toQuery.value = 'Dubai (DXB)'
-    handleSearch()
-  } else {
-    if (route.query.origin) { searchQuery.value.origin = String(route.query.origin); fromQuery.value = String(route.query.origin) }
-    if (route.query.destination) { searchQuery.value.destination = String(route.query.destination); toQuery.value = String(route.query.destination) }
-    if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate)
-    
-    // Support both old 'passengers' and new granular props
-    if (route.query.adults) searchQuery.value.adults = parseInt(String(route.query.adults)) || 1
-    else if (route.query.passengers) searchQuery.value.adults = parseInt(String(route.query.passengers)) || 1
-    
-    if (route.query.children) searchQuery.value.children = parseInt(String(route.query.children)) || 0
-    if (route.query.infants) searchQuery.value.infants = parseInt(String(route.query.infants)) || 0
-    if (route.query.infantsOnLap || route.query.infantsInSeat) {
-      searchQuery.value.infants = (parseInt(String(route.query.infantsOnLap)) || 0) + (parseInt(String(route.query.infantsInSeat)) || 0)
-    }
-    
-    if (route.query.cabinClass) searchQuery.value.cabinClass = String(route.query.cabinClass)
-    else if (route.query.class) searchQuery.value.cabinClass = String(route.query.class)
+  } else if (!route.query.origin) {
+    try {
+      loading.value = true
+      const ipRes = await fetch('https://ipapi.co/json/')
+      const ipData = await ipRes.json()
+      
+      let autoOrigin = 'LHR' 
+      let autoCity = 'London (LHR)'
+      
+      if (ipData.country_code === 'NG') { autoOrigin = 'LOS'; autoCity = 'Lagos (LOS)' }
+      else if (ipData.country_code === 'US') { autoOrigin = 'JFK'; autoCity = 'New York (JFK)' }
+      else if (ipData.country_code === 'AE') { autoOrigin = 'DXB'; autoCity = 'Dubai (DXB)' }
+      else if (ipData.country_code === 'GH') { autoOrigin = 'ACC'; autoCity = 'Accra (ACC)' }
+      else if (ipData.country_code === 'KE') { autoOrigin = 'NBO'; autoCity = 'Nairobi (NBO)' }
+      else if (ipData.country_code === 'FR') { autoOrigin = 'CDG'; autoCity = 'Paris (CDG)' }
 
+      searchQuery.value.origin = autoOrigin
+      fromQuery.value = autoCity
+      
+      if (!searchQuery.value.departureDate) {
+         searchQuery.value.departureDate = new Date(Date.now() + 14*86400000).toISOString().split('T')[0]
+      }
+      
+      // Aggressively open 'from' field
+      setTimeout(() => { openField('from') }, 100)
+    } catch (e) {
+      searchQuery.value.origin = 'LHR'
+      fromQuery.value = 'London (LHR)'
+    } finally {
+      loading.value = false
+      if (searchQuery.value.destination) {
+        handleSearch()
+      }
+    }
+  } else {
     handleSearch()
   }
   fetchPopularFlights()
@@ -794,16 +905,108 @@ onMounted(async () => {
   overflow: visible;
 }
 
+.fp-hero--dest {
+  padding: 120px 0 100px;
+  background: #111;
+  border-bottom: none;
+}
+
 .fp-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+.fp-hero-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+.fp-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
+  z-index: 2;
+}
+
 .fp-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.28; }
 .fp-orb--a { width: 420px; height: 420px; background: radial-gradient(circle, #b8e8cc, transparent); top: -180px; right: -60px; }
 .fp-orb--b { width: 300px; height: 300px; background: radial-gradient(circle, #d4e6ff, transparent); bottom: -100px; left: 8%; }
 
 /* Headline */
-.fp-headline { margin-bottom: 28px; }
+.fp-headline { margin-bottom: 28px; position: relative; z-index: 10; }
 .fp-eyebrow { font-size: 14px; font-weight: 600; letter-spacing: 0.18em; color: #999; display: block; margin-bottom: 10px; }
 .fp-h1 { font-family: 'Onest', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .fp-h1 em { font-style: normal; color: #0D1DAD; }
+.fp-h1--dest { color: #fff; text-shadow: 0 4px 16px rgba(0,0,0,0.3); font-size: clamp(32px, 5vw, 56px); }
+
+/* ── Destination Features ──────────────────────────────────────────── */
+.fp-dest-features {
+  margin: 40px 0;
+}
+.fp-df-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.fp-df-item {
+  background: #f8f9f7;
+  padding: 32px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.fp-df-icon {
+  margin-bottom: 20px;
+  color: #0D1DAD;
+}
+.fp-df-h {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.fp-df-p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+.fp-df-paylater {
+  background: #eef2ff;
+  border-radius: 24px;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.fp-df-pl-content {
+  flex: 1;
+}
+.fp-df-pl-h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #111;
+}
+.fp-df-pl-p {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 24px;
+  max-width: 500px;
+  line-height: 1.5;
+}
+.fp-df-pl-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fp-pl-badge {
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: sans-serif;
+}
 
 /* ── Search bar ────────────────────────────────────────────────────── */
 .fp-bar {

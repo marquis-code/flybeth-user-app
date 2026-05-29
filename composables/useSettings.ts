@@ -100,9 +100,30 @@ export function useSettings() {
                 }
             } catch { /* fall through, we already have rates */ }
 
-            // Restore saved currency preference
-            const saved = typeof window !== 'undefined' ? localStorage.getItem('flybeth_currency') : null
-            const found = currencies.value.find(c => c.code === (saved || 'USD'))
+            // First try to detect user country currency via IP
+            let targetCurrency = null
+            if (typeof window !== 'undefined') {
+                targetCurrency = localStorage.getItem('flybeth_currency')
+                
+                if (!targetCurrency) {
+                    try {
+                        const ipRes = await fetch('https://ipapi.co/currency/')
+                        if (ipRes.ok) {
+                            const code = await ipRes.text()
+                            if (code && code.length === 3) targetCurrency = code.trim().toUpperCase()
+                        }
+                    } catch (e) {
+                        try {
+                            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+                            if (tz.includes('Lagos') || tz.includes('Africa/')) targetCurrency = 'NGN'
+                            else if (tz.includes('London')) targetCurrency = 'GBP'
+                            else if (tz.includes('Europe/')) targetCurrency = 'EUR'
+                        } catch {}
+                    }
+                }
+            }
+            
+            const found = currencies.value.find(c => c.code === (targetCurrency || 'USD'))
             if (found) currentCurrency.value = found
 
             // Ancillary prices

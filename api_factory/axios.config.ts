@@ -4,7 +4,7 @@ import { useCustomToast } from "@/composables/core/useCustomToast";
 
 export const rawBaseUrl = (import.meta.env.VITE_BASE_URL as string)
   || (import.meta.env.NUXT_PUBLIC_API_BASE as string)
-  || "https://flybeth-api-service.onrender.com";
+  || "https://api.flybeth.com";
 const $GATEWAY_ENDPOINT_WITHOUT_VERSION = rawBaseUrl.replace(/\/api\/v1\/?$/, '').replace(/\/+$/, '');
 const $GATEWAY_ENDPOINT = `${$GATEWAY_ENDPOINT_WITHOUT_VERSION}/api/v1`;
 const $GATEWAY_ENDPOINT_V2 = `${$GATEWAY_ENDPOINT_WITHOUT_VERSION}/v2`;

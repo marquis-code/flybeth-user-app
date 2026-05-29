@@ -60,7 +60,7 @@
                     :class="[
                       isSelected(smIdx, seat.number) 
                         ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30 scale-110' 
-                        : (seat.isOccupied ? 'bg-black text-black cursor-not-allowed' : 'bg-white border border-gray-200 text-black hover:border-brand-blue/50')
+                        : (seat.isOccupied ? 'bg-gray-100 text-black cursor-not-allowed' : 'bg-white border border-gray-200 text-black hover:border-brand-blue/50')
                     ]"
                   >
                     {{ seat.number }}

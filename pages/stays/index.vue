@@ -298,14 +298,13 @@
               </label>
             </div>
  
-            <!-- Max price -->
             <div class="sp-sb-block">
-              <p class="sp-sb-label">Max price <strong>${{ maxPriceFilter.toLocaleString() }}<span class="sp-per-night">/night</span></strong></p>
+              <p class="sp-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}<span class="sp-per-night">/night</span></strong></p>
               <div class="sp-range-wrap">
                 <input type="range" :min="minPrice" :max="maxPrice" step="1" v-model.number="maxPriceFilter" class="sp-range" />
                 <div class="sp-range-ends">
-                  <span>${{ minPrice.toLocaleString() }}</span>
-                  <span>${{ maxPrice.toLocaleString() }}</span>
+                  <span>{{ formatPrice(minPrice) }}</span>
+                  <span>{{ formatPrice(maxPrice) }}</span>
                 </div>
               </div>
             </div>
@@ -456,7 +455,7 @@
                 <div class="sp-card-foot">
                   <div class="sp-card-price-wrap">
                     <div class="sp-card-price">
-                      ${{ Math.round(stay.priceWithCommission || stay.cheapestPrice || stay.price || 0).toLocaleString() }}
+                      {{ formatPrice(Math.round(stay.priceWithCommission || stay.cheapestPrice || stay.price || 0)) }}
                     </div>
                     <div class="sp-card-per">/ night</div>
                   </div>
@@ -477,7 +476,7 @@
           <span class="sp-cart-label">Cart</span>
           <span class="sp-cart-name">{{ pendingBooking.stay?.name }}</span>
         </div>
-        <div class="sp-cart-price">${{ pendingBooking.price }}</div>
+        <div class="sp-cart-price">{{ formatPrice(pendingBooking.price) }}</div>
         <button class="sp-cart-checkout" @click="goToCheckout(pendingBooking)">Checkout →</button>
         <button class="sp-cart-close" @click="clearPendingBooking">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -498,7 +497,9 @@ definePageMeta({ layout: 'no-footer' })
  
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useSearchStays } from '@/composables/modules/stays/useSearchStays'
- 
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
 const { loading, stays, searchStays } = useSearchStays()
  
 // ── Refs ──────────────────────────────────────────────────────────────

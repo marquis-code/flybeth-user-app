@@ -21,7 +21,7 @@
         <!-- Price summary -->
         <div v-if="selectedRoom?.rates?.[0]?.priceWithCommission" class="mb-6">
           <div class="text-sm text-black font-medium">Total price</div>
-          <div class="text-3xl font-bold text-black">${{ Math.round(selectedRoom.rates[0].priceWithCommission) }}</div>
+          <div class="text-3xl font-bold text-black">{{ formatPrice(Math.round(selectedRoom.rates[0].priceWithCommission)) }}</div>
         </div>
 
         <div class="flex items-center justify-center text-black mb-10 gap-2">
@@ -51,6 +51,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useSettings } from '@/composables/useSettings';
+
+const { formatPrice } = useSettings();
 
 const props = defineProps({
   stay: { type: Object, required: true },

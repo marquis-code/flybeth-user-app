@@ -1,8 +1,7 @@
 <template>
   <div class="relative w-full h-full" ref="pickerRef">
-    <!-- Trigger Field -->
     <div
-      @mousedown.prevent="togglePicker"
+      @click.stop="togglePicker"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
       :class="showPicker ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
     >
@@ -24,12 +23,21 @@
     <Transition name="loc-drop">
       <div
         v-show="showPicker"
-        class="absolute right-0 top-[calc(100%+6px)] z-[2000] bg-white rounded-2xl border border-gray-200 shadow-2xl overflow-hidden"
-        :class="[isMobile ? 'fixed inset-x-4 top-1/2 -translate-y-1/2 w-auto' : 'w-[320px]']"
+        class="absolute right-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
+        :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[320px] rounded-2xl']"
         style="background-color: #ffffff !important;"
         @mousedown.stop
+        @click.stop
       >
-        <div class="px-5 py-5 space-y-5">
+        <!-- Mobile Header with Close Button -->
+        <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">
+          <h3 class="text-base font-bold text-black">{{ label }}</h3>
+          <button @click="closePicker" class="p-2 -mr-2 text-black hover:bg-gray-100 rounded-full transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <div class="px-5 py-5 space-y-5 overflow-y-auto flex-1">
           <!-- Rows -->
           <div
             v-for="row in rows"
@@ -70,6 +78,21 @@
             Each hotel has unique child policies. Ages at check-in ensure best deals.
           </p>
 
+          <!-- Cabin Class Selection -->
+          <div v-if="variant === 'flight'" class="pt-4 border-t border-gray-200">
+            <p class="text-[13px] font-bold text-black mb-3">Cabin Class</p>
+            <div class="flex flex-col gap-2">
+              <label v-for="c in cabinClasses" :key="c.value" class="flex items-center gap-3 cursor-pointer group">
+                <div class="w-5 h-5 rounded-full border flex items-center justify-center transition-colors"
+                  :class="localCabinClass === c.value ? 'border-black bg-black' : 'border-gray-300 group-hover:border-black'">
+                  <div class="w-2 h-2 rounded-full bg-white transition-opacity" :class="localCabinClass === c.value ? 'opacity-100' : 'opacity-0'"></div>
+                </div>
+                <span class="text-[14px] font-medium" :class="localCabinClass === c.value ? 'text-black font-bold' : 'text-gray-700'">{{ c.label }}</span>
+                <input type="radio" :value="c.value" v-model="localCabinClass" class="sr-only" />
+              </label>
+            </div>
+          </div>
+
           <!-- Action Buttons -->
           <div class="flex items-center gap-2 pt-2 border-t border-gray-200">
              <button @click="closePicker" class="flex-1 py-3 bg-black text-white rounded-xl text-[12px] font-bold hover:bg-gray-900 transition-all active:scale-95">Done</button>
@@ -92,11 +115,12 @@ const props = defineProps({
   variant:  { type: String,  default: 'hotel' },
   infantsOnLap:  { type: Number, default: 0 },
   infantsInSeat: { type: Number, default: 0 },
+  cabinClass: { type: String, default: 'economy' },
 })
 
 const emit = defineEmits([
   'update:rooms', 'update:adults', 'update:children',
-  'update:infantsOnLap', 'update:infantsInSeat',
+  'update:infantsOnLap', 'update:infantsInSeat', 'update:cabinClass',
   'focus', 'close'
 ])
 
@@ -107,6 +131,14 @@ const local = reactive({
   infantsOnLap:  props.infantsOnLap,
   infantsInSeat: props.infantsInSeat,
 })
+const localCabinClass = ref(props.cabinClass)
+
+const cabinClasses = [
+  { value: 'economy',         label: 'Economy' },
+  { value: 'premium_economy', label: 'Premium Economy' },
+  { value: 'business',        label: 'Business' },
+  { value: 'first',           label: 'First' },
+]
 
 const rows = computed(() => {
   if (props.variant === 'flight') {
@@ -129,7 +161,8 @@ const showChildNote = computed(() => props.variant === 'hotel' && local.children
 const summary = computed(() => {
   if (props.variant === 'flight') {
     const total = local.adults + local.children + local.infantsOnLap + local.infantsInSeat
-    return `${total} Passenger${total > 1 ? 's' : ''}`
+    const cabinLabel = cabinClasses.find(c => c.value === localCabinClass.value)?.label || 'Economy'
+    return `${total} Passenger${total > 1 ? 's' : ''}, ${cabinLabel}`
   }
   const guests = local.adults + local.children
   return `${local.adults} Adult${local.adults > 1 ? 's' : ''}, ${local.rooms} Room${local.rooms > 1 ? 's' : ''}`
@@ -152,21 +185,22 @@ const closePicker = () => {
   if (props.variant === 'flight') {
     emit('update:infantsOnLap',  local.infantsOnLap)
     emit('update:infantsInSeat', local.infantsInSeat)
+    emit('update:cabinClass', localCabinClass.value)
   }
   emit('close')
 }
 
-const handleClickOutside = (e: MouseEvent) => { if (pickerRef.value && !pickerRef.value.contains(e.target as Node)) closePicker() }
+const handleClickOutside = (e: MouseEvent) => { if (showPicker.value && pickerRef.value && !pickerRef.value.contains(e.target as Node)) closePicker() }
 const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
 
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  window.addEventListener('mousedown', handleClickOutside)
+  window.addEventListener('click', handleClickOutside, true)
 })
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
-  window.removeEventListener('mousedown', handleClickOutside)
+  window.removeEventListener('click', handleClickOutside, true)
 })
 </script>
 

@@ -155,12 +155,12 @@
             <div class="space-y-4">
               <div class="flex justify-between items-baseline">
                 <p class="text-sm  uppercase  text-black">Budget</p>
-                <span class="text-sm  text-primary">${{ filters.priceRange[1] }}</span>
+                <span class="text-sm  text-primary">{{ formatPrice(filters.priceRange[1]) }}</span>
               </div>
               <input type="range" min="0" max="10000" step="100" v-model.number="filters.priceRange[1]" class="w-full h-1.5 bg-black rounded-lg appearance-none cursor-pointer accent-primary" />
               <div class="flex justify-between text-sm font-bold text-black">
-                <span>$0</span>
-                <span>$10k+</span>
+                <span>{{ formatPrice(0) }}</span>
+                <span>{{ formatPrice(10000) }}+</span>
               </div>
             </div>
           </div>
@@ -252,9 +252,11 @@ import { Anchor, MapPin, Calendar, Compass, Filter, Ship, ChevronDown, Check, Wa
 import { useRoute } from '#app'
 import { useSearchCruises } from '~/composables/modules/cruises/useSearchCruises'
 import CruiseCard from '~/components/CruiseCard.vue'
+import { useSettings } from '@/composables/useSettings'
 
 const route = useRoute()
 const { loading, filteredCruises, filters, searchCruises } = useSearchCruises()
+const { formatPrice } = useSettings()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)

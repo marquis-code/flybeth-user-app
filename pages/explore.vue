@@ -208,12 +208,12 @@
             </div>
 
             <div class="ep-sb-block">
-              <p class="ep-sb-label">Max price <strong>${{ maxPriceFilter.toLocaleString() }}</strong></p>
+              <p class="ep-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}</strong></p>
               <div class="ep-range-wrap">
                 <input type="range" :min="0" :max="10000" step="50" v-model.number="maxPriceFilter" class="ep-range" />
                 <div class="ep-range-ends">
-                  <span>$0</span>
-                  <span>$10,000</span>
+                  <span>{{ formatPrice(0) }}</span>
+                  <span>{{ formatPrice(10000) }}</span>
                 </div>
               </div>
             </div>
@@ -305,7 +305,7 @@
                 <!-- Price badge on image -->
                 <div class="ep-card-price-badge">
                   <span class="ep-price-from">from</span>
-                  <span class="ep-price-amt">${{ Number(deal.price).toLocaleString() }}</span>
+                  <span class="ep-price-amt">{{ formatPrice(deal.price) }}</span>
                 </div>
                 <!-- Category badge -->
                 <div v-if="deal.category" class="ep-card-cat-badge">{{ deal.category }}</div>
@@ -351,8 +351,10 @@ definePageMeta({ layout: 'no-footer' })
 
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useFetchAllPackages } from '~/composables/modules/packages/useFetchAllPackages'
+import { useSettings } from '@/composables/useSettings'
 
 const { loading, packages, fetchAllPackages } = useFetchAllPackages()
+const { formatPrice } = useSettings()
 
 // ── State ─────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)

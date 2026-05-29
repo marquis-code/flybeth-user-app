@@ -24,7 +24,7 @@
       <div class="pc-foot">
         <div class="pc-price-grp">
           <span class="pc-price-label">Starts from</span>
-          <span class="pc-price-val">{{ currencySymbol }}{{ formatPrice(package.price?.total || package.price?.amount || 0) }}</span>
+          <span class="pc-price-val">{{ formatPrice(package.price?.total || package.price?.amount || 0) }}</span>
         </div>
         <button class="pc-btn">View Details →</button>
       </div>
@@ -34,6 +34,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useSettings } from '~/composables/useSettings'
+
+const { formatPrice } = useSettings()
 
 const props = defineProps({
   package: { type: Object, required: true },
@@ -48,13 +51,6 @@ const imageUrl = computed(() => {
   return null
 })
 
-const currencySymbol = computed(() => props.package.currency || '$')
-
-const formatPrice = (p: any) => {
-  const num = parseFloat(p)
-  if (isNaN(num)) return '0.00'
-  return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
 
 const truncate = (str: string, len: number) => {
   if (!str) return ''

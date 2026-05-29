@@ -1,41 +1,34 @@
 <template>
-  <Teleport to="body">
-    <Transition name="fade">
-      <div v-if="isOpen" class="fixed inset-0 z-[1000000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden animate-scale-up border border-gray-200">
-          <!-- Header -->
-          <div class="p-8 pb-4 flex justify-between items-start">
-            <div v-if="step !== 'otp'">
-              <h2 class="text-2xl font-medium text-black  font-spectral">{{ isLogin ? 'Welcome Back' : 'Create Account' }}</h2>
-              <p class="text-base font-medium text-black   mt-2">
-                {{ isLogin ? 'Sign in to continue your booking' : 'Join Flybeth for exclusive travel deals' }}
-              </p>
-            </div>
-            <div v-else>
-              <h2 class="text-3xl text-black  font-spectral">Verify Identity</h2>
-              <p class="text-sm font-bold text-black   mt-2">
-                Secure authentication protocol active
-              </p>
-            </div>
-            <button @click="close" class="p-2 hover:bg-black rounded-full transition-colors group">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black group-hover:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-          </div>
+  <SideDrawer :visible="isOpen" :title="step !== 'otp' ? (isLogin ? 'Welcome Back' : 'Create Account') : 'Verify Identity'" @close="close">
+    <template #default>
+      <!-- Subtitle & Header context (if needed) -->
+      <div class="px-8 pb-4 pt-4 border-b border-gray-100 flex justify-between items-start">
+        <div v-if="step !== 'otp'">
+          <p class="text-sm font-medium text-gray-500">
+            {{ isLogin ? 'Sign in to continue your booking' : 'Join Flybeth for exclusive travel deals' }}
+          </p>
+        </div>
+        <div v-else>
+          <p class="text-sm font-medium text-gray-500">
+            Secure authentication protocol active
+          </p>
+        </div>
+      </div>
 
-          <!-- Tabs -->
-          <div v-if="step !== 'otp'" class="px-8 flex gap-8 border-b border-gray-200">
-            <button @click="switchToLogin" class="pb-4 text-sm font-bold   transition-all relative" :class="isLogin ? 'text-brand-blue' : 'text-black'">
-              Login
-              <div v-if="isLogin" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full"></div>
-            </button>
-            <button @click="switchToRegister" class="pb-4 text-sm font-bold   transition-all relative" :class="!isLogin ? 'text-brand-blue' : 'text-black'">
-              Register
-              <div v-if="!isLogin" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full"></div>
-            </button>
-          </div>
+      <!-- Tabs -->
+      <div v-if="step !== 'otp'" class="px-8 pt-4 flex gap-8 border-b border-gray-200">
+        <button @click="switchToLogin" class="pb-4 text-sm font-bold transition-all relative" :class="isLogin ? 'text-brand-blue' : 'text-gray-500'">
+          Login
+          <div v-if="isLogin" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full"></div>
+        </button>
+        <button @click="switchToRegister" class="pb-4 text-sm font-bold transition-all relative" :class="!isLogin ? 'text-brand-blue' : 'text-gray-500'">
+          Register
+          <div v-if="!isLogin" class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-blue rounded-full"></div>
+        </button>
+      </div>
 
-          <!-- Form Area -->
-          <div class="p-8 pt-6">
+      <!-- Form Area -->
+      <div class="p-8 pt-6">
             <!-- Login Step -->
             <form v-if="step === 'login'" @submit.prevent="handleLogin" class="space-y-5">
               <div class="space-y-1.5">
@@ -143,15 +136,14 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+    </template>
+  </SideDrawer>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, nextTick } from 'vue'
 import { useAuth } from '@/composables/modules/auth/useAuth'
+import SideDrawer from '@/components/ui/SideDrawer.vue'
 
 const props = defineProps<{
   isOpen: boolean

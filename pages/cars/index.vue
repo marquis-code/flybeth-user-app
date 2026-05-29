@@ -206,12 +206,12 @@
             </div>
 
             <div class="cp-sb-block">
-              <p class="cp-sb-label">Max price <strong>${{ maxPriceFilter }}/day</strong></p>
+              <p class="cp-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}/day</strong></p>
               <div class="cp-range-wrap">
                 <input type="range" :min="minPrice" :max="maxPrice" step="1" v-model.number="maxPriceFilter" class="cp-range" />
                 <div class="cp-range-ends">
-                  <span>${{ minPrice }}</span>
-                  <span>${{ maxPrice }}</span>
+                  <span>{{ formatPrice(minPrice) }}</span>
+                  <span>{{ formatPrice(maxPrice) }}</span>
                 </div>
               </div>
             </div>
@@ -312,8 +312,10 @@ definePageMeta({ layout: 'no-footer' })
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useSearchCars } from '@/composables/modules/cars/useSearchCars'
 import CarCard from '@/components/CarCard.vue'
+import { useSettings } from '@/composables/useSettings'
 
 const { loading, filteredCars, searchCars } = useSearchCars()
+const { formatPrice } = useSettings()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
@@ -571,8 +573,8 @@ onMounted(() => {
   const defaultReturn = new Date(defaultPickup)
   defaultReturn.setDate(defaultPickup.getDate() + 3)
 
-  if (route.query.pickUpLocation || route.query.location) {
-    searchQuery.value.pickUpLocation = String(route.query.pickUpLocation || route.query.location)
+  if (route.query.pickUpLocation || route.query.location || route.query.origin) {
+    searchQuery.value.pickUpLocation = String(route.query.pickUpLocation || route.query.location || route.query.origin)
     locQuery.value = searchQuery.value.pickUpLocation
   } else {
     searchQuery.value.pickUpLocation = 'Dubai International Airport (DXB)'

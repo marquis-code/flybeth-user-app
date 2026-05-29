@@ -39,6 +39,33 @@ export const flightsApi = {
     createDuffel3DSSession(data: any) {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/payments/3ds", data);
     },
+    getDuffelAirlines(params: any) {
+        return GATEWAY_ENDPOINT.get("/integrations/duffel/airlines", { params });
+    },
+    getDuffelAirline(id: string) {
+        return GATEWAY_ENDPOINT.get(`/integrations/duffel/airlines/${id}`);
+    },
+    getDuffelAircraftList(params: any) {
+        return GATEWAY_ENDPOINT.get("/integrations/duffel/aircraft", { params });
+    },
+    getDuffelAircraft(id: string) {
+        return GATEWAY_ENDPOINT.get(`/integrations/duffel/aircraft/${id}`);
+    },
+    getDuffelAirports(params: any) {
+        return GATEWAY_ENDPOINT.get("/integrations/duffel/airports", { params });
+    },
+    getDuffelAirport(id: string) {
+        return GATEWAY_ENDPOINT.get(`/integrations/duffel/airports/${id}`);
+    },
+    getDuffelCities(params: any) {
+        return GATEWAY_ENDPOINT.get("/integrations/duffel/cities", { params });
+    },
+    getDuffelCity(id: string) {
+        return GATEWAY_ENDPOINT.get(`/integrations/duffel/cities/${id}`);
+    },
+    getDuffelPlacesSuggestions(params: any) {
+        return GATEWAY_ENDPOINT.get("/integrations/duffel/places/suggestions", { params });
+    },
 
     // Legacy/Individual Provider Endpoints (Keep for compatibility if needed, but mark as deprecated)
     /** @deprecated Use searchLive */

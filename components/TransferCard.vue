@@ -58,6 +58,9 @@
 
 <script setup lang="ts">
 import { UserIcon, BriefcaseIcon, ClockIcon, ShieldCheckIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
+import { useSettings } from '~/composables/useSettings'
+
+const { formatPrice, currentCurrency } = useSettings()
 
 const props = defineProps<{
   transfer: any
@@ -87,10 +90,12 @@ const providerLabel = computed(() => {
 
 const displayPrice = computed(() => {
   const p = props.transfer.price
-  if (typeof p === 'number') return `$${p.toFixed(2)}`
-  if (p?.totalAmount) return `${p.currencyId || 'USD'} ${p.totalAmount}`
-  if (p?.amount || p?.total) return `${p.currency || 'USD'} ${p.amount || p.total}`
-  return 'Check Price'
+  let amount = 0
+  if (typeof p === 'number') amount = p
+  else if (p?.totalAmount) amount = Number(p.totalAmount)
+  else if (p?.amount || p?.total) amount = Number(p.amount || p.total)
+  else return 'Check Price'
+  return formatPrice(amount)
 })
 
 const capacity = computed(() => {
@@ -108,10 +113,4 @@ const duration = computed(() => {
   const hbDuration = props.transfer.transferDetailInfo?.find((i: any) => i.id === 'TRFTIME')?.value
   return props.transfer.duration || (hbDuration ? `${hbDuration} mins` : '45 mins')
 })
-
-const formatPrice = (price: any) => {
-  if (typeof price === 'number') return `$${price.toFixed(2)}`
-  if (typeof price === 'object') return `${price.currency || price.currencyId} ${price.amount || price.total || price.totalAmount}`
-  return price
-}
 </script>

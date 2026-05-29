@@ -8,20 +8,20 @@
 
     <!-- Info Summary Container -->
     <div class="bg-white/50 rounded-3xl border border-gray-200 p-6 md:p-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="flex flex-col gap-6">
         <!-- Flight Breakdown -->
         <div v-if="flightOffer" class="flex items-start gap-4">
           <div class="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-black shadow-sm">
              <Plane class="w-6 h-6" />
           </div>
-          <div class="flex-1">
+          <div class="flex-1 min-w-0">
             <span class="text-sm font-bold text-black  block mb-1 uppercase">Flight Route</span>
-            <div class="flex items-center gap-2">
-              <span class="text-base font-bold text-black">{{ flightOffer.origin }}</span>
-              <ChevronRight class="w-4 h-4 text-black" />
-              <span class="text-base font-bold text-black">{{ flightOffer.destination }}</span>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-base font-bold text-black truncate">{{ flightOffer.origin }}</span>
+              <ChevronRight class="w-4 h-4 text-black flex-shrink-0" />
+              <span class="text-base font-bold text-black truncate">{{ flightOffer.destination }}</span>
             </div>
-            <p class="text-sm font-bold text-black  mt-1">{{ flightOffer.airline }}</p>
+            <p class="text-sm font-bold text-black  mt-1 truncate">{{ flightOffer.airline }}</p>
           </div>
         </div>
         
@@ -42,10 +42,10 @@
           <div class="w-12 h-12 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-black shadow-sm">
              <User class="w-6 h-6" />
           </div>
-          <div class="flex-1">
+          <div class="flex-1 min-w-0">
             <span class="text-sm font-bold text-black  block mb-1 uppercase">Traveler</span>
-            <p class="text-base font-bold text-black">{{ formatName(traveller.firstName) }} {{ traveller.lastName }}</p>
-            <p class="text-sm font-bold text-black  mt-1 truncate">{{ traveller.email }}</p>
+            <p class="text-base font-bold text-black truncate">{{ formatName(traveller?.travelers?.[0]?.firstName || traveller?.firstName) }} {{ traveller?.travelers?.[0]?.lastName || traveller?.lastName }}</p>
+            <p class="text-sm font-bold text-black  mt-1 truncate">{{ traveller?.contact?.email || traveller?.email }}</p>
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@
 
     <!-- Continue -->
     <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10 border-t border-gray-200">
-      <button @click="$emit('back')" class="text-xs bg-black py-3 px-6 rounded-2xl font-bold uppercase  text-black hover:text-black transition-colors">
+      <button @click="$emit('back')" class="text-xs bg-white border border-gray-200 py-3 px-6 rounded-2xl font-bold uppercase text-black hover:bg-gray-100 transition-colors">
         Go Back
       </button>
       <button @click="$emit('continue')" class="w-full sm:w-auto bg-black px-12 h-14 rounded-2xl font-bold  text-[11px] text-white transition-all active:scale-[0.98] shadow-lg shadow-[#0D1DAD]/20 flex items-center justify-center gap-4 uppercase">

@@ -184,7 +184,7 @@
                 <div class="pk-fc-footer">
                   <div class="pk-fc-price">
                     <span class="pk-fc-from">from</span>
-                    <span class="pk-fc-amt">${{ (pkg.price?.total || pkg.price?.amount || pkg.price || 0).toLocaleString() }}</span>
+                    <span class="pk-fc-amt">{{ formatPrice(pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
                     <span class="pk-fc-per">/ person</span>
                   </div>
                   <button class="pk-fc-btn">View deal →</button>
@@ -232,12 +232,12 @@
             </div>
 
             <div class="pk-sb-block">
-              <p class="pk-sb-label">Max price <strong>${{ maxPriceFilter.toLocaleString() }}</strong></p>
+              <p class="pk-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}</strong></p>
               <div class="pk-range-wrap">
                 <input type="range" :min="minPrice" :max="maxPrice" step="50" v-model.number="maxPriceFilter" class="pk-range" />
                 <div class="pk-range-ends">
-                  <span>${{ minPrice.toLocaleString() }}</span>
-                  <span>${{ maxPrice.toLocaleString() }}</span>
+                  <span>{{ formatPrice(minPrice) }}</span>
+                  <span>{{ formatPrice(maxPrice) }}</span>
                 </div>
               </div>
             </div>
@@ -362,7 +362,7 @@
                 <div class="pk-card-footer">
                   <div class="pk-card-price">
                     <span class="pk-card-from">from</span>
-                    <span class="pk-card-amt">${{ (pkg.price?.total || pkg.price?.amount || pkg.price || 0).toLocaleString() }}</span>
+                    <span class="pk-card-amt">{{ formatPrice(pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
                     <span class="pk-card-per">/ person</span>
                   </div>
                   <button class="pk-card-btn" @click.stop="selectPackage(pkg)">View →</button>
@@ -389,6 +389,9 @@ definePageMeta({ layout: 'no-footer' })
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useFetchAllPackages } from '~/composables/modules/packages/useFetchAllPackages'
 import { useFetchFeaturedPackages } from '~/composables/modules/packages/useFetchFeaturedPackages'
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
 
 const { loading, packages, fetchAllPackages } = useFetchAllPackages()
 const { featuredPackages, fetchFeaturedPackages } = useFetchFeaturedPackages()
@@ -566,9 +569,10 @@ const clearFilters = () => {
 
 onMounted(() => {
   const route = useRoute()
-  if (route.query.q) {
-    searchQuery.value.destination = String(route.query.q)
-    destQuery.value = String(route.query.q)
+  const destParam = route.query.q || route.query.destination
+  if (destParam) {
+    searchQuery.value.destination = String(destParam)
+    destQuery.value = String(destParam)
   }
   fetchFeaturedPackages()
   handleSearch()

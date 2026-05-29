@@ -13,7 +13,7 @@
 
           <!-- Logo & Mobile Hamburger -->
           <div class="flex items-center gap-4">
-            <button @click="isMobileMenuOpen = true" class="lg:hidden p-2 rounded-md text-black hover:text-black hover:bg-black transition-colors">
+            <button @click="isMobileMenuOpen = true" class="lg:hidden p-2 rounded-md text-black hover:bg-gray-100 transition-colors">
               <Menu class="h-5 w-5" />
             </button>
 
@@ -56,17 +56,13 @@
           <!-- Desktop Actions -->
           <div class="hidden lg:flex items-center gap-2">
 
-            <!-- Regional Settings Dropdown -->
-            <div class="relative group">
-              <button class="flex items-center gap-2 px-3 py-2 border border-blue-50 bg-blue-50/20 rounded-lg hover:border-blue-100 hover:bg-blue-50 transition-all duration-300">
+            <!-- Regional Settings Trigger -->
+            <div>
+              <button @click="showSettings = true" class="flex items-center gap-2 px-3 py-2 border border-blue-50 bg-blue-50/20 rounded-lg hover:border-blue-100 hover:bg-blue-50 transition-all duration-300">
                 <img :src="getFlag(locale)" class="h-3 w-4.5 object-cover rounded shadow-[0_1px_2px_rgba(0,0,0,0.1)] border border-white/50" />
-                <span class="text-sm   text-black uppercase">{{ locale }} · {{ currentCurrency.code }}</span>
-                <ChevronDown class="h-3 w-3 text-black transition-transform duration-200 group-hover:rotate-180" />
+                <span class="text-sm text-black uppercase">{{ locale }} · {{ currentCurrency.code }}</span>
+                <ChevronDown class="h-3 w-3 text-black" />
               </button>
-
-              <div class="absolute right-0 top-[calc(100%+6px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-[100000]">
-                <RegionalSettingsPanel />
-              </div>
             </div>
 
             <!-- Divider -->
@@ -156,11 +152,6 @@
                 <Bell class="h-4 w-4" />
                 <span v-if="notifications.length > 0" class="absolute top-2 right-2 h-2 w-2 bg-red-500 border border-white rounded-full"></span>
               </button>
-
-              <div v-if="showNotifications" class="absolute right-0 top-[calc(100%+8px)] z-[100000]">
-                <NotificationPanel @click.stop />
-                <div class="fixed inset-0 bg-transparent -z-1" @click="showNotifications = false"></div>
-              </div>
             </div>
 
             <!-- Divider -->
@@ -206,11 +197,6 @@
                 <Bell class="h-4 w-4" />
                 <span v-if="notifications.length > 0" class="absolute top-2 right-2 h-2 w-2 bg-red-500 border border-white rounded-full"></span>
               </button>
-              
-              <div v-if="showNotifications" class="fixed inset-x-4 top-20 z-[100000] flex justify-center">
-                <NotificationPanel class="w-full" />
-                <div class="fixed inset-0 bg-black/10 -z-1" @click="showNotifications = false"></div>
-              </div>
             </div>
             <button v-if="!user" @click="openAuthModal" class="bg-black text-white px-4 py-2 rounded-md text-[12px] font-semibold active:scale-95 transition-all">
               Sign in
@@ -232,11 +218,11 @@
           @click="isMobileMenuOpen = false"
         ></div>
 
-        <div :class="['absolute inset-y-0 left-0 w-[280px] bg-white flex flex-col transition-transform duration-300', isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
+        <div :class="['absolute inset-y-0 right-0 w-[280px] bg-white flex flex-col transition-transform duration-300', isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full']">
           <!-- Drawer Header -->
           <div class="flex justify-between items-center px-5 py-4 border-b border-gray-200">
             <img src="@/assets/img/logo.png" class="h-7 object-contain" alt="Flybeth Logo" />
-            <button @click="isMobileMenuOpen = false" class="p-2 rounded-md text-black hover:text-black hover:bg-black transition-colors">
+            <button @click="isMobileMenuOpen = false" class="p-2 rounded-md text-black hover:bg-gray-100 transition-colors">
               <X class="h-5 w-5" />
             </button>
           </div>
@@ -277,7 +263,7 @@
           <div class="px-5 py-4 border-t border-gray-200">
             <div v-if="user" class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-black flex items-center justify-center text-[13px] font-bold text-black">
+                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[13px] font-bold text-black">
                   {{ user?.firstName?.charAt(0) }}
                 </div>
                 <div>
@@ -319,6 +305,12 @@
       @confirm="confirmExit"
       @cancel="cancelExit"
     />
+
+    <!-- Notification Side Drawer -->
+    <NotificationPanel :visible="showNotifications" @close="showNotifications = false" />
+
+    <!-- Regional Settings Side Drawer -->
+    <RegionalSettingsPanel :visible="showSettings" @close="showSettings = false" />
   </div>
 </template>
 

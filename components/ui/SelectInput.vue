@@ -77,7 +77,7 @@
               v-for="(option, index) in filteredOptions"
               :key="index"
               @click="selectOption(option)"
-              class="p-3 font-medium hover:bg-black m-1 rounded-lg cursor-pointer transition-colors text-sm text-[#1A1A1B]"
+              class="p-3 font-medium hover:bg-gray-100 m-1 rounded-lg cursor-pointer transition-colors text-sm text-[#1A1A1B]"
             >
               <!-- Custom option slot -->
               <slot v-if="slots.default" :option="option" :index="index" />

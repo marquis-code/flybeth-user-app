@@ -26,11 +26,11 @@
               <div class="text-sm text-black font-bold  mt-1">Total rooms</div>
             </div>
             <div class="flex items-center gap-3">
-              <button @click="rooms > 1 && rooms--" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
+              <button @click="rooms > 1 && rooms--" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
               </button>
               <span class="text-sm  w-4 text-center">{{ rooms }}</span>
-              <button @click="rooms++" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
+              <button @click="rooms++" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
               </button>
             </div>
@@ -43,11 +43,11 @@
               <div class="text-sm text-black font-bold  mt-1">Age 13+</div>
             </div>
             <div class="flex items-center gap-3">
-              <button @click="adults > 1 && adults--" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
+              <button @click="adults > 1 && adults--" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
               </button>
               <span class="text-sm  w-4 text-center">{{ adults }}</span>
-              <button @click="adults++" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
+              <button @click="adults++" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
               </button>
             </div>
@@ -60,11 +60,11 @@
               <div class="text-sm text-black font-bold  mt-1">Age 0-12</div>
             </div>
             <div class="flex items-center gap-3">
-              <button @click="children > 0 && children--" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
+              <button @click="children > 0 && children--" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M20 12H4" stroke-linecap="round"/></svg>
               </button>
               <span class="text-sm  w-4 text-center">{{ children }}</span>
-              <button @click="children++" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-black hover:text-white transition-all">
+              <button @click="children++" class="h-9 w-9 rounded-xl border-2 border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-all">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M12 20v-8m0 0V4m0 8h8m-8 0H4" stroke-linecap="round"/></svg>
               </button>
             </div>

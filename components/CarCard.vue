@@ -4,7 +4,7 @@
     <!-- Car Image & Quick Badge -->
     <div class="md:w-[320px] lg:w-[380px] h-60 md:h-auto shrink-0 relative flex items-center justify-center rounded-[2rem] bg-[#F8FAFC] border border-gray-200 overflow-hidden group-hover:bg-white transition-colors duration-500">
       <img v-if="car.image" :src="car.image" :alt="car.name" class="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-1000 ease-out" />
-      <div v-else class="w-20 h-20 bg-black rounded-full animate-pulse flex items-center justify-center text-black">
+      <div v-else class="w-20 h-20 bg-gray-100 rounded-full animate-pulse flex items-center justify-center text-black">
          <CarIcon class="h-10 w-10" />
       </div>
 
@@ -66,8 +66,7 @@
            <div class="flex flex-col">
               <span class="text-sm font-bold text-black uppercase  mb-0.5">Total Price</span>
               <div class="flex items-baseline gap-1">
-                 <span class="text-xs font-bold text-black">USD</span>
-                 <span class="text-3xl font-extrabold text-black er">{{ formatPrice(car.pricing?.basePrice || car.price) }}</span>
+                 <span class="text-3xl font-extrabold text-black er">{{ formatCarPrice(car.pricing?.basePrice || car.price) }}</span>
               </div>
            </div>
            <span class="text-[11px] font-bold text-black ml-1">/ trip</span>
@@ -94,6 +93,9 @@ import {
   StarIcon,
   ArrowRightIcon
 } from '@heroicons/vue/24/solid'
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
 
 const props = defineProps({
   car: {
@@ -104,9 +106,9 @@ const props = defineProps({
 
 defineEmits(['select'])
 
-const formatPrice = (p: any) => {
+const formatCarPrice = (p: any) => {
   const num = parseFloat(p)
-  if (isNaN(num)) return '0.00'
-  return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  if (isNaN(num)) return formatPrice(0)
+  return formatPrice(num)
 }
 </script>

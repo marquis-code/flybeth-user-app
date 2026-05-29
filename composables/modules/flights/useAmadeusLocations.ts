@@ -82,30 +82,26 @@ export const useAmadeusLocations = () => {
         error.value = null;
 
         try {
-            // LAYER 1: Primary search (Unified Locations)
-            console.log(`${LOG_PREFIX} ➡️ Attempt 1: GET /flights/locations?keyword=${keyword}`);
-            const response = await flightsApi.searchAirports(keyword, countryCode);
-            let results = extractResults(response);
+            // LAYER 1: Primary search using Duffel
+            console.log(`${LOG_PREFIX} ➡️ Attempt 1: GET Duffel places suggestions`);
+            const response = await flightsApi.getDuffelPlacesSuggestions({ query: keyword });
+            
+            const rawData = response.data?.data || response.data || [];
+            const results = Array.isArray(rawData) ? rawData : [];
 
-            // LAYER 2: Fallback to /airports/cities/search if no results
-            if (results.length === 0) {
-                console.log(`${LOG_PREFIX} ➡️ Attempt 2 (Fallback): GET /airports/cities/search?q=${keyword}`);
-                const fallbackResponse = await GATEWAY_ENDPOINT.get('/airports/cities/search', {
-                    params: { q: keyword, limit: 10 }
-                });
-                const fallbackResults = fallbackResponse.data || [];
-                
-                // Map fallback results to Amadeus-like shape if needed
-                results = fallbackResults.map((item: any) => ({
-                    ...item,
-                    iataCode: item.iataCode || item.code || item.id,
-                    name: item.name || item.cityName || item.description,
-                    subType: item.subType || (item.type === 'airport' ? 'AIRPORT' : 'CITY')
-                }));
-            }
+            // Map Duffel places to expected shape
+            const mappedResults = results.map((item: any) => ({
+                ...item,
+                iataCode: item.iata_code || item.iataCode || item.code || item.id,
+                name: item.name || item.city_name || item.cityName,
+                address: {
+                   cityName: item.city_name || item.cityName || item.name
+                },
+                subType: item.type === 'airport' ? 'AIRPORT' : 'CITY'
+            })).filter((item: any) => item.iataCode); // Ensure we only return locations with an IATA code
 
-            console.log(`${LOG_PREFIX} Found ${results.length} results after multi-layer search.`);
-            locations.value = results;
+            console.log(`${LOG_PREFIX} Found ${mappedResults.length} results after Duffel search.`);
+            locations.value = mappedResults;
         } catch (err: any) {
             if (err?.name !== 'CanceledError' && err?.code !== 'ERR_CANCELED') {
                 console.error(`${LOG_PREFIX} ❌ API error:`, err?.message);

@@ -13,7 +13,7 @@
         <input 
           v-model="cardData.name"
           type="text" 
-          placeholder="AS WRITTEN ON CARD"
+          placeholder="As Written On Card"
           class="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white/50 focus:bg-white focus:border-brand-blue transition-all outline-none text-sm font-medium"
         />
       </div>

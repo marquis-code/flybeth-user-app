@@ -1,59 +1,109 @@
 <template>
-  <div class="regional-settings-panel bg-white border border-gray-200 rounded-2xl shadow-[0_30px_60px_-12px_rgba(0,0,0,0.15)] w-[800px] overflow-hidden flex flex-col p-6 max-h-[85vh] overflow-y-auto custom-scrollbar">
-    
-    <!-- Language Section -->
-    <div class="mb-8">
-      <h3 class="text-lg font-semibold text-black mb-4">{{ $t('language') || 'Language' }}</h3>
-      <div class="grid grid-cols-2 gap-x-8 gap-y-4">
-        <button 
-          v-for="loc in locales" 
-          :key="loc.code"
-          @click="changeLocale(loc.code)"
-          class="flex items-center gap-3 p-3 rounded-xl transition-all group border text-left"
-          :class="currentLocale === loc.code ? 'border-brand-blue bg-blue-50 text-brand-blue shadow-sm' : 'border-transparent hover:bg-gray-50 text-black'"
-        >
-          <img :src="getLocaleFlag(loc.code)" class="h-5 w-7 object-cover rounded shadow-sm border border-gray-200" />
-          <div class="flex flex-col">
-             <span class="text-sm font-medium leading-none">{{ getLocalizedCountryName(loc.code) }} - {{ loc.name }}</span>
+  <SideDrawer :visible="visible" @close="$emit('close')">
+    <template #title>Select Region & Currency</template>
+    <template #default>
+      <div class="flex flex-col h-full">
+        <!-- Header Tabs -->
+        <div class="p-4 pb-0">
+          <div class="flex bg-[#F3F4F6] rounded-full p-1">
+            <button
+              @click="activeSection = 'language'"
+              :class="['flex-1 py-2.5 text-[13px] font-semibold rounded-full transition-all', activeSection === 'language' ? 'bg-white text-[#111827] shadow-sm' : 'text-[#6B7280] hover:text-[#374151]']"
+            >Language</button>
+            <button
+              @click="activeSection = 'currency'"
+              :class="['flex-1 py-2.5 text-[13px] font-semibold rounded-full transition-all', activeSection === 'currency' ? 'bg-white text-[#111827] shadow-sm' : 'text-[#6B7280] hover:text-[#374151]']"
+            >Currency</button>
           </div>
-          <div v-if="currentLocale === loc.code" class="ml-auto">
-             <Check class="w-4 h-4" />
-          </div>
-        </button>
+        </div>
+
+        <!-- Search -->
+        <div class="px-4 py-3">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search"
+            class="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 text-sm text-[#111827] placeholder-[#9CA3AF] outline-none focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] transition-colors"
+          />
+        </div>
+
+        <!-- Scrollable List -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4">
+
+          <!-- Language List -->
+          <template v-if="activeSection === 'language'">
+            <div
+              v-for="loc in filteredLocales"
+              :key="loc.code"
+              @click="changeLocale(loc.code)"
+              class="flex items-center gap-4 py-3.5 border-b border-[#F3F4F6] last:border-b-0 cursor-pointer group"
+            >
+              <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-[#E5E7EB] bg-[#F9FAFB]">
+                <img :src="getLocaleFlag(loc.code)" :alt="loc.name" class="w-full h-full object-cover" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[14px] font-semibold text-[#111827] leading-tight">{{ getLocalizedCountryName(loc.code) }}</p>
+                <p class="text-[12px] text-[#9CA3AF] font-medium mt-0.5">{{ loc.name }}</p>
+              </div>
+              <div class="flex-shrink-0">
+                <div v-if="currentLocale === loc.code" class="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div v-else class="w-6 h-6 rounded-full border-2 border-[#D1D5DB] group-hover:border-[#9CA3AF] transition-colors"></div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Currency List -->
+          <template v-else>
+            <div
+              v-for="currencyData in filteredCurrencies"
+              :key="currencyData.code"
+              @click="setCurrency(currencyData.code)"
+              class="flex items-center gap-4 py-3.5 border-b border-[#F3F4F6] last:border-b-0 cursor-pointer group"
+            >
+              <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-[#E5E7EB] bg-[#F9FAFB]">
+                <img :src="currencyData.flag" :alt="currencyData.code" class="w-full h-full object-cover" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[14px] font-semibold text-[#111827] leading-tight">{{ currencyData.name || currencyData.code }}</p>
+                <p class="text-[12px] text-[#9CA3AF] font-medium mt-0.5">{{ currencyData.code }} · {{ currencyData.symbol }}</p>
+              </div>
+              <div class="flex-shrink-0">
+                <div v-if="currentCurrency.code === currencyData.code" class="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div v-else class="w-6 h-6 rounded-full border-2 border-[#D1D5DB] group-hover:border-[#9CA3AF] transition-colors"></div>
+              </div>
+            </div>
+          </template>
+        </div>
       </div>
-    </div>
-
-    <hr class="border-gray-200 mb-8" />
-
-    <!-- Currency Section -->
-    <div>
-      <h3 class="text-lg font-semibold text-black mb-4">{{ $t('currency') || 'Currency' }}</h3>
-      <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
-        <button 
-          v-for="currencyData in currencies" 
-          :key="currencyData.code"
-          @click="setCurrency(currencyData.code)"
-          class="flex items-center gap-2 p-2 rounded-xl transition-all border group"
-          :class="currentCurrency.code === currencyData.code ? 'border-brand-blue bg-blue-50 text-brand-blue shadow-sm' : 'border-transparent hover:bg-gray-50 text-black'"
-        >
-          <img :src="currencyData.flag" class="h-3.5 w-5 object-cover rounded-sm border border-gray-200 shrink-0" />
-          <span class="text-[13px] font-medium">{{ currencyData.code }}</span>
-          <span class="text-[11px] font-medium text-gray-400 bg-gray-100 rounded-full px-1.5 py-0.5 ml-auto group-hover:bg-gray-200 transition-colors" :class="currentCurrency.code === currencyData.code ? 'bg-blue-100 text-brand-blue' : ''">{{ currencyData.symbol }}</span>
-        </button>
-      </div>
-    </div>
-
-  </div>
+    </template>
+  </SideDrawer>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Check } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSettings, localeToCurrency } from '@/composables/useSettings'
+import SideDrawer from '@/components/ui/SideDrawer.vue'
+
+defineProps({
+  visible: { type: Boolean, default: false }
+})
+
+defineEmits(['close'])
 
 const { locale: currentLocale, locales, setLocale } = useI18n() as any
 const { currentCurrency, currencies, setCurrency } = useSettings()
+
+const activeSection = ref<'language' | 'currency'>('language')
+const searchQuery = ref('')
 
 const changeLocale = async (code: string) => {
   await setLocale(code)
@@ -63,20 +113,38 @@ const changeLocale = async (code: string) => {
   }
 }
 
+const filteredLocales = computed(() => {
+  if (!searchQuery.value) return locales.value || locales
+  const q = searchQuery.value.toLowerCase()
+  const list = locales.value || locales
+  return list.filter((loc: any) =>
+    loc.name?.toLowerCase().includes(q) || loc.code?.toLowerCase().includes(q) || getLocalizedCountryName(loc.code).toLowerCase().includes(q)
+  )
+})
+
+const filteredCurrencies = computed(() => {
+  if (!searchQuery.value) return currencies.value || currencies
+  const q = searchQuery.value.toLowerCase()
+  const list = currencies.value || currencies
+  return list.filter((c: any) =>
+    (c.name || c.code).toLowerCase().includes(q) || c.code.toLowerCase().includes(q)
+  )
+})
+
 const getLocaleFlag = (code: string) => {
   const flags: Record<string, string> = {
-    'en': 'https://flagcdn.com/us.svg',
-    'es': 'https://flagcdn.com/us.svg', // Based on image: 'Estados Unidos - Español'
-    'fr': 'https://flagcdn.com/fr.svg',
-    'de': 'https://flagcdn.com/de.svg',
-    'ar': 'https://flagcdn.com/sa.svg',
-    'zh': 'https://flagcdn.com/cn.svg',
-    'ja': 'https://flagcdn.com/jp.svg',
-    'pt': 'https://flagcdn.com/br.svg',
-    'it': 'https://flagcdn.com/it.svg',
-    'ko': 'https://flagcdn.com/kr.svg',
-    'tr': 'https://flagcdn.com/tr.svg',
-    'hi': 'https://flagcdn.com/in.svg'
+    'en': 'https://flagcdn.com/w80/us.png',
+    'es': 'https://flagcdn.com/w80/us.png',
+    'fr': 'https://flagcdn.com/w80/fr.png',
+    'de': 'https://flagcdn.com/w80/de.png',
+    'ar': 'https://flagcdn.com/w80/sa.png',
+    'zh': 'https://flagcdn.com/w80/cn.png',
+    'ja': 'https://flagcdn.com/w80/jp.png',
+    'pt': 'https://flagcdn.com/w80/br.png',
+    'it': 'https://flagcdn.com/w80/it.png',
+    'ko': 'https://flagcdn.com/w80/kr.png',
+    'tr': 'https://flagcdn.com/w80/tr.png',
+    'hi': 'https://flagcdn.com/w80/in.png'
   }
   return flags[code] || flags['en']
 }
@@ -84,7 +152,7 @@ const getLocaleFlag = (code: string) => {
 const getLocalizedCountryName = (code: string) => {
   const names: Record<string, string> = {
     'en': 'United States',
-    'es': 'Estados Unidos', // As seen in image
+    'es': 'Estados Unidos',
     'fr': 'France',
     'de': 'Deutschland',
     'ar': 'المملكة العربية السعودية',
@@ -101,7 +169,7 @@ const getLocalizedCountryName = (code: string) => {
 </script>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 </style>

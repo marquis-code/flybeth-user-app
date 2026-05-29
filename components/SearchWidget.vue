@@ -1,5 +1,6 @@
 <template>
   <div 
+    ref="widgetRef"
     class="sw-root transition-all duration-300" 
     :class="[
       isSticky ? 'sw-root--sticky' : '', 
@@ -37,13 +38,12 @@
       </nav>
     </div>
 
-    <!-- Global backdrop -->
+    <!-- Global backdrop (visual only — pointer-events: none) -->
     <Teleport to="body">
       <Transition name="sw-fade">
         <div
           v-if="isFocused || activeCruiseField"
           class="sw-backdrop"
-          @click="isFocused = false; activeCruiseField = null"
         />
       </Transition>
     </Teleport>
@@ -100,53 +100,20 @@
               />
             </div>
             <div v-if="idx === 0" class="sw-bar-div" />
-            <div v-if="idx === 0" class="sw-field sw-field--pax" @click="isFocused = true">
+            <div v-if="idx === 0" class="sw-field sw-field--pax-class" @click="isFocused = true">
               <Occupancypicker 
-                label="Passengers" 
+                label="Passengers & Class" 
                 variant="flight" 
                 v-model:adults="flightTravelers.adults" 
                 v-model:children="flightTravelers.children" 
                 v-model:infantsOnLap="flightTravelers.infantsOnLap"
                 v-model:infantsInSeat="flightTravelers.infantsInSeat"
+                v-model:cabinClass="flightTravelers.cabinClass"
                 @focus="isFocused = true" 
                 @close="isFocused = false" 
               />
             </div>
-            <div v-if="idx === 0" class="sw-bar-div" />
-            <div v-if="idx === 0" class="sw-field sw-field--class" ref="classRef">
-              <button 
-                type="button"
-                @click="isClassOpen = !isClassOpen" 
-                class="sw-field-inner w-full text-left bg-transparent border-none p-0 outline-none group"
-              >
-                <span class="sw-fld-lbl group-hover:text-black transition-colors">Class</span>
-                <div class="flex items-center justify-between gap-1 mt-1">
-                  <span class="sw-fld-val sw-fld-val--trunc">{{ currentCabinLabel }}</span>
-                  <ChevronDown class="sw-ico-xs sw-ico-muted transition-transform duration-200" :class="isClassOpen ? 'rotate-180' : ''" />
-                </div>
-              </button>
 
-              <Teleport v-if="isClassOpen" to="body">
-                <div class="fixed inset-0 z-[1000000] bg-black/5" @click="isClassOpen = false"></div>
-                <Transition name="sw-drop" appear>
-                  <div 
-                    class="sw-drop" 
-                    :style="classDropdownStyle"
-                  >
-                    <div 
-                      v-for="opt in cabinClasses" 
-                      :key="opt.value"
-                      @click="flightTravelers.cabinClass = opt.value; isClassOpen = false"
-                      class="sw-drop-item"
-                      :class="flightTravelers.cabinClass === opt.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'"
-                    >
-                      <span class="text-[14px] font-semibold" :class="flightTravelers.cabinClass === opt.value ? 'text-white' : 'text-black'">{{ opt.label }}</span>
-                      <Check v-if="flightTravelers.cabinClass === opt.value" class="sw-ico-sm text-green-500" />
-                    </div>
-                  </div>
-                </Transition>
-              </Teleport>
-            </div>
           </div>
         </div>
 
@@ -493,6 +460,7 @@ import { useTracking } from '@/composables/core/useTracking'
 import { flightsApi } from '@/api_factory/modules/flights'
 import { useAuth } from '@/composables/modules/auth/useAuth'
 import CustomTimePicker from '@/components/ui/CustomTimePicker.vue'
+import { useRoute } from 'vue-router'
 
 const { isLoggedIn } = useAuth()
 const { trackAction } = useTracking()
@@ -504,16 +472,15 @@ const isFocused           = ref(false)
 const isSearching         = ref(false)
 const currentTab          = ref('Flights')
 const stayMode            = ref('single')
-const flightMode          = ref('roundtrip')
+const flightMode          = ref('oneway')
 const carMode             = ref('pickup')
 const transferMode        = ref('pickup')
 const packageType         = ref('Hotel+Flight')
 const onlyPartialHotel    = ref(false)
 const differentCarDropoff = ref(false)
 const activeCruiseField   = ref<string | null>(null)
-const isClassOpen         = ref(false)
-const classRef            = ref<HTMLElement | null>(null)
 const isMobile            = ref(false)
+const widgetRef           = ref<HTMLElement | null>(null)
 
 const checkMobile = () => {
   if (typeof window !== 'undefined') isMobile.value = window.innerWidth < 768
@@ -531,30 +498,7 @@ const cruiseRefs: Record<string, typeof destRef> = {
 const dynamicStyles = reactive<Record<string, any>>({})
 
 const updateDropdownPositions = () => {
-  // 1. Cabin Class
-  if (isClassOpen.value && classRef.value) {
-    let el = classRef.value as any
-    if (Array.isArray(el)) el = el[0]
-    if (!el || !el.getBoundingClientRect) return
-
-    const rect = el.getBoundingClientRect()
-    const isMob = window.innerWidth < 768
-    const w = isMob ? Math.min(280, window.innerWidth - 32) : rect.width
-    let left = rect.left
-    if (left + w > window.innerWidth - 12) left = window.innerWidth - w - 12
-    if (left < 12) left = 12
-
-    dynamicStyles.class = {
-      position: 'fixed',
-      top: `${rect.bottom + 6}px`,
-      left: `${left}px`,
-      width: `${w}px`,
-      minWidth: isMob ? 'none' : '200px',
-      zIndex: 1000001
-    }
-  }
-
-  // 2. Cruise Fields
+  // Cruise Fields
   if (activeCruiseField.value) {
     const el = cruiseRefs[activeCruiseField.value]?.value as HTMLElement | null
     if (el) {
@@ -571,7 +515,7 @@ const updateDropdownPositions = () => {
   }
 }
 
-watch([isClassOpen, activeCruiseField], () => {
+watch([activeCruiseField], () => {
   nextTick(updateDropdownPositions)
 })
 
@@ -636,13 +580,7 @@ const cruiseSearchState     = reactive({ destination: '', destinationLabel: '', 
 
 const addHotelLeg = () => { if (multiHotelLegs.value.length < 5) multiHotelLegs.value.push({ location: '', checkIn: '', checkOut: '' }) }
 
-const currentCabinLabel = computed(() => {
-  return cabinClasses.find(c => c.value === flightTravelers.cabinClass)?.label || 'Economy'
-})
 
-const classDropdownStyle = computed(() => {
-  return dynamicStyles.class || {}
-})
 
 // ─── Cruise data ─────────────────────────────────────────────
 const cruiseDestinations = [
@@ -731,7 +669,48 @@ const removeSearch = async (id: string) => {
   } catch (err) {}
 }
 
+// ─── Click-outside handler (replaces backdrop click) ──────
+const handleWidgetClickOutside = (e: MouseEvent) => {
+  if (!isFocused.value && !activeCruiseField.value) return
+  if (widgetRef.value && widgetRef.value.contains(e.target as Node)) return
+  isFocused.value = false
+  activeCruiseField.value = null
+}
+
 onMounted(() => {
+  const route = useRoute()
+  
+  if (route.query.tab) {
+    const matchedTab = tabs.find(t => t.name === String(route.query.tab))
+    if (matchedTab) currentTab.value = matchedTab.name
+  }
+
+  // Restore flight state
+  if (route.query.origin) flightSearchState.origin = String(route.query.origin)
+  if (route.query.destination) flightSearchState.destination = String(route.query.destination)
+  if (route.query.departureDate) flightSearchState.departureDate = String(route.query.departureDate)
+  if (route.query.returnDate) flightSearchState.returnDate = String(route.query.returnDate)
+  if (route.query.type) flightMode.value = String(route.query.type)
+  if (route.query.adults) flightTravelers.adults = Number(route.query.adults)
+  if (route.query.children) flightTravelers.children = Number(route.query.children)
+  if (route.query.infantsOnLap) flightTravelers.infantsOnLap = Number(route.query.infantsOnLap)
+  if (route.query.infantsInSeat) flightTravelers.infantsInSeat = Number(route.query.infantsInSeat)
+  if (route.query.cabinClass) flightTravelers.cabinClass = String(route.query.cabinClass)
+
+  // Restore hotel state
+  if (route.query.location) searchState.location = String(route.query.location)
+  if (route.query.checkIn) searchState.checkIn = String(route.query.checkIn)
+  if (route.query.checkOut) searchState.checkOut = String(route.query.checkOut)
+  if (route.query.rooms) occupancy.rooms = Number(route.query.rooms)
+  if (route.query.adults && currentTab.value === 'Hotels') occupancy.adults = Number(route.query.adults)
+
+  // Restore car state
+  if (route.query.pickUpDate && currentTab.value === 'Cars') carSearchState.pickUpDate = String(route.query.pickUpDate)
+  if (route.query.carMode) carMode.value = String(route.query.carMode)
+
+  // Restore package state
+  if (route.query.packageType) packageType.value = String(route.query.packageType)
+
   checkMobile()
   fetchRecentSearches()
   
@@ -741,7 +720,7 @@ onMounted(() => {
     if (local) {
       try { 
         recentSearches.value = JSON.parse(local).slice(0, 5)
-        // Auto-prefill for guest
+        // Auto-prefill for guest if not already prefilled by route
         if (recentSearches.value.length > 0 && !flightSearchState.origin && !flightSearchState.destination) {
            applyRecentSearch(recentSearches.value[0])
         }
@@ -752,11 +731,13 @@ onMounted(() => {
   window.addEventListener('resize', checkMobile)
   window.addEventListener('scroll', updateDropdownPositions, true)
   window.addEventListener('resize', updateDropdownPositions)
+  window.addEventListener('click', handleWidgetClickOutside)
 })
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
   window.removeEventListener('scroll', updateDropdownPositions, true)
   window.removeEventListener('resize', updateDropdownPositions)
+  window.removeEventListener('click', handleWidgetClickOutside)
 })
 
 const handleSearch = async () => {
@@ -770,6 +751,10 @@ const handleSearch = async () => {
   }
 
   if (currentTab.value === 'Flights') {
+    Object.assign(query, flightSearchState)
+    Object.assign(query, flightTravelers)
+    query.type = flightMode.value
+
     try {
       // Secure Search Session
       const searchCriteria = {
@@ -795,7 +780,7 @@ const handleSearch = async () => {
       // Handle both sid and sessionId for robustness
       const sid = data?.sid || data?.sessionId
       if (sid) {
-        return navigateTo({ path: '/flights', query: { sid } })
+        query.sid = sid
       }
     } catch (err: any) {
       console.error('Failed to create secure search session:', err)
@@ -804,14 +789,13 @@ const handleSearch = async () => {
         console.warn('Search session endpoint not found (404). Check backend routing.')
       }
     }
-    // Fallback to URL params if session creation fails
-    Object.assign(query, flightSearchState)
-    Object.assign(query, flightTravelers)
   }
   else if (currentTab.value === 'Cruises')       Object.assign(query, cruiseSearchState)
-  else if (currentTab.value === 'Transfers') { Object.assign(query, transferSearchState); query.mode = transferMode.value }
-  else if (currentTab.value === 'Activities') Object.assign(query, activitiesSearchState)
-  else if (currentTab.value === 'Hotels')   { Object.assign(query, searchState); Object.assign(query, occupancy) }
+  else if (currentTab.value === 'Transfers')     { Object.assign(query, transferSearchState); query.mode = transferMode.value }
+  else if (currentTab.value === 'Activities')    Object.assign(query, activitiesSearchState)
+  else if (currentTab.value === 'Hotels')        { Object.assign(query, searchState); Object.assign(query, occupancy) }
+  else if (currentTab.value === 'Packages')      { Object.assign(query, packageSearchState); Object.assign(query, packageOccupancy); query.packageType = packageType.value }
+  else if (currentTab.value === 'Cars')          { Object.assign(query, carSearchState); query.carMode = carMode.value }
   trackAction('booking_step_search', { tab: currentTab.value, ...query })
   try {
     await navigateTo({ path: routes[currentTab.value] || '/search', query })
@@ -822,9 +806,15 @@ const handleSearch = async () => {
 
 const handleExternalDeal = (deal: any) => {
   currentTab.value = deal.type || 'Flights'
-  if (deal.type === 'Flights')     flightSearchState.origin = deal.from || ''
-  else if (deal.type === 'Hotels') searchState.location = deal.to || ''
-  else if (deal.type === 'Cars')   carSearchState.destination = deal.to || ''
+  if (deal.type === 'Flights') {
+    flightSearchState.origin = deal.from || ''
+    flightSearchState.destination = deal.to || ''
+  } else if (deal.type === 'Hotels') {
+    searchState.location = deal.to || ''
+  } else if (deal.type === 'Cars') {
+    carSearchState.destination = deal.to || ''
+  }
+  handleSearch()
 }
 defineExpose({ handleExternalDeal })
 
@@ -1368,6 +1358,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   inset: 0;
   background: rgba(0,0,0,0.08);
   z-index: 9990;
+  pointer-events: none;
 }
 
 /* ═══════════════════════════════════════════════════

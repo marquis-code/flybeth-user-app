@@ -42,7 +42,7 @@
               @click="selectResult(item)"
               class="px-4 py-3.5 hover:bg-white cursor-pointer flex items-center gap-4 group transition-all rounded-2xl"
             >
-              <div class="h-10 w-10 rounded-xl bg-white flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all text-black">
+              <div class="h-10 w-10 rounded-xl bg-white flex items-center justify-center group-hover:bg-gray-100 text-black transition-all text-black">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </div>
               <span class="text-sm font-bold text-black group-hover:text-black transition-colors">{{ item.name }}</span>
@@ -58,7 +58,7 @@
               @click="selectResult(city)"
               class="px-4 py-3.5 hover:bg-white cursor-pointer transition-all flex items-center gap-4 group rounded-2xl"
             >
-               <div class="h-10 w-10 rounded-xl bg-white flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all text-black">
+               <div class="h-10 w-10 rounded-xl bg-white flex items-center justify-center group-hover:bg-gray-100 text-black transition-all text-black">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
               </div>
               <div class="text-sm font-bold text-black group-hover:text-black transition-colors">{{ city.name }}</div>
@@ -73,7 +73,7 @@
               @click="selectAmadeusResult(res)"
               class="px-4 py-3.5 hover:bg-white cursor-pointer flex items-center gap-4 group transition-all rounded-2xl"
             >
-               <div class="h-10 w-10 rounded-xl bg-white flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all text-black">
+               <div class="h-10 w-10 rounded-xl bg-white flex items-center justify-center group-hover:bg-gray-100 text-black transition-all text-black">
                 <svg v-if="res.subType === 'CITY'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </div>

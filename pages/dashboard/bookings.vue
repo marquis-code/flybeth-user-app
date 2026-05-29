@@ -114,12 +114,12 @@
               </div>
               <div class="text-center">
                 <p class="text-sm  text-black uppercase ">Total</p>
-                <p class="text-xl  text-black">{{ booking.pricing?.currency }} {{ formatPrice(booking.pricing?.totalAmount) }}</p>
+                <p class="text-xl  text-black">{{ formatPrice(booking.pricing?.totalAmount) }}</p>
               </div>
               <div class="flex gap-2">
                 <NuxtLink
                   :to="`/bookings?pnr=${booking.pnr}`"
-                  class="px-4 py-2 bg-white text-black rounded-xl text-xs  uppercase  hover:bg-black border border-gray-200 transition-all"
+                  class="px-4 py-2 bg-white text-black rounded-xl text-xs  uppercase  hover:bg-gray-100 border border-gray-200 transition-all"
                 >
                   View Details
                 </NuxtLink>
@@ -143,6 +143,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { navigateTo } from '#app'
 import { useFetchMyBookings } from '@/composables/modules/bookings/useFetchMyBookings'
+import { useSettings } from '~/composables/useSettings'
 
 definePageMeta({ middleware: 'auth' })
 
@@ -156,7 +157,7 @@ const filteredBookings = computed(() => {
 })
 
 const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'
-const formatPrice = (p: number) => p?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'
+const { formatPrice } = useSettings()
 
 const handlePayment = (booking: any) => {
   navigateTo({
@@ -165,7 +166,7 @@ const handlePayment = (booking: any) => {
       type: 'flight',
       id: booking._id,
       pnr: booking.pnr,
-      provider: 'amadeus',
+      provider: 'duffel',
     }
   })
 }

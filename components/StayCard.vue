@@ -29,7 +29,7 @@
         </div>
 
         <div v-if="stay.amenities?.length" class="mt-3 flex flex-wrap gap-2">
-          <span v-for="amenity in stay.amenities" :key="amenity" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-black text-black">
+          <span v-for="amenity in stay.amenities" :key="amenity" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-black">
             {{ amenity }}
           </span>
         </div>
@@ -38,7 +38,7 @@
       <div class="mt-4 flex items-end justify-between">
         <div>
           <p class="text-xs text-black">{{ $t('stayCard.nightlyAvg') }}</p>
-          <p class="text-xl font-bold text-black">${{ stay.price?.amount || stay.price?.total || stay.pricing?.baseRate || '—' }}</p>
+          <p class="text-xl font-bold text-black">{{ formatPrice(stay.price?.amount || stay.price?.total || stay.pricing?.baseRate || 0) }}</p>
           <p v-if="stay.price?.total" class="text-xs text-black">{{ $t('stayCard.includesTaxes', { total: stay.price.total }) }}</p>
         </div>
         <UiBaseButton size="sm" @click="$emit('select', stay)">
@@ -50,6 +50,10 @@
 </template>
 
 <script setup lang="ts">
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
+
 defineProps({
   stay: {
     type: Object,

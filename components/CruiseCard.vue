@@ -4,7 +4,7 @@
     <!-- Ship Image & Quick Badges -->
     <div class="md:w-[320px] lg:w-[380px] h-60 md:h-auto shrink-0 relative flex items-center justify-center rounded-[2rem] bg-[#F8FAFC] border border-gray-200 overflow-hidden group-hover:bg-white transition-colors duration-500">
       <img v-if="cruise.image" :src="cruise.image" :alt="cruise.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
-      <div v-else class="w-full h-full bg-black flex items-center justify-center text-black">
+      <div v-else class="w-full h-full bg-gray-100 flex items-center justify-center text-black">
          <GlobeAltIcon class="h-16 w-16 opacity-20" />
       </div>
 
@@ -81,8 +81,7 @@
         <div class="flex flex-col">
            <span class="text-sm font-bold text-black uppercase  mb-0.5">Starting from</span>
            <div class="flex items-baseline gap-1.5">
-              <span class="text-xs font-bold text-black">USD</span>
-              <span class="text-3xl font-extrabold text-black er">{{ formatPrice(cruise.pricing?.startingPrice || cruise.price) }}</span>
+              <span class="text-3xl font-extrabold text-black er">{{ formatCruisePrice(cruise.pricing?.startingPrice || cruise.price) }}</span>
               <span class="text-[11px] font-bold text-black ml-1">/ person</span>
            </div>
         </div>
@@ -110,6 +109,9 @@ import {
   ArrowRightIcon,
   GlobeAltIcon
 } from '@heroicons/vue/24/solid'
+import { useSettings } from '@/composables/useSettings'
+
+const { formatPrice } = useSettings()
 
 const props = defineProps({
   cruise: {
@@ -120,10 +122,10 @@ const props = defineProps({
 
 defineEmits(['select'])
 
-const formatPrice = (p: any) => {
+const formatCruisePrice = (p: any) => {
   const num = parseFloat(p)
-  if (isNaN(num)) return '0.00'
-  return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  if (isNaN(num)) return formatPrice(0)
+  return formatPrice(num)
 }
 
 const formatDate = (d: string) => {

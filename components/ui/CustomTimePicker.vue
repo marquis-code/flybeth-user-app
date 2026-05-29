@@ -38,7 +38,7 @@
                   :key="h-1"
                   @click="selectHour(h-1)"
                   class="w-full py-2.5 text-sm font-medium transition-colors"
-                  :class="selectedHour === (h-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-black hover:bg-black'"
+                  :class="selectedHour === (h-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-black hover:bg-gray-100'"
                 >
                   {{ String(h-1).padStart(2, '0') }}
                 </button>
@@ -56,7 +56,7 @@
                   :key="m-1"
                   @click="selectMinute(m-1)"
                   class="w-full py-2.5 text-sm font-medium transition-colors"
-                  :class="selectedMinute === (m-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-black hover:bg-black'"
+                  :class="selectedMinute === (m-1) ? 'bg-[#0D1DAD] text-white font-bold' : 'text-black hover:bg-gray-100'"
                 >
                   {{ String(m-1).padStart(2, '0') }}
                 </button>
