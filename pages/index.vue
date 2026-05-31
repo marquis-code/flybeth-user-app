@@ -1,13 +1,10 @@
 <template>
   <div class="min-h-screen bg-white overflow-x-hidden relative">
-    <!-- Hero Section — Clean & Professional -->
     <div class="relative w-full pb-8 lg:pb-20 z-20">
-      <!-- Blue background extending halfway down the widget -->
       <div class="absolute top-0 left-0 right-0 h-[400px] lg:h-[480px] bg-brand-blue z-0 pointer-events-none"></div>
           
       <div class="relative z-10 pt-32 lg:pt-48 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
         <div class="mb-8 lg:mb-10 flex flex-col items-center w-full max-w-3xl mx-auto text-center">
-          <!-- ✅ white text for contrast against solid blue -->
           <p class="text-sm font-bold text-white/80 mb-3 uppercase">Search · Compare · Book</p>
           <h1 class="text-3xl lg:text-5xl font-black text-white leading-[1.1] drop-shadow-sm">
             {{ heroTitle }}
