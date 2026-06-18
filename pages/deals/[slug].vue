@@ -34,7 +34,7 @@
                  </div>
                </div>
                <div class="mt-auto">
-                 <button class="w-full bg-[#Eef2ff] hover:bg-[#e0e7ff] text-[#4F46E5] font-bold py-3 rounded-xl text-sm transition-colors">Select Deal</button>
+                 <button class="w-full bg-[#F0F4FF] hover:bg-[#E0E7FF] text-[#0D1DAD] font-bold py-3 rounded-xl text-sm transition-colors">Select Deal</button>
                </div>
             </div>
           </div>

@@ -8,7 +8,7 @@ export const useUser = () => {
         path: '/'
     });
 
-    const user = ref(userCookie.value || null);
+    const user = useState<any>('global_user_state', () => userCookie.value || null);
 
     const setUser = (newUser: any) => {
         user.value = newUser;

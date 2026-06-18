@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white rounded-2xl overflow-hidden mb-6 border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md">
+  <div class="bg-white rounded-[20px] overflow-hidden mb-6 border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md">
     <!-- Header: Price and Recommended Badge -->
-    <div class="bg-white px-5 sm:px-6 py-4 flex flex-wrap items-center justify-between border-b border-gray-100 gap-4">
+    <div class="bg-white px-6 sm:px-8 py-5 sm:py-6 flex flex-wrap items-center justify-between border-b border-gray-100 gap-4">
       <div class="flex items-center gap-3">
-        <div v-if="isRecommended" class="bg-brand-green/10 text-brand-green text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wide">
+        <div v-if="isRecommended" class="bg-brand-green/10 text-brand-green text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase ">
           <Star class="w-3.5 h-3.5 fill-current" />
           Recommended
         </div>
@@ -14,13 +14,13 @@
       </div>
       
       <div class="flex items-center gap-3 ml-auto">
-        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Price</span>
+        <span class="text-xs font-bold text-gray-400 uppercase ">Total Price</span>
         <span class="text-2xl font-bold text-black">{{ formattedPrice }}</span>
       </div>
     </div>
 
     <!-- Slices (Outbound, Return, etc.) rendered as FlightCards -->
-    <div class="p-2 sm:p-3 space-y-2 bg-gray-50/50">
+    <div class="p-4 sm:p-5 space-y-3 bg-gray-50/50">
       <FlightCard 
         v-for="(slice, index) in slices" 
         :key="index"
@@ -29,7 +29,7 @@
     </div>
 
     <!-- Footer: Baggage & Next Step -->
-    <div class="bg-white px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 gap-4">
+    <div class="bg-white px-6 sm:px-8 py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 gap-4">
       <!-- Summary / Baggage -->
       <div class="flex items-center gap-5 w-full sm:w-auto">
         <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
@@ -47,7 +47,7 @@
       <!-- Action Button -->
       <button 
         @click="$emit('select', flight)"
-        class="w-full sm:w-auto bg-[#0D1DAD] hover:bg-[#002a66] text-white px-8 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2"
+        class="w-full sm:w-auto bg-[#0D1DAD] hover:bg-[#002a66] text-white px-10 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
       >
         Next step
         <ArrowRight class="w-4 h-4" />

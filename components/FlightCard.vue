@@ -2,7 +2,7 @@
   <div class="bg-white rounded-2xl border border-gray-200 transition-all duration-300">
     <!-- Main Collapsed Row -->
     <div 
-      class="p-4 sm:p-5 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 cursor-pointer hover:bg-gray-50/50 rounded-2xl"
+      class="p-5 sm:p-7 flex flex-col sm:flex-row items-center gap-5 sm:gap-8 cursor-pointer hover:bg-gray-50/50 rounded-2xl"
       @click="isExpanded = !isExpanded"
     >
       <!-- Airline Logo -->
@@ -42,7 +42,7 @@
             <div v-for="i in flight.stops" :key="i" class="w-2 h-2 rounded-full bg-white border-2 border-[#0D1DAD] z-10"></div>
           </div>
         </div>
-        <span class="text-[10px] font-bold mt-1.5 uppercase tracking-wider text-[#0D1DAD]" :class="flight.stops > 0 ? 'text-gray-500' : ''">
+        <span class="text-[10px] font-bold mt-1.5 uppercase  text-[#0D1DAD]" :class="flight.stops > 0 ? 'text-gray-500' : ''">
           {{ flight.stops === 0 ? 'Direct' : `${flight.stops} Stop${flight.stops > 1 ? 's' : ''}` }}
         </span>
       </div>
@@ -72,8 +72,8 @@
       leave-to-class="max-h-0 opacity-0"
     >
       <div v-if="isExpanded" class="border-t border-gray-100 bg-gray-50/30 overflow-hidden">
-        <div class="p-5 sm:p-6">
-          <h4 class="text-sm font-bold text-black mb-4">Flight Details</h4>
+        <div class="p-6 sm:p-8">
+          <h4 class="text-sm font-bold text-black mb-5">Flight Details</h4>
           
           <!-- Iterating over slices/segments if available, else showing generic block -->
           <div class="space-y-6 relative">
@@ -131,7 +131,7 @@
               </div>
 
               <!-- Connection Info between segments -->
-              <div v-if="idx < segments.length - 1" class="mt-4 mb-2 py-3 px-4 bg-orange-50 rounded-xl border border-orange-100 flex items-center gap-3">
+              <div v-if="idx < segments.length - 1" class="mt-5 mb-3 py-3.5 px-5 bg-orange-50 rounded-xl border border-orange-100 flex items-center gap-3">
                 <Clock class="w-4 h-4 text-orange-600" />
                 <span class="text-sm font-bold text-orange-800">
                   Connection in {{ segment.destination_name || segments[idx+1].origin_name || flight.destination }}
@@ -141,9 +141,9 @@
           </div>
 
           <!-- Baggage Info -->
-          <div class="mt-6 pt-5 border-t border-gray-200">
-            <h4 class="text-sm font-bold text-black mb-3">Included Baggage</h4>
-            <div class="flex flex-wrap gap-4">
+          <div class="mt-7 pt-6 border-t border-gray-200">
+            <h4 class="text-sm font-bold text-black mb-4">Included Baggage</h4>
+            <div class="flex flex-wrap gap-5">
               <div class="flex items-center gap-2 text-sm text-gray-700">
                 <Briefcase class="w-4 h-4 text-gray-400" />
                 <span class="font-medium">1 Personal item</span>

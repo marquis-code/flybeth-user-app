@@ -25,7 +25,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search"
-              class="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 text-sm text-[#111827] placeholder-[#9CA3AF] outline-none focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] transition-colors"
+              class="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 text-sm text-[#111827] placeholder-[#9CA3AF] outline-none focus:border-[#1A2ED4] focus:ring-1 focus:ring-[#1A2ED4] transition-colors"
             />
           </div>
         </div>
@@ -53,7 +53,7 @@
 
               <!-- Radio -->
               <div class="flex-shrink-0">
-                <div v-if="selectedCode === currency.code" class="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center">
+                <div v-if="selectedCode === currency.code" class="w-6 h-6 rounded-full bg-[#1A2ED4] flex items-center justify-center">
                   <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
@@ -83,7 +83,7 @@
                 <p class="text-[13px] text-[#9CA3AF] font-medium mt-0.5">{{ crypto.code }}</p>
               </div>
               <div class="flex-shrink-0">
-                <div v-if="selectedCode === crypto.code" class="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center">
+                <div v-if="selectedCode === crypto.code" class="w-6 h-6 rounded-full bg-[#1A2ED4] flex items-center justify-center">
                   <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
@@ -102,7 +102,7 @@
 
     <template #footer>
       <div class="px-6 py-5 bg-white border-t border-gray-100 flex flex-col gap-4">
-        <button class="w-full py-4 bg-[#6366F1] text-white text-sm font-bold rounded-xl hover:bg-[#4F46E5] transition-colors" @click="handleContinue">
+        <button class="w-full py-4 bg-[#1A2ED4] text-white text-sm font-bold rounded-xl hover:bg-[#0D1DAD] transition-colors" @click="handleContinue">
           Continue
         </button>
         

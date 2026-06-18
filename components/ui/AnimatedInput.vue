@@ -22,7 +22,8 @@
         :readonly="readonly"
         :rows="rows"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300 resize-none',
+          'w-full py-3 px-3 bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300 resize-none',
+          label ? 'pt-6' : '',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
           (hasError || (errorMessage && showError)) ? 'border ring-red-500 border-red-500' : ''
@@ -43,7 +44,8 @@
         :readonly="readonly || type === 'date' || type === 'time' || type === 'datetime-local'"
         :autocomplete="autocomplete"
         :class="[
-          'w-full py-3 pt-6 px-3 bg-white border border-gray-200 focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
+          'w-full py-3 px-3 bg-white border border-gray-200 focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
+          label ? 'pt-6' : '',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
           (type === 'date' || type === 'time' || type === 'datetime-local') ? 'cursor-pointer' : '',
@@ -54,6 +56,13 @@
         @blur="handleBlur"
         @click="handleInputClick"
       />
+      
+      <!-- Completed Checkmark Icon for Input -->
+      <div v-if="modelValue && !hasError && !disabled && type !== 'password'" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#0D1DAD] pointer-events-none transition-all duration-300">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+      </div>
       
       <button 
         v-if="type === 'password'"
@@ -683,9 +692,14 @@ const handleFocus = (e: FocusEvent) => {
   emit('focus', e)
 }
 
+import { useTracking } from '@/composables/core/useTracking'
+
 const handleBlur = (e: FocusEvent) => {
   isFocused.value = false
   emit('blur', e)
+  if (props.modelValue) {
+    useTracking().trackAction('input_blur', { field: props.label })
+  }
 }
 
 const handleInputClick = () => {

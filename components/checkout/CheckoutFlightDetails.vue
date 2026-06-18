@@ -1,104 +1,118 @@
 <template>
-  <div class="ck-fd">
-    <!-- Flight Itinerary -->
-    <div v-if="flightOffer" class="ck-fd-card">
-      <div class="ck-fd-hdr">
-        <div class="ck-fd-route-wrap">
-          <h2 class="ck-fd-h">{{ flightOffer.originName || flightOffer.origin }} ➔ {{ flightOffer.destinationName || flightOffer.destination }}</h2>
-          <div class="ck-fd-sub">
-             <span>{{ formatDate(flightOffer.departureTime) }}</span>
-             <span class="ck-fd-dot"></span>
-             <span>{{ flightOffer.stops === 0 ? 'Non-stop' : `${flightOffer.stops} Stop${flightOffer.stops > 1 ? 's' : ''}` }}</span>
-             <span class="ck-fd-dot"></span>
-             <span>{{ formatDuration(flightOffer.duration) }}</span>
+  <div class="space-y-6 font-sans">
+    
+    <!-- Header -->
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D1DAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.5l-1.3 1.3c-.2.2-.1.6.2.8L9 12l-4 4-2.2-.6c-.3-.1-.6 0-.8.2L1 16.5c-.2.2-.1.5.2.6L5 19l2 3.8c.1.3.4.4.6.2l.9-1c.2-.2.3-.5.2-.8L8 19l4-4 3.2 6.4c.2.3.6.4.8.2l1.3-1.3c.3-.2.6-.6.5-1.1z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-[22px] font-bold text-gray-900">Flight details</h2>
+        <p class="text-sm text-gray-500 mt-1">Review your selected flights</p>
+      </div>
+    </div>
+
+    <!-- Flight Itinerary Card -->
+    <div v-if="flightOffer" class="bg-white border border-gray-100 rounded-[20px] overflow-hidden">
+      <!-- Summary Header -->
+      <div 
+        @click="expanded = !expanded" 
+        class="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+      >
+        <div class="flex items-center gap-4">
+          <img v-if="flightOffer.airlineLogo" :src="flightOffer.airlineLogo" :alt="flightOffer.airline" class="w-8 h-8 object-contain" />
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2 text-base font-bold text-gray-900">
+              <span>{{ flightOffer.origin }} {{ formatTime(flightOffer.departureTime) }}</span>
+              <span class="text-gray-400">➔</span>
+              <span>{{ flightOffer.destination }} {{ formatTime(flightOffer.arrivalTime) }}</span>
+            </div>
+            <div class="text-[13px] text-gray-500 mt-1">
+              {{ formatDate(flightOffer.departureTime) }} • {{ formatDuration(flightOffer.duration) }} • {{ flightOffer.stops === 0 ? 'Direct' : `${flightOffer.stops} Stop${flightOffer.stops > 1 ? 's' : ''}` }}
+            </div>
           </div>
         </div>
-        <button @click="expanded = !expanded" class="ck-fd-toggle">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" :class="{ 'rotate-180': expanded }"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
+        <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 transition-transform duration-300" :class="{ 'rotate-180': expanded }">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
       </div>
 
-      <Transition name="fade">
-        <div v-show="expanded" class="ck-fd-body">
-          <div v-for="(segment, idx) in flightOffer.segments" :key="idx" class="ck-fd-seg-group">
+      <!-- Expanded Timeline Details -->
+      <div v-show="expanded" class="border-t border-gray-100 p-6 bg-[#fafafa]">
+        <div v-for="(segment, idx) in flightOffer.segments" :key="idx" class="relative">
+          
+          <!-- Layover -->
+          <div v-if="idx > 0" class="flex gap-6 my-4 relative z-10">
+            <div class="w-3 flex justify-center">
+              <div class="w-[30px] h-[30px] bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 z-10">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+            </div>
+            <div class="flex flex-col pt-1">
+              <span class="text-sm font-semibold text-gray-900">Transfer in {{ segment.originName || segment.origin }}</span>
+              <span class="text-xs text-gray-500">{{ calcLayover(flightOffer.segments[idx - 1], segment) }}</span>
+            </div>
+          </div>
+
+          <!-- Timeline Segment -->
+          <div class="flex gap-6 relative group">
+            <!-- Timeline connector line -->
+            <div class="absolute left-[5.5px] top-4 bottom-[-16px] w-[2px] bg-gray-200 group-last:hidden"></div>
             
-            <!-- Segment Card -->
-            <div class="ck-fd-seg">
-              <div class="ck-fd-seg-hd">
-                <div class="ck-fd-airline">
-                  <img v-if="segment.airlineLogo" :src="segment.airlineLogo" :alt="segment.airline" class="ck-fd-logo" />
-                  <span class="ck-fd-seg-name">{{ segment.airline }} • {{ segment.flightNumber }}</span>
-                </div>
-                <span class="ck-fd-cabin">{{ capitalize(flightOffer.cabinClass || 'economy') }}</span>
-              </div>
-
-              <div class="ck-fd-time-grid">
-                <div class="ck-fd-point">
-                  <span class="ck-fd-time">{{ formatTime(segment.departureTime) }}</span>
-                  <div class="ck-fd-loc">
-                    <span class="ck-fd-iata">{{ segment.origin }}</span>
-                    <span class="ck-fd-term">{{ segment.originTerminal ? `Terminal ${segment.originTerminal}` : 'Main Terminal' }}</span>
-                  </div>
-                </div>
-
-                <div class="ck-fd-path">
-                  <div class="ck-fd-path-line"></div>
-                  <span class="ck-fd-path-dur">{{ formatDuration(segment.duration) }}</span>
-                </div>
-
-                <div class="ck-fd-point ck-fd-point--end">
-                  <span class="ck-fd-time">{{ formatTime(segment.arrivalTime) }}</span>
-                  <div class="ck-fd-loc">
-                    <span class="ck-fd-iata">{{ segment.destination }}</span>
-                    <span class="ck-fd-term">{{ segment.destinationTerminal ? `Terminal ${segment.destinationTerminal}` : 'Main Terminal' }}</span>
-                  </div>
-                </div>
-              </div>
+            <div class="flex flex-col items-center relative z-10 mt-1.5">
+              <div class="w-3 h-3 bg-blue-600 rounded-full ring-4 ring-white"></div>
             </div>
 
-            <!-- Layover -->
-            <div v-if="idx < flightOffer.segments.length - 1" class="ck-fd-layover">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              <span>{{ calcLayover(segment, flightOffer.segments[idx + 1]) }} Layover in {{ segment.destinationName || segment.destination }}</span>
+            <div class="flex-1 pb-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-sm font-bold text-gray-900">{{ formatTime(segment.departureTime) }}</div>
+                  <div class="text-xs text-gray-500">{{ formatDate(segment.departureTime) }}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-bold text-gray-900">{{ segment.originName || segment.origin }}</div>
+                  <div class="text-xs text-gray-500">{{ segment.originTerminal ? `Terminal ${segment.originTerminal}` : 'Main Terminal' }} • {{ segment.origin }}</div>
+                </div>
+                <div class="text-right font-semibold text-blue-600 text-sm w-12">{{ segment.origin }}</div>
+              </div>
+
+              <!-- Airline info block -->
+              <div class="my-3 flex items-center gap-2 bg-white border border-gray-200 rounded-full px-3 py-1.5 w-fit">
+                <img v-if="segment.airlineLogo" :src="segment.airlineLogo" :alt="segment.airline" class="w-4 h-4 object-contain" />
+                <span class="text-xs font-semibold text-gray-700">{{ segment.airline }}</span>
+                <span class="text-xs text-gray-400 border-l pl-2">{{ segment.flightNumber }}</span>
+                <span class="text-xs text-gray-400 border-l pl-2">{{ formatDuration(segment.duration) }}</span>
+              </div>
+
+              <div class="flex justify-between items-start mt-3">
+                <div>
+                  <div class="text-sm font-bold text-gray-900">{{ formatTime(segment.arrivalTime) }}</div>
+                  <div class="text-xs text-gray-500">{{ formatDate(segment.arrivalTime) }}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-bold text-gray-900">{{ segment.destinationName || segment.destination }}</div>
+                  <div class="text-xs text-gray-500">{{ segment.destinationTerminal ? `Terminal ${segment.destinationTerminal}` : 'Main Terminal' }} • {{ segment.destination }}</div>
+                </div>
+                <div class="text-right font-semibold text-blue-600 text-sm w-12">{{ segment.destination }}</div>
+              </div>
             </div>
+            
+            <div class="absolute left-[5.5px] bottom-0 w-[2px] h-4 bg-gray-200 group-last:hidden"></div>
+            <div class="absolute left-[5.5px] bottom-[-2px] w-[2px] h-2 bg-gray-200 group-last:hidden z-0"></div>
+            <!-- Bottom dot -->
+            <div class="absolute left-[-2px] bottom-0 w-3 h-3 bg-white border-2 border-gray-300 rounded-full z-10 group-last:block hidden"></div>
+            
           </div>
-
-          <!-- Bag Info -->
-          <div class="ck-fd-bags">
-             <div class="ck-fd-bag-item">
-               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-               <span>Check-in: 2 × 23kg</span>
-             </div>
-             <div class="ck-fd-bag-item">
-               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-               <span>Cabin: 1 × 7kg</span>
-             </div>
-          </div>
-        </div>
-      </Transition>
-
-      <!-- Footer Tags -->
-      <div class="ck-fd-ft">
-        <div class="ck-fd-tags">
-          <span :class="flightOffer.conditions?.refundable ? 'ck-tag--pos' : 'ck-tag--neg'">
-            {{ flightOffer.conditions?.refundable ? 'Refundable' : 'Non-refundable' }}
-          </span>
-          <span :class="flightOffer.conditions?.changeable ? 'ck-tag--pos' : 'ck-tag--neu'">
-             {{ flightOffer.conditions?.changeable ? 'Changeable' : 'Fixed Date' }}
-          </span>
-        </div>
-        <div v-if="flightOffer.totalEmissionsKg" class="ck-fd-co2">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 118-8 8 8 0 01-8 8z"/><path d="M12 6a6 6 0 016 6 6 6 0 01-6 6 6 6 0 01-6-6 6 6 0 016-6z"/></svg>
-          <span>{{ flightOffer.totalEmissionsKg }}kg CO₂</span>
         </div>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="ck-fd-actions">
-       <button @click="$emit('continue')" class="ck-fd-btn">
-          <span>Continue to passenger info</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <div v-if="!hideContinue" class="flex justify-end pt-4">
+       <button @click="$emit('continue')" class="px-8 py-3 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-[12px] font-bold transition-all text-sm">
+          Continue
        </button>
     </div>
   </div>
@@ -108,7 +122,8 @@
 import { ref } from 'vue'
 
 defineProps({
-  flightOffer: { type: Object, default: null }
+  flightOffer: { type: Object, default: null },
+  hideContinue: { type: Boolean, default: false }
 })
 
 defineEmits(['continue'])
@@ -126,7 +141,7 @@ const formatTime = (iso: string) => {
 const formatDate = (iso: string) => {
   if (!iso) return '—'
   const d = new Date(iso)
-  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 const formatDuration = (minutes: number) => {
@@ -142,85 +157,3 @@ const calcLayover = (seg1: any, seg2: any) => {
   return formatDuration(Math.round(diff / 60000))
 }
 </script>
-
-<style scoped>
-.ck-fd { display: flex; flex-direction: column; gap: 24px; font-family: 'Sora', sans-serif; }
-
-.ck-fd-card { background: #fff; border: 1.5px solid #f0f0ea; border-radius: 20px; overflow: hidden; }
-
-.ck-fd-hdr { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafaf8; }
-@media (min-width: 640px) {
-  .ck-fd-hdr { padding: 24px 32px; }
-}
-.ck-fd-h { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 4px; letter-spacing: -0.02em; }
-.ck-fd-sub { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; color: #aaa; }
-.ck-fd-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
-
-.ck-fd-toggle {
-  width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid #eee;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; color: #888;
-}
-
-.ck-fd-body { padding: 20px; border-top: 1px solid #f0f0ea; }
-@media (min-width: 640px) {
-  .ck-fd-body { padding: 32px; }
-}
-
-.ck-fd-seg-group { margin-bottom: 24px; }
-.ck-fd-seg { background: #fff; border: 1px solid #eee; border-radius: 16px; padding: 20px; }
-.ck-fd-seg-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.ck-fd-airline { display: flex; align-items: center; gap: 10px; }
-.ck-fd-logo { width: 24px; height: 24px; object-fit: contain; }
-.ck-fd-seg-name { font-size: 11px; font-weight: 700; color: #111; }
-.ck-fd-cabin { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #1d7a4f; background: #f0f7f3; padding: 3px 8px; border-radius: 100px; }
-
-.ck-fd-time-grid { display: flex; flex-direction: column; gap: 16px; }
-@media (min-width: 640px) {
-  .ck-fd-time-grid { flex-direction: row; gap: 24px; }
-}
-.ck-fd-point { flex: 1; }
-.ck-fd-time { display: block; font-size: 16px; font-weight: 800; color: #111; margin-bottom: 4px; }
-.ck-fd-loc { display: flex; flex-direction: column; }
-.ck-fd-iata { font-size: 12px; font-weight: 700; color: #555; }
-.ck-fd-term { font-size: 10px; color: #aaa; }
-
-.ck-fd-path { flex: 1.2; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.ck-fd-path-line { width: 100%; height: 2px; background: #eee; border-radius: 4px; position: relative; }
-.ck-fd-path-line::before, .ck-fd-path-line::after { content: ''; position: absolute; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: #eee; }
-.ck-fd-path-line::before { left: 0; } .ck-fd-path-line::after { right: 0; }
-.ck-fd-path-dur { font-size: 10px; font-weight: 600; color: #bbb; letter-spacing: 0.05em; }
-
-.ck-fd-point--end { text-align: left; }
-@media (min-width: 640px) {
-  .ck-fd-point--end { text-align: right; }
-}
-
-.ck-fd-layover {
-  display: flex; align-items: center; gap: 8px; margin: 12px 20px;
-  font-size: 11px; font-weight: 600; color: #c2410c; background: #fff7ed; padding: 6px 12px; border-radius: 100px; width: fit-content;
-}
-
-.ck-fd-bags { display: flex; gap: 24px; margin-top: 32px; padding-top: 24px; border-top: 1px dashed #eee; }
-.ck-fd-bag-item { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: #555; }
-.ck-fd-bag-item svg { color: #aaa; }
-
-.ck-fd-ft { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: #fafaf8; border-top: 1px solid #f0f0ea; }
-.ck-fd-tags { display: flex; gap: 12px; }
-.ck-fd-tags span { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 4px; }
-.ck-tag--pos { background: #f0fdf4; color: #166534; }
-.ck-tag--neg { background: #fef2f2; color: #991b1b; }
-.ck-tag--neu { background: #f3f4f6; color: #4b5563; }
-
-.ck-fd-co2 { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #059669; }
-
-.ck-fd-actions { display: flex; justify-content: flex-end; }
-.ck-fd-btn {
-  background: #111; color: #fff; border: none; border-radius: 12px; height: 52px; padding: 0 32px;
-  display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
-}
-.ck-fd-btn:hover { background: #1d7a4f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-.ck-fd-btn:active { transform: scale(0.98); }
-
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-10px); }
-</style>

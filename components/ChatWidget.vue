@@ -11,7 +11,11 @@ import {
   EnvelopeIcon,
   IdentificationIcon,
   SparklesIcon,
+  FaceSmileIcon,
+  PhotoIcon
 } from '@heroicons/vue/24/solid'
+import EmojiPicker from 'vue3-emoji-picker'
+import 'vue3-emoji-picker/css'
 
 const BOT_USER_ID = "000000000000000000000001"
 const isOpen = ref(false)
@@ -28,8 +32,49 @@ const guestInfo = ref({
 })
 
 const { user, isLoggedIn } = useUser()
-const { messages, activeRoom, findAdminAndStartChat, loading } = useChat()
+const { messages, activeRoom, findAdminAndStartChat, loading, uploadChatImage } = useChat()
 const { socket, connect, isConnected } = useRealtime()
+
+const showEmojiPicker = ref(false)
+const isUploading = ref(false)
+const selectedImage = ref<File | null>(null)
+const selectedImageUrl = ref<string | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+
+const onSelectEmoji = (emoji: any) => {
+  messageText.value += emoji.i
+}
+
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+const handleFileChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0]
+    if (!file.type.startsWith('image/')) return
+    selectedImage.value = file
+    selectedImageUrl.value = URL.createObjectURL(file)
+  }
+}
+
+const clearSelectedImage = () => {
+  selectedImage.value = null
+  selectedImageUrl.value = null
+  if (fileInput.value) fileInput.value.value = ''
+}
+
+const formatDepartment = (dept: string) => {
+  if (!dept) return 'General'
+  return dept.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+}
+
+const markAsRead = (roomId: string) => {
+  if (socket.value) {
+    socket.value.emit('markAsRead', roomId)
+  }
+}
 
 const isUserIdentified = computed(() => {
   if (isLoggedIn.value) return true
@@ -90,22 +135,37 @@ const scrollToBottom = async () => {
   }
 }
 
-const handleSendMessage = () => {
-  if (!messageText.value.trim() || !socket.value || !activeRoom.value) {
+const handleSendMessage = async () => {
+  if (isUploading.value) return
+  if ((!messageText.value.trim() && !selectedImage.value) || !socket.value || !activeRoom.value) {
     if (!activeRoom.value && isUserIdentified.value) {
       initializeChatRoom()
     }
     return
   }
 
+  isUploading.value = true
+
+  let imageUrl = null
+  if (selectedImage.value) {
+    try {
+      imageUrl = await uploadChatImage(selectedImage.value)
+    } catch (e) {
+      isUploading.value = false
+      return
+    }
+  }
+
   const payload = {
     roomId: activeRoom.value._id,
     content: messageText.value,
-    type: 'text',
+    type: imageUrl ? 'image' : 'text',
     metadata: {
        userName: isLoggedIn.value ? `${user.value?.firstName} ${user.value?.lastName}` : guestInfo.value.name,
        userEmail: isLoggedIn.value ? user.value?.email : guestInfo.value.email,
-       isGuest: !isLoggedIn.value
+       isGuest: !isLoggedIn.value,
+       source: 'user_app',
+       ...(imageUrl && { imageUrl })
     }
   }
 
@@ -118,12 +178,17 @@ const handleSendMessage = () => {
      sender: { _id: currentUserId.value, firstName: isLoggedIn.value ? user.value?.firstName : guestInfo.value.name },
      content: messageText.value,
      createdAt: new Date().toISOString(),
-     isBot: false,
      isAutoResponse: false,
+     type: payload.type,
+     metadata: payload.metadata,
+     isOptimistic: true
   }
   messages.value.push(tempMsg)
   
   messageText.value = ''
+  clearSelectedImage()
+  showEmojiPicker.value = false
+  isUploading.value = false
   scrollToBottom()
 }
 
@@ -136,6 +201,10 @@ const isBotMessage = (msg: any) => {
 
 const isMyMessage = (msg: any) => {
   if (isBotMessage(msg)) return false
+  if (msg.isOptimistic) return true
+  
+  if (msg.metadata?.source === 'user_app') return true
+  if (msg.metadata?.source === 'admin_dashboard') return false
   
   const senderId = String(msg.sender?._id || msg.sender)
   const myId = String(currentUserId.value || '')
@@ -152,7 +221,7 @@ const isMyMessage = (msg: any) => {
   }
 
   // Final fallback for guests
-  if (!isLoggedIn.value && msg.metadata?.isGuest && !msg.metadata?.senderRole?.includes('admin')) {
+  if (!isLoggedIn.value && msg.metadata?.isGuest) {
     return true
   }
 
@@ -162,7 +231,12 @@ const isMyMessage = (msg: any) => {
 const getSenderLabel = (msg: any) => {
   if (isBotMessage(msg)) return 'Flybeth Bot'
   if (isMyMessage(msg)) return 'You'
-  return msg.sender?.firstName || msg.metadata?.senderName || 'Support Agent'
+  
+  if (msg.sender && msg.sender.firstName) {
+    return `${msg.sender.firstName} ${msg.sender.lastName || ''}`.trim() + ' (Support)'
+  }
+  
+  return msg.metadata?.senderName || 'Support Agent'
 }
 
 const formatTime = (dateStr: string) => {
@@ -202,45 +276,61 @@ const handleOpenFromEvent = () => {
   }
 }
 
+// Real-time message listener
+const messageHandler = (e: any) => {
+  const msg = e.detail
+  if (activeRoom.value && (msg.room === activeRoom.value._id || msg.room?._id === activeRoom.value._id)) {
+     // Logic to replace optimistic message
+     const tempIdx = messages.value.findIndex(m => 
+       m._id?.toString().startsWith('temp-') && 
+       m.content === msg.content &&
+       Math.abs(new Date(m.createdAt).getTime() - new Date(msg.createdAt).getTime()) < 10000
+     )
+
+     if (tempIdx !== -1) {
+        messages.value[tempIdx] = msg
+     } else if (!messages.value.find((m: any) => m._id === msg._id)) {
+        messages.value.push(msg)
+        scrollToBottom()
+     }
+     if (isOpen.value && !document.hidden) markAsRead(activeRoom.value._id)
+     else unreadCount.value++
+     
+     // Show typing indicator briefly for bot messages
+     if (isBotMessage(msg)) {
+        isTypingIndicator.value = false
+     }
+  }
+}
+
+const transferHandler = (e: any) => {
+  const data = e.detail
+  if (activeRoom.value && activeRoom.value._id === data.roomId) {
+    activeRoom.value.department = data.department
+  }
+}
+
+const resolveHandler = (e: any) => {
+  const data = e.detail
+  if (activeRoom.value && activeRoom.value._id === data.roomId) {
+    activeRoom.value.status = 'resolved'
+    activeRoom.value.ticketNumber = data.ticketNumber
+  }
+}
+
 onMounted(() => {
   connect()
   window.addEventListener('open-chat-bot', handleOpenFromEvent)
-  
-  // Real-time message listener
-  const messageHandler = (e: any) => {
-    const msg = e.detail
-    if (activeRoom.value && (msg.room === activeRoom.value._id || msg.room?._id === activeRoom.value._id)) {
-       // Logic to replace optimistic message
-       const tempIdx = messages.value.findIndex(m => 
-         m._id?.toString().startsWith('temp-') && 
-         m.content === msg.content &&
-         Math.abs(new Date(m.createdAt).getTime() - new Date(msg.createdAt).getTime()) < 10000
-       )
-
-       if (tempIdx !== -1) {
-          messages.value[tempIdx] = msg
-       } else if (!messages.value.find(m => m._id === msg._id)) {
-          messages.value.push(msg)
-          scrollToBottom()
-          
-          // If chat is not open, increment unread
-          if (!isOpen.value) {
-            unreadCount.value++
-          }
-          
-          // Show typing indicator briefly for bot messages
-          if (isBotMessage(msg)) {
-            isTypingIndicator.value = false
-          }
-       }
-    }
-  }
-
   window.addEventListener('new-chat-message', messageHandler)
+  window.addEventListener('room-transferred', transferHandler)
+  window.addEventListener('room-resolved', resolveHandler)
 })
 
 onUnmounted(() => {
   window.removeEventListener('open-chat-bot', handleOpenFromEvent)
+  window.removeEventListener('new-chat-message', messageHandler)
+  window.removeEventListener('room-transferred', transferHandler)
+  window.removeEventListener('room-resolved', resolveHandler)
 })
 
 watch(messages, () => {
@@ -287,11 +377,18 @@ watch(messages, () => {
                 <div class="h-11 w-11 bg-white/20 rounded-xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
                    <SparklesIcon class="h-6 w-6 text-white" />
                 </div>
-                <div>
+                 <div>
                    <h3 class="font-bold text-base leading-tight">Flybeth Support</h3>
                    <div class="flex items-center space-x-2">
                       <div class="h-2 w-2 rounded-full" :class="isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-black'"></div>
-                      <span class="text-sm font-semibold uppercase  opacity-80">{{ isConnected ? 'Online' : 'Connecting...' }}</span>
+                      <span class="text-sm font-semibold  opacity-80">{{ isConnected ? 'Online' : 'Connecting...' }}</span>
+                      <span v-if="activeRoom?.status === 'resolved'" class="text-sm font-semibold  bg-green-500 px-1 rounded ml-2">Resolved</span>
+                   </div>
+                   <div v-if="activeRoom?.department" class="text-xs font-semibold mt-1">
+                      Dept: {{ formatDepartment(activeRoom.department) }}
+                   </div>
+                   <div v-if="activeRoom?.ticketNumber" class="text-xs font-semibold mt-0.5">
+                      Ticket: #{{ activeRoom.ticketNumber }}
                    </div>
                 </div>
              </div>
@@ -352,7 +449,7 @@ watch(messages, () => {
           <!-- Loading -->
           <div v-if="loading && messages.length === 0" class="flex flex-col items-center justify-center h-full space-y-3 opacity-40">
              <div class="h-8 w-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-             <p class="text-sm font-bold uppercase ">Connecting to support...</p>
+             <p class="text-sm font-bold  ">Connecting to support...</p>
           </div>
 
           <!-- Quick Questions (when no messages yet) -->
@@ -399,6 +496,7 @@ watch(messages, () => {
                <!-- User/Guest message -->
                <div v-else-if="isMyMessage(msg)" class="max-w-[85%]">
                  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3.5 rounded-2xl rounded-br-sm text-sm leading-relaxed shadow-sm">
+                   <img v-if="msg.type === 'image' && msg.metadata?.imageUrl" :src="msg.metadata.imageUrl" class="max-w-full rounded-lg mb-2" />
                    {{ msg.content }}
                  </div>
                  <span class="text-[9px] font-semibold text-black mt-1 text-right block mr-1">
@@ -408,11 +506,13 @@ watch(messages, () => {
 
                <!-- Admin/Agent message -->
                <div v-else class="max-w-[85%] flex items-start space-x-2">
-                 <div class="h-7 w-7 bg-black rounded-lg flex items-center justify-center shrink-0 mt-1">
-                   <UserIcon class="h-3.5 w-3.5 text-black" />
+                 <div class="h-7 w-7 bg-blue-100 rounded-lg overflow-hidden flex items-center justify-center shrink-0 mt-1 border border-blue-200">
+                   <img v-if="msg.sender?.avatar" :src="msg.sender.avatar" class="h-full w-full object-cover" />
+                   <UserIcon v-else class="h-4 w-4 text-blue-600" />
                  </div>
                  <div>
                    <div class="bg-white text-black p-3.5 rounded-2xl rounded-tl-sm text-sm leading-relaxed shadow-sm border border-gray-200">
+                     <img v-if="msg.type === 'image' && msg.metadata?.imageUrl" :src="msg.metadata.imageUrl" class="max-w-full rounded-lg mb-2" />
                      {{ msg.content }}
                    </div>
                    <span class="text-[9px] font-semibold text-black mt-1 ml-1 block">
@@ -439,24 +539,59 @@ watch(messages, () => {
         </div>
 
         <!-- Input Area -->
-        <div v-if="!isIdentifying" class="p-3 bg-white border-t border-gray-200 shrink-0">
-           <div class="flex items-end bg-white rounded-xl p-1.5 border border-gray-200 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/10 transition-all">
+        <div v-if="!isIdentifying" class="p-3 bg-white border-t border-gray-200 shrink-0 relative">
+           
+           <!-- Emoji Picker -->
+           <div v-if="showEmojiPicker" class="absolute bottom-full right-2 mb-2 z-50 shadow-2xl rounded-xl overflow-hidden">
+              <EmojiPicker :native="true" @select="onSelectEmoji" />
+           </div>
+
+           <!-- Image Preview -->
+           <div v-if="selectedImageUrl" class="mb-3 relative inline-block">
+             <img :src="selectedImageUrl" class="h-20 w-auto rounded-lg shadow-sm border border-gray-200" />
+             <button @click="clearSelectedImage" class="absolute -top-2 -right-2 bg-white text-red-500 rounded-full shadow border border-gray-200 p-0.5 hover:scale-110 transition-transform">
+               <XMarkIcon class="h-4 w-4" />
+             </button>
+           </div>
+
+           <div v-if="activeRoom?.status === 'resolved'" class="bg-gray-100 p-4 rounded-xl text-center">
+             <p class="text-sm font-medium text-gray-700 mb-2">This chat has been resolved.</p>
+             <button @click="activeRoom = null; messages = []; initializeChatRoom()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Start New Chat</button>
+           </div>
+           <div v-else class="flex items-end bg-white rounded-xl p-1.5 border border-gray-200 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500/10 transition-all">
+              <input type="file" accept="image/*" class="hidden" ref="fileInput" @change="handleFileChange" />
+              
+              <button 
+                @click="triggerFileInput"
+                class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors shrink-0 mr-1"
+              >
+                <PhotoIcon class="h-5 w-5" />
+              </button>
+              
+              <button 
+                @click="showEmojiPicker = !showEmojiPicker"
+                class="p-2 text-gray-400 hover:text-yellow-500 hover:bg-yellow-50 rounded-lg transition-colors shrink-0 mr-1"
+              >
+                <FaceSmileIcon class="h-5 w-5" />
+              </button>
+
               <textarea 
                 v-model="messageText"
                 rows="1"
                 placeholder="Type your message..." 
-                class="flex-1 bg-transparent border-0 focus:ring-0 text-sm font-medium p-2.5 resize-none outline-none placeholder:text-black max-h-20"
+                class="flex-1 bg-transparent border-0 focus:ring-0 text-sm font-medium p-2.5 resize-none outline-none placeholder:text-gray-400 max-h-20"
                 @keydown="handleKeyDown"
               ></textarea>
               <button 
                 @click="handleSendMessage"
-                :disabled="!messageText.trim() || !activeRoom"
+                :disabled="(!messageText.trim() && !selectedImage) || !activeRoom || isUploading"
                 class="p-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow-md shadow-blue-600/20 disabled:opacity-20 disabled:shadow-none transition-all active:scale-90 shrink-0"
               >
-                 <PaperAirplaneIcon class="h-4 w-4" />
+                 <div v-if="isUploading" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                 <PaperAirplaneIcon v-else class="h-4 w-4" />
               </button>
            </div>
-           <p class="text-[9px] text-black text-center mt-1.5 font-medium">Flybeth Support • Available 24/7</p>
+           <p class="text-[9px] text-gray-400 text-center mt-1.5 font-medium">Flybeth Support • Available 24/7</p>
         </div>
       </div>
     </Transition>

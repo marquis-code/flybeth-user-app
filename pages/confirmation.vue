@@ -1,70 +1,98 @@
 <template>
-  <div class="confirmation-page">
-    <!-- Branded Header -->
-    <div class="confirmation-header">
-      <img src="@/assets/img/logo.png" alt="Flybeth" class="header-logo" />
-    </div>
+  <div class="min-h-screen bg-[#F8FAFC] flex flex-col font-sans relative overflow-hidden">
+    
+    <!-- Ambient Background Elements -->
+    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-    <div class="confirmation-content">
-      <!-- Success Card -->
-      <div class="success-card">
-        <div class="success-icon-wrapper">
-          <div class="success-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="success-check" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+    <!-- Minimal Header -->
+    <header class="w-full py-6 px-8 flex justify-center z-10 relative">
+      <img src="@/assets/img/logo.png" alt="Flybeth" class="h-10 cursor-pointer" @click="goHome" />
+    </header>
+
+    <main class="flex-1 flex items-center justify-center p-6 z-10 relative">
+      
+      <!-- Processing State -->
+      <div v-if="isAuthorizing" class="bg-white/80 backdrop-blur-xl border border-white p-12 rounded-[32px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] w-full max-w-[500px] text-center">
+        <div class="relative w-24 h-24 mx-auto mb-8">
+          <div class="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+          <div class="absolute inset-0 border-4 border-[#0D1DAD] border-t-transparent rounded-full animate-spin"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#0D1DAD] animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+          </div>
+        </div>
+        <h1 class="text-2xl font-black text-gray-900 mb-3 tracking-tight">Authorizing Payment...</h1>
+        <p class="text-gray-500 font-medium">Please wait while we securely confirm your transaction with the payment provider.</p>
+      </div>
+
+      <!-- Result Card -->
+      <div v-else class="bg-white/80 backdrop-blur-xl border border-white p-8 md:p-10 rounded-[32px] w-full max-w-[500px] text-center transform transition-all duration-700">
+        
+        <!-- Animated Icon Container -->
+        <div class="relative mx-auto w-20 h-20 mb-10 flex items-center justify-center group">
+          <div class="absolute inset-0 rounded-full transition-transform duration-700 group-hover:scale-110" :class="statusTheme.ringClass"></div>
+          <div class="absolute inset-2 rounded-full opacity-50" :class="statusTheme.ringClass"></div>
+          
+          <div class="relative w-16 h-16 rounded-full flex items-center justify-center shadow-lg" :class="statusTheme.iconBgClass">
+            <svg v-if="paymentStatus === 'success'" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <svg v-else-if="paymentStatus === 'pending_payment'" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <div class="success-ring ring-1"></div>
-          <div class="success-ring ring-2"></div>
         </div>
 
-        <h1 class="success-title">{{ statusTitle }}</h1>
-        <p class="success-subtitle">{{ statusMessage }}</p>
+        <h1 class="text-2xl font-black text-gray-900 mb-3">{{ statusTheme.title }}</h1>
+        <p class="text-gray-500 font-medium text-sm mb-8">{{ statusTheme.subtitle }}</p>
 
-        <div v-if="isAuthorizing" class="authorizing-overlay">
-          <div class="spinner"></div>
-          <p>Authorizing your payment...</p>
-        </div>
-        
-        <div v-else>
-          <!-- Booking Details -->
-          <div class="booking-details">
-            <div v-if="bookingRef" class="detail-row">
-              <span class="detail-label">Booking Reference</span>
-              <span class="detail-value highlight">{{ bookingRef }}</span>
-            </div>
-            <div v-if="orderId" class="detail-row">
-              <span class="detail-label">Order ID</span>
-              <span class="detail-value">{{ orderId }}</span>
-            </div>
-            <div v-if="paymentStatus" class="detail-row">
-              <span class="detail-label">Payment Status</span>
-              <span class="detail-value" :class="statusClass">{{ displayPaymentStatus }}</span>
-            </div>
-          </div>
-
-          <p class="email-notice">
-            We've sent a confirmation email with your booking details. Please check your inbox.
-          </p>
+        <!-- Dynamic Reference Block -->
+        <div v-if="bookingRef" class="bg-gray-50/80 rounded-2xl p-5 border border-gray-100 mb-8 flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+           <div class="flex-1 py-2 sm:py-0 text-center">
+             <p class="text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-1">Booking Reference</p>
+             <p class="text-lg font-black text-[#0D1DAD]">{{ bookingRef }}</p>
+           </div>
+           <div class="flex-1 py-2 sm:py-0 text-center pt-3 sm:pt-0">
+             <p class="text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-1">Status</p>
+             <p class="text-sm font-bold mt-1" :class="statusTheme.textClass">{{ statusTheme.badgeText }}</p>
+           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="action-buttons">
-          <button @click="goHome" class="btn-primary">Back to Home</button>
-          <button v-if="bookingRef" @click="viewBooking" class="btn-secondary">View Booking</button>
+        <!-- Call to Action -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <button @click="goHome" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-sm rounded-xl transition-colors duration-300">
+            Back to Home
+          </button>
+          <button v-if="bookingRef" @click="goToManageBookings" class="px-6 py-3 bg-[#0D1DAD] hover:bg-[#0A1485] text-white font-bold text-sm rounded-xl transition-all duration-300 transform hover:-translate-y-0.5">
+            Manage Booking
+          </button>
         </div>
+
       </div>
-    </div>
+    </main>
+
+    <BookingDetailsDrawer 
+      :visible="showDrawer" 
+      :pnr="bookingRef" 
+      @close="showDrawer = false" 
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useTracking } from '@/composables/core/useTracking'
-
 import { paymentsApi } from '@/api_factory/modules/payments'
+import BookingDetailsDrawer from '@/components/checkout/BookingDetailsDrawer.vue'
+
+definePageMeta({ layout: false })
 
 const route = useRoute()
+const router = useRouter()
 const { trackAction } = useTracking()
 
 const bookingRef = computed(() => (route.query.pnr as string) || '')
@@ -74,18 +102,20 @@ const checkoutToken = computed(() => (route.query.checkout_token as string) || (
 const provider = computed(() => (route.query.provider as string) || '')
 const isAuthorizing = ref(false)
 
+const showDrawer = ref(false)
+
 onMounted(async () => {
   if (paymentStatus.value === 'success' && checkoutToken.value && provider.value) {
     isAuthorizing.value = true
     try {
-      await paymentsApi.authorizeBnpl({
+      await paymentsApi.verifyPayment({
         bookingId: orderId.value,
         provider: provider.value,
         checkoutToken: checkoutToken.value
       })
       paymentStatus.value = 'success'
     } catch (error) {
-      console.error('Failed to authorize BNPL payment:', error)
+      console.error('Failed to verify payment:', error)
       paymentStatus.value = 'pending_payment'
     } finally {
       isAuthorizing.value = false
@@ -99,266 +129,42 @@ onMounted(async () => {
   })
 })
 
-const statusTitle = computed(() => {
-  switch (paymentStatus.value) {
-    case 'pending_payment': return 'Booking Created!'
-    case 'booked': return 'Booking Confirmed! 🎉'
-    case 'success': return 'Payment Successful! 🎉'
-    default: return 'Booking Confirmed!'
+const statusTheme = computed(() => {
+  if (paymentStatus.value === 'success') {
+    return {
+      title: 'Booking Confirmed!',
+      subtitle: 'Your payment was successful and your reservation is secured.',
+      ringClass: 'bg-green-100 animate-pulse',
+      iconBgClass: 'bg-green-500',
+      textClass: 'text-green-600',
+      badgeText: 'Confirmed'
+    }
+  } else if (paymentStatus.value === 'pending_payment' || paymentStatus.value === 'booked') {
+    return {
+      title: 'Booking Reserved',
+      subtitle: 'Your booking has been created. Complete payment to confirm your reservation.',
+      ringClass: 'bg-amber-100',
+      iconBgClass: 'bg-amber-500',
+      textClass: 'text-amber-600',
+      badgeText: 'Pending Payment'
+    }
+  } else {
+    return {
+      title: 'Booking Failed',
+      subtitle: 'There was an issue processing your booking. Please try again.',
+      ringClass: 'bg-red-100',
+      iconBgClass: 'bg-red-500',
+      textClass: 'text-red-600',
+      badgeText: 'Failed'
+    }
   }
 })
 
-const statusMessage = computed(() => {
-  switch (paymentStatus.value) {
-    case 'pending_payment': return 'Your booking has been created. Complete payment to confirm your reservation.'
-    case 'booked': return 'Your flight has been successfully booked with the airline.'
-    case 'success': return 'Payment received! Your booking is fully confirmed.'
-    default: return 'Your booking is confirmed. Have a great trip!'
-  }
-})
+const goHome = () => {
+  router.push('/')
+}
 
-const displayPaymentStatus = computed(() => {
-  switch (paymentStatus.value) {
-    case 'pending_payment': return 'Pending Payment'
-    case 'booked': return 'Booked'
-    case 'success': return 'Paid'
-    default: return paymentStatus.value
-  }
-})
-
-const statusClass = computed(() => ({
-  'status-pending': paymentStatus.value === 'pending_payment',
-  'status-success': paymentStatus.value === 'success' || paymentStatus.value === 'booked',
-}))
-
-const goHome = () => navigateTo('/')
-const viewBooking = () => {
-  // Navigate to booking details if available
-  if (bookingRef.value && bookingRef.value !== 'N/A') {
-    navigateTo(`/bookings?pnr=${bookingRef.value}`)
-  }
+const goToManageBookings = () => {
+  router.push({ path: '/bookings', query: { pnr: bookingRef.value } })
 }
 </script>
-
-<style scoped>
-.confirmation-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf2 100%);
-}
-
-.confirmation-header {
-  display: flex;
-  justify-content: center;
-  padding: 2rem 0 1rem;
-}
-
-.header-logo {
-  height: 48px;
-  width: auto;
-}
-
-.confirmation-content {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
-}
-
-.success-card {
-  background: white;
-  border-radius: 1.5rem;
-  padding: 3rem 2.5rem;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-}
-
-.success-icon-wrapper {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.success-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0D1DAD 0%, #28a003 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  animation: pop-in 0.5s ease-out;
-}
-
-.success-check {
-  width: 28px;
-  height: 28px;
-  color: white;
-}
-
-.success-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 2px solid rgba(50, 180, 4, 0.2);
-}
-
-.ring-1 {
-  width: 80px;
-  height: 80px;
-  animation: ring-pulse 2s ease-out infinite;
-}
-
-.ring-2 {
-  width: 100px;
-  height: 100px;
-  animation: ring-pulse 2s ease-out 0.5s infinite;
-}
-
-@keyframes pop-in {
-  0% { transform: scale(0); }
-  70% { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
-
-@keyframes ring-pulse {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(1.3); opacity: 0; }
-}
-
-.success-title {
-  font-size: 1.75rem;
-  font-weight: 900;
-  color: #1a2332;
-  margin-bottom: 0.5rem;
-}
-
-.success-subtitle {
-  font-size: 0.9rem;
-  color: #6b7280;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.booking-details {
-  background: #f9fafb;
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-}
-
-.detail-row:not(:last-child) {
-  border-bottom: 1px dashed #e5e7eb;
-}
-
-.detail-label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.detail-value {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: #1a2332;
-}
-
-.detail-value.highlight {
-  color: #0D1DAD;
-  font-size: 1.05rem;
-  letter-spacing: 0.05em;
-}
-
-.status-pending {
-  color: #f59e0b !important;
-}
-
-.status-success {
-  color: #0D1DAD !important;
-}
-
-.email-notice {
-  font-size: 0.78rem;
-  color: #9ca3af;
-  margin-bottom: 2rem;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-primary {
-  background: #0D1DAD;
-  color: white;
-  border: none;
-  padding: 0.85rem 2.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-primary:hover {
-  background: #0a1488;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(13, 29, 173, 0.25);
-}
-
-.btn-secondary {
-  background: white;
-  color: #0D1DAD;
-  border: 2px solid #0D1DAD;
-  padding: 0.85rem 2.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-secondary:hover {
-  background: rgba(13, 29, 173, 0.05);
-}
-
-.authorizing-overlay {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 0;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(13, 29, 173, 0.1);
-  border-left-color: #0D1DAD;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>

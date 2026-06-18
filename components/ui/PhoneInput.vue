@@ -19,13 +19,20 @@
       </button>
 
       <!-- Phone Number Input -->
-      <input
-        type="tel"
-        :placeholder="placeholder || '812 345 6789'"
-        :value="phoneNumber"
-        @input="onPhoneInput"
-        class="flex-grow px-5 py-4 bg-white border border-gray-200 border-l-0 rounded-r-2xl focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue transition-all duration-500 font-bold text-black placeholder-brand-gray/30"
-      />
+      <div class="flex-grow relative">
+        <input
+          type="tel"
+          :placeholder="placeholder || '812 345 6789'"
+          :value="phoneNumber"
+          @input="onPhoneInput"
+          class="w-full px-5 py-4 bg-white border border-gray-200 border-l-0 rounded-r-2xl focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-500 font-bold text-black placeholder-brand-gray/30"
+        />
+        <div v-if="phoneNumber" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#0D1DAD] pointer-events-none transition-all duration-300">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+      </div>
     </div>
 
     <!-- Dropdown -->
@@ -161,9 +168,14 @@ const onPhoneInput = (e: Event) => {
   emitValue()
 }
 
+import { useTracking } from '@/composables/core/useTracking'
+
 const emitValue = () => {
   const fullNumber = `${selectedCountry.value.dialCode}${phoneNumber.value}`
   emit('update:modelValue', fullNumber)
+  if (phoneNumber.value.length > 3) {
+    useTracking().trackAction('phone_input', { field: props.label || 'phone' })
+  }
 }
 
 // Click outside to close

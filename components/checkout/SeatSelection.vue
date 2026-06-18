@@ -3,7 +3,7 @@
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 group/header">
       <div class="flex items-center gap-3 whitespace-nowrap">
         <Armchair class="w-6 h-6 text-blue-600" />
-        <h3 class="text-xl md:text-2xl font-black text-black er">
+        <h3 class="text-xl md:text-2xl font-black text-black">
           Select Your Seat
         </h3>
       </div>
@@ -11,16 +11,20 @@
       <!-- Legend (Compact) -->
       <div class="flex flex-wrap items-center gap-4 px-4 py-2.5 bg-white rounded-xl border border-gray-200 shadow-sm">
         <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-blue-600"></div>
-          <span class="text-[9px] font-black text-black  uppercase">Available</span>
+          <div class="w-4 h-4 rounded-md bg-[#F0F4FF] border border-[#0D1DAD]/30"></div>
+          <span class="text-[10px] font-bold text-gray-700 uppercase">Available</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-          <span class="text-[9px] font-black text-black  uppercase">Selected</span>
+          <div class="w-4 h-4 rounded-md bg-[#0D1DAD] border border-[#0D1DAD]"></div>
+          <span class="text-[10px] font-bold text-gray-700 uppercase">Selected</span>
         </div>
         <div class="flex items-center gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-black"></div>
-          <span class="text-[9px] font-black text-black  uppercase">Occupied</span>
+          <div class="w-4 h-4 rounded-md bg-gray-100 border border-gray-200 relative overflow-hidden">
+             <div class="absolute inset-0 flex items-center justify-center text-gray-300">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+             </div>
+          </div>
+          <span class="text-[10px] font-bold text-gray-700 uppercase">Occupied</span>
         </div>
       </div>
     </div>
@@ -29,30 +33,30 @@
     <div v-if="loading" class="flex flex-col items-center justify-center py-32 space-y-6">
       <div class="relative w-16 h-16">
         <div class="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-        <div class="absolute inset-0 border-4 border-t-blue-600 rounded-full animate-spin"></div>
+        <div class="absolute inset-0 border-4 border-t-[#0D1DAD] rounded-full animate-spin"></div>
       </div>
       <div class="text-center">
-        <p class="text-sm  text-black ">Mapping Aircraft Cabin</p>
-        <p class="text-sm font-bold text-black  mt-2">Retrieving real-time availability...</p>
+        <p class="text-sm text-gray-500">Mapping Aircraft Cabin</p>
+        <p class="text-sm font-bold text-gray-900 mt-2">Retrieving real-time availability...</p>
       </div>
     </div>
 
     <!-- Main Content -->
     <div v-else-if="seatmaps.length" class="space-y-6">
       <!-- Main Selection Bar -->
-      <div class="w-full flex items-center justify-between p-6 bg-white border border-gray-200 rounded-[2rem] text-black shadow-sm relative overflow-hidden group">
-        <div class="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <div class="w-full flex flex-col md:flex-row md:items-center justify-between p-6 bg-white border border-gray-200 rounded-[24px] shadow-sm relative overflow-hidden group gap-4">
+        <div class="absolute inset-0 bg-[#0D1DAD]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
         
         <!-- Selection Info -->
         <div class="flex items-center gap-4 relative z-10">
-          <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-black border border-gray-200">
-            <User class="w-5 h-5" />
+          <div class="w-12 h-12 rounded-full bg-[#F0F4FF] flex items-center justify-center text-[#0D1DAD]">
+            <User class="w-6 h-6" />
           </div>
           <div class="min-w-0">
-            <p class="text-[9px] font-bold text-black  uppercase mb-1">Traveler Selection</p>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">Traveler Selection</p>
             <div class="flex items-center gap-2">
-              <span class="text-base font-bold text-black truncate">{{ passengers.firstName }} {{ passengers.lastName }}</span>
-              <div v-if="selectedSeats[0]" class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-bold rounded-lg border border-emerald-100  uppercase">
+              <span class="text-lg font-bold text-gray-900 truncate">{{ passengers.firstName || 'Traveler' }} {{ passengers.lastName || '1' }}</span>
+              <div v-if="selectedSeats[0]" class="px-3 py-1 bg-[#E2FCA4] text-[#2F4F2F] text-[10px] font-bold rounded-md uppercase ">
                 SEAT {{ selectedSeats[0].designator }}
               </div>
             </div>
@@ -60,109 +64,98 @@
         </div>
  
         <!-- Pricing -->
-        <div class="text-right relative z-10">
-          <p class="text-[9px] font-bold text-black  uppercase mb-1">Seat Surcharge</p>
-          <span class="text-2xl font-black text-[#0D1DAD] ">{{ formatPrice(totalSeatPrice) }}</span>
+        <div class="md:text-right relative z-10">
+          <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">Seat Surcharge</p>
+          <span class="text-2xl font-black text-[#0D1DAD]">{{ formatPrice(totalSeatPrice) }}</span>
         </div>
       </div>
 
-      <!-- Bottom Section: Full Width Aircraft Cabin -->
-      <div class="w-full">
-        <div class="w-full  mx-auto bg-white rounded-[3rem] border-2 border-gray-200 shadow-2xl shadow-blue-50/50 overflow-hidden flex flex-col items-center">
+      <!-- Aircraft Cabin UI -->
+      <div class="w-full mt-8 bg-white border border-gray-200 rounded-[24px] shadow-sm p-4 md:p-8">
+        
+        <div class="overflow-x-auto custom-scrollbar pb-8">
+          <div v-if="currentMap" class="min-w-max mx-auto">
+            <div v-for="(cabin, cIdx) in currentMap.cabins" :key="cIdx" class="mb-12">
 
+              <!-- Cabin Header -->
+              <div class="mb-8">
+                <h4 class="text-lg font-black text-gray-900 capitalize">{{ cabin.cabin_class || cabin.name || 'Cabin' }}</h4>
+              </div>
 
+              <!-- Column Labels -->
+              <div class="flex items-center gap-2 sm:gap-4 mb-4">
+                 <!-- Left spacer for row number -->
+                 <div class="w-8 sm:w-10 flex-shrink-0"></div>
+                 
+                 <div class="flex items-center gap-4 sm:gap-6 flex-1">
+                   <template v-for="(section, sIdx) in cabin.rows[0]?.sections" :key="`col-sec-${sIdx}`">
+                     <div v-if="sIdx > 0" class="w-6 sm:w-8 flex-shrink-0"></div> <!-- Aisle -->
+                     <div class="flex items-center gap-2 sm:gap-3">
+                       <div v-for="(element, eIdx) in section.elements" :key="`col-${eIdx}`" class="w-20 sm:w-24 text-center text-sm font-black text-gray-400">
+                         {{ element.designator ? element.designator.replace(/^[0-9]+/, '') : '' }}
+                       </div>
+                     </div>
+                   </template>
+                 </div>
+              </div>
 
-
-          <!-- Scrollable Area Wrapper -->
-          <div class="relative w-full overflow-hidden">
-            <!-- Scrollable Seat Map Area -->
-            <div class="flex-1 overflow-x-auto overflow-y-auto custom-scrollbar" style="max-height: min(75vh, 700px); min-height: 400px;">
-              <div v-if="currentMap" class="pb-24 px-2">
-                <div v-for="(cabin, cIdx) in currentMap.cabins" :key="cIdx">
-
-                  <!-- Cabin Header -->
-                  <div class="flex items-center gap-4 justify-center sticky top-0 bg-white/95 backdrop-blur-md py-6 z-20">
-                    <div class="h-[2px] flex-1 bg-gradient-to-r from-transparent via-gray-100 to-blue-100"></div>
-                    <span class="px-8 py-3 bg-black rounded-xl text-xs sm:text-sm  text-white   shadow-xl shadow-blue-200 whitespace-nowrap">
-                      {{ cabin.name || 'Main Cabin' }}
-                    </span>
-                    <div class="h-[2px] flex-1 bg-gradient-to-l from-transparent via-gray-100 to-blue-100"></div>
+              <!-- Rows -->
+              <div class="flex flex-col gap-3">
+                <div
+                  v-for="(row, rIdx) in cabin.rows"
+                  :key="rIdx"
+                  class="flex items-center gap-2 sm:gap-4 w-full"
+                >
+                  <!-- Row Number Left -->
+                  <div class="w-8 sm:w-10 flex-shrink-0 text-left">
+                    <span class="text-sm font-bold text-gray-900">{{ row.number || row.sections[0]?.elements?.find(e => e.designator)?.designator?.replace(/[A-Za-z]+$/, '') }}</span>
                   </div>
 
-                  <!-- Rows -->
-                  <div class="flex flex-col items-center gap-2 mt-4">
-                    <div
-                      v-for="(row, rIdx) in cabin.rows"
-                      :key="rIdx"
-                      class="flex items-center justify-center gap-1 sm:gap-2 group w-full"
-                    >
-                      <!-- Row Number Left -->
-                      <div class="w-8 sm:w-10 flex-shrink-0 text-right pr-1">
-                        <span class="text-xs sm:text-sm  text-black group-hover:text-blue-500 transition-colors">{{ row.number }}</span>
-                      </div>
+                  <!-- Sections -->
+                  <div class="flex items-center gap-4 sm:gap-6 flex-1">
+                    <template v-for="(section, sIdx) in row.sections" :key="sIdx">
+                      <!-- Aisle spacer between sections -->
+                      <div v-if="sIdx > 0" class="w-6 sm:w-8 flex-shrink-0"></div>
 
-                      <!-- Sections with Aisle Gap -->
-                      <div class="flex items-center gap-1 sm:gap-2">
-                        <template v-for="(section, sIdx) in row.sections" :key="sIdx">
-                          <!-- Aisle spacer between sections -->
-                          <div v-if="sIdx > 0" class="w-6 sm:w-10 flex-shrink-0"></div>
-
-                          <div class="flex items-center gap-1 sm:gap-2">
-                            <div v-for="(element, eIdx) in section.elements" :key="eIdx">
-                              <template v-if="element.type === 'seat'">
-                                <button
-                                  @click="handleSeatClick(element)"
-                                  :disabled="!isSeatAvailable(element)"
-                                  class="w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center transition-all duration-300 relative group/seat border-2 touch-manipulation"
-                                  :class="[
-                                    isSeatSelectedByActivePlayer(element)
-                                      ? 'bg-emerald-500 border-emerald-400 text-white shadow-xl shadow-emerald-200 scale-110 -translate-y-0.5 z-10'
-                                      : isSeatAvailable(element)
-                                        ? 'bg-white border-blue-100 text-blue-600 hover:border-blue-600 hover:scale-105 hover:bg-blue-50 hover:shadow-lg hover:shadow-blue-100/50 active:scale-95'
-                                        : 'bg-white border-gray-200 text-black cursor-not-allowed'
-                                  ]"
-                                >
-                                  <Armchair class="h-5 w-5 sm:h-6 sm:w-6 mb-0.5" />
-                                  <span class="text-sm sm:text-xs  leading-none er">{{ element.designator }}</span>
-
-                                  <!-- Price tooltip -->
-                                  <div
-                                    v-if="isSeatAvailable(element) && !isSeatSelectedByActivePlayer(element)"
-                                    class="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 bg-black text-white text-[8px]  rounded-lg shadow-2xl opacity-0 group-hover/seat:opacity-100 transition-all pointer-events-none whitespace-nowrap z-30"
-                                  >
-                                    +{{ formatPrice(parseFloat(element.available_services[0].total_amount)) }}
-                                  </div>
-                                </button>
+                      <div class="flex items-center gap-2 sm:gap-3">
+                        <div v-for="(element, eIdx) in section.elements" :key="eIdx">
+                          <template v-if="element.type === 'seat'">
+                            <button
+                              @click="handleSeatClick(element)"
+                              :disabled="!isSeatAvailable(element)"
+                              class="w-20 h-12 sm:w-24 sm:h-14 rounded-lg flex flex-col items-center justify-center transition-all duration-200 border touch-manipulation font-bold text-xs sm:text-[13px]"
+                              :class="[
+                                isSeatSelectedByActivePlayer(element)
+                                  ? 'bg-[#0D1DAD] border-[#0D1DAD] text-white shadow-md'
+                                  : isSeatAvailable(element)
+                                    ? 'bg-white border-[#0D1DAD]/40 text-[#0D1DAD] hover:bg-[#F0F4FF] hover:border-[#0D1DAD]'
+                                    : 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed'
+                              ]"
+                            >
+                              <template v-if="isSeatSelectedByActivePlayer(element)">
+                                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                               </template>
+                              <template v-else-if="!isSeatAvailable(element)">
+                                <svg class="w-5 h-5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                              </template>
+                              <template v-else>
+                                <span>{{ formatPrice(parseFloat(element.available_services[0].total_amount)) }}</span>
+                              </template>
+                            </button>
+                          </template>
 
-                              <div v-else-if="element.type === 'empty'" class="w-10 h-10 sm:w-12 sm:h-12"></div>
+                          <div v-else-if="element.type === 'empty'" class="w-20 h-12 sm:w-24 sm:h-14"></div>
 
-                              <div v-else class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-black">
-                                <Info v-if="element.type !== 'empty'" class="h-4 w-4 opacity-20" />
-                              </div>
-                            </div>
+                          <div v-else class="w-20 h-12 sm:w-24 sm:h-14 flex items-center justify-center text-gray-300">
+                            <!-- Bassinet or other non-seat elements -->
+                            <div class="w-2 h-2 rounded-full bg-gray-200"></div>
                           </div>
-                        </template>
+                        </div>
                       </div>
-
-                      <!-- Row Number Right (mirror) -->
-                      <div class="w-8 sm:w-10 flex-shrink-0 text-left pl-1">
-                        <span class="text-xs sm:text-sm  text-black group-hover:text-blue-500 transition-colors">{{ row.number }}</span>
-                      </div>
-                    </div>
+                    </template>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Bottom Gradient Fade & Scroll Indicator -->
-            <div class="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none z-10 flex flex-col items-center justify-end pb-8">
-               <div class="flex flex-col items-center gap-2 animate-bounce transition-opacity duration-500 group-hover:opacity-10">
-                  <span class="text-xs    text-black">Scroll for more</span>
-                  <div class="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm">
-                    <ChevronDown class="w-4 h-4 text-black" />
-                  </div>
-               </div>
             </div>
           </div>
         </div>
@@ -171,29 +164,23 @@
 
     <!-- Empty State -->
     <div v-else class="flex flex-col items-center justify-center py-24 rounded-3xl border-2 border-dashed border-gray-200 bg-white">
-      <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm mb-4">
-        <Armchair class="w-8 h-8 text-black" />
+      <div class="w-16 h-16 rounded-2xl bg-[#F0F4FF] flex items-center justify-center shadow-sm mb-4 text-[#0D1DAD]">
+        <Armchair class="w-8 h-8" />
       </div>
-      <p class="text-xs font-black text-black ">No Seat Map Available</p>
-      <p class="text-[9px] font-bold text-black  mt-1 text-center px-4">Seat selection is not supported for this flight.</p>
-      <button @click="$emit('continue')" class="mt-6 px-6 h-10 bg-black text-white rounded-xl text-[9px] font-black  uppercase">Skip Selection</button>
+      <p class="text-lg font-black text-gray-900">No Seat Map Available</p>
+      <p class="text-sm font-medium text-gray-500 mt-1 text-center px-4">Seat selection is not supported for this flight.</p>
     </div>
 
     <!-- Navigation -->
     <div v-if="!isEmbedded" class="mt-10 flex items-center justify-between border-t border-gray-200 pt-8">
-      <button @click="$emit('back')" class="group flex items-center gap-2 sm:gap-3 px-4 sm:px-6 h-12 sm:h-14 rounded-2xl hover:bg-white transition-all">
-        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border border-gray-200 group-hover:border-gray-200 transition-colors flex-shrink-0">
-          <ChevronRight class="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-180" />
-        </div>
-        <span class="text-[9px] sm:text-sm    text-black group-hover:text-black hidden xs:block">Previous Review</span>
+      <button @click="$emit('back')" class="group flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors font-bold text-gray-700">
+        <ChevronRight class="w-4 h-4 rotate-180" />
+        Back
       </button>
 
-      <button @click="$emit('continue')" class="group relative bg-black text-white px-8 sm:px-12 py-3.5 rounded-lg text-sm sm:text-[11px]    shadow-2xl hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-white/10 to-blue-600/0 -translate-x-full group-hover:animate-shimmer"></div>
-        <span class="relative z-10 flex items-center gap-2 sm:gap-3">
-          Finalize Selection
-          <ChevronRight class="w-4 h-4" />
-        </span>
+      <button @click="$emit('continue')" class="group flex items-center gap-2 px-8 py-3 bg-[#0D1DAD] text-white rounded-xl hover:bg-[#0A1485] transition-colors font-bold shadow-md hover:shadow-lg">
+        Confirm Selection
+        <ChevronRight class="w-4 h-4" />
       </button>
     </div>
   </div>

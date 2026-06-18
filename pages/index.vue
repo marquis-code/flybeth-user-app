@@ -43,7 +43,7 @@
          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Card 1 -->
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center text-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-[#Eef2ff] flex items-center justify-center text-[#4F46E5]">
+              <div class="w-12 h-12 rounded-full bg-[#F0F4FF] flex items-center justify-center text-[#0D1DAD]">
                 <GlobeAltIcon class="w-6 h-6" />
               </div>
               <h4 class="font-bold text-black text-sm">15+ Years of Experience</h4>
@@ -51,7 +51,7 @@
             </div>
             <!-- Card 2 -->
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center text-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-[#Eef2ff] flex items-center justify-center text-[#4F46E5]">
+              <div class="w-12 h-12 rounded-full bg-[#F0F4FF] flex items-center justify-center text-[#0D1DAD]">
                 <PhoneIcon class="w-6 h-6" />
               </div>
               <h4 class="font-bold text-black text-sm">24/7 Travel Advisors</h4>
@@ -59,7 +59,7 @@
             </div>
             <!-- Card 3 -->
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center text-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-[#Eef2ff] flex items-center justify-center text-[#4F46E5]">
+              <div class="w-12 h-12 rounded-full bg-[#F0F4FF] flex items-center justify-center text-[#0D1DAD]">
                 <CurrencyDollarIcon class="w-6 h-6" />
               </div>
               <h4 class="font-bold text-black text-sm">Upfront Pricing</h4>
@@ -67,7 +67,7 @@
             </div>
             <!-- Card 4 -->
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center text-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-[#Eef2ff] flex items-center justify-center text-[#4F46E5]">
+              <div class="w-12 h-12 rounded-full bg-[#F0F4FF] flex items-center justify-center text-[#0D1DAD]">
                 <TicketIcon class="w-6 h-6" />
               </div>
               <h4 class="font-bold text-black text-sm">Members Save More</h4>
@@ -583,7 +583,7 @@
     <div class="w-full bg-white py-24 border-y border-gray-100">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-12">
         <!-- Left Oval Image -->
-        <div class="hidden lg:block w-[200px] h-[300px] rounded-[100px] overflow-hidden shrink-0 shadow-lg border-4 border-[#eef2ff]">
+        <div class="hidden lg:block w-[200px] h-[300px] rounded-[100px] overflow-hidden shrink-0 shadow-lg border-4 border-[#F0F4FF]">
            <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover" />
         </div>
 
@@ -605,10 +605,10 @@
 
         <!-- Right Oval Images -->
         <div class="hidden lg:flex items-center gap-6 shrink-0">
-          <div class="w-[180px] h-[280px] rounded-[90px] overflow-hidden shadow-lg border-4 border-[#eef2ff]">
+          <div class="w-[180px] h-[280px] rounded-[90px] overflow-hidden shadow-lg border-4 border-[#F0F4FF]">
             <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover" />
           </div>
-          <div class="w-[160px] h-[260px] rounded-[80px] overflow-hidden shadow-lg border-4 border-[#eef2ff]">
+          <div class="w-[160px] h-[260px] rounded-[80px] overflow-hidden shadow-lg border-4 border-[#F0F4FF]">
             <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=400" class="w-full h-full object-cover" />
           </div>
         </div>
@@ -1046,7 +1046,15 @@ const formatDateShort = (dateStr: string) => {
 };
 
 const navigateToFlightSearch = (destination: string) => {
-  const origin = userLocation.value?.cityCode || 'LOS';
+  const origin = userLocation.value?.cityCode;
+  if (!origin) {
+    showToast({
+      title: 'Location Required',
+      message: 'Please enable location services or enter an origin manually to search.',
+      toastType: 'error'
+    });
+    return;
+  }
   const query = {
     origin,
     destination: destination.toUpperCase().slice(0, 3), // Simple heuristic for demo
@@ -1059,14 +1067,7 @@ const navigateToFlightSearch = (destination: string) => {
 
 const currentFareDeals = computed(() => {
   if (liveDeals.value.length > 0) {
-    const isRoundTrip = fareTab.value === 'Round Trip';
-    
-    // Filter by trip type if possible, or just slice
     return liveDeals.value
-      .filter(deal => {
-        const hasReturn = deal.slices?.length > 1 || deal.segments?.length > 1;
-        return isRoundTrip ? hasReturn : !hasReturn;
-      })
       .slice(0, 6)
       .map((deal, idx) => ({
         id: deal.offerId || deal.id || idx,
@@ -1098,10 +1099,10 @@ const flightRecommendations = computed(() => {
     return recommendations.value.slice(0, 4).map((deal: any, idx: number) => ({
       city: deal.destination,
       route: `${deal.origin} - ${deal.destination}`,
-      price: Math.floor(deal.price?.total || deal.price),
-      dates: deal.departureDate ? `${formatMonthDay(deal.departureDate)} - ${formatMonthDay(deal.returnDate)}` : 'Flexible dates',
+      price: Math.floor(deal.price?.total || deal.priceWithCommission || deal.price || 0),
+      dates: `${formatMonthDay(deal.departureDate || deal.departureTime)}`,
       image: fallbackImages[idx % fallbackImages.length],
-      isRoundTrip: !!deal.returnDate,
+      isRoundTrip: deal.slices?.length > 1 || deal.segments?.length > 1 || !!deal.returnDate,
       offerId: deal.offerId || deal.id,
       provider: deal.provider || 'duffel',
       rawDeal: deal
@@ -1236,17 +1237,19 @@ onMounted(async () => {
   
   // Detect user location first
   const location = await detectUserLocation();
-  const originCode = location?.cityCode || 'LOS';
+  const originCode = location?.cityCode;
 
-  // Fetch comprehensive market insights based on user location
-  const currentPeriod = new Date().toISOString().slice(0, 7); // YYYY-MM
-  const currentYear = new Date().getFullYear().toString();
-  
-  await Promise.all([
-    fetchMostTraveled(originCode, currentPeriod),
-    fetchMostBooked(originCode, currentPeriod),
-    fetchBusiestPeriods(originCode, currentYear)
-  ]);
+  if (originCode) {
+    // Fetch comprehensive market insights based on user location
+    const currentPeriod = new Date().toISOString().slice(0, 7); // YYYY-MM
+    const currentYear = new Date().getFullYear().toString();
+    
+    await Promise.all([
+      fetchMostTraveled(originCode, currentPeriod),
+      fetchMostBooked(originCode, currentPeriod),
+      fetchBusiestPeriods(originCode, currentYear)
+    ]);
+  }
 
   // Fetch scores for the top trending destination
   if (mostBooked.value.length > 0 || mostTraveled.value.length > 0) {
@@ -1258,9 +1261,14 @@ onMounted(async () => {
   // Fetch flight deals
   fetchFlightDeals(6);
   
-  // Fetch live deals based on origin and current fare tab
-  const tripType = fareTab.value === 'Round Trip' ? 'round-trip' : 'one-way';
-  fetchLiveDeals(originCode, tripType);
+  if (originCode) {
+    // Fetch live deals based on origin and current fare tab
+    const tripType = fareTab.value === 'Round Trip' ? 'round-trip' : 'one-way';
+    fetchLiveDeals(originCode, tripType);
+
+    // Fetch flight inspiration/recommendations
+    fetchFlightInspiration(originCode);
+  }
 
   // Fetch hotel listings (using searchLive with the detected location)
   searchStays({
@@ -1269,15 +1277,14 @@ onMounted(async () => {
     guests: 2,
     checkIn: new Date().toISOString().split('T')[0]
   });
-
-  // Fetch flight inspiration/recommendations
-  fetchFlightInspiration(originCode);
 })
 
 watch(fareTab, () => {
-  const originCode = userLocation.value?.cityCode || 'LOS';
-  const tripType = fareTab.value === 'Round Trip' ? 'round-trip' : 'one-way';
-  fetchLiveDeals(originCode, tripType);
+  const originCode = userLocation.value?.cityCode;
+  if (originCode) {
+    const tripType = fareTab.value === 'Round Trip' ? 'round-trip' : 'one-way';
+    fetchLiveDeals(originCode, tripType);
+  }
 });
 
 onUnmounted(() => {

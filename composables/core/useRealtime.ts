@@ -67,6 +67,14 @@ export const useRealtime = () => {
       newMessages.value.push(message);
       window.dispatchEvent(new CustomEvent('new-chat-message', { detail: message }));
     });
+
+    socket.value.on('roomTransferred', (data) => {
+      window.dispatchEvent(new CustomEvent('room-transferred', { detail: data }));
+    });
+
+    socket.value.on('roomResolved', (data) => {
+      window.dispatchEvent(new CustomEvent('room-resolved', { detail: data }));
+    });
   };
 
   const disconnect = () => {

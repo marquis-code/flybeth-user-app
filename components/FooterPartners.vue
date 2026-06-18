@@ -1,13 +1,19 @@
 <template>
-  <div class="flex flex-wrap justify-center items-center gap-6 lg:gap-10 bg-white">
-    <img
-      v-for="partner in partners"
-      :key="partner.name"
-      :src="partner.src"
-      :alt="partner.name"
-      :style="{ height: partner.height, width: partner.width }"
-      class="object-contain transition-all duration-300"
-    />
+  <div class="w-full max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:flex lg:flex-wrap lg:justify-center items-center gap-x-6 gap-y-8 md:gap-x-8 lg:gap-10">
+      <div
+        v-for="partner in partners"
+        :key="partner.name"
+        class="h-10 md:h-12 flex items-center justify-center w-full lg:w-auto"
+      >
+        <img
+          :src="partner.src"
+          :alt="partner.name"
+          :style="{ maxHeight: partner.height }"
+          class="w-auto object-contain transition-all duration-300"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -27,21 +33,20 @@ import itan from '@/assets/img/partners/itan.webp';
 interface Partner {
   name: string;
   src: string;
-  height?: string;
-  width?: string;
+  height: string;
 }
 
 const partners: Partner[] = [
-  { name: 'Norton Secured', src: norton,   height: '48px', width: 'auto' },
-  { name: 'IATAN',          src: iatan,    height: '40px', width: 'auto' },
-  { name: 'Visa',           src: visa,     height: '32px', width: 'auto' },
-  { name: 'Mastercard',     src: mastercard, height: '40px', width: 'auto' },
-  { name: 'American Express', src: amex,  height: '40px', width: 'auto' },
-  { name: 'Affirm',         src: affirm,   height: '28px', width: 'auto' },
-  { name: 'PayPal',         src: paypal,   height: '36px', width: 'auto' },
-  { name: 'Nanta',          src: nanta,    height: '50px', width: 'auto' },
-  { name: 'NCAA',           src: ncaa,     height: '48px', width: 'auto' },
-  { name: 'IATA',           src: iata,     height: '48px', width: 'auto' },
-  { name: 'ITAN',           src: itan,     height: '45px', width: 'auto' },
+  { name: 'Norton Secured', src: norton,   height: '36px' },
+  { name: 'IATAN',          src: iatan,    height: '30px' },
+  { name: 'Visa',           src: visa,     height: '18px' },
+  { name: 'Mastercard',     src: mastercard, height: '28px' },
+  { name: 'American Express', src: amex,  height: '32px' },
+  { name: 'Affirm',         src: affirm,   height: '22px' },
+  { name: 'PayPal',         src: paypal,   height: '26px' },
+  { name: 'Nanta',          src: nanta,    height: '36px' },
+  { name: 'NCAA',           src: ncaa,     height: '36px' },
+  { name: 'IATA',           src: iata,     height: '34px' },
+  { name: 'ITAN',           src: itan,     height: '32px' },
 ];
 </script>

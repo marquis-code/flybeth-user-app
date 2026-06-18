@@ -21,5 +21,8 @@ export const bookingsApi = {
     },
     emailCapture(data: { email: string; firstName: string; destination: string; checkoutUrl: string; tenantId?: string }) {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/bookings/email-capture", data);
+    },
+    manageBooking(data: { pnr: string; email: string }) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/bookings/manage", data);
     }
 };

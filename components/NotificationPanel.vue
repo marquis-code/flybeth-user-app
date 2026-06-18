@@ -12,7 +12,7 @@
           <button 
             v-if="notifications.length > 0"
             @click="clearAll" 
-            class="text-[13px] font-semibold text-[#6366F1] hover:text-[#4F46E5] transition-colors"
+            class="text-[13px] font-semibold text-[#1A2ED4] hover:text-[#0D1DAD] transition-colors"
           >
             Clear all
           </button>
@@ -54,7 +54,7 @@
             </div>
 
             <!-- Unread dot -->
-            <div v-if="!n.read" class="w-2 h-2 rounded-full bg-[#6366F1] flex-shrink-0 mt-2"></div>
+            <div v-if="!n.read" class="w-2 h-2 rounded-full bg-[#1A2ED4] flex-shrink-0 mt-2"></div>
           </div>
         </div>
 
@@ -65,7 +65,7 @@
       <div class="px-6 py-4 text-center">
         <button 
           @click="$router.push('/dashboard/notifications')" 
-          class="text-[13px] font-semibold text-[#6366F1] hover:text-[#4F46E5] transition-colors"
+          class="text-[13px] font-semibold text-[#1A2ED4] hover:text-[#0D1DAD] transition-colors"
         >
           View all activity →
         </button>

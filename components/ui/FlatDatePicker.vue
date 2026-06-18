@@ -1,5 +1,5 @@
 <template>
-  <div class="flat-date-picker" v-bind="$attrs">
+  <div class="flat-date-picker relative" v-bind="$attrs">
     <!-- Trigger input -->
     <div
       class="relative"
@@ -13,7 +13,7 @@
       >{{ label }}</label>
       <div
         :class="[
-          'w-full px-4 bg-white border border-gray-200 rounded-2xl cursor-pointer transition-all duration-300 min-h-[68px] flex items-center',
+          'w-full px-4 bg-white border border-gray-200 rounded-2xl cursor-pointer transition-all duration-300 min-h-[68px] flex items-center justify-between',
           open ? 'ring-2 ring-gray-200 border-gray-200' : 'hover:border-gray-200',
           hasError ? 'ring-red-500 border-red-500' : ''
         ]"
@@ -23,25 +23,29 @@
            <span v-if="modelValue" class="font-semibold text-black text-sm ">{{ displayDate }}</span>
            <span v-else-if="open" class="text-black text-sm font-semibold ">Select date</span>
         </div>
+        <div v-if="modelValue && !hasError" class="text-[#0D1DAD] pointer-events-none transition-all duration-300">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
       </div>
     </div>
 
-    <!-- Calendar Overlay (Matching FlightDateRangePicker) -->
-    <Teleport to="body">
-      <Transition name="fade-overlay">
-        <div v-if="open">
-          
-          <!-- Dark backdrop -->
-          <div
-            class="fixed inset-0 z-[10010] bg-black/50 backdrop-blur-[3px]"
-            @click="open = false"
-          />
+    <!-- Calendar Overlay -->
+    <Transition name="fade-overlay">
+      <div v-if="open" class="absolute top-[calc(100%+8px)] left-0 z-[10011] w-[300px] sm:w-[340px]">
+        
+        <!-- Invisible backdrop for click-outside -->
+        <div
+          class="fixed inset-0 z-[-1]"
+          @click.stop="open = false"
+        ></div>
 
-          <!-- Calendar card -->
-          <div
-            class="fixed z-[10011] bg-white rounded-2xl overflow-hidden select-none transition-all duration-300 shadow-2xl flex flex-col w-[calc(100vw-32px)] sm:w-[400px] h-auto max-h-[85vh] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-            @click.stop
-          >
+        <!-- Calendar card -->
+        <div
+          class="bg-white rounded-2xl border border-gray-100 overflow-hidden select-none transition-all duration-300 shadow-2xl flex flex-col w-full h-auto max-h-[400px]"
+          @click.stop
+        >
             <!-- Header -->
             <div class="flex items-center justify-between px-6 pt-5 pb-3">
               <button
@@ -94,7 +98,7 @@
                 </div>
                 <div class="grid grid-cols-7">
                   <template v-for="(day, i) in leftDays" :key="i">
-                    <div v-if="!day.inMonth" class="h-10" />
+                    <div v-if="!day.inMonth" class="h-10"></div>
                     <div
                       v-else
                       class="flex items-center justify-center h-10"
@@ -125,7 +129,7 @@
                 >
                   Clear
                 </button>
-                <div v-else />
+                <div v-else></div>
 
                 <button
                   @click="open = false"
@@ -136,8 +140,7 @@
             </div>
           </div>
         </div>
-      </Transition>
-    </Teleport>
+    </Transition>
   </div>
 </template>
 
@@ -231,15 +234,20 @@ function buildMonthDays(year: number, month: number): CalDay[] {
 
 const leftDays = computed(() => buildMonthDays(leftYear.value, leftMonth.value))
 
+import { useTracking } from '@/composables/core/useTracking'
+
 function selectDay(day: CalDay) {
   if (!day.inMonth) return
   const iso = `${day.dateObj.getFullYear()}-${String(day.dateObj.getMonth() + 1).padStart(2, '0')}-${String(day.dateObj.getDate()).padStart(2, '0')}`
   emit('update:modelValue', iso)
   setTimeout(() => { open.value = false }, 150)
+  
+  useTracking().trackAction('date_selected', { field: props.label, date: iso })
 }
 
 function clearValue() {
   emit('update:modelValue', '')
+  useTracking().trackAction('date_cleared', { field: props.label })
 }
 
 function prevMonth() {
@@ -269,10 +277,10 @@ function nextMonth() {
   opacity: 0;
 }
 
-.fade-overlay-enter-active .fixed.z-\[10011\] {
+.fade-overlay-enter-active > div:last-child {
   transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
-.fade-overlay-enter-from .fixed.z-\[10011\] {
+.fade-overlay-enter-from > div:last-child {
   transform: translateY(-10px) scale(0.97);
   opacity: 0;
 }

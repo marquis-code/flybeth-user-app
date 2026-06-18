@@ -221,10 +221,13 @@ function inRange(iso: string): boolean {
 function rangeWrapClass(iso: string): string {
   if (isPast(iso)) return 'cursor-not-allowed opacity-30'
   const s = isStartDay(iso), e = isEndDay(iso), end = effectiveEnd(), inR = inRange(iso)
-  if (s && end && iso < end) return 'bg-black rounded-l-lg'
-  if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) return 'bg-black rounded-r-lg'
-  if (inR) return 'bg-black'
-  return ''
+  
+  let classes = 'cursor-pointer'
+  if (s && end && iso < end) classes += ' bg-black rounded-l-lg'
+  else if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) classes += ' bg-black rounded-r-lg'
+  else if (inR) classes += ' bg-black'
+  
+  return classes
 }
 
 function dayClass(iso: string): string {
