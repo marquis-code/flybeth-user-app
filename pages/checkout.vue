@@ -39,94 +39,92 @@
   <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-white/30 overflow-x-hidden">
     
     <!-- Premium Header -->
-    <header class="bg-neutral-900 border-b border-white/5 py-8 relative overflow-hidden">
-      <!-- Orbs -->
-      <div class="absolute inset-0 pointer-events-none">
-        <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[300px] h-[300px] bg-primary/10 blur-[80px] rounded-full"></div>
-        <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[200px] h-[200px] bg-sky-500/5 blur-[60px] rounded-full"></div>
-      </div>
-
-      <div class="ck-wrap mx-auto relative z-10 flex items-center justify-between">
-        <button @click="handleGoBack" class="flex items-center gap-2 group text-white/40 hover:text-white transition-all text-sm font-bold">
-          <div class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <ChevronLeft class="h-4 w-4" />
-          </div>
-          <span>Back</span>
-        </button>
-
-        <div class="flex flex-col items-center">
-          <span class="text-2xl  text-white ">Flybeth</span>
-          <div class="flex items-center gap-1.5 mt-1">
-            <Lock class="h-3 w-3 text-primary" />
-            <span class="text-[9px]  tracking-[0.2em] text-white/30">AES-256 Encrypted</span>
+    <header class="bg-white border-b border-gray-200 py-6">
+      <div class="ck-wrap mx-auto relative z-10 flex flex-wrap xl:flex-nowrap items-center justify-between gap-4 xl:gap-8">
+        <!-- Left: Flight Details -->
+        <div class="flex items-center gap-3 lg:gap-4 flex-1 min-w-0">
+          <button @click="handleGoBack" class="flex-shrink-0 flex items-center justify-center hover:bg-gray-100 rounded-full w-10 h-10 transition-colors">
+            <ChevronLeft class="h-6 w-6 text-gray-700" />
+          </button>
+          
+          <div class="flex flex-col min-w-0">
+            <div class="flex items-center gap-2 truncate">
+              <span class="text-[14px] lg:text-[15px] font-bold text-gray-900 truncate">
+                <template v-if="bookingDetails.type === 'flight' && priceDetailed">
+                  {{ priceDetailed.originName || priceDetailed.origin }} <span class="text-gray-400 font-normal">→</span> {{ priceDetailed.destinationName || priceDetailed.destination }}
+                </template>
+                <template v-else>
+                  {{ bookingDetails.name }}
+                </template>
+              </span>
+            </div>
+            <span class="text-[12px] lg:text-[13px] text-gray-500 mt-0.5 truncate">
+              <template v-if="bookingDetails.type === 'flight' && priceDetailed">
+                {{ new Date(priceDetailed.departureTime).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) }}
+              </template>
+            </span>
           </div>
         </div>
 
-        <div class="flex items-center gap-3">
-          <div v-if="currentStep < 3" class="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
-            <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
-            <span class="text-sm  text-white/50  whitespace-nowrap">Held for 14:59</span>
+        <!-- Center: Stepper -->
+        <div class="flex items-center justify-center w-full xl:w-auto order-last xl:order-none mt-4 xl:mt-0 flex-shrink-0">
+          <CheckoutStepper :currentStep="currentStep" :steps="['Details', 'Customise', 'Protect', 'Summary']" />
+        </div>
+
+        <!-- Right: Price & Actions -->
+        <div class="flex items-center justify-end gap-4 lg:gap-6 flex-1 flex-shrink-0 min-w-max">
+          <div class="flex flex-col items-end flex-shrink-0">
+             <span class="text-[14px] lg:text-[15px] font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+             <span class="text-[11px] lg:text-[12px] text-gray-500">Total price</span>
           </div>
-          <div class="hidden md:flex flex-col items-end">
-             <span class="text-sm  text-white/20 ">Support</span>
-             <span class="text-sm font-bold text-white/50">+1 800 FLYBETH</span>
+          
+          <button @click="currentStep = 3" class="px-4 py-2 lg:px-5 lg:py-2.5 bg-blue-50 text-blue-600 rounded-full text-xs lg:text-sm font-semibold hover:bg-blue-100 transition-colors hidden md:block whitespace-nowrap">
+            View Summary
+          </button>
+
+          <div class="hidden md:flex flex-shrink-0 items-center justify-center">
+            <LanguageSelector />
           </div>
         </div>
       </div>
     </header>
 
-    <!-- Refined Stepper -->
-    <div class="bg-white border-b border-gray-200 py-6">
-       <div class="ck-wrap mx-auto">
-          <CheckoutStepper :currentStep="currentStep" :steps="['Review', 'Travelers', 'Extras', 'Payment']" />
-       </div>
-    </div>
-
    <main class="ck-main">
   <div class="ck-wrap mx-auto">
     <!-- Replace the flex div and its two children's class attributes -->
-    <div class="ck-content-row">
-      
-      <!-- Main column: was flex-grow w-full (causes overflow), now ck-main-col -->
-      <div class="ck-main-col space-y-8">
-        <!-- Step 0: Review -->
-        <div v-if="currentStep === 0" class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden animate-in">
-          <div class="p-6 md:p-10 border-b border-gray-200 bg-white/30">
-            <h2 class="text-2xl text-black ">Review selection</h2>
-            <p class="text-black font-medium text-sm mt-1">Confirm your trip specifics before adding traveler data.</p>
+      <!-- Main column: center aligned without sidebar -->
+      <div class="w-full max-w-3xl mx-auto space-y-8 pb-32 pt-8">
+        <!-- Step 0: Details (Flight Details + Contact Details + Passenger Details) -->
+        <div v-if="currentStep === 0" class="space-y-6 animate-in">
+          
+          <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-4 md:p-6">
+              <CheckoutFlightDetails
+                v-if="bookingDetails.type === 'flight'"
+                :flightOffer="priceDetailed"
+                hideContinue
+              />
+              <CheckoutStayDetails
+                v-if="bookingDetails.type === 'stay'"
+                :stay="priceDetailed"
+                :currency-symbol="currencySymbol"
+                hideContinue
+              />
+            </div>
           </div>
-          <div class="p-4 md:p-6">
-            <CheckoutFlightDetails
-              v-if="bookingDetails.type === 'flight'"
-              :flightOffer="priceDetailed"
-              @continue="goToStep(1)"
-            />
-            <CheckoutTransferDetails
-              v-if="bookingDetails.type === 'transfer'"
-              :name="bookingDetails.name"
-              :provider="bookingDetails.provider"
-              @continue="goToStep(1)"
-            />
-            <CheckoutStayDetails
-              v-if="bookingDetails.type === 'stay'"
-              :stay="priceDetailed"
-              :currency-symbol="currencySymbol"
-              @continue="goToStep(1)"
-            />
-          </div>
-        </div>
 
-        <!-- Step 1: Traveler -->
-        <div v-if="currentStep === 1" class="animate-in">
           <CheckoutTravellerForm 
             v-model="travellerData" 
-            @continue="handleTravellerContinue" 
             @email-blur="handleEmailBlur"
+            @continue="goToStep(1)"
           />
         </div>
 
-        <!-- Step 2: Extras -->
-        <div v-if="currentStep === 2" class="bg-white rounded-[2.5rem] border border-gray-200 shadow-sm overflow-hidden animate-in">
+        <!-- Step 1: Customise (Seats & Baggage) -->
+        <div v-if="currentStep === 1" class="animate-in space-y-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[28px] font-bold text-[#111827]">Customise your booking</h2>
+          </div>
           <CheckoutTripCustomization
             :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
             :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
@@ -135,62 +133,107 @@
             v-model:selectedAddOns="selectedAddOns"
             v-model:selectedSeats="selectedSeats"
             @update:seatPrice="val => seatPrice = val"
+            @continue="goToStep(2)"
+            @back="goToStep(0)"
+          />
+        </div>
+
+        <!-- Step 2: Protect (Cancellation & Baggage Protection) -->
+        <div v-if="currentStep === 2" class="animate-in space-y-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-[28px] font-bold text-[#111827]">Protect your booking</h2>
+          </div>
+          <CheckoutProtection 
+            :flightOffer="priceDetailed"
+            :currencySymbol="currencySymbol"
+            v-model:selectedAddOns="selectedAddOns"
             @continue="goToStep(3)"
             @back="goToStep(1)"
           />
         </div>
 
-        <!-- Step 3: Payment -->
+        <!-- Step 3: Summary & Payment -->
         <div v-if="currentStep === 3" class="animate-in space-y-6">
-          <div class="flex gap-4 p-4 bg-sky-50 border border-sky-100 rounded-2xl items-center">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-sky-500 shadow-sm flex-shrink-0">
-              <ShieldCheck class="h-5 w-5" />
-            </div>
-            <div class="space-y-0.5">
-              <p class="text-sm font-black text-sky-900 ">Security Verification</p>
-              <p class="text-sm text-sky-700/60 font-bold leading-none">Your transaction is protected by multi-layer encryption.</p>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden p-6 md:p-8">
-            <CheckoutPayment 
-              ref="paymentRef"
-              :total-amount="displayPrices.total" 
-              :currency-symbol="currencySymbol"
-              :currency="currentCurrency.code"
-              :processing="paymentProcessing"
-              :flight-offer="priceDetailed"
-              @complete-payment="handlePayment"
-              @change-currency="handleCurrencySelect"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar column: was w-full lg:w-[400px] flex-shrink-0, now ck-sidebar-col -->
-      <div class="ck-sidebar-col">
-        <div class="sticky top-12">
-          <CheckoutSidebar
-            :flight="bookingDetails.type === 'flight' ? priceDetailed : null"
-            :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
-            :passengerCount="1"
-            :baseFare="displayPrices.base"
-            :taxes="displayPrices.tax"
-            :discount="0"
-            :serviceCharge="displayPrices.serviceCharge"
-            :addOns="selectedAddOns.map(a => ({ ...a, price: a.price * (currentCurrency.rate || 1) }))"
+          
+          <!-- Summary Modules (Read-only views) -->
+          <CheckoutSummary 
+            :flightOffer="priceDetailed"
+            :travellerData="travellerData"
             :selectedSeats="selectedSeats"
-            :seatPrice="seatPrice * (currentCurrency.rate || 1)"
-            :currency="currencySymbol"
-            :showPayButton="currentStep === 3"
-            :bundledStay="bundledStay"
-            @pay-now="handlePayNow"
-            @hold-now="handleHold"
-            @apply-promo="handleApplyPromo"
+            :seatPrice="seatPrice"
+            :selectedAddOns="selectedAddOns"
+            :currencySymbol="currencySymbol"
+            @edit="goToStep"
           />
-        </div>
-      </div>
 
+          <div class="flex flex-col lg:flex-row gap-6 mt-6">
+            <!-- Payment Section -->
+            <div class="flex-1 bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+              <CheckoutPayment 
+                ref="paymentRef"
+                :total-amount="displayPrices.total" 
+                :currency-symbol="currencySymbol"
+                :currency="currentCurrency.code"
+                :processing="paymentProcessing"
+                :flight-offer="priceDetailed"
+                @complete-payment="handlePayment"
+                @wallet-authorize="handleWalletAuthorize"
+                @change-currency="handleCurrencySelect"
+              />
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="w-full lg:w-[360px] flex-shrink-0">
+              <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Price breakdown</h3>
+                
+                <div class="space-y-3 mb-6 text-sm text-gray-600">
+                  <div class="flex justify-between items-center">
+                    <span>Flight Fare</span>
+                    <span class="font-medium text-gray-900">{{ currencySymbol }}{{ displayPrices.base.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span>Taxes & Fees</span>
+                    <span class="font-medium text-gray-900">{{ currencySymbol }}{{ displayPrices.tax.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                  </div>
+                  
+                  <div v-if="seatPrice > 0" class="flex justify-between items-center text-blue-600">
+                    <span>Seat Selection</span>
+                    <span class="font-medium">+{{ currencySymbol }}{{ (seatPrice * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                  </div>
+
+                  <template v-if="selectedAddOns.length > 0">
+                    <div v-for="addon in selectedAddOns.filter(a => a.id !== 'seat-selection')" :key="addon.id" class="flex justify-between items-center text-blue-600">
+                      <span>{{ addon.name }}</span>
+                      <span class="font-medium">+{{ currencySymbol }}{{ (addon.price * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+                  </template>
+                </div>
+
+                <div class="pt-4 border-t border-gray-200">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-base font-bold text-gray-900">Total</span>
+                    <span class="text-2xl font-black text-gray-900">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                  </div>
+                  <p class="text-xs text-gray-500 mb-6">Includes taxes and charges</p>
+
+                  <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-14 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2">
+                    <template v-if="!paymentProcessing">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                      Pay Securely
+                    </template>
+                    <span v-else class="animate-pulse">Processing...</span>
+                  </button>
+
+                  <div class="flex items-center justify-center gap-1.5 mt-4 text-gray-400">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span class="text-[10px] font-semibold uppercase ">AES-256 Encrypted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
 </main>
@@ -210,6 +253,8 @@ import CheckoutFlightDetails from '~/components/checkout/CheckoutFlightDetails.v
 import CheckoutTransferDetails from '~/components/checkout/CheckoutTransferDetails.vue'
 import CheckoutTravellerForm from '~/components/checkout/CheckoutTravellerForm.vue'
 import CheckoutTripCustomization from '~/components/checkout/CheckoutTripCustomization.vue'
+import CheckoutProtection from '~/components/checkout/CheckoutProtection.vue'
+import CheckoutSummary from '~/components/checkout/CheckoutSummary.vue'
 import CheckoutPayment from '~/components/checkout/CheckoutPayment.vue'
 import CurrencySelectorModal from '~/components/checkout/CurrencySelectorModal.vue'
 import ManualPaymentDetailsModal from '~/components/checkout/ManualPaymentDetailsModal.vue'
@@ -233,7 +278,7 @@ const { ensureDuffelIdentity } = useDuffelIdentity()
 const { currentCurrency } = useSettings()
 
 definePageMeta({
-  layout: 'no-footer'
+  layout: 'checkout'
 })
 const { trackAction } = useTracking()
 const route = useRoute()
@@ -569,7 +614,7 @@ const goToStep = (step: number) => {
   currentStep.value = step
   saveCheckoutState()
   window.scrollTo({ top: 0, behavior: 'smooth' })
-  const steps = ['review', 'passengers', 'customization', 'payment']
+  const steps = ['details', 'customise', 'protect', 'summary']
   trackAction(`booking_step_${steps[step]}`, { type: bookingDetails.value.type, item: bookingDetails.value.name, price: displayPrices.value.total })
 }
 
@@ -624,6 +669,127 @@ const handlePayNow = () => {
   }
 }
 
+const handleWalletAuthorize = async (paymentInfo: any) => {
+  if (paymentInfo.channel === 'applepay' || paymentInfo.channel === 'googlepay') {
+    // 1. We create the booking silently
+    paymentProcessing.value = true
+    showBrandedLoader.value = true
+    loaderStatus.value = 'Preparing secure wallet...'
+
+    try {
+      const payload: any = {
+        contactDetails: {
+          email: travellerData.value.contact.email,
+          phone: travellerData.value.contact.phone,
+          name: `${travellerData.value.travelers[0].firstName} ${travellerData.value.travelers[0].lastName}`,
+          state: travellerData.value.travelers[0].nationality
+        },
+        currency: currentCurrency.value.code,
+        paymentModel: 'pay_now',
+        paymentProvider: 'paypal',
+        paymentMetadata: { provider: 'paypal', channel: paymentInfo.channel },
+        passengerDetails: travellerData.value.travelers.map(t => ({
+          ...t,
+          email: travellerData.value.contact.email || '',
+          phone: travellerData.value.contact.phone || '',
+          gender: (t.gender || 'male').toLowerCase(),
+          title: (t.title || 'mr').toLowerCase(),
+          type: 'adult'
+        })),
+        pricing: {
+          baseFare: displayPrices.value.base,
+          taxes: displayPrices.value.tax,
+          fees: displayPrices.value.total - displayPrices.value.base - displayPrices.value.tax
+        },
+        hasInsurance: selectedAddOns.value.some(a => a.id === 'insurance'),
+        hasVipSupport: selectedAddOns.value.some(a => a.id === 'vip-support'),
+        extraBaggageCount: selectedAddOns.value.filter(a => a.id.startsWith('bag-')).length,
+        premiumSeatCount: selectedSeats.value.length
+      }
+
+      if (bookingDetails.value.type === 'flight') {
+        payload.flights = [{
+          flightId: bookingDetails.value.id,
+          class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
+          offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId || priceDetailed.value?.id || bookingDetails.value.id,
+          provider: bookingDetails.value.provider,
+          passengerIds: []
+        }]
+      } else if (bookingDetails.value.type === 'stay') {
+        payload.stays = [{
+          hotelId: bookingDetails.value.id,
+          roomId: bookingDetails.value.roomId,
+          checkIn: bookingDetails.value.checkIn,
+          checkOut: bookingDetails.value.checkOut,
+          occupancy: {
+            rooms: bookingDetails.value.rooms,
+            adults: bookingDetails.value.adults,
+            children: bookingDetails.value.children
+          }
+        }]
+      }
+
+      const { data: rawData } = await bookingsApi.create(payload)
+      const booking = rawData?.data || rawData;
+
+      if (booking && booking.pnr) {
+        // Save these for the capture step
+        sessionStorage.setItem('walletBookingId', booking._id)
+        sessionStorage.setItem('walletBookingPnr', booking.pnr)
+
+        const initResponse = await paymentsApi.initialize({
+          bookingId: booking._id,
+          provider: 'paypal',
+          callbackUrl: `${window.location.origin}/confirmation?pnr=${booking.pnr}&orderId=${booking._id}&status=success&provider=paypal`,
+        });
+
+        const responseData = initResponse.data?.data || initResponse.data;
+        if (responseData && responseData.orderId) {
+          // Resolve the orderId back to PayPal SDK
+          paymentInfo.resolveOrder(responseData.orderId)
+          showBrandedLoader.value = false;
+        } else {
+          throw new Error('No order ID returned from payment init')
+        }
+      }
+    } catch (err: any) {
+      showToast({ title: "Wallet Error", message: err.message || "Failed to initialize wallet", toastType: "error" })
+    } finally {
+      paymentProcessing.value = false
+      showBrandedLoader.value = false
+    }
+
+  } else if (paymentInfo.channel.endsWith('_approve')) {
+    // 2. Capture the authorized order
+    paymentProcessing.value = true
+    showBrandedLoader.value = true
+    loaderStatus.value = 'Capturing payment...'
+
+    try {
+      const orderId = paymentInfo.data.orderID
+      const bookingId = sessionStorage.getItem('walletBookingId')
+      const pnr = sessionStorage.getItem('walletBookingPnr')
+
+      if (!bookingId) throw new Error('Booking ID lost in session')
+
+      await paymentsApi.verifyPayment({
+        bookingId: bookingId,
+        provider: 'paypal',
+        checkoutToken: orderId
+      })
+
+      clearCheckoutState()
+      router.push(`/confirmation?pnr=${pnr}&status=success`)
+
+    } catch (err: any) {
+      showToast({ title: "Capture Failed", message: err.message || "Failed to capture payment", toastType: "error" })
+    } finally {
+      paymentProcessing.value = false
+      showBrandedLoader.value = false
+    }
+  }
+}
+
 const handlePayment = async (paymentInfo: any) => {
   paymentProcessing.value = true
   showBrandedLoader.value = true
@@ -637,7 +803,7 @@ const handlePayment = async (paymentInfo: any) => {
         name: `${travellerData.value.travelers[0].firstName} ${travellerData.value.travelers[0].lastName}`,
         state: travellerData.value.travelers[0].nationality
       },
-      currency: priceDetailed.value?.currency || 'USD',
+      currency: currentCurrency.value.code,
       paymentModel: paymentInfo.paymentModel || 'pay_now',
       paymentProvider: paymentInfo.provider,
       paymentMetadata: paymentInfo,
@@ -650,10 +816,14 @@ const handlePayment = async (paymentInfo: any) => {
         type: 'adult'
       })),
       pricing: {
-        baseFare: priceDetailed.value?.price || bookingDetails.value.price || 0,
-        taxes: (priceDetailed.value?.price || bookingDetails.value.price || 0) * 0.12, // Standard flight tax estimation
-        fees: 0
+        baseFare: displayPrices.value.base,
+        taxes: displayPrices.value.tax,
+        fees: displayPrices.value.total - displayPrices.value.base - displayPrices.value.tax
       },
+      hasInsurance: selectedAddOns.value.some(a => a.id === 'insurance'),
+      hasVipSupport: selectedAddOns.value.some(a => a.id === 'vip-support'),
+      extraBaggageCount: selectedAddOns.value.filter(a => a.id.startsWith('bag-')).length,
+      premiumSeatCount: selectedSeats.value.length,
       tenantId: bookingDetails.value.provider === 'duffel' ? undefined : undefined // Add if needed
     }
 
@@ -679,11 +849,10 @@ const handlePayment = async (paymentInfo: any) => {
       }]
     }
 
-    const { data } = await bookingsApi.create(payload)
+    const { data: rawData } = await bookingsApi.create(payload)
+    const booking = rawData?.data || rawData;
     
-    if (data && data.pnr) {
-      clearCheckoutState()
-
+    if (booking && booking.pnr) {
       // Handle BNPL or any payment that requires redirection
       if (
         [
@@ -691,30 +860,36 @@ const handlePayment = async (paymentInfo: any) => {
           "affirm",
           "klarna",
           "paypal_four",
+          "afterpay",
+          "paypal",
+          "paystack"
         ].includes(paymentInfo.provider)
       ) {
         loaderStatus.value = "Redirecting to payment gateway...";
         try {
           const initResponse = await paymentsApi.initialize({
-            bookingId: data._id,
+            bookingId: booking._id,
             provider: paymentInfo.provider,
-            callbackUrl: `${window.location.origin}/confirmation?pnr=${data.pnr}&orderId=${data._id}&status=success&provider=${paymentInfo.provider}`,
+            callbackUrl: `${window.location.origin}/confirmation?pnr=${booking.pnr}&orderId=${booking._id}&status=success&provider=${paymentInfo.provider}`,
           });
           
-          if (initResponse.data && initResponse.data.url) {
-            if (initResponse.data.url === 'klarna_sdk' && initResponse.data.reference) {
+          const responseData = initResponse.data?.data || initResponse.data;
+          
+          if (responseData && responseData.url) {
+            clearCheckoutState(); // Only clear state when initialization succeeds
+            if (responseData.url === 'klarna_sdk' && responseData.reference) {
               // Handle Klarna SDK flow
               showBrandedLoader.value = false;
-              klarnaClientToken.value = initResponse.data.reference;
-              klarnaOrderId.value = data._id;
-              klarnaPnr.value = data.pnr;
+              klarnaClientToken.value = responseData.reference;
+              klarnaOrderId.value = booking._id;
+              klarnaPnr.value = booking.pnr;
               showKlarnaWidget.value = true;
               
               await loadKlarnaSdk(klarnaClientToken.value);
               return;
             } else {
               // Standard redirect flow
-              window.location.href = initResponse.data.url;
+              window.location.href = responseData.url;
               return;
             }
           }
@@ -722,16 +897,18 @@ const handlePayment = async (paymentInfo: any) => {
           console.error("Payment initialization failed:", initErr);
           showToast({
             title: "Payment Error",
-            message: "Failed to initialize payment gateway. Please try again from your bookings page.",
+            message: initErr.response?.data?.message || "Failed to initialize payment gateway. Please try again.",
             toastType: "error",
           });
-          // Still redirect to confirmation but with pending status
-          router.push(`/confirmation?pnr=${data.pnr}&status=pending_payment`);
+          // DO NOT redirect to confirmation page on payment init failure
+          // User stays on checkout page with cart intact to try again
           return;
         }
       }
 
-      router.push(`/confirmation?pnr=${data.pnr}`)
+      // For payments that don't require redirection
+      clearCheckoutState();
+      router.push(`/confirmation?pnr=${booking.pnr}`)
     } else {
       throw new Error('Booking response was invalid')
     }

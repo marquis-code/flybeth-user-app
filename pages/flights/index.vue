@@ -38,48 +38,12 @@
         <div class="fp-bar">
 
           <!-- FROM field -->
-          <div class="fp-fld fp-fld--from" :class="{ 'fp-fld--active': activeField === 'from' }" ref="fromRef">
-            <div class="fp-fld-inner" @click="openField('from')">
-              <svg class="fp-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-              <div class="fp-fld-text">
-                <span class="fp-fld-lbl">From</span>
-                <span class="fp-fld-val" :class="{ 'fp-fld-val--set': searchQuery.origin }">
-                  {{ searchQuery.origin || 'Origin' }}
-                </span>
-              </div>
-            </div>
-            <!-- FROM dropdown -->
-            <Transition name="fd">
-              <div v-if="activeField === 'from'" class="fp-drop fp-drop--loc" @mousedown.stop>
-                <div class="fp-drop-search">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                  <input ref="fromInputRef" v-model="fromQuery" placeholder="Search city or airport…" class="fp-drop-input" @input="searchLocations('from')" />
-                  <button v-if="fromQuery" class="fp-drop-clear" @click="fromQuery=''; searchQuery.origin=''">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </button>
-                </div>
-                <div v-if="!fromQuery" class="fp-drop-section">
-                  <span class="fp-drop-sec-label">Popular airports</span>
-                  <div class="fp-drop-grid">
-                    <button v-for="p in popularAirports" :key="p.code" class="fp-pop-item" @click="selectLocation('from', p)">
-                      <span class="fp-pop-icon">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                      </span>
-                      <span class="fp-pop-name">{{ p.city }}</span>
-                      <span class="fp-pop-code">{{ p.code }}</span>
-                    </button>
-                  </div>
-                </div>
-                <div v-else class="fp-drop-results">
-                  <button v-for="r in locationResults" :key="r.code" class="fp-loc-result" @click="selectLocation('from', r)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="fp-loc-city">{{ r.city }}</span>
-                    <span class="fp-loc-code">{{ r.code }}</span>
-                  </button>
-                  <div v-if="!locationResults.length" class="fp-drop-empty">No results for "{{ fromQuery }}"</div>
-                </div>
-              </div>
-            </Transition>
+          <div class="fp-fld fp-fld--from">
+            <LocationPicker
+              v-model="searchQuery.origin"
+              label="From"
+              placeholder="City or airport"
+            />
           </div>
 
           <!-- SWAP -->
@@ -88,48 +52,12 @@
           </button>
 
           <!-- TO field -->
-          <div class="fp-fld fp-fld--to" :class="{ 'fp-fld--active': activeField === 'to' }" ref="toRef">
-            <div class="fp-fld-inner" @click="openField('to')">
-              <svg class="fp-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <div class="fp-fld-text">
-                <span class="fp-fld-lbl">To</span>
-                <span class="fp-fld-val" :class="{ 'fp-fld-val--set': searchQuery.destination }">
-                  {{ searchQuery.destination || 'Destination' }}
-                </span>
-              </div>
-            </div>
-            <!-- TO dropdown -->
-            <Transition name="fd">
-              <div v-if="activeField === 'to'" class="fp-drop fp-drop--loc" @mousedown.stop>
-                <div class="fp-drop-search">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                  <input ref="toInputRef" v-model="toQuery" placeholder="Search city or airport…" class="fp-drop-input" @input="searchLocations('to')" />
-                  <button v-if="toQuery" class="fp-drop-clear" @click="toQuery=''; searchQuery.destination=''">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </button>
-                </div>
-                <div v-if="!toQuery" class="fp-drop-section">
-                  <span class="fp-drop-sec-label">Popular airports</span>
-                  <div class="fp-drop-grid">
-                    <button v-for="p in popularAirports" :key="p.code" class="fp-pop-item" @click="selectLocation('to', p)">
-                      <span class="fp-pop-icon">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                      </span>
-                      <span class="fp-pop-name">{{ p.city }}</span>
-                      <span class="fp-pop-code">{{ p.code }}</span>
-                    </button>
-                  </div>
-                </div>
-                <div v-else class="fp-drop-results">
-                  <button v-for="r in locationResults" :key="r.code" class="fp-loc-result" @click="selectLocation('to', r)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="fp-loc-city">{{ r.city }}</span>
-                    <span class="fp-loc-code">{{ r.code }}</span>
-                  </button>
-                  <div v-if="!locationResults.length" class="fp-drop-empty">No results for "{{ toQuery }}"</div>
-                </div>
-              </div>
-            </Transition>
+          <div class="fp-fld fp-fld--to">
+            <LocationPicker
+              v-model="searchQuery.destination"
+              label="To"
+              placeholder="City or airport"
+            />
           </div>
 
           <div class="fp-bar-sep"></div>
@@ -177,67 +105,16 @@
           <div class="fp-bar-sep"></div>
 
           <!-- TRAVELERS field -->
-          <div class="fp-fld fp-fld--pax" :class="{ 'fp-fld--active': activeField === 'pax' }" ref="paxRef">
-            <div class="fp-fld-inner" @click="openField('pax')">
-              <svg class="fp-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-              <div class="fp-fld-text">
-                <span class="fp-fld-lbl">Travelers</span>
-                <span class="fp-fld-val fp-fld-val--set">{{ summary }}</span>
-              </div>
-            </div>
-            <!-- Pax dropdown -->
-            <Transition name="fd">
-              <div v-if="activeField === 'pax'" class="fp-drop fp-drop--pax" @mousedown.stop>
-                <div class="fp-pax-rows">
-                  <div class="fp-pax-item">
-                    <div class="fp-pax-info"><span class="fp-pax-type">Adults</span><span class="fp-pax-sub">12+</span></div>
-                    <div class="fp-pax-ctrl">
-                      <button class="fp-pax-btn" @click="searchQuery.adults = Math.max(1, searchQuery.adults - 1)" :disabled="searchQuery.adults <= 1">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
-                      </button>
-                      <span class="fp-pax-num">{{ searchQuery.adults }}</span>
-                      <button class="fp-pax-btn" @click="searchQuery.adults = Math.min(9, searchQuery.adults + 1)">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="fp-pax-item">
-                    <div class="fp-pax-info"><span class="fp-pax-type">Children</span><span class="fp-pax-sub">2-12</span></div>
-                    <div class="fp-pax-ctrl">
-                      <button class="fp-pax-btn" @click="searchQuery.children = Math.max(0, searchQuery.children - 1)" :disabled="searchQuery.children <= 0">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
-                      </button>
-                      <span class="fp-pax-num">{{ searchQuery.children }}</span>
-                      <button class="fp-pax-btn" @click="searchQuery.children = Math.min(8, searchQuery.children + 1)">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="fp-pax-item">
-                    <div class="fp-pax-info"><span class="fp-pax-type">Infants</span><span class="fp-pax-sub">Under 2</span></div>
-                    <div class="fp-pax-ctrl">
-                      <button class="fp-pax-btn" @click="searchQuery.infants = Math.max(0, searchQuery.infants - 1)" :disabled="searchQuery.infants <= 0">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14"/></svg>
-                      </button>
-                      <span class="fp-pax-num">{{ searchQuery.infants }}</span>
-                      <button class="fp-pax-btn" @click="searchQuery.infants = Math.min(searchQuery.adults, searchQuery.infants + 1)">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="fp-pax-divider"></div>
-                <div class="fp-pax-class">
-                  <span class="fp-pax-sub  font-bold mb-2 block">Cabin Class</span>
-                  <div class="fp-pax-class-grid">
-                    <button v-for="c in ['economy','premium_economy','business','first']" :key="c" @click="searchQuery.cabinClass = c" class="fp-class-chip" :class="{ 'fp-class-chip--on': searchQuery.cabinClass === c }">
-                      {{ c.replace('_',' ') }}
-                    </button>
-                  </div>
-                </div>
-                <button class="fp-pax-done mt-4" @click="activeField = null">Done</button>
-              </div>
-            </Transition>
+          <div class="fp-fld fp-fld--pax">
+            <Occupancypicker
+              label="Travelers"
+              variant="flight"
+              v-model:adults="searchQuery.adults"
+              v-model:children="searchQuery.children"
+              v-model:infantsOnLap="searchQuery.infantsOnLap"
+              v-model:infantsInSeat="searchQuery.infantsInSeat"
+              v-model:cabinClass="searchQuery.cabinClass"
+            />
           </div>
 
           <!-- SEARCH BTN -->
@@ -268,80 +145,9 @@
         </div>
       </Transition>
 
-      <!-- Destination Info Blocks -->
-      <div v-if="searchQuery.destination" class="fp-dest-features">
-        <div class="fp-df-grid">
-          <div class="fp-df-item">
-            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.61 6.61l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
-            <h4 class="fp-df-h">Over 600 airlines</h4>
-            <p class="fp-df-p">Search and compare flights from over 600 global airlines to find the best deal.</p>
-          </div>
-          <div class="fp-df-item">
-            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-            <h4 class="fp-df-h">Fly now, pay later</h4>
-            <p class="fp-df-p">Spread the cost of your flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }} with flexible payment options.</p>
-          </div>
-          <div class="fp-df-item">
-            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <h4 class="fp-df-h">Book with confidence</h4>
-            <p class="fp-df-p">Secure your booking with ease, top-tier encryption, and 24/7 dedicated support.</p>
-          </div>
-        </div>
+      <!-- Destination Info Blocks moved down to bottom -->
 
-        <div class="fp-df-paylater">
-          <div class="fp-df-pl-content">
-            <h2 class="fp-df-pl-h2">Buy flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }} and pay later</h2>
-            <p class="fp-df-pl-p">At Flybeth, you can book your flights and pay for them in flexible installments. Choose from Klarna, Afterpay, Affirm and more at checkout.</p>
-            <div class="fp-df-pl-badges">
-              <span class="fp-pl-badge" style="background:#FFA8B6;color:#000;">Klarna.</span>
-              <span class="fp-pl-badge" style="background:#B2FCE4;color:#000;">afterpay</span>
-              <span class="fp-pl-badge" style="background:#004CFF;color:#fff;">Affirm</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Fare cards -->
-      <div v-if="displayedFlights.length" class="fp-fares">
-        <div v-for="f in fareTypes" :key="f.key" class="fp-fare" :class="{ 'fp-fare--on': activeFare === f.key }" @click="activeFare = f.key">
-          <span class="fp-fare-tag" :class="`fp-fare-tag--${f.key}`">{{ f.badge }}</span>
-          <div class="fp-fare-price">{{ formatPrice(getMatrixPrice(f.key)) }}</div>
-          <div class="fp-fare-label">{{ f.label }}</div>
-        </div>
-      </div>
-
-      <!-- Airline × Stops matrix -->
-      <div v-if="displayedFlights.length && airlineMeta.length" class="fp-matrix">
-        <div class="fp-matrix-hd">
-          <span class="fp-sec-label">Price matrix</span>
-          <span class="fp-sec-hint">Click a cell to jump to results</span>
-        </div>
-        <div class="fp-matrix-scroll">
-          <table class="fp-mtable">
-            <thead>
-              <tr>
-                <th class="fp-mth fp-mth--first"></th>
-                <th class="fp-mth" v-for="al in airlineMeta" :key="al.name">
-                  <div class="fp-al-box">
-                    <img v-if="al.logo" :src="al.logo" :alt="al.name" class="fp-al-img" />
-                    <span v-else class="fp-al-abbr">{{ al.name.slice(0,2).toUpperCase() }}</span>
-                  </div>
-                  <span class="fp-al-nm">{{ al.name }}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="sl in stopLabels" :key="sl">
-                <td class="fp-mstop">{{ sl }}</td>
-                <td v-for="al in airlineMeta" :key="al.name" class="fp-mcell" @click="jumpTo(al.name)">
-                  <span v-if="getMatrixPriceFor(al.name, sl)" class="fp-mprice">{{ formatPrice(getMatrixPriceFor(al.name, sl)) }}</span>
-                  <span v-else class="fp-mdash">—</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
 
       <!-- Body grid -->
       <div class="fp-body">
@@ -454,10 +260,11 @@
           <div v-if="sortedFlights.length" class="fp-groups">
             <template v-for="(flight, index) in sortedFlights" :key="flight.id || index">
               <FlightGroup
+                :id="`group-${(flight.airline || '').replace(/\\s+/g, '-')}`"
                 :flight="flight"
                 :isRecommended="index === 0 && sortBy === 'price'"
-                :passengersCount="searchQuery.adults + searchQuery.children + searchQuery.infants"
-                @select="selectFlight"
+                :passengersCount="searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat"
+                @select="openVariantsDrawer"
               />
               <FlightAdCarousel v-if="(index + 1) % 2 === 0 && index < sortedFlights.length - 1" class="my-4 h-32" />
             </template>
@@ -465,6 +272,40 @@
         </div>
 
       </div>
+
+      <!-- Destination Info Blocks (Moved from top) -->
+      <div v-if="searchQuery.destination" class="fp-dest-features mt-8">
+        <div class="fp-df-grid">
+          <div class="fp-df-item">
+            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.61 6.61l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+            <h4 class="fp-df-h">Over 600 airlines</h4>
+            <p class="fp-df-p">Search and compare flights from over 600 global airlines to find the best deal.</p>
+          </div>
+          <div class="fp-df-item">
+            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <h4 class="fp-df-h">Fly now, pay later</h4>
+            <p class="fp-df-p">Spread the cost of your flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }} with flexible payment options.</p>
+          </div>
+          <div class="fp-df-item">
+            <svg class="fp-df-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <h4 class="fp-df-h">Book with confidence</h4>
+            <p class="fp-df-p">Secure your booking with ease, top-tier encryption, and 24/7 dedicated support.</p>
+          </div>
+        </div>
+
+        <div class="fp-df-paylater">
+          <div class="fp-df-pl-content">
+            <h2 class="fp-df-pl-h2">Buy flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }} and pay later</h2>
+            <p class="fp-df-pl-p">At Flybeth, you can book your flights and pay for them in flexible installments. Choose from Klarna, Afterpay, Affirm and more at checkout.</p>
+            <div class="fp-df-pl-badges">
+              <span class="fp-pl-badge" style="background:#FFA8B6;color:#000;">Klarna.</span>
+              <span class="fp-pl-badge" style="background:#B2FCE4;color:#000;">afterpay</span>
+              <span class="fp-pl-badge" style="background:#004CFF;color:#fff;">Affirm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Mobile filter overlay -->
@@ -475,6 +316,167 @@
     <!-- Availability Check Modal -->
     <AvailabilityCheckModal :visible="checkingAvailability" />
 
+    <!-- Flight Variants Side Drawer -->
+    <SideDrawer 
+      :visible="showVariantsDrawer" 
+      @close="showVariantsDrawer = false"
+      widthClass="w-[760px]"
+    >
+      <template #title>
+        Select fare to {{ lookupCity(searchQuery.destination).split(' (')[0] }}
+      </template>
+      <template #default>
+        <div class="fd-drawer-content" v-if="selectedFlightSchedule">
+          <!-- Outbound details header card -->
+          <div class="fd-flight-summary-card">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center p-1.5 flex-shrink-0">
+                  <img v-if="selectedFlightSchedule.airlineLogo" :src="selectedFlightSchedule.airlineLogo" :alt="selectedFlightSchedule.airline" class="h-full w-full object-contain" />
+                  <div v-else class="h-full w-full bg-gray-100 rounded flex items-center justify-center">
+                    <span class="text-black font-bold text-xs">{{ (selectedFlightSchedule.airline || 'FL').slice(0, 2).toUpperCase() }}</span>
+                  </div>
+                </div>
+                <div>
+                  <h4 class="font-bold text-black text-sm leading-tight">{{ selectedFlightSchedule.airline }}</h4>
+                  <span class="text-xs text-gray-500 font-semibold mt-1 block">
+                    {{ formatTime(selectedFlightSchedule.departureTime) }} - {{ formatTime(selectedFlightSchedule.arrivalTime) }} 
+                    ({{ formatDuration(selectedFlightSchedule.duration) }}, {{ selectedFlightSchedule.stops === 0 ? 'nonstop' : `${selectedFlightSchedule.stops} stop${selectedFlightSchedule.stops > 1 ? 's' : ''}` }})
+                  </span>
+                </div>
+              </div>
+              <button 
+                @click="showDrawerFlightDetails = !showDrawerFlightDetails" 
+                class="text-xs font-bold text-[#0D1DAD] hover:text-[#002a66] flex items-center gap-1 transition-colors"
+              >
+                {{ showDrawerFlightDetails ? 'Hide details' : 'Show details' }}
+                <ChevronDown class="w-3.5 h-3.5 transition-transform duration-300" :class="showDrawerFlightDetails ? 'rotate-180' : ''" />
+              </button>
+            </div>
+
+            <!-- Segment timeline (collapsible) -->
+            <div v-if="showDrawerFlightDetails" class="mt-5 pt-5 border-t border-gray-200/60">
+              <div class="space-y-6 relative border-l border-gray-200 ml-4 pl-6">
+                <div v-for="(segment, idx) in selectedFlightSchedule.segments" :key="idx" class="relative">
+                  <!-- Node indicator -->
+                  <div class="absolute -left-[29.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#0D1DAD] outline outline-4 outline-gray-50"></div>
+
+                  <!-- Segment Header -->
+                  <div class="flex flex-wrap gap-2 items-center mb-2">
+                    <span class="text-xs font-bold text-black">{{ segment.operatingCarrier || segment.airline || selectedFlightSchedule.airline }}</span>
+                    <span class="text-[10px] font-semibold text-gray-500 bg-gray-200/60 px-1.5 py-0.5 rounded">
+                      {{ segment.flightNumber }}
+                    </span>
+                    <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded" v-if="segment.aircraft">
+                      {{ segment.aircraft }}
+                    </span>
+                  </div>
+
+                  <!-- Times & Airports -->
+                  <div class="text-[13px] space-y-1">
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-black">{{ formatTime(segment.departureTime) }}</span>
+                      <span class="text-gray-600 font-medium">{{ segment.origin }}</span>
+                      <span class="text-xs text-gray-400" v-if="segment.originTerminal">(Terminal {{ segment.originTerminal }})</span>
+                    </div>
+                    <div class="text-[11px] text-gray-400 flex items-center gap-1 pl-1 py-0.5">
+                      <Clock class="w-3 h-3 text-gray-300" /> {{ formatDuration(segment.duration) }}
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-black">{{ formatTime(segment.arrivalTime) }}</span>
+                      <span class="text-gray-600 font-medium">{{ segment.destination }}</span>
+                      <span class="text-xs text-gray-400" v-if="segment.destinationTerminal">(Terminal {{ segment.destinationTerminal }})</span>
+                    </div>
+                  </div>
+
+                  <!-- Connection Info if multiple segments -->
+                  <div v-if="Number(idx) < selectedFlightSchedule.segments.length - 1" class="mt-4 mb-2 -ml-2 py-2 px-3 bg-orange-50/50 rounded-xl border border-orange-100/30 flex items-center gap-2 text-xs">
+                    <Clock class="w-3.5 h-3.5 text-orange-600" />
+                    <span class="font-bold text-orange-800">
+                      Connection layover in {{ segment.destination }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Variants grid -->
+          <div class="fd-variant-grid pb-8 overflow-y-auto">
+            <div 
+              v-for="variant in activeFlightVariants" 
+              :key="variant.offerId || variant.id"
+              class="fd-variant-card"
+            >
+              <div>
+                <!-- Brand & Cabin -->
+                <div class="fd-variant-card-header">
+                  <div>
+                    <h4 class="fd-variant-title">{{ getFareVariantDetails(variant).brandName }}</h4>
+                    <span class="fd-variant-cabin">{{ getFareVariantDetails(variant).cabinLabel }}</span>
+                  </div>
+                  <span class="fd-variant-price">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
+                </div>
+                
+                <p class="fd-variant-price-info">
+                  {{ formatPrice(variant.priceWithCommission || variant.price || 0) }} one way for 1 traveler
+                </p>
+
+                <!-- Features list -->
+                <ul class="fd-variant-features">
+                  <!-- Seat -->
+                  <li class="fd-variant-feature-item">
+                    <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" v-if="getFareVariantDetails(variant).seatText.includes('included')" />
+                    <svg class="w-4 h-4 text-gray-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" v-else>
+                      <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+                    </svg>
+                    <span>{{ getFareVariantDetails(variant).seatText }}</span>
+                  </li>
+                  <!-- Carry-on -->
+                  <li class="fd-variant-feature-item">
+                    <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{{ getFareVariantDetails(variant).carryOn }}</span>
+                  </li>
+                  <!-- Checked bags -->
+                  <li class="fd-variant-feature-item">
+                    <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" v-if="getFareVariantDetails(variant).checkedBags.includes('included')" />
+                    <svg class="w-4 h-4 text-gray-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" v-else>
+                      <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+                    </svg>
+                    <span>{{ getFareVariantDetails(variant).checkedBags }}</span>
+                  </li>
+                  <!-- Refundability -->
+                  <li class="fd-variant-feature-item">
+                    <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" v-if="getFareVariantDetails(variant).refundText.includes('Fully') || getFareVariantDetails(variant).refundText.includes('Refundable')" />
+                    <svg class="w-4 h-4 text-gray-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" v-else>
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    <span>{{ getFareVariantDetails(variant).refundText }}</span>
+                  </li>
+                  <!-- Changeability -->
+                  <li class="fd-variant-feature-item">
+                    <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" v-if="getFareVariantDetails(variant).changeText.includes('included')" />
+                    <svg class="w-4 h-4 text-gray-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" v-else>
+                      <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+                    </svg>
+                    <span>{{ getFareVariantDetails(variant).changeText }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Select Button -->
+              <button 
+                @click="selectVariant(variant)"
+                class="fd-variant-select-btn"
+              >
+                Select
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </SideDrawer>
+
   </div>
 </template>
 
@@ -482,6 +484,8 @@
 definePageMeta({ layout: 'no-footer' })
 
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import SideDrawer from '@/components/ui/SideDrawer.vue'
+import { Plane, Star, Luggage, Users, Clock, Briefcase, Archive, Check, X, ArrowRight, ChevronDown, Info } from 'lucide-vue-next'
 import { useSearchFlights } from '@/composables/modules/flights/useSearchFlights'
 import { useFetchPopularFlights } from '@/composables/modules/flights/useFetchPopularFlights'
 import { useTripPurpose } from '@/composables/modules/flights/useTripPurpose'
@@ -490,6 +494,8 @@ import FlightGroup from '@/components/FlightGroup.vue'
 import FlightAdCarousel from '@/components/FlightAdCarousel.vue'
 import AvailabilityCheckModal from '@/components/AvailabilityCheckModal.vue'
 import { useSettings, localeToCurrency } from '@/composables/useSettings'
+import LocationPicker from '@/components/LocationPicker.vue'
+import Occupancypicker from '@/components/Occupancypicker.vue'
 
 const { loading, flights, searchFlights } = useSearchFlights()
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights()
@@ -498,16 +504,17 @@ const { setCurrency, formatPrice } = useSettings()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
-const fromRef = ref<HTMLElement | null>(null)
-const toRef = ref<HTMLElement | null>(null)
+const openField = (field: string) => {
+  activeField.value = field
+}
 const dateRef = ref<HTMLElement | null>(null)
-const paxRef = ref<HTMLElement | null>(null)
 const sortRef = ref<HTMLElement | null>(null)
-const fromInputRef = ref<HTMLInputElement | null>(null)
-const toInputRef = ref<HTMLInputElement | null>(null)
-const fromQuery = ref('')
-const toQuery = ref('')
-const locationResults = ref<any[]>([])
+
+// ── Fare Variants side drawer Refs ────────────────────────────────────
+const showVariantsDrawer = ref(false)
+const selectedFlightSchedule = ref<any>(null)
+const activeFlightVariants = ref<any[]>([])
+const showDrawerFlightDetails = ref(false)
 const calViewDate = ref(new Date())
 const sortOpen = ref(false)
 const mobileFilters = ref(false)
@@ -518,25 +525,31 @@ const activeFare = ref('cheapest')
 const sortBy = ref('price')
 const checkingAvailability = ref(false)
 
-const searchQuery = ref({ origin: '', destination: '', departureDate: '', adults: 1, children: 0, infants: 0, cabinClass: 'economy' })
-const summary = computed(() => {
-  const t = searchQuery.value.adults + searchQuery.value.children + searchQuery.value.infants
-  return `${t} Passenger${t > 1 ? 's' : ''}, ${searchQuery.value.cabinClass.replace('_', ' ')}`
+const searchQuery = ref({
+  origin: '',
+  destination: '',
+  departureDate: '',
+  adults: 1,
+  children: 0,
+  infantsOnLap: 0,
+  infantsInSeat: 0,
+  cabinClass: 'economy'
 })
 
-// Popular airports list
-const popularAirports = [
-  { city: 'Lagos', code: 'LOS', country: 'Nigeria' },
-  { city: 'Abuja', code: 'ABV', country: 'Nigeria' },
-  { city: 'Dubai', code: 'DXB', country: 'UAE' },
-  { city: 'London', code: 'LHR', country: 'UK' },
-  { city: 'Accra', code: 'ACC', country: 'Ghana' },
-  { city: 'Nairobi', code: 'NBO', country: 'Kenya' },
-  { city: 'New York', code: 'JFK', country: 'USA' },
-  { city: 'Paris', code: 'CDG', country: 'France' },
+const cabinClasses = [
+  { value: 'economy',         label: 'Economy' },
+  { value: 'premium_economy', label: 'Premium Economy' },
+  { value: 'business',        label: 'Business' },
+  { value: 'first',           label: 'First' },
 ]
 
-// All airports for search
+const summary = computed(() => {
+  const t = searchQuery.value.adults + searchQuery.value.children + searchQuery.value.infantsOnLap + searchQuery.value.infantsInSeat
+  const cabinLabel = cabinClasses.find(c => c.value === searchQuery.value.cabinClass)?.label || 'Economy'
+  return `${t} Passenger${t > 1 ? 's' : ''}, ${cabinLabel}`
+})
+
+// All airports for search & city lookup (preserve dictionary)
 const allAirports = [
   { city: 'Lagos', code: 'LOS' }, { city: 'Abuja', code: 'ABV' },
   { city: 'Dubai', code: 'DXB' }, { city: 'London', code: 'LHR' },
@@ -553,44 +566,9 @@ const allAirports = [
   { city: 'Port Harcourt', code: 'PHC' }, { city: 'Enugu', code: 'ENU' },
 ]
 
-// ── Location search ───────────────────────────────────────────────────
-const searchLocations = (field: string) => {
-  const q = field === 'from' ? fromQuery.value : toQuery.value
-  if (!q) { locationResults.value = []; return }
-  const lq = q.toLowerCase()
-  locationResults.value = allAirports.filter(a =>
-    a.city.toLowerCase().includes(lq) || a.code.toLowerCase().includes(lq)
-  ).slice(0, 6)
-}
-
-const selectLocation = (field: string, airport: any) => {
-  if (field === 'from') {
-    searchQuery.value.origin = airport.code
-    fromQuery.value = `${airport.city} (${airport.code})`
-    activeField.value = null
-    // Auto-open destination
-    nextTick(() => { activeField.value = 'to'; nextTick(() => toInputRef.value?.focus()) })
-  } else {
-    searchQuery.value.destination = airport.code
-    toQuery.value = `${airport.city} (${airport.code})`
-    activeField.value = null
-    // Auto-open date
-    nextTick(() => { activeField.value = 'date' })
-  }
-}
-
-// ── Field management ──────────────────────────────────────────────────
-const openField = (field: string) => {
-  activeField.value = activeField.value === field ? null : field
-  if (field === 'from') nextTick(() => fromInputRef.value?.focus())
-  if (field === 'to') nextTick(() => toInputRef.value?.focus())
-}
-
 const handleGlobalMousedown = (e: MouseEvent) => {
-  const refs: Record<string, any> = { from: fromRef, to: toRef, date: dateRef, pax: paxRef }
-  if (activeField.value) {
-    const currentRef = refs[activeField.value]?.value
-    if (currentRef && !currentRef.contains(e.target as Node)) {
+  if (activeField.value === 'date') {
+    if (dateRef.value && !dateRef.value.contains(e.target as Node)) {
       activeField.value = null
     }
   }
@@ -631,8 +609,15 @@ const pickDate = (iso: string) => {
 }
 
 const formatDate = (iso: string) => {
-  const [y,m,d] = iso.split('-').map(Number)
-  return `${d} ${MONTHS[m-1].slice(0,3)} ${y}`
+  const parts = iso.split('-').map(Number)
+  if (parts.length < 3) return iso
+  const y = parts[0]
+  const m = parts[1]
+  const d = parts[2]
+  if (y === undefined || m === undefined || d === undefined) return iso
+  const monthName = MONTHS[m - 1]
+  const monthAbbr = monthName ? monthName.slice(0, 3) : ''
+  return `${d} ${monthAbbr} ${y}`
 }
 
 // ── Flight data ───────────────────────────────────────────────────────
@@ -669,13 +654,186 @@ const filteredFlights = computed(() =>
   })
 )
 
-const sortedFlights = computed(() =>
-  [...filteredFlights.value].sort((a: any, b: any) => {
+const getScheduleKey = (flight: any) => {
+  if (!flight || !Array.isArray(flight.segments)) return flight?.offerId || String(Math.random())
+  return flight.segments.map((s: any) => `${s.flightNumber || ''}-${s.departureTime || ''}`).join('|')
+}
+
+// Groups all filtered flights by schedule
+const groupedSchedules = computed(() => {
+  const groups: Record<string, any[]> = {}
+  
+  filteredFlights.value.forEach((flight: any) => {
+    const key = getScheduleKey(flight)
+    if (!groups[key]) {
+      groups[key] = []
+    }
+    groups[key].push(flight)
+  })
+  
+  return groups
+})
+
+const sortedFlights = computed(() => {
+  const primaries = Object.keys(groupedSchedules.value).map(key => {
+    const group = groupedSchedules.value[key] || []
+    // Sort group variants by price (cheapest first)
+    const sortedGroup = [...group].sort((a: any, b: any) => {
+      const priceA = a.priceWithCommission || a.price || 0
+      const priceB = b.priceWithCommission || b.price || 0
+      return priceA - priceB
+    })
+    // The first one is the representative cheapest offer
+    return sortedGroup[0]
+  })
+  
+  return primaries.sort((a: any, b: any) => {
     if (sortBy.value === 'price') return (a.priceWithCommission||a.price||0) - (b.priceWithCommission||b.price||0)
     if (sortBy.value === 'duration') return (a.duration||9999) - (b.duration||9999)
     return 0
   })
-)
+})
+
+const openVariantsDrawer = (flight: any) => {
+  const key = getScheduleKey(flight)
+  const variants = groupedSchedules.value[key] || [flight]
+  activeFlightVariants.value = [...variants].sort((a: any, b: any) => {
+    const priceA = a.priceWithCommission || a.price || 0
+    const priceB = b.priceWithCommission || b.price || 0
+    return priceA - priceB
+  })
+  selectedFlightSchedule.value = flight
+  showDrawerFlightDetails.value = false
+  showVariantsDrawer.value = true
+}
+
+const selectVariant = async (variant: any) => {
+  showVariantsDrawer.value = false
+  await selectFlight(variant)
+}
+
+const getFareVariantDetails = (variant: any) => {
+  const cabin = variant.cabinClass || 'economy'
+  const isDuffel = variant.provider === 'duffel'
+  
+  let brandName = ''
+  if (variant.rawOffer?.fare_brand_name) {
+    brandName = variant.rawOffer.fare_brand_name
+  } else if (variant.rawOffer?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.brandedFare) {
+    brandName = variant.rawOffer.travelerPricings[0].fareDetailsBySegment[0].brandedFare
+  }
+  
+  if (!brandName) {
+    if (cabin === 'economy') {
+      if (variant.conditions?.refundable) brandName = 'Plus Select'
+      else if (variant.conditions?.changeable) brandName = 'Plus'
+      else brandName = 'Basic'
+    } else if (cabin === 'premium_economy') {
+      brandName = 'Premium Select'
+    } else if (cabin === 'business') {
+      brandName = 'Club Plus'
+    } else {
+      brandName = 'First Elite'
+    }
+  }
+  
+  brandName = brandName.split('_').join(' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+
+  let carryOn = 'Carry-on bag included'
+  let checkedBags = '1st checked bag: fee applies'
+  
+  if (isDuffel) {
+    const allowances = variant.rawOffer?.slices?.[0]?.segments?.[0]?.passengers?.[0]?.baggage_allowances || []
+    let checkedCount = 0
+    allowances.forEach((allowance: any) => {
+      if (allowance.type === 'checked') checkedCount += allowance.quantity || 0
+    })
+    if (checkedCount > 0) {
+      checkedBags = `${checkedCount} checked bag${checkedCount > 1 ? 's' : ''} included`
+    } else {
+      checkedBags = '1st checked bag: for a fee'
+    }
+  } else {
+    const baggage = variant.baggageIncluded || variant.rawOffer?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.includedCheckedBags
+    if (baggage) {
+      const quantity = baggage.quantity !== undefined ? baggage.quantity : (typeof baggage === 'object' ? 1 : parseInt(String(baggage)))
+      if (quantity > 0) {
+        checkedBags = `${quantity} checked bag${quantity > 1 ? 's' : ''} included`
+      } else {
+        checkedBags = '1st checked bag: for a fee'
+      }
+    } else {
+      checkedBags = '1st checked bag: for a fee'
+    }
+  }
+
+  let refundText = 'Non-refundable'
+  let changeText = 'Changes for a fee'
+  
+  if (variant.conditions?.refundable) {
+    const penalty = variant.conditions.refundPenalty
+    refundText = penalty ? `Refundable (fee: ${formatPrice(Number(penalty))})` : 'Fully refundable'
+  }
+  
+  if (variant.conditions?.changeable) {
+    const penalty = variant.conditions.changePenalty
+    changeText = penalty ? `Changes for a fee (from ${formatPrice(Number(penalty))})` : 'Changes included, only pay fare difference'
+  } else {
+    changeText = 'Non-changeable'
+  }
+
+  let seatText = 'Seat choice for a fee'
+  if (cabin === 'business' || cabin === 'first' || brandName.includes('Select') || brandName.includes('Elite')) {
+    seatText = 'Seat choice included'
+  }
+
+  return {
+    brandName,
+    cabinLabel: cabin.split('_').join(' ').split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '),
+    seatText,
+    carryOn,
+    checkedBags,
+    refundText,
+    changeText
+  }
+}
+
+const formatTime = (isoString: string) => {
+  if (!isoString) return '—'
+  try {
+    const date = new Date(isoString)
+    return date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    })
+  } catch (e) {
+    if (typeof isoString === 'string' && isoString.includes(':')) {
+      return isoString.split(':').slice(0, 2).join(':')
+    }
+    return isoString
+  }
+}
+
+const formatDuration = (val: any) => {
+  if (!val) return '—'
+  if (typeof val === 'string' && val.startsWith('PT')) {
+    const match = val.match(/PT(?:(\d+)H)?(?:(\d+)M)?/)
+    if (match) {
+      const h = match[1] ? `${match[1]}h` : ''
+      const m = match[2] ? ` ${match[2]}m` : ''
+      return (h + m).trim() || '—'
+    }
+  }
+  const minutes = parseInt(val)
+  if (!isNaN(minutes)) {
+    const h = Math.floor(minutes / 60)
+    const m = minutes % 60
+    if (h === 0) return `${m}m`
+    return `${h}h ${m}m`
+  }
+  return String(val)
+}
 
 const filteredGrouped = computed(() =>
   sortedFlights.value.reduce((acc: any, f: any) => {
@@ -732,7 +890,7 @@ const getMatrixPriceFor = (airline: string, sl: string) => {
 }
 
 const jumpTo = (airline: string) => {
-  const el = document.getElementById(`group-${airline}`)
+  const el = document.getElementById(`group-${airline.replace(/\s+/g, '-')}`)
   if (el) window.scrollTo({ top: el.offsetTop - 90, behavior: 'smooth' })
 }
 
@@ -745,13 +903,9 @@ const handleSearch = () => {
 
 const swapLocations = () => {
   const t = searchQuery.value.origin; searchQuery.value.origin = searchQuery.value.destination; searchQuery.value.destination = t
-  const tq = fromQuery.value; fromQuery.value = toQuery.value; toQuery.value = tq
 }
 
-const adjustPax = (d: number) => {
-  const n = searchQuery.value.passengers + d
-  if (n >= 1 && n <= 9) searchQuery.value.passengers = n
-}
+
 
 const toggleStop = (v: number) => {
   const i = activeStops.value.indexOf(v)
@@ -785,8 +939,8 @@ const selectFlight = async (flight: any) => {
 }
 
 const loadFromQuery = (route: any) => {
-  if (route.query.origin) { searchQuery.value.origin = String(route.query.origin); fromQuery.value = lookupCity(String(route.query.origin)) }
-  if (route.query.destination) { searchQuery.value.destination = String(route.query.destination); toQuery.value = lookupCity(String(route.query.destination)) }
+  if (route.query.origin) { searchQuery.value.origin = String(route.query.origin) }
+  if (route.query.destination) { searchQuery.value.destination = String(route.query.destination) }
   if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate)
   
   // Support both old 'passengers' and new granular props
@@ -794,9 +948,11 @@ const loadFromQuery = (route: any) => {
   else if (route.query.passengers) searchQuery.value.adults = parseInt(String(route.query.passengers)) || 1
   
   if (route.query.children) searchQuery.value.children = parseInt(String(route.query.children)) || 0
-  if (route.query.infants) searchQuery.value.infants = parseInt(String(route.query.infants)) || 0
-  if (route.query.infantsOnLap || route.query.infantsInSeat) {
-    searchQuery.value.infants = (parseInt(String(route.query.infantsOnLap)) || 0) + (parseInt(String(route.query.infantsInSeat)) || 0)
+  
+  if (route.query.infantsOnLap) searchQuery.value.infantsOnLap = parseInt(String(route.query.infantsOnLap)) || 0
+  if (route.query.infantsInSeat) searchQuery.value.infantsInSeat = parseInt(String(route.query.infantsInSeat)) || 0
+  if (route.query.infants && !route.query.infantsOnLap && !route.query.infantsInSeat) {
+    searchQuery.value.infantsOnLap = parseInt(String(route.query.infants)) || 0
   }
   
   if (route.query.cabinClass) searchQuery.value.cabinClass = String(route.query.cabinClass)
@@ -810,16 +966,45 @@ const lookupCity = (code: string) => {
 
 onMounted(async () => {
   const route = useRoute()
+  const router = useRouter()
   
-  // Auto currency detection
-  try {
-    const lang = navigator.language.split('-')[0]
-    const curCode = localeToCurrency[lang]
-    if (curCode) setCurrency(curCode)
-  } catch (e) {}
-
   // Aggressively load parameters from URL first to prevent blank states
   loadFromQuery(route)
+
+  let hasRestoredFromLocal = false
+  if (!route.query.origin && !route.query.destination && !route.query.sid && import.meta.client) {
+    try {
+      const saved = localStorage.getItem('flybeth_last_flight_search')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.origin || parsed.destination) {
+           searchQuery.value = { ...searchQuery.value, ...parsed }
+           hasRestoredFromLocal = true
+        }
+      }
+    } catch(e) {}
+  }
+
+  // Aggressive tracking: keep URL and localStorage perfectly in sync
+  watch(searchQuery, (newVal) => {
+    if (import.meta.client) {
+      localStorage.setItem('flybeth_last_flight_search', JSON.stringify(newVal))
+    }
+    const currentQuery = route.query
+    router.replace({ 
+      query: { 
+        ...currentQuery, 
+        origin: newVal.origin || undefined,
+        destination: newVal.destination || undefined,
+        departureDate: newVal.departureDate || undefined,
+        adults: newVal.adults > 1 ? String(newVal.adults) : undefined,
+        children: newVal.children > 0 ? String(newVal.children) : undefined,
+        infantsOnLap: newVal.infantsOnLap > 0 ? String(newVal.infantsOnLap) : undefined,
+        infantsInSeat: newVal.infantsInSeat > 0 ? String(newVal.infantsInSeat) : undefined,
+        cabinClass: newVal.cabinClass !== 'economy' ? newVal.cabinClass : undefined
+      } 
+    })
+  }, { deep: true })
 
   if (route.query.sid) {
     try {
@@ -827,8 +1012,9 @@ onMounted(async () => {
       const { data } = await flightsApi.getSearchSession(route.query.sid as string)
       if (data?.searchQuery) {
         searchQuery.value = { ...searchQuery.value, ...data.searchQuery }
-        if (data.searchQuery.origin) fromQuery.value = lookupCity(data.searchQuery.origin)
-        if (data.searchQuery.destination) toQuery.value = lookupCity(data.searchQuery.destination)
+        if (data.searchQuery.infants && !data.searchQuery.infantsOnLap) {
+          searchQuery.value.infantsOnLap = data.searchQuery.infants
+        }
       }
     } catch (err) {
       console.error('Failed to load search session:', err)
@@ -837,34 +1023,28 @@ onMounted(async () => {
       loading.value = false
       handleSearch()
     }
-  } else if (!route.query.origin) {
+  } else if (!route.query.origin && !hasRestoredFromLocal) {
     try {
       loading.value = true
       const ipRes = await fetch('https://ipapi.co/json/')
       const ipData = await ipRes.json()
       
       let autoOrigin = 'LHR' 
-      let autoCity = 'London (LHR)'
       
-      if (ipData.country_code === 'NG') { autoOrigin = 'LOS'; autoCity = 'Lagos (LOS)' }
-      else if (ipData.country_code === 'US') { autoOrigin = 'JFK'; autoCity = 'New York (JFK)' }
-      else if (ipData.country_code === 'AE') { autoOrigin = 'DXB'; autoCity = 'Dubai (DXB)' }
-      else if (ipData.country_code === 'GH') { autoOrigin = 'ACC'; autoCity = 'Accra (ACC)' }
-      else if (ipData.country_code === 'KE') { autoOrigin = 'NBO'; autoCity = 'Nairobi (NBO)' }
-      else if (ipData.country_code === 'FR') { autoOrigin = 'CDG'; autoCity = 'Paris (CDG)' }
-
+      if (ipData.country_code === 'NG') autoOrigin = 'LOS'
+      else if (ipData.country_code === 'US') autoOrigin = 'JFK'
+      else if (ipData.country_code === 'AE') autoOrigin = 'DXB'
+      else if (ipData.country_code === 'GH') autoOrigin = 'ACC'
+      else if (ipData.country_code === 'KE') autoOrigin = 'NBO'
+      else if (ipData.country_code === 'FR') autoOrigin = 'CDG'
+ 
       searchQuery.value.origin = autoOrigin
-      fromQuery.value = autoCity
       
       if (!searchQuery.value.departureDate) {
-         searchQuery.value.departureDate = new Date(Date.now() + 14*86400000).toISOString().split('T')[0]
+         searchQuery.value.departureDate = new Date(Date.now() + 14*86400000).toISOString().split('T')[0] || ''
       }
-      
-      // Aggressively open 'from' field
-      setTimeout(() => { openField('from') }, 100)
     } catch (e) {
       searchQuery.value.origin = 'LHR'
-      fromQuery.value = 'London (LHR)'
     } finally {
       loading.value = false
       if (searchQuery.value.destination) {
@@ -881,13 +1061,15 @@ onMounted(async () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,700&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; }
 
 .fp-root {
   min-height: 100vh;
   background: #fff;
   font-family: 'Onest', system-ui, sans-serif;
   color: #111;
+  overflow-x: clip;
+  max-width: 100vw;
 }
 
 .fp-wrap {
@@ -972,7 +1154,7 @@ onMounted(async () => {
   line-height: 1.5;
 }
 .fp-df-paylater {
-  background: #eef2ff;
+  background: #F0F4FF;
   border-radius: 24px;
   padding: 40px;
   display: flex;
@@ -1388,7 +1570,7 @@ onMounted(async () => {
 .fp-pax-done:hover { background: #0D1DAD; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(50, 180, 4, 0.2); }
 
 /* ── Main content ──────────────────────────────────────────────────── */
-.fp-main { padding-top: 36px; padding-bottom: 60px; }
+.fp-main { padding-top: 44px; padding-bottom: 72px; }
 
 /* Purpose strip */
 .fp-purpose {
@@ -1413,15 +1595,15 @@ onMounted(async () => {
 .fp-fares {
   display: grid;
   grid-template-columns: repeat(3,1fr);
-  gap: 10px;
-  margin-bottom: 24px;
+  gap: 14px;
+  margin-bottom: 28px;
 }
 
 .fp-fare {
   background: #fff;
   border: 1.5px solid #eaeae3;
-  border-radius: 14px;
-  padding: 18px 20px;
+  border-radius: 16px;
+  padding: 22px 24px;
   cursor: pointer;
   transition: all 0.18s;
 }
@@ -1451,34 +1633,34 @@ onMounted(async () => {
 .fp-fare-label { font-size: 11px; color: #aaa; }
 
 /* Matrix */
-.fp-matrix { background: #fff; border: 1px solid #eaeae3; border-radius: 14px; overflow: hidden; margin-bottom: 28px; }
-.fp-matrix-hd { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid #f0f0ea; }
+.fp-matrix { background: #fff; border: 1px solid #eaeae3; border-radius: 16px; overflow: hidden; margin-bottom: 32px; }
+.fp-matrix-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid #f0f0ea; }
 .fp-sec-label { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; color: #111; }
-.fp-sec-hint { font-size: 11px; color: #bbb; }
+.fp-sec-hint { font-size: 11px; color: #000; font-weight: 600; }
 .fp-matrix-scroll { overflow-x: auto; }
 .fp-mtable { width: 100%; border-collapse: collapse; }
-.fp-mth { padding: 12px 14px; background: #fafaf8; text-align: center; border-bottom: 1px solid #f0f0ea; }
+.fp-mth { padding: 14px 16px; background: #fafaf8; text-align: center; border-bottom: 1px solid #f0f0ea; }
 .fp-mth--first { min-width: 90px; text-align: left; }
 .fp-al-box { width: 28px; height: 28px; border-radius: 7px; background: #fff; border: 1px solid #eaeae3; display: flex; align-items: center; justify-content: center; margin: 0 auto 3px; overflow: hidden; }
 .fp-al-img { width: 20px; height: 20px; object-fit: contain; }
-.fp-al-abbr { font-size: 12px; font-weight: 700; color: #333; }
-.fp-al-nm { display: block; font-size: 12px; color: #bbb; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fp-mstop { padding: 11px 14px; font-size: 11px; color: #999; border-bottom: 1px solid #f8f8f5; font-weight: 500; }
-.fp-mcell { padding: 11px 14px; text-align: center; border-bottom: 1px solid #f8f8f5; cursor: pointer; transition: background 0.12s; }
+.fp-al-abbr { font-size: 12px; font-weight: 700; color: #000; }
+.fp-al-nm { display: block; font-size: 12px; color: #000; font-weight: 700; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fp-mstop { padding: 14px 18px; font-size: 11px; color: #000; border-bottom: 1px solid #f8f8f5; font-weight: 700; }
+.fp-mcell { padding: 14px 18px; text-align: center; border-bottom: 1px solid #f8f8f5; cursor: pointer; transition: background 0.12s; }
 .fp-mcell:hover { background: #f0f7f3; }
-.fp-mprice { font-size: 12px; font-weight: 600; color: #111; }
-.fp-mdash { font-size: 13px; color: #e0e0da; }
+.fp-mprice { font-size: 12px; font-weight: 700; color: #000; }
+.fp-mdash { font-size: 13px; color: #000; font-weight: 700; }
 
 /* Body grid */
-.fp-body { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; }
+.fp-body { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
 
 /* Sidebar */
 .fp-sidebar { position: sticky; top: 20px; }
 .fp-sbar {
   background: #fff;
   border: 1px solid #eaeae3;
-  border-radius: 14px;
-  padding: 18px;
+  border-radius: 16px;
+  padding: 22px;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
 }
@@ -1498,8 +1680,8 @@ onMounted(async () => {
 .fp-reset { margin-left: auto; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #bbb; background: none; border: none; cursor: pointer; transition: color 0.15s; }
 .fp-reset:hover { color: #0D1DAD; }
 
-.fp-sb-block { margin-bottom: 20px; }
-.fp-sb-label { font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #bbb; display: block; margin-bottom: 10px; }
+.fp-sb-block { margin-bottom: 24px; }
+.fp-sb-label { font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #bbb; display: block; margin-bottom: 12px; }
 .fp-sb-label strong { color: #111;  letter-spacing: 0; font-size: 12px; }
 
 .fp-chips { display: flex; flex-direction: column; gap: 5px; }
@@ -1530,7 +1712,7 @@ onMounted(async () => {
 .fp-range-ends { display: flex; justify-content: space-between; font-size: 10px; color: #bbb; }
 
 /* Toolbar */
-.fp-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.fp-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
 .fp-rcount { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #aaa; }
 .fp-toolbar-r { display: flex; align-items: center; gap: 8px; }
 
@@ -1562,14 +1744,14 @@ onMounted(async () => {
 .fp-sk--price { width: 65px; height: 20px; }
 
 /* Empty */
-.fp-empty { display: flex; flex-direction: column; align-items: center; padding: 72px 24px; gap: 10px; text-align: center; background: #fff; border: 1px solid #eaeae3; border-radius: 14px; }
+.fp-empty { display: flex; flex-direction: column; align-items: center; padding: 80px 32px; gap: 12px; text-align: center; background: #fff; border: 1px solid #eaeae3; border-radius: 16px; }
 .fp-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #0D1DAD; margin-bottom: 4px; }
 .fp-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .fp-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
 .fp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .fp-empty-btn:hover { background: #0D1DAD; }
 
-.fp-groups { display: flex; flex-direction: column; gap: 10px; }
+.fp-groups { display: flex; flex-direction: column; gap: 16px; }
 
 /* Overlay */
 .fp-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 150; backdrop-filter: blur(2px); }
@@ -1635,5 +1817,140 @@ onMounted(async () => {
   .fp-drop--cal { width: calc(100vw - 28px); left: 0; }
   .fp-drop--pax { left: 0; right: auto; width: calc(100vw - 28px); }
   .fp-fares { grid-template-columns: 1fr; }
+  .fp-df-paylater {
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    text-align: center;
+  }
+  .fp-df-pl-badges {
+    justify-content: center;
+  }
+}
+
+/* --- Premium Flight Variant Side Drawer Custom Styles --- */
+.fd-drawer-content {
+  padding: 28px 36px 36px 36px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.fd-flight-summary-card {
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.fd-variant-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  padding-bottom: 36px;
+}
+
+@media (min-width: 640px) {
+  .fd-variant-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.fd-variant-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fd-variant-card:hover {
+  border-color: #0D1DAD;
+  box-shadow: 0 10px 25px -5px rgba(13, 29, 173, 0.08), 0 8px 10px -6px rgba(13, 29, 173, 0.08);
+  transform: translateY(-2px);
+}
+
+.fd-variant-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.fd-variant-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.25;
+}
+
+.fd-variant-cabin {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+  display: block;
+}
+
+.fd-variant-price {
+  font-size: 24px;
+  font-weight: 900;
+  color: #111827;
+  line-height: 1;
+}
+
+.fd-variant-price-info {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.fd-variant-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fd-variant-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.fd-variant-select-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #0D1DAD;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.fd-variant-select-btn:hover {
+  background-color: #002a66;
+}
+
+.fd-variant-select-btn:active {
+  transform: scale(0.98);
 }
 </style>

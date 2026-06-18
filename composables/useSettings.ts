@@ -13,6 +13,7 @@ interface AncillaryPrices {
     bags: number
     seats: number
     insurance: number
+    vipSupport: number
 }
 
 const currencies = ref<Currency[]>([])
@@ -23,7 +24,7 @@ const currentCurrency = ref<Currency>({
     flag: 'https://flagcdn.com/us.svg',
     rate: 1
 })
-const ancillaryPrices = ref<AncillaryPrices>({ bags: 25, seats: 15, insurance: 12 })
+const ancillaryPrices = ref<AncillaryPrices>({ bags: 25, seats: 15, insurance: 12, vipSupport: 15 })
 const isLoading = ref(false)
 
 // Country code to flag mapping for currencies with non-obvious codes
@@ -105,7 +106,8 @@ export function useSettings() {
             if (typeof window !== 'undefined') {
                 targetCurrency = localStorage.getItem('flybeth_currency')
                 
-                if (!targetCurrency) {
+                // Aggressively re-detect if currency is the default USD, to fix the previous override bug
+                if (!targetCurrency || targetCurrency === 'USD') {
                     try {
                         const ipRes = await fetch('https://ipapi.co/currency/')
                         if (ipRes.ok) {
@@ -120,6 +122,11 @@ export function useSettings() {
                             else if (tz.includes('Europe/')) targetCurrency = 'EUR'
                         } catch {}
                     }
+
+                    // Save the genuinely detected location currency to localStorage
+                    if (targetCurrency) {
+                        localStorage.setItem('flybeth_currency', targetCurrency)
+                    }
                 }
             }
             
@@ -131,7 +138,8 @@ export function useSettings() {
                 ancillaryPrices.value = {
                     bags: configData.ancillaryPrices.bags ?? 25,
                     seats: configData.ancillaryPrices.seats ?? 15,
-                    insurance: configData.ancillaryPrices.insurance ?? 12
+                    insurance: configData.ancillaryPrices.insurance ?? 12,
+                    vipSupport: configData.ancillaryPrices.vipSupport ?? 15
                 }
             }
         } catch (error) {

@@ -35,13 +35,20 @@
               {{ selectedLabel || placeholder }}
             </template>
           </span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4 transition-transform duration-200"
-            :class="{ 'transform rotate-180': showDropdown }"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
+          <div class="flex items-center gap-2">
+            <div v-if="modelValue && !hasError && !disabled" class="text-[#0D1DAD] pointer-events-none transition-all duration-300">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 transition-transform duration-200"
+              :class="{ 'transform rotate-180': showDropdown }"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
         </div>
   
         <div
@@ -172,6 +179,8 @@
     }
   }
   
+import { useTracking } from '@/composables/core/useTracking'
+
   const selectOption = (option: any) => {
     // Support multiple formats: string, { value }, { code }, { name }
     let val: string | number
@@ -191,6 +200,8 @@
     showDropdown.value = false
     isFocused.value = false
     searchQuery.value = ''
+
+    useTracking().trackAction('select_change', { field: props.label, value: val })
   }
   
   const getLabel = (option: any): string => {

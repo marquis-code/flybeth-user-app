@@ -29,7 +29,7 @@
             <p class="text-xs md:text-sm text-white/80 mt-0.5 leading-tight">
               +1 844 FLYBETH (359-2384) 
               <!-- &nbsp;·&nbsp; Say
-              <span class="text-orange-400 font-bold tracking-wide">DIAL10</span>
+              <span class="text-orange-400 font-bold ">DIAL10</span>
               to save. -->
               <!-- <span class="inline-flex items-center justify-center h-3.5 w-3.5 rounded-full border border-white/40 text-[9px] text-white/60 ml-0.5 cursor-help align-middle">i</span> -->
             </p>

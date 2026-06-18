@@ -5,7 +5,7 @@
       <div class="max-w-5xl w-full mx-auto relative z-10 flex flex-col items-center">
         <!-- Re-using SearchWidget here configured to search across everything -->
         <SearchWidget ref="searchWidgetRef" class="w-full shadow-2xl rounded-2xl bg-white overflow-hidden border border-white/50" />
-        <p class="text-white text-sm font-medium mt-6 tracking-wide opacity-90">22,042 reviews on Flybeth</p>
+        <p class="text-white text-sm font-medium mt-6  opacity-90">22,042 reviews on Flybeth</p>
       </div>
     </div>
 

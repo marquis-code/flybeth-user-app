@@ -3,16 +3,16 @@
     <div :class="['fixed inset-0 z-[1000000] transition-all duration-300', visible ? 'visible' : 'invisible']">
       <!-- Backdrop -->
       <div 
-        :class="['absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300', visible ? 'opacity-100' : 'opacity-0']" 
+        :class="['absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300', visible ? 'opacity-100' : 'opacity-0']" 
         @click="$emit('close')"
       ></div>
 
       <!-- Drawer Panel -->
       <div 
-        :class="['absolute inset-y-0 right-0 w-full md:w-[440px] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]', visible ? 'translate-x-0' : 'translate-x-full']"
+        :class="['absolute right-3 top-3 bottom-3 max-w-[calc(100%-1.5rem)] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]', visible ? 'translate-x-0' : 'translate-x-[calc(100%+1.5rem)]', widthClass]"
       >
         <!-- Header -->
-        <div class="flex justify-between items-center px-6 py-5 shrink-0">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-100 shrink-0">
           <h2 class="text-[18px] font-bold text-[#111827]" style="font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
             <slot name="title">{{ title }}</slot>
           </h2>
@@ -43,6 +43,7 @@ import { onMounted, onUnmounted, watch } from 'vue'
 const props = defineProps({
   visible: { type: Boolean, default: false },
   title: { type: String, default: '' },
+  widthClass: { type: String, default: 'w-[440px]' },
 })
 
 const emit = defineEmits(['close'])

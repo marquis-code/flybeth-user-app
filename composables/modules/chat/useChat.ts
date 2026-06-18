@@ -1,8 +1,10 @@
 import { ref } from 'vue';
 import { chatApiFactory } from '@/api_factory/modules/chat';
+import { uploadApiFactory } from '@/api_factory/modules/upload';
 
 export const useChat = () => {
     const loading = ref(false);
+    const isInitializing = ref(false);
     const rooms = ref<any[]>([]);
     const messages = ref<any[]>([]);
     const activeRoom = ref<any>(null);
@@ -29,16 +31,20 @@ export const useChat = () => {
             } else {
                 res = await chatApiFactory.getMessages(roomId, { limit: 100 });
             }
-            messages.value = (res.data?.data || []).reverse();
+            const dataArr = res?.data?.data || res?.data || [];
+            messages.value = Array.isArray(dataArr) ? dataArr.reverse() : [];
             return res;
         } catch (err) {
             console.error('Failed to fetch messages:', err);
+            messages.value = [];
         } finally {
             loading.value = false;
         }
     };
 
     const findAdminAndStartChat = async (guestData?: { email: string, name: string }, userData?: { userId: string, name: string, email: string }) => {
+        if (isInitializing.value) return activeRoom.value;
+        isInitializing.value = true;
         loading.value = true;
         try {
             // Support room creation — works for both guests and logged-in users
@@ -53,7 +59,9 @@ export const useChat = () => {
             }
 
             const res = await chatApiFactory.initSupport(initData);
-            const room = res.data?.data || res.data;
+            const room = res?.data?.data || res?.data;
+            if (!room || !room._id) throw new Error("Invalid room data received");
+            
             activeRoom.value = room;
             await fetchMessages(room._id, true);
             return room;
@@ -62,6 +70,21 @@ export const useChat = () => {
             throw err;
         } finally {
             loading.value = false;
+            isInitializing.value = false;
+        }
+    };
+
+    const uploadChatImage = async (file: File) => {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'chat_images');
+            
+            const res = await uploadApiFactory.uploadImage(formData);
+            return res.data?.data?.url || res.data?.url;
+        } catch (err) {
+            console.error('Failed to upload chat image:', err);
+            throw err;
         }
     };
 
@@ -73,5 +96,6 @@ export const useChat = () => {
         fetchRooms,
         fetchMessages,
         findAdminAndStartChat,
+        uploadChatImage,
     };
 };

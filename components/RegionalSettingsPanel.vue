@@ -23,7 +23,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search"
-            class="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 text-sm text-[#111827] placeholder-[#9CA3AF] outline-none focus:border-[#6366F1] focus:ring-1 focus:ring-[#6366F1] transition-colors"
+            class="w-full bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 text-sm text-[#111827] placeholder-[#9CA3AF] outline-none focus:border-[#1A2ED4] focus:ring-1 focus:ring-[#1A2ED4] transition-colors"
           />
         </div>
 
@@ -46,7 +46,7 @@
                 <p class="text-[12px] text-[#9CA3AF] font-medium mt-0.5">{{ loc.name }}</p>
               </div>
               <div class="flex-shrink-0">
-                <div v-if="currentLocale === loc.code" class="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center">
+                <div v-if="currentLocale === loc.code" class="w-6 h-6 rounded-full bg-[#1A2ED4] flex items-center justify-center">
                   <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
@@ -72,7 +72,7 @@
                 <p class="text-[12px] text-[#9CA3AF] font-medium mt-0.5">{{ currencyData.code }} · {{ currencyData.symbol }}</p>
               </div>
               <div class="flex-shrink-0">
-                <div v-if="currentCurrency.code === currencyData.code" class="w-6 h-6 rounded-full bg-[#6366F1] flex items-center justify-center">
+                <div v-if="currentCurrency.code === currencyData.code" class="w-6 h-6 rounded-full bg-[#1A2ED4] flex items-center justify-center">
                   <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                   </svg>

@@ -131,12 +131,12 @@
             <History class="w-3 h-3" />
             Recent
           </span>
-          <div v-for="s in recentSearches" :key="s._id" 
+          <div v-for="s in recentSearches" :key="s._id || `${s.origin}-${s.destination}`" 
             class="group flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-200 px-3 py-1.5 rounded-full transition-all cursor-pointer"
             @click="applyRecentSearch(s)"
           >
             <span class="text-[11px] font-bold text-black">{{ s.origin }} → {{ s.destination }}</span>
-            <button @click.stop="removeSearch(s._id)" class="text-black hover:text-rose-500 transition-colors">
+            <button @click.stop="removeSearch(s)" class="text-black hover:text-rose-500 transition-colors">
               <X class="w-3 h-3" />
             </button>
           </div>
@@ -662,11 +662,27 @@ const applyRecentSearch = (s: any) => {
   trackAction('recent_search_applied', { origin: s.origin, destination: s.destination })
 }
 
-const removeSearch = async (id: string) => {
-  try {
-    await flightsApi.removeRecentSearch(id)
-    recentSearches.value = recentSearches.value.filter(s => s._id !== id)
-  } catch (err) {}
+const removeSearch = async (s: any) => {
+  if (isLoggedIn.value && s._id) {
+    try {
+      await flightsApi.removeRecentSearch(s._id)
+      recentSearches.value = recentSearches.value.filter(item => item._id !== s._id)
+    } catch (err) {
+      console.error('Failed to remove recent search:', err)
+    }
+  } else {
+    // Guest flow: delete locally from state & localStorage
+    recentSearches.value = recentSearches.value.filter(
+      item => item.origin !== s.origin || item.destination !== s.destination
+    )
+    if (import.meta.client) {
+      try {
+        localStorage.setItem('flybeth_recent_searches', JSON.stringify(recentSearches.value))
+      } catch (e) {
+        console.error('Failed to update local recent searches:', e)
+      }
+    }
+  }
 }
 
 // ─── Click-outside handler (replaces backdrop click) ──────

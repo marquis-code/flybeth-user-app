@@ -4,7 +4,7 @@
       
       <!-- Header -->
       <div class="text-center mb-12">
-        <h2 class="text-[32px] md:text-[40px] font-bold text-[#111827] tracking-tight mb-4" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+        <h2 class="text-[32px] md:text-[40px] font-bold text-[#111827]  mb-4" style="font-family: 'Plus Jakarta Sans', sans-serif;">
           Ready to explore?
         </h2>
         <p class="text-[15px] text-[#4B5563] max-w-2xl mx-auto leading-relaxed">
@@ -34,7 +34,7 @@
       <!-- CTA -->
       <button 
         @click="$router.push('/destinations')" 
-        class="bg-[#6366f1] hover:bg-[#4f46e5] text-white px-8 py-3.5 rounded-full text-[15px] font-medium transition-colors shadow-sm"
+        class="bg-[#1A2ED4] hover:bg-[#0D1DAD] text-white px-8 py-3.5 rounded-full text-[15px] font-medium transition-colors shadow-sm"
       >
         Explore all destinations
       </button>

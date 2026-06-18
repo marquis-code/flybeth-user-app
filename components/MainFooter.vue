@@ -98,7 +98,7 @@
       <!-- ── Main link columns ───────────────────────────── -->
       <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-8 py-10">
         <div v-for="col in linkColumns" :key="col.title">
-          <h4 class="font-bold text-[13px] mb-4 tracking-wide uppercase text-white/50">{{ col.title }}</h4>
+          <h4 class="font-bold text-[13px] mb-4  uppercase text-white/50">{{ col.title }}</h4>
           <ul class="space-y-2.5">
             <li v-for="item in col.links" :key="item.label">
               <NuxtLink
@@ -113,17 +113,17 @@
       </div>
     </div>
 
-    <!-- ── Dark bottom bar ─────────────────────────────── -->
-    <div class="bg-[#040d4f] w-full">
-      <div class="py-8 border-b border-white/10">
+    <!-- ── White bottom bar ─────────────────────────────── -->
+    <div class="bg-white w-full border-t border-gray-200">
+      <div class="py-8 border-b border-gray-100">
         <FooterPartners />
       </div>
-      <div class="text-center text-[12px] text-white/50 py-6 pb-16 md:pb-6 max-w-7xl mx-auto px-6">
+      <div class="text-center text-[12px] text-gray-500 py-6 pb-16 md:pb-6 max-w-7xl mx-auto px-6">
         <p>
           © {{ new Date().getFullYear() }} FLYBETH LLC. All rights reserved.
-          <NuxtLink to="/privacy-policy" class="underline hover:text-white">Privacy Policy</NuxtLink>
+          <NuxtLink to="/privacy-policy" class="underline text-gray-600 hover:text-black transition-colors">Privacy Policy</NuxtLink>
           and agree to our
-          <NuxtLink to="/terms" class="underline hover:text-white">Terms and Conditions</NuxtLink>.
+          <NuxtLink to="/terms" class="underline text-gray-600 hover:text-black transition-colors">Terms and Conditions</NuxtLink>.
         </p>
       </div>
     </div>
@@ -143,7 +143,7 @@
       <Transition name="slide">
         <div
           v-if="privacyOpen"
-          class="fixed right-0 top-0 h-full w-[340px] bg-white text-gray-800 z-50 shadow-2xl overflow-y-auto flex flex-col"
+          class="fixed right-3 top-3 bottom-3 w-[340px] max-w-[calc(100%-1.5rem)] bg-white text-gray-800 z-50 shadow-2xl overflow-hidden rounded-3xl flex flex-col"
         >
           <!-- Header -->
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
@@ -154,7 +154,7 @@
           </div>
 
           <!-- Body -->
-          <div class="px-5 py-4 flex-1 text-[12.5px] leading-relaxed">
+          <div class="px-5 py-4 flex-1 overflow-y-auto text-[12.5px] leading-relaxed">
             <p class="text-gray-600 mb-4">
               Must slide "right" to opt-out under each toggle, then click "Save" at the bottom.
               Cookie opt-outs are stored per-browser and per-website.
@@ -442,7 +442,7 @@ onMounted(() => {
 }
 .slide-enter-from,
 .slide-leave-to {
-  transform: translateX(100%);
+  transform: translateX(calc(100% + 1.5rem));
 }
 
 /* Scrollbar hiding for horizontal scroll */

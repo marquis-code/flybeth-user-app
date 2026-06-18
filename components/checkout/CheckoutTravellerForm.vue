@@ -9,7 +9,7 @@
         </div>
 
         <div class="flex flex-col md:flex-row flex-wrap items-center gap-3 mt-4 md:mt-0">
-   <input 
+   <!-- <input 
      type="file" 
      ref="csvInput" 
      accept=".csv" 
@@ -22,7 +22,7 @@
    >
       <Upload class="w-4 h-4" />
       <span>Import CSV</span>
-   </button>
+   </button> -->
    <button 
      @click="addTraveler"
      class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-black text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-lg"
@@ -57,14 +57,39 @@
          </div> -->
     </div>
 
-    <div class="space-y-6 mt-8">
+    <!-- Autofill Toggle Banner -->
+    <div v-if="hasSavedData" class="mt-6 mb-2 p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-center justify-between transition-all">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+          <User class="w-4 h-4" />
+        </div>
+        <div>
+          <p class="text-[13px] font-bold text-blue-900">Saved details found!</p>
+          <p class="text-[12px] text-blue-700/70 font-medium">Toggle to automatically fill in your previous traveler info.</p>
+        </div>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" v-model="useSavedData" class="sr-only peer" @change="toggleAutofill">
+        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+      </label>
+    </div>
+
+    <div class="space-y-6 mt-6">
       <div v-for="(traveler, index) in travelers" :key="index" class="relative animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div class="flex items-center justify-between mb-4">
            <div class="flex flex-wrap items-center gap-3">
-              <div class="w-8 h-8 rounded-full bg-neutral-900 text-white text-xs font-black flex items-center justify-center">
-                {{ index + 1 }}
+              <div class="relative w-9 h-9 rounded-full bg-[#FFF0E6] flex items-center justify-center flex-shrink-0">
+                <User class="w-4 h-4 text-[#FF7A45]" />
+                <div v-if="isPassengerComplete(traveler)" class="absolute -top-1 -right-1 text-[#0D1DAD] bg-white rounded-full leading-none pointer-events-none transition-all duration-300">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
               </div>
-              <span class="text-sm font-black text-neutral-900 ">Traveler {{ index + 1 }}</span>
+              <div class="flex flex-col leading-none gap-0.5">
+                <span class="text-base font-bold text-gray-900">Passenger details</span>
+                <span class="text-xs text-gray-500 font-medium ">Adult {{ index + 1 }}</span>
+              </div>
            </div>
            <button 
              v-if="travelers.length > 1" 
@@ -76,81 +101,82 @@
         </div>
 
         <!-- Form Box with reduced internal padding -->
-        <div class="ck-tf-grid bg-white border-neutral-100 rounded-[2rem] shadow-sm">
+        <div class="ck-tf-grid bg-white border-neutral-100 rounded-[2rem] p-5 shadow-sm">
            <!-- Basic Info Group -->
            <div class="ck-tf-sec">
-              <div class="ck-tf-cards">
-                 <div class="ck-tf-row">
-                    <SelectInput
-                      v-model="traveler.title"
-                      label="Title"
-                      :options="['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']"
-                      class="flex-[0.3]"
-                    />
-                    <AnimatedInput
-                      v-model="traveler.lastName"
-                      label="Last Name / Surname"
-                      type="text"
-                      class="flex-1"
-                      position="middle"
-                    />
-                 </div>
-                 <div class="ck-tf-row">
-                    <AnimatedInput
-                      v-model="traveler.firstName"
-                      type="text"
-                      label="First Name"
-                      class="flex-1"
-                      position="middle"
-                    />
-                 </div>
-                 <div class="ck-tf-row">
-                    <FlatDatePicker
-                      v-model="traveler.dateOfBirth"
-                      label="Date of Birth"
-                      :maxDate="today"
-                      class="flex-1"
-                    />
-                    <SelectInput
-                      v-model="traveler.gender"
-                      label="Gender"
-                      :options="['Male', 'Female', 'Unknown']"
-                      class="flex-1"
-                    />
-                 </div>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                 <SelectInput
+                   v-model="traveler.title"
+                   label="Title"
+                   :options="['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']"
+                   class="sm:col-span-2"
+                 />
+                 <AnimatedInput
+                   v-model="traveler.firstName"
+                   type="text"
+                   label="First Name"
+                   class="sm:col-span-5"
+                   position="middle"
+                 />
+                 <AnimatedInput
+                   v-model="traveler.lastName"
+                   label="Last Name"
+                   type="text"
+                   class="sm:col-span-5"
+                   position="middle"
+                 />
+                 
+                 <FlatDatePicker
+                   v-model="traveler.dateOfBirth"
+                   label="Date of Birth"
+                   :maxDate="today"
+                   class="sm:col-span-6 mt-2"
+                 />
+                 <SelectInput
+                   v-model="traveler.gender"
+                   label="Gender"
+                   :options="['Male', 'Female', 'Unknown']"
+                   class="sm:col-span-6 mt-2"
+                 />
               </div>
            </div>
 
            <!-- Identity Information -->
-           <div v-if="index === 0" class="ck-tf-sec mt-5 pt-5 border-t border-neutral-100">
-              <h3 class="ck-tf-sh flex items-center gap-2">
-                <Globe class="w-4 h-4 text-[#0D1DAD]" />
-                Identity Information
-              </h3>
-              <div class="ck-tf-cards">
-                  <div class="ck-tf-row">
-                    <SelectInput
-                      v-model="traveler.nationality"
-                      label="Nationality"
-                      :options="countriesNames"
-                      class="flex-1"
-                    />
-                    <AnimatedInput
-                      v-model="traveler.passportNumber"
-                      label="Passport Number"
-                      type="text"
-                      class="flex-1"
-                      position="middle"
-                    />
-                 </div>
-                 <div class="ck-tf-row">
-                    <FlatDatePicker
-                      v-model="traveler.passportExpiry"
-                      label="Passport Expiry Date"
-                      :minDate="today"
-                      class="flex-1"
-                    />
-                 </div>
+           <div v-if="index === 0" class="ck-tf-sec mt-6 pt-5 border-t border-neutral-100">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="relative w-9 h-9 rounded-full bg-[#E0F2FE] flex items-center justify-center flex-shrink-0">
+                  <Globe class="w-4 h-4 text-[#0284C7]" />
+                  <div v-if="isIdentityComplete(traveler)" class="absolute -top-1 -right-1 text-[#0D1DAD] bg-white rounded-full leading-none pointer-events-none transition-all duration-300">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="flex flex-col leading-none gap-0.5">
+                  <span class="text-base font-bold text-gray-900">Identity Information</span>
+                  <span class="text-xs text-gray-500 font-medium ">Passport and nationality details</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                 <SelectInput
+                   v-model="traveler.nationality"
+                   label="Nationality"
+                   :options="countriesNames"
+                   class="sm:col-span-4"
+                 />
+                 <AnimatedInput
+                   v-model="traveler.passportNumber"
+                   label="Passport Number"
+                   type="text"
+                   class="sm:col-span-4"
+                   position="middle"
+                 />
+                 <FlatDatePicker
+                   v-model="traveler.passportExpiry"
+                   label="Passport Expiry Date"
+                   :minDate="today"
+                   class="sm:col-span-4"
+                 />
               </div>
            </div>
         </div>
@@ -159,17 +185,27 @@
 
     <!-- Contact Group -->
     <div class="mt-8 p-5  bg-[#0D1DAD]/[0.02] rounded-[2rem] border border-[#0D1DAD]/10">
-        <h3 class="ck-tf-sh flex items-center text-sm gap-2 mb-5">
-          <Mail class="w-4 h-4 text-[#0D1DAD]" />
-          Booking Contact (For the whole group)
-        </h3>
-        <div class="ck-tf-cards space-y-6">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="relative w-9 h-9 rounded-full bg-[#F0F4FF] flex items-center justify-center flex-shrink-0">
+            <MessageSquare class="w-4 h-4 text-[#0D1DAD]" />
+            <div v-if="isContactComplete()" class="absolute -top-1 -right-1 text-[#0D1DAD] bg-white rounded-full leading-none pointer-events-none transition-all duration-300">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="flex flex-col leading-none gap-0.5">
+            <span class="text-base font-bold text-gray-900">Contact details</span>
+            <span class="text-xs text-gray-500 font-medium ">This is where we'll send your tickets and booking updates</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <PhoneInput
                 v-model="contact.phone"
                 label="Mobile Number"
-                class="w-full max-w-md"
+                class="w-full"
               />
-              <div class="w-full max-w-md">
+              <div class="w-full">
                 <label class="block text-sm font-medium text-brand-gray  mb-1.5 ml-1">Email Address</label>
                 <AnimatedInput
                   v-model="contact.email"
@@ -185,11 +221,11 @@
 
     <div class="ck-tf-foot">
        <div class="flex flex-col gap-3 mb-4">
-          <label v-if="isLoggedIn" class="ck-tf-terms">
+          <label class="ck-tf-terms">
              <input type="checkbox" v-model="saveForFuture" class="ck-tf-chk custom-checkbox" />
-             <span class="font-bold text-black">Save traveler information for future bookings</span>
+             <span class="font-bold text-black">Save traveler and contact information for future bookings</span>
           </label>
-          <div v-else class="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl mb-2 flex items-center gap-3">
+          <div v-if="!isLoggedIn" class="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl mb-2 flex items-center gap-3">
              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
              </div>
@@ -223,11 +259,13 @@ import SelectInput from '@/components/ui/SelectInput.vue';
 import PhoneInput from '@/components/ui/PhoneInput.vue';
 import FlatDatePicker from '@/components/ui/FlatDatePicker.vue';
 import { useAuth } from '@/composables/modules/auth/useAuth';
-import { Mail, Globe, Users, Plus, Trash2, Upload } from 'lucide-vue-next'
+import { Mail, Globe, Users, User, MessageSquare, Plus, Trash2, Upload } from 'lucide-vue-next'
 import axios from 'axios'
 import { useCustomToast } from '~/composables/core/useCustomToast';
 
-const { isLoggedIn } = useAuth()
+import { GATEWAY_ENDPOINT_WITH_AUTH } from '@/api_factory/axios.config';
+
+const { isLoggedIn, user } = useAuth()
 const { showToast } = useCustomToast()
 
 const today = new Date()
@@ -256,9 +294,25 @@ const contact = ref(props.modelValue.contact?.email ? { ...props.modelValue.cont
   phoneCountryCode: '+234'
 })
 
+const hasSavedData = ref(false)
+const useSavedData = ref(false)
+const savedBackendTravelers = ref<any[]>([])
+const savedBackendContact = ref<any>({})
 const saveForFuture = ref(false)
 const termsAccepted = ref(false)
 const countries = ref<{ code: string; name: string }[]>([])
+
+const isPassengerComplete = (traveler: any) => {
+  return traveler.title && traveler.firstName && traveler.lastName && traveler.dateOfBirth && traveler.gender;
+}
+
+const isIdentityComplete = (traveler: any) => {
+  return traveler.nationality && traveler.passportNumber && traveler.passportExpiry;
+}
+
+const isContactComplete = () => {
+  return contact.value.phone && contact.value.email;
+}
 
 const addTraveler = () => {
   travelers.value.push({
@@ -310,7 +364,86 @@ const handleCSVUpload = (event: any) => {
   reader.readAsText(file)
 }
 
+const toggleAutofill = () => {
+  if (useSavedData.value) {
+    if (savedBackendTravelers.value.length > 0) {
+      travelers.value = savedBackendTravelers.value.map(t => ({
+        title: t.title || 'Mr',
+        firstName: t.firstName || '',
+        lastName: t.lastName || '',
+        dateOfBirth: t.dateOfBirth ? new Date(t.dateOfBirth).toISOString().split('T')[0] : '',
+        gender: t.gender?.toLowerCase() === 'male' ? 'Male' : t.gender?.toLowerCase() === 'female' ? 'Female' : 'Unknown',
+        nationality: t.nationality || 'Nigeria',
+        passportNumber: t.passportNumber || '',
+        passportExpiry: t.passportExpiry ? new Date(t.passportExpiry).toISOString().split('T')[0] : ''
+      }));
+    }
+    if (savedBackendContact.value.email) {
+      contact.value = { ...savedBackendContact.value };
+    }
+    showToast({ title: "Autofill Success", message: "Traveler details automatically loaded.", toastType: "success" });
+  } else {
+    // Reset to blank
+    travelers.value = [{
+      title: 'Mr',
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      gender: 'Male',
+      nationality: 'Nigeria',
+      passportNumber: '',
+      passportExpiry: ''
+    }];
+    contact.value = {
+      email: '',
+      phone: '',
+      phoneCountryCode: '+234'
+    };
+  }
+}
+
 onMounted(async () => {
+  if (isLoggedIn.value) {
+    try {
+      const [passengersRes, userRes] = await Promise.all([
+        GATEWAY_ENDPOINT_WITH_AUTH.get('/passengers'),
+        GATEWAY_ENDPOINT_WITH_AUTH.get('/users/me')
+      ]);
+
+      const fetchedPassengers = passengersRes.data?.data || passengersRes.data;
+      const fetchedUser = userRes.data?.data || userRes.data;
+
+      if (fetchedPassengers && Array.isArray(fetchedPassengers) && fetchedPassengers.length > 0) {
+        savedBackendTravelers.value = fetchedPassengers;
+        savedBackendContact.value = {
+          email: fetchedUser?.email || '',
+          phone: fetchedUser?.phone || '',
+          phoneCountryCode: '+234'
+        };
+        hasSavedData.value = true;
+        useSavedData.value = true;
+        toggleAutofill();
+      }
+    } catch (error) {
+      console.error("Failed to fetch saved travelers from backend", error);
+    }
+  } else {
+    // Guest Mode: load from local storage
+    try {
+      const localData = localStorage.getItem('flybeth_guest_checkout_info');
+      if (localData) {
+        const parsed = JSON.parse(localData);
+        if (parsed.travelers && parsed.travelers.length > 0) {
+          savedBackendTravelers.value = parsed.travelers;
+          savedBackendContact.value = parsed.contact || {};
+          hasSavedData.value = true;
+          useSavedData.value = true;
+          toggleAutofill();
+        }
+      }
+    } catch(e) {}
+  }
+
   try {
     const { data } = await axios.get('https://countriesnow.space/api/v0.1/countries/iso')
     countries.value = data.data.map((c: any) => ({
@@ -336,7 +469,54 @@ watch([travelers, contact], () => {
   emit('update:modelValue', { travelers: [...travelers.value], contact: { ...contact.value } }) 
 }, { deep: true })
 
-const handleContinue = () => { if (canContinue.value) emit('continue') }
+const handleContinue = async () => { 
+  if (canContinue.value) {
+    if (saveForFuture.value && isLoggedIn.value) {
+      // Save passengers asynchronously
+      try {
+        // Update user contact info
+        GATEWAY_ENDPOINT_WITH_AUTH.patch('/users/me', {
+           phone: contact.value.phone
+        }).catch(e => console.error("Failed to update user contact", e));
+
+        for (const traveler of travelers.value) {
+          const payload = {
+            firstName: traveler.firstName,
+            lastName: traveler.lastName,
+            title: traveler.title,
+            gender: traveler.gender.toLowerCase(),
+            dateOfBirth: traveler.dateOfBirth ? new Date(traveler.dateOfBirth).toISOString() : undefined,
+            nationality: traveler.nationality,
+            passportNumber: traveler.passportNumber,
+            passportExpiry: traveler.passportExpiry ? new Date(traveler.passportExpiry).toISOString() : undefined,
+            type: 'adult', // assuming adult for now from the form
+            email: contact.value.email,
+            phone: contact.value.phone
+          };
+          
+          // Fire and forget
+          GATEWAY_ENDPOINT_WITH_AUTH.post('/passengers', payload).catch(e => console.error("Failed to save passenger", e));
+        }
+      } catch (error) {
+        console.error("Error initiating passenger save", error);
+      }
+    } else if (saveForFuture.value && !isLoggedIn.value) {
+      // Guest Mode: save to local storage
+      try {
+        localStorage.setItem('flybeth_guest_checkout_info', JSON.stringify({
+          travelers: travelers.value,
+          contact: contact.value
+        }));
+      } catch(e) {}
+    }
+    
+    emit('update:modelValue', {
+      travelers: travelers.value,
+      contact: contact.value
+    })
+    emit('continue');
+  } 
+}
 </script>
 
 <style scoped>

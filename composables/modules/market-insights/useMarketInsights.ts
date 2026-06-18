@@ -13,14 +13,15 @@ export const useMarketInsights = () => {
 
     const detectUserLocation = async () => {
         try {
-            const { data } = await marketInsightsApi.detectLocation();
-            userLocation.value = data;
-            return data;
+            const { data: res } = await marketInsightsApi.detectLocation();
+            // API response: { success, data: { city, cityCode, country, countryCode } }
+            const locationData = res.data || res;
+            userLocation.value = locationData;
+            return locationData;
         } catch (error) {
             console.error('Error detecting user location:', error);
-            // Default to Lagos if detection fails
-            userLocation.value = { city: 'Lagos', cityCode: 'LOS', country: 'Nigeria', countryCode: 'NG' };
-            return userLocation.value;
+            userLocation.value = null;
+            return null;
         }
     };
 
