@@ -25,86 +25,34 @@
         <div class="tr-bar">
 
           <!-- ORIGIN -->
-          <div class="tr-fld tr-fld--loc" :class="{ 'tr-fld--active': activeField === 'origin' }" ref="originRef">
-            <div class="tr-fld-inner" @click="openField('origin')">
-              <svg class="tr-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <div class="tr-fld-text">
-                <span class="tr-fld-lbl">Pick-up</span>
-                <span class="tr-fld-val" :class="{ 'tr-fld-val--set': searchQuery.origin }">
-                  {{ searchQuery.origin || 'Airport or city' }}
-                </span>
-              </div>
-            </div>
-            <Transition name="td">
-              <div v-if="activeField === 'origin'" class="tr-drop tr-drop--loc" @mousedown.stop>
-                <div class="tr-drop-search">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                  <input ref="originInputRef" v-model="originQuery" placeholder="Where from?…" class="tr-drop-input" @input="searchOrigins" />
-                </div>
-                <div class="tr-drop-results">
-                  <button v-for="r in originResults" :key="r" class="tr-loc-result" @click="selectOrigin(r)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>{{ r }}</span>
-                  </button>
-                </div>
-              </div>
-            </Transition>
+          <div class="tr-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <LocationPicker 
+              v-model="searchQuery.origin" 
+              label="Pick-up" 
+              placeholder="Airport or city" 
+            />
           </div>
 
           <div class="tr-bar-sep"></div>
 
           <!-- DESTINATION -->
-          <div class="tr-fld tr-fld--loc" :class="{ 'tr-fld--active': activeField === 'dest' }" ref="destRef">
-            <div class="tr-fld-inner" @click="openField('dest')">
-              <svg class="tr-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-              <div class="tr-fld-text">
-                <span class="tr-fld-lbl">Drop-off</span>
-                <span class="tr-fld-val" :class="{ 'tr-fld-val--set': searchQuery.destination }">
-                  {{ searchQuery.destination || 'Destination' }}
-                </span>
-              </div>
-            </div>
-            <Transition name="td">
-              <div v-if="activeField === 'dest'" class="tr-drop tr-drop--loc" @mousedown.stop>
-                <div class="tr-drop-search">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                  <input ref="destInputRef" v-model="destQuery" placeholder="Where to?…" class="tr-drop-input" @input="searchDests" />
-                </div>
-                <div class="tr-drop-results">
-                  <button v-for="r in destResults" :key="r" class="tr-loc-result" @click="selectDest(r)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>{{ r }}</span>
-                  </button>
-                </div>
-              </div>
-            </Transition>
+          <div class="tr-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <LocationPicker 
+              v-model="searchQuery.destination" 
+              label="Drop-off" 
+              placeholder="Destination" 
+            />
           </div>
 
           <div class="tr-bar-sep"></div>
 
           <!-- DATE -->
-          <div class="tr-fld tr-fld--date" :class="{ 'tr-fld--active': activeField === 'date' }" ref="dateRef">
-            <div class="tr-fld-inner" @click="openField('date')">
-              <svg class="tr-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <div class="tr-fld-text">
-                <span class="tr-fld-lbl">Pickup</span>
-                <span class="tr-fld-val" :class="{ 'tr-fld-val--set': searchQuery.date }">
-                  {{ searchQuery.date ? formatDate(searchQuery.date) : 'Choose date' }}
-                </span>
-              </div>
-            </div>
-            <Transition name="td">
-              <div v-if="activeField === 'date'" class="tr-drop tr-drop--cal" @mousedown.stop>
-                <div class="tr-cal-grid">
-                   <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="tr-cal-dow">{{ d }}</div>
-                   <div v-for="c in calCells" :key="c.key"
-                     class="tr-cal-cell"
-                     :class="{ 'tr-cal-cell--blank': !c.date, 'tr-cal-cell--past': c.past, 'tr-cal-cell--sel': c.selected }"
-                     @click="c.date && !c.past && pickDate(c.date)"
-                   >{{ c.day }}</div>
-                </div>
-              </div>
-            </Transition>
+          <div class="tr-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <FlightDateRangePicker 
+              :departure="searchQuery.date" 
+              mode="oneway" 
+              @update:departure="(v) => searchQuery.date = v"
+            />
           </div>
 
           <button class="tr-search-btn" :class="{ 'tr-search-btn--busy': loading }" @click="handleSearch">
@@ -165,38 +113,14 @@ definePageMeta({ layout: 'no-footer' })
 import { ref, onMounted, nextTick } from 'vue'
 import { useSearchTransfers } from '@/composables/modules/transfers/useSearchTransfers'
 import TransferCard from '@/components/TransferCard.vue'
+import LocationPicker from '@/components/LocationPicker.vue'
+import FlightDateRangePicker from '@/components/FlightDateRangePicker.vue'
 
 const { loading, transfers, searchTransfers } = useSearchTransfers()
 
-const activeField = ref<string | null>(null)
-const originRef = ref(null), destRef = ref(null), dateRef = ref(null)
-const originInputRef = ref(null), destInputRef = ref(null)
-const originQuery = ref(''), destQuery = ref('')
-const originResults = ref(['DXB - Dubai Intl', 'LOS - Murtala Muhammed', 'LHR - Heathrow'])
-const destResults = ref(['Downtown', 'Marina', 'Palm Jumeirah'])
 const selectedTypes = ref<string[]>([])
 
 const searchQuery = ref({ origin: '', destination: '', date: '', time: '12:00', adults: 2 })
-
-const openField = (f: string) => { 
-  activeField.value = activeField.value === f ? null : f
-  if (f === 'origin') nextTick(() => originInputRef.value?.focus())
-  if (f === 'dest') nextTick(() => destInputRef.value?.focus())
-}
-
-const handleGlobalMousedown = (e: MouseEvent) => {
-  const refs: Record<string, any> = { origin: originRef, dest: destRef, date: dateRef }
-  if (activeField.value) {
-    const cur = refs[activeField.value]?.value
-    if (cur && !cur.contains(e.target as Node)) activeField.value = null
-  }
-}
-
-const selectOrigin = (r: string) => { searchQuery.value.origin = r; activeField.value = null; nextTick(() => openField('dest')) }
-const selectDest = (r: string) => { searchQuery.value.destination = r; activeField.value = null; nextTick(() => openField('date')) }
-
-const pickDate = (iso: string) => { searchQuery.value.date = iso; activeField.value = null }
-const formatDate = (iso: string) => iso
 
 const toggleType = (t: string) => {
   const i = selectedTypes.value.indexOf(t)
@@ -205,6 +129,7 @@ const toggleType = (t: string) => {
 
 const handleSearch = () => {
   const extractIata = (str: string) => {
+    if (!str) return '';
     const match = str.match(/\(([^)]+)\)/);
     return match ? match[1].toUpperCase() : str.toUpperCase();
   }
@@ -212,9 +137,10 @@ const handleSearch = () => {
   const toCode = extractIata(searchQuery.value.destination);
   
   searchTransfers({
-    fromCode, fromType: 'IATA', toCode, toType: 'ATLAS',
-    outbound: `${searchQuery.value.date}T${searchQuery.value.time}:00`,
-    adults: Number(searchQuery.value.adults), children: 0, infants: 0, language: 'en'
+    startLocationCode: fromCode || 'DXB',
+    endCityName: toCode || 'Dubai',
+    startDateTime: `${searchQuery.value.date}T${searchQuery.value.time}:00`,
+    passengers: Number(searchQuery.value.adults) || 1,
   })
 }
 
@@ -225,21 +151,15 @@ const selectTransfer = (t: any) => {
   })
 }
 
-const calCells = computed(() => {
-  const cells = []
-  const today = new Date(); today.setHours(0,0,0,0)
-  for (let d = 1; d <= 30; d++) {
-    const dt = new Date(); dt.setDate(today.getDate() + d)
-    const iso = dt.toISOString().split('T')[0]
-    cells.push({ key: iso, date: iso, day: dt.getDate(), past: false, selected: searchQuery.value.date === iso })
-  }
-  return cells
-})
+
 
 onMounted(() => {
-  searchQuery.value.origin = 'DXB'
-  searchQuery.value.destination = 'Dubai Marina'
-  searchQuery.value.date = new Date(Date.now() + 86400000 * 7).toISOString().split('T')[0]
+  const route = useRoute();
+  searchQuery.value.origin = (route.query.origin as string) || 'DXB'
+  searchQuery.value.destination = (route.query.destination as string) || 'Dubai Marina'
+  searchQuery.value.date = (route.query.date as string) || new Date(Date.now() + 86400000 * 7).toISOString().split('T')[0]
+  if (route.query.time) searchQuery.value.time = route.query.time as string;
+  if (route.query.adults) searchQuery.value.adults = Number(route.query.adults);
   handleSearch()
 })
 </script>

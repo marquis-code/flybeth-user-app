@@ -5,7 +5,7 @@
     <div
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl relative overflow-hidden"
       :class="showDropdown ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
-      @click.stop="toggleDropdown"
+      @click="toggleDropdown"
     >
       <p
         class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
@@ -20,7 +20,7 @@
           <span class="text-[13px] text-black leading-tight truncate font-bold">
             {{ selectedLocationName }}
           </span>
-          <span class="text-xs text-black font-bold shrink-0">{{ modelValue }}</span>
+          <span v-if="modelValue && modelValue !== selectedLocationName" class="text-xs text-black font-bold shrink-0">({{ modelValue }})</span>
         </template>
         <template v-else>
           <MapPinIcon class="h-4 w-4 shrink-0 text-black" />
@@ -40,8 +40,6 @@
           class="flex-1 bg-transparent outline-none text-[13px] font-bold text-black placeholder:text-black placeholder:font-normal"
           @input="onSearchInput"
           @keydown.escape="closeDropdown"
-          @mousedown.stop
-          @click.stop
         />
       </div>
 
@@ -57,8 +55,6 @@
         class="absolute left-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
         :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[360px] rounded-2xl']"
         style="background-color: #ffffff !important;"
-        @mousedown.stop
-        @click.stop
       >
         <!-- Mobile Header with Close Button -->
         <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">
@@ -79,7 +75,6 @@
               class="flex-1 bg-transparent outline-none text-[15px] font-medium text-black placeholder:text-gray-500"
               @input="onSearchInput"
               @keydown.escape="closeDropdown"
-              @click.stop
             />
           </div>
         </div>
@@ -310,6 +305,23 @@ onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
   window.addEventListener('click', handleClickOutside)
+
+  // Auto-detect user's location if it's the 'From' field and no value is pre-selected
+  if (props.label === 'From' && !props.modelValue) {
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(async (data) => {
+        if (data && data.latitude && data.longitude) {
+          try {
+            const airports = await detectNearestAirports(data.latitude, data.longitude)
+            if (airports && airports.length > 0) {
+              selectAmadeusResult(airports[0])
+            }
+          } catch (e) {}
+        }
+      })
+      .catch(() => {})
+  }
 })
 
 onUnmounted(() => {

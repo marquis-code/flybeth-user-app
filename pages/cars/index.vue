@@ -27,130 +27,23 @@
         <div class="cp-bar">
 
           <!-- LOCATION field -->
-          <div class="cp-fld cp-fld--loc" :class="{ 'cp-fld--active': activeField === 'loc' }" ref="locRef">
-            <div class="cp-fld-inner" @click="openField('loc')">
-              <svg class="cp-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-              <div class="cp-fld-text">
-                <span class="cp-fld-lbl">Pick-up Location</span>
-                <span class="cp-fld-val" :class="{ 'cp-fld-val--set': searchQuery.pickUpLocation }">
-                  {{ searchQuery.pickUpLocation || 'City or airport' }}
-                </span>
-              </div>
-            </div>
-            <!-- Location dropdown -->
-            <Transition name="cd">
-              <div v-if="activeField === 'loc'" class="cp-drop cp-drop--loc" @mousedown.stop>
-                <div class="cp-drop-search">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                  <input ref="locInputRef" v-model="locQuery" placeholder="Search city or airport…" class="cp-drop-input" @input="searchLocations" />
-                  <button v-if="locQuery" class="cp-drop-clear" @click="locQuery = ''; searchQuery.pickUpLocation = ''">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </button>
-                </div>
-                <div v-if="!locQuery" class="cp-drop-section">
-                  <span class="cp-drop-sec-label">Popular locations</span>
-                  <div class="cp-drop-grid">
-                    <button v-for="p in popularLocations" :key="p.code" class="cp-pop-item" @click="selectLocation(p)">
-                      <span class="cp-pop-icon">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                      </span>
-                      <span class="cp-pop-name">{{ p.city }}</span>
-                      <span class="cp-pop-code">{{ p.code }}</span>
-                    </button>
-                  </div>
-                </div>
-                <div v-else class="cp-drop-results">
-                  <button v-for="r in locationResults" :key="r.code" class="cp-loc-result" @click="selectLocation(r)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="cp-loc-city">{{ r.city }}</span>
-                    <span class="cp-loc-code">{{ r.code }}</span>
-                  </button>
-                  <div v-if="!locationResults.length" class="cp-drop-empty">No results for "{{ locQuery }}"</div>
-                </div>
-              </div>
-            </Transition>
+          <div class="cp-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <LocationPicker 
+              v-model="searchQuery.pickUpLocation" 
+              label="Pick-up Location" 
+              placeholder="City or airport" 
+            />
           </div>
 
-          <div class="cp-bar-sep"></div>
-
-          <!-- PICK-UP DATE field -->
-          <div class="cp-fld cp-fld--date" :class="{ 'cp-fld--active': activeField === 'pickup' }" ref="pickupRef">
-            <div class="cp-fld-inner" @click="openField('pickup')">
-              <svg class="cp-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <div class="cp-fld-text">
-                <span class="cp-fld-lbl">Pick-up Date</span>
-                <span class="cp-fld-val" :class="{ 'cp-fld-val--set': searchQuery.pickUpDate }">
-                  {{ searchQuery.pickUpDate ? formatDate(searchQuery.pickUpDate) : 'Select date' }}
-                </span>
-              </div>
-            </div>
-            <Transition name="cd">
-              <div v-if="activeField === 'pickup'" class="cp-drop cp-drop--cal" @mousedown.stop>
-                <div class="cp-cal-nav-row">
-                  <button class="cp-cal-arrow" @click="prevMonth('pickup')">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-                  </button>
-                  <span class="cp-cal-title">{{ calMonthLabel('pickup') }}</span>
-                  <button class="cp-cal-arrow" @click="nextMonth('pickup')">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                  </button>
-                </div>
-                <div class="cp-cal-grid">
-                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="cp-cal-dow">{{ d }}</div>
-                  <div v-for="c in calCells('pickup')" :key="c.key"
-                    class="cp-cal-cell"
-                    :class="{
-                      'cp-cal-cell--blank': !c.date,
-                      'cp-cal-cell--past': c.past,
-                      'cp-cal-cell--sel': c.selected,
-                      'cp-cal-cell--today': c.today
-                    }"
-                    @click="c.date && !c.past && pickDate('pickup', c.date)"
-                  >{{ c.day }}</div>
-                </div>
-              </div>
-            </Transition>
-          </div>
-
-          <div class="cp-bar-sep"></div>
-
-          <!-- RETURN DATE field -->
-          <div class="cp-fld cp-fld--date" :class="{ 'cp-fld--active': activeField === 'return' }" ref="returnRef">
-            <div class="cp-fld-inner" @click="openField('return')">
-              <svg class="cp-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <div class="cp-fld-text">
-                <span class="cp-fld-lbl">Return Date</span>
-                <span class="cp-fld-val" :class="{ 'cp-fld-val--set': searchQuery.dropOffDate }">
-                  {{ searchQuery.dropOffDate ? formatDate(searchQuery.dropOffDate) : 'Select date' }}
-                </span>
-              </div>
-            </div>
-            <Transition name="cd">
-              <div v-if="activeField === 'return'" class="cp-drop cp-drop--cal" @mousedown.stop>
-                <div class="cp-cal-nav-row">
-                  <button class="cp-cal-arrow" @click="prevMonth('return')">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-                  </button>
-                  <span class="cp-cal-title">{{ calMonthLabel('return') }}</span>
-                  <button class="cp-cal-arrow" @click="nextMonth('return')">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                  </button>
-                </div>
-                <div class="cp-cal-grid">
-                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="cp-cal-dow">{{ d }}</div>
-                  <div v-for="c in calCells('return')" :key="c.key"
-                    class="cp-cal-cell"
-                    :class="{
-                      'cp-cal-cell--blank': !c.date,
-                      'cp-cal-cell--past': c.past,
-                      'cp-cal-cell--sel': c.selected,
-                      'cp-cal-cell--today': c.today
-                    }"
-                    @click="c.date && !c.past && pickDate('return', c.date)"
-                  >{{ c.day }}</div>
-                </div>
-              </div>
-            </Transition>
+          <!-- DATES field -->
+          <div class="cp-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <FlightDateRangePicker 
+              :departure="searchQuery.pickUpDate" 
+              :return="searchQuery.dropOffDate"
+              mode="roundtrip" 
+              @update:departure="(v) => searchQuery.pickUpDate = v"
+              @update:return="(v) => searchQuery.dropOffDate = v"
+            />
           </div>
 
           <!-- SEARCH BTN -->
@@ -313,19 +206,14 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useSearchCars } from '@/composables/modules/cars/useSearchCars'
 import CarCard from '@/components/CarCard.vue'
 import { useSettings } from '@/composables/useSettings'
+import LocationPicker from '@/components/LocationPicker.vue'
+import FlightDateRangePicker from '@/components/FlightDateRangePicker.vue'
 
 const { loading, filteredCars, searchCars } = useSearchCars()
 const { formatPrice } = useSettings()
 
 // ── Refs ──────────────────────────────────────────────────────────────
-const activeField = ref<string | null>(null)
-const locRef = ref<HTMLElement | null>(null)
-const pickupRef = ref<HTMLElement | null>(null)
-const returnRef = ref<HTMLElement | null>(null)
 const sortRef = ref<HTMLElement | null>(null)
-const locInputRef = ref<HTMLInputElement | null>(null)
-const locQuery = ref('')
-const locationResults = ref<any[]>([])
 const sortOpen = ref(false)
 const mobileFilters = ref(false)
 const activeCategories = ref<string[]>([])
@@ -335,53 +223,12 @@ const maxPriceFilter = ref(99999)
 const freeCancelOnly = ref(false)
 const sortBy = ref('price')
 
-const calViewDates = ref<Record<string, Date>>({
-  pickup: new Date(),
-  return: new Date(),
-})
-
 const searchQuery = ref({
   pickUpLocation: '',
   pickUpDate: '',
   dropOffDate: '',
   type: 'rental',
 })
-
-// Popular locations list
-const popularLocations = [
-  { city: 'Dubai', code: 'DXB', country: 'UAE' },
-  { city: 'Lagos', code: 'LOS', country: 'Nigeria' },
-  { city: 'London', code: 'LHR', country: 'UK' },
-  { city: 'Abuja', code: 'ABV', country: 'Nigeria' },
-  { city: 'Accra', code: 'ACC', country: 'Ghana' },
-  { city: 'Nairobi', code: 'NBO', country: 'Kenya' },
-  { city: 'New York', code: 'JFK', country: 'USA' },
-  { city: 'Paris', code: 'CDG', country: 'France' },
-]
-
-const allLocations = [
-  { city: 'Dubai', code: 'DXB' }, { city: 'Lagos', code: 'LOS' },
-  { city: 'London', code: 'LHR' }, { city: 'London Gatwick', code: 'LGW' },
-  { city: 'Abuja', code: 'ABV' }, { city: 'Accra', code: 'ACC' },
-  { city: 'Nairobi', code: 'NBO' }, { city: 'New York JFK', code: 'JFK' },
-  { city: 'Paris CDG', code: 'CDG' }, { city: 'Amsterdam', code: 'AMS' },
-  { city: 'Frankfurt', code: 'FRA' }, { city: 'Istanbul', code: 'IST' },
-  { city: 'Cairo', code: 'CAI' }, { city: 'Johannesburg', code: 'JNB' },
-  { city: 'Cape Town', code: 'CPT' }, { city: 'Addis Ababa', code: 'ADD' },
-  { city: 'Doha', code: 'DOH' }, { city: 'Toronto', code: 'YYZ' },
-  { city: 'Singapore', code: 'SIN' }, { city: 'Mumbai', code: 'BOM' },
-  { city: 'Kigali', code: 'KGL' }, { city: 'Port Harcourt', code: 'PHC' },
-]
-
-// ── Location search ───────────────────────────────────────────────────
-const searchLocations = () => {
-  const q = locQuery.value
-  if (!q) { locationResults.value = []; return }
-  const lq = q.toLowerCase()
-  locationResults.value = allLocations.filter(a =>
-    a.city.toLowerCase().includes(lq) || a.code.toLowerCase().includes(lq)
-  ).slice(0, 6)
-}
 
 const selectLocation = (loc: any) => {
   searchQuery.value.pickUpLocation = `${loc.city} (${loc.code})`
@@ -391,19 +238,7 @@ const selectLocation = (loc: any) => {
 }
 
 // ── Field management ──────────────────────────────────────────────────
-const openField = (field: string) => {
-  activeField.value = activeField.value === field ? null : field
-  if (field === 'loc') nextTick(() => locInputRef.value?.focus())
-}
-
 const handleGlobalMousedown = (e: MouseEvent) => {
-  const refs: Record<string, any> = { loc: locRef, pickup: pickupRef, return: returnRef }
-  if (activeField.value) {
-    const currentRef = refs[activeField.value]?.value
-    if (currentRef && !currentRef.contains(e.target as Node)) {
-      activeField.value = null
-    }
-  }
   if (sortRef.value && !sortRef.value.contains(e.target as Node)) {
     sortOpen.value = false
   }

@@ -61,7 +61,7 @@
                   <!-- Range Background -->
                   <div 
                     v-if="isInRange(getDateObj(currentMonth, day))"
-                    class="absolute inset-y-1 bg-black"
+                    class="absolute inset-y-1 bg-gray-100"
                     :class="getRangeBgClasses(getDateObj(currentMonth, day))"
                   ></div>
 
@@ -105,7 +105,7 @@
                   <!-- Range Background -->
                   <div 
                     v-if="isInRange(getDateObj(nextMonthDate, day))"
-                    class="absolute inset-y-1 bg-black"
+                    class="absolute inset-y-1 bg-gray-100"
                     :class="getRangeBgClasses(getDateObj(nextMonthDate, day))"
                   ></div>
 

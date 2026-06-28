@@ -27,44 +27,12 @@
         <div class="pk-bar">
 
           <!-- DESTINATION field -->
-          <div class="pk-fld pk-fld--dest" :class="{ 'pk-fld--active': activeField === 'dest' }" ref="destRef">
-            <div class="pk-fld-inner" @click="openField('dest')">
-              <svg class="pk-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <div class="pk-fld-text">
-                <span class="pk-fld-lbl">Destination</span>
-                <span class="pk-fld-val" :class="{ 'pk-fld-val--set': searchQuery.destination }">
-                  {{ searchQuery.destination || 'Where to?' }}
-                </span>
-              </div>
-            </div>
-            <!-- Destination dropdown -->
-            <Transition name="fd">
-              <div v-if="activeField === 'dest'" class="pk-drop pk-drop--dest" @mousedown.stop>
-                <div class="pk-drop-search">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                  <input ref="destInputRef" v-model="destQuery" placeholder="Search destination…" class="pk-drop-input" @input="searchDestinations" />
-                  <button v-if="destQuery" class="pk-drop-clear" @click="destQuery=''; searchQuery.destination=''">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </button>
-                </div>
-                <div v-if="!destQuery" class="pk-drop-section">
-                  <span class="pk-drop-sec-label">Popular escapes</span>
-                  <div class="pk-drop-grid">
-                    <button v-for="p in popularDestinations" :key="p.name" class="pk-pop-item" @click="selectDestination(p.name)">
-                      <span class="pk-pop-flag">{{ p.flag }}</span>
-                      <span class="pk-pop-name">{{ p.name }}</span>
-                    </button>
-                  </div>
-                </div>
-                <div v-else class="pk-drop-results">
-                  <button v-for="r in destinationResults" :key="r" class="pk-loc-result" @click="selectDestination(r)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="pk-loc-city">{{ r }}</span>
-                  </button>
-                  <div v-if="!destinationResults.length" class="pk-drop-empty">No results for "{{ destQuery }}"</div>
-                </div>
-              </div>
-            </Transition>
+          <div class="pk-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <LocationPicker 
+              v-model="searchQuery.destination" 
+              label="Destination" 
+              placeholder="Where to?" 
+            />
           </div>
 
           <div class="pk-bar-sep"></div>
@@ -81,7 +49,7 @@
               </div>
             </div>
             <Transition name="fd">
-              <div v-if="activeField === 'dur'" class="pk-drop pk-drop--dur" @mousedown.stop>
+              <div v-if="activeField === 'dur'" class="pk-drop pk-drop--dur">
                 <span class="pk-drop-sec-label" style="padding: 14px 14px 8px; display: block;">Nights away</span>
                 <div class="pk-dur-grid">
                   <button v-for="d in durationOptions" :key="d.value"
@@ -110,7 +78,7 @@
               </div>
             </div>
             <Transition name="fd">
-              <div v-if="activeField === 'bud'" class="pk-drop pk-drop--bud" @mousedown.stop>
+              <div v-if="activeField === 'bud'" class="pk-drop pk-drop--bud">
                 <span class="pk-drop-sec-label" style="padding: 14px 14px 8px; display: block;">Price range</span>
                 <div class="pk-bud-list">
                   <button v-for="b in budgetOptions" :key="b.value"
@@ -267,13 +235,13 @@
             </span>
             <div class="pk-toolbar-r">
               <div class="pk-sort-wrap" ref="sortRef">
-                <button class="pk-sort-btn" @click.stop="sortOpen = !sortOpen">
+                <button class="pk-sort-btn" @click="sortOpen = !sortOpen">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
                   {{ currentSort.label }}
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="pk-chev" :class="{ 'pk-chev--up': sortOpen }"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
                 <Transition name="fd">
-                  <div v-if="sortOpen" class="pk-sort-panel" @mousedown.stop>
+                  <div v-if="sortOpen" class="pk-sort-panel">
                     <button v-for="o in sortOptions" :key="o.value"
                       class="pk-sort-opt"
                       :class="{ 'pk-sort-opt--on': sortBy === o.value }"
@@ -365,7 +333,7 @@
                     <span class="pk-card-amt">{{ formatPrice(pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
                     <span class="pk-card-per">/ person</span>
                   </div>
-                  <button class="pk-card-btn" @click.stop="selectPackage(pkg)">View →</button>
+                  <button class="pk-card-btn" @click="selectPackage(pkg)">View →</button>
                 </div>
               </div>
             </div>
@@ -390,6 +358,7 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useFetchAllPackages } from '~/composables/modules/packages/useFetchAllPackages'
 import { useFetchFeaturedPackages } from '~/composables/modules/packages/useFetchFeaturedPackages'
 import { useSettings } from '@/composables/useSettings'
+import LocationPicker from '@/components/LocationPicker.vue'
 
 const { formatPrice } = useSettings()
 
@@ -398,13 +367,9 @@ const { featuredPackages, fetchFeaturedPackages } = useFetchFeaturedPackages()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
-const destRef = ref<HTMLElement | null>(null)
 const durRef = ref<HTMLElement | null>(null)
 const budRef = ref<HTMLElement | null>(null)
 const sortRef = ref<HTMLElement | null>(null)
-const destInputRef = ref<HTMLInputElement | null>(null)
-const destQuery = ref('')
-const destinationResults = ref<string[]>([])
 const sortOpen = ref(false)
 const mobileFilters = ref(false)
 const activeCategory = ref('')
@@ -415,24 +380,6 @@ const sortBy = ref('recommended')
 const searchQuery = ref({ destination: '', duration: null as number | null, budget: '' })
 
 // ── Data ─────────────────────────────────────────────────────────────
-const popularDestinations = [
-  { name: 'Maldives', flag: '🏝️' },
-  { name: 'Dubai', flag: '🏙️' },
-  { name: 'Paris', flag: '🗼' },
-  { name: 'Bali', flag: '🌿' },
-  { name: 'New York', flag: '🗽' },
-  { name: 'Tokyo', flag: '⛩️' },
-  { name: 'Santorini', flag: '🌊' },
-  { name: 'Cape Town', flag: '🦁' },
-]
-
-const allDestinations = [
-  'Maldives', 'Dubai', 'Paris', 'Bali', 'New York', 'Tokyo', 'Santorini', 'Cape Town',
-  'London', 'Rome', 'Barcelona', 'Amsterdam', 'Istanbul', 'Singapore', 'Sydney',
-  'Nairobi', 'Lagos', 'Accra', 'Marrakech', 'Cairo', 'Lisbon', 'Vienna', 'Prague',
-  'Bangkok', 'Phuket', 'Cancun', 'Miami', 'Los Angeles', 'Las Vegas', 'Zanzibar',
-]
-
 const categories = [
   { value: 'beach', label: 'Beach', icon: '🏖️' },
   { value: 'city', label: 'City Break', icon: '🏙️' },
@@ -468,29 +415,13 @@ const sortOptions = [
 
 const currentSort = computed(() => sortOptions.find(o => o.value === sortBy.value)!)
 
-// ── Destination search ────────────────────────────────────────────────
-const searchDestinations = () => {
-  const q = destQuery.value
-  if (!q) { destinationResults.value = []; return }
-  const lq = q.toLowerCase()
-  destinationResults.value = allDestinations.filter(d => d.toLowerCase().includes(lq)).slice(0, 8)
-}
-
-const selectDestination = (name: string) => {
-  searchQuery.value.destination = name
-  destQuery.value = name
-  activeField.value = null
-  nextTick(() => { activeField.value = 'dur' })
-}
-
 // ── Field management ──────────────────────────────────────────────────
 const openField = (field: string) => {
   activeField.value = activeField.value === field ? null : field
-  if (field === 'dest') nextTick(() => destInputRef.value?.focus())
 }
 
 const handleGlobalMousedown = (e: MouseEvent) => {
-  const refs: Record<string, any> = { dest: destRef, dur: durRef, bud: budRef }
+  const refs: Record<string, any> = { dur: durRef, bud: budRef }
   if (activeField.value) {
     const r = refs[activeField.value]?.value
     if (r && !r.contains(e.target as Node)) activeField.value = null

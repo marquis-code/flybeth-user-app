@@ -9,7 +9,7 @@ export const useSearchTransfers = () => {
         loading.value = true;
         try {
             const { data } = await transfersApi.searchLive(searchData);
-            transfers.value = data.results;
+            transfers.value = data?.data?.results || data?.results || [];
             return data;
         } catch (error) {
             console.error('Error searching transfers:', error);

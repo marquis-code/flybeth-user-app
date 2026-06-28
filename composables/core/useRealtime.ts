@@ -15,7 +15,7 @@ export const useRealtime = () => {
     if (socket.value && socket.value.connected) return;
 
     // Use Nuxt useCookie for SSR-friendly token retrieval
-    const token = useCookie('accessToken').value || (typeof window !== 'undefined' ? localStorage.getItem('accessToken') : '');
+    const token = useCookie('accessToken').value || '';
     
     if (!token) {
         console.log('[User] Connecting as Guest (no token)');

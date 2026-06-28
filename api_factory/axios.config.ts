@@ -210,9 +210,6 @@ instanceArray.forEach((instance) => {
           if (!newAccessToken) throw new Error('No token in refresh response');
 
           setCookie('accessToken', newAccessToken, 7);
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('accessToken', newAccessToken);
-          }
           if (newRefreshToken) {
             setCookie('refreshToken', newRefreshToken, 30);
           }

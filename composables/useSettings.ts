@@ -106,8 +106,8 @@ export function useSettings() {
             if (typeof window !== 'undefined') {
                 targetCurrency = localStorage.getItem('flybeth_currency')
                 
-                // Aggressively re-detect if currency is the default USD, to fix the previous override bug
-                if (!targetCurrency || targetCurrency === 'USD') {
+                // Aggressively re-detect if no currency is set yet
+                if (!targetCurrency) {
                     try {
                         const ipRes = await fetch('https://ipapi.co/currency/')
                         if (ipRes.ok) {
