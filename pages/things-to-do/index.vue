@@ -14,8 +14,8 @@
         <div class="tt-headline">
           <span class="tt-eyebrow">✦ Curated Experiences</span>
           <h1 class="tt-h1">
-            <template v-if="currentCityName">
-              Exploring <em>{{ currentCityName }}</em>
+            <template v-if="searchQuery.destinationIata">
+              Exploring <em>{{ searchQuery.destinationIata }}</em>
             </template>
             <template v-else>
               Discover<br><em>world wonders.</em>
@@ -27,86 +27,21 @@
         <div class="tt-bar">
 
           <!-- DESTINATION field -->
-          <div class="tt-fld tt-fld--dest" :class="{ 'tt-fld--active': activeField === 'dest' }" ref="destRef">
-            <div class="tt-fld-inner" @click="openField('dest')">
-              <svg class="tt-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <div class="tt-fld-text">
-                <span class="tt-fld-lbl">Where to?</span>
-                <span class="tt-fld-val" :class="{ 'tt-fld-val--set': searchQuery.destinationIata }">
-                  {{ currentCityName || 'Select city' }}
-                </span>
-              </div>
-            </div>
-            <!-- Destination dropdown -->
-            <Transition name="td">
-              <div v-if="activeField === 'dest'" class="tt-drop tt-drop--dest" @mousedown.stop>
-                <div class="tt-drop-search">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                  <input ref="destInputRef" v-model="destQuery" placeholder="Search cities…" class="tt-drop-input" @input="searchCities" />
-                  <button v-if="destQuery" class="tt-drop-clear" @click="destQuery = ''; searchQuery.destinationIata = ''">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </button>
-                </div>
-                <div v-if="!destQuery" class="tt-drop-section">
-                  <span class="tt-drop-sec-label">Popular cities</span>
-                  <div class="tt-drop-grid">
-                    <button v-for="p in popularCities" :key="p.code" class="tt-pop-item" @click="selectCity(p)">
-                      <span class="tt-pop-icon">✨</span>
-                      <span class="tt-pop-name">{{ p.name }}</span>
-                    </button>
-                  </div>
-                </div>
-                <div v-else class="tt-drop-results">
-                  <button v-for="r in cityResults" :key="r.code" class="tt-loc-result" @click="selectCity(r)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span class="tt-loc-name">{{ r.name }}</span>
-                  </button>
-                  <div v-if="!cityResults.length" class="tt-drop-empty">No results for "{{ destQuery }}"</div>
-                </div>
-              </div>
-            </Transition>
+          <div class="tt-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <LocationPicker 
+              v-model="searchQuery.destinationIata" 
+              label="Where to?" 
+              placeholder="Select city" 
+            />
           </div>
 
-          <div class="tt-bar-sep"></div>
-
           <!-- DATE field -->
-          <div class="tt-fld tt-fld--date" :class="{ 'tt-fld--active': activeField === 'date' }" ref="dateRef">
-            <div class="tt-fld-inner" @click="openField('date')">
-              <svg class="tt-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <div class="tt-fld-text">
-                <span class="tt-fld-lbl">When?</span>
-                <span class="tt-fld-val" :class="{ 'tt-fld-val--set': searchQuery.date }">
-                  {{ searchQuery.date ? formatDate(searchQuery.date) : 'Choose date' }}
-                </span>
-              </div>
-            </div>
-            <!-- Calendar dropdown -->
-            <Transition name="td">
-              <div v-if="activeField === 'date'" class="tt-drop tt-drop--cal" @mousedown.stop>
-                <div class="tt-cal-nav-row">
-                  <button class="tt-cal-arrow" @click="prevMonth">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-                  </button>
-                  <span class="tt-cal-title">{{ calMonthLabel }}</span>
-                  <button class="tt-cal-arrow" @click="nextMonth">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                  </button>
-                </div>
-                <div class="tt-cal-grid">
-                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="tt-cal-dow">{{ d }}</div>
-                  <div v-for="c in calCells" :key="c.key"
-                    class="tt-cal-cell"
-                    :class="{
-                      'tt-cal-cell--blank': !c.date,
-                      'tt-cal-cell--past': c.past,
-                      'tt-cal-cell--sel': c.selected,
-                      'tt-cal-cell--today': c.today
-                    }"
-                    @click="c.date && !c.past && pickDate(c.date)"
-                  >{{ c.day }}</div>
-                </div>
-              </div>
-            </Transition>
+          <div class="tt-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+            <FlightDateRangePicker 
+              :departure="searchQuery.date" 
+              mode="oneway" 
+              @update:departure="(v) => searchQuery.date = v" 
+            />
           </div>
 
           <!-- SEARCH BTN -->
@@ -269,21 +204,15 @@ import { useRoute, navigateTo } from '#app'
 import { useSearchActivities } from '@/composables/modules/experiences/useSearchActivities'
 import { flightsApi } from '@/api_factory/modules/flights'
 import { useSettings } from '@/composables/useSettings'
+import LocationPicker from '@/components/LocationPicker.vue'
+import FlightDateRangePicker from '@/components/FlightDateRangePicker.vue'
 
 const route = useRoute()
 const { loading, filteredActivitiesList, filters, searchActivities, activitiesList } = useSearchActivities()
 const { formatPrice } = useSettings()
 
 // ── Refs ──────────────────────────────────────────────────────────────
-const activeField = ref<string | null>(null)
-const destRef = ref<HTMLElement | null>(null)
-const dateRef = ref<HTMLElement | null>(null)
-const destInputRef = ref<HTMLInputElement | null>(null)
-const destQuery = ref('')
-const cityResults = ref<any[]>([])
-const calViewDate = ref(new Date())
 const mobileFilters = ref(false)
-const currentCityName = ref('')
 
 const searchQuery = reactive({
   destinationIata: (route.query.destination as string) || '',
@@ -292,52 +221,8 @@ const searchQuery = reactive({
 
 // ── Constants ─────────────────────────────────────────────────────────
 const availableCategories = ['Sightseeing', 'Culture', 'Museums', 'Nature', 'Adventure', 'Food', 'Nightlife']
-const popularCities = [
-  { name: 'Paris', code: 'PAR' },
-  { name: 'Dubai', code: 'DXB' },
-  { name: 'London', code: 'LON' },
-  { name: 'New York', code: 'NYC' },
-  { name: 'Lagos', code: 'LOS' },
-  { name: 'Nairobi', code: 'NBO' }
-]
 
 // ── Methods ───────────────────────────────────────────────────────────
-const openField = (field: string) => {
-  activeField.value = activeField.value === field ? null : field
-  if (field === 'dest') nextTick(() => destInputRef.value?.focus())
-}
-
-const handleGlobalMousedown = (e: MouseEvent) => {
-  const refs: Record<string, any> = { dest: destRef, date: dateRef }
-  if (activeField.value) {
-    const cur = refs[activeField.value]?.value
-    if (cur && !cur.contains(e.target as Node)) activeField.value = null
-  }
-}
-
-const searchCities = async () => {
-  if (!destQuery.value) { cityResults.value = []; return }
-  try {
-    const res = await flightsApi.searchAirports(destQuery.value)
-    const data = res.data?.data || res.data || []
-    cityResults.value = data.map((item: any) => ({
-      name: item.name || item.address?.cityName,
-      code: item.iataCode || item.id,
-      lat: item.geoCode?.latitude,
-      lon: item.geoCode?.longitude
-    })).slice(0, 5)
-  } catch (e) {
-    cityResults.value = []
-  }
-}
-
-const selectCity = async (city: any) => {
-  searchQuery.destinationIata = city.code
-  currentCityName.value = city.name
-  destQuery.value = city.name
-  activeField.value = null
-  nextTick(() => openField('date'))
-}
 
 // Replaced by useSettings formatPrice
 
@@ -388,28 +273,7 @@ const goToDetail = (activity: any) => {
   navigateTo({ path: `/things-to-do/${activity.experienceId}`, query: { provider: activity.provider } })
 }
 
-// ── Calendar ──────────────────────────────────────────────────────────
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
-const calMonthLabel = computed(() => `${MONTHS[calViewDate.value.getMonth()]} ${calViewDate.value.getFullYear()}`)
-const calCells = computed(() => {
-  const y = calViewDate.value.getFullYear(), m = calViewDate.value.getMonth()
-  const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate()
-  const today = new Date(); today.setHours(0,0,0,0)
-  const cells = []
-  for (let i = 0; i < first; i++) cells.push({ key: `b${i}`, date: null, day: '', past: false, selected: false, today: false })
-  for (let d = 1; d <= days; d++) {
-    const dt = new Date(y, m, d), iso = dt.toISOString().split('T')[0]
-    cells.push({ key: iso, date: iso, day: d, past: dt < today, selected: searchQuery.date === iso, today: dt.getTime() === today.getTime() })
-  }
-  return cells
-})
-const prevMonth = () => { const d = new Date(calViewDate.value); d.setMonth(d.getMonth()-1); calViewDate.value = d }
-const nextMonth = () => { const d = new Date(calViewDate.value); d.setMonth(d.getMonth()+1); calViewDate.value = d }
-const pickDate = (iso: string) => { searchQuery.date = iso; activeField.value = null }
-const formatDate = (iso: string) => {
-  const [y,m,d] = iso.split('-').map(Number)
-  return `${d} ${MONTHS[m-1].slice(0,3)} ${y}`
-}
+// ── Calendar (Removed - using FlightDateRangePicker) ─────────────────
 
 onMounted(() => {
   if (searchQuery.destinationIata) handleSearch()

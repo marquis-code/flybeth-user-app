@@ -8,10 +8,10 @@
             v-for="tab in ['language', 'currency']" 
             :key="tab"
             @click="currentTab = tab"
-            class="flex-1 py-3 text-sm uppercase rounded-xl transition-all duration-300 font-bold"
+            class="flex-1 py-2 text-xs rounded-xl transition-all duration-300 font-bold"
             :class="currentTab === tab ? 'bg-white text-[#0D1DAD] shadow-sm' : 'text-gray-500 hover:text-black'"
           >
-            {{ $t(`settings.${tab}`) }}
+            <span class="capitalize">{{ $t(`settings.${tab}`) }}</span>
           </button>
         </div>
       </div>
@@ -20,18 +20,18 @@
       <div class="p-6">
         <!-- Language Tab -->
         <div v-if="currentTab === 'language'" class="animate-in">
-          <div class="flex flex-col gap-3">
+          <div class="flex flex-col gap-2">
             <button 
               v-for="locale in locales" 
               :key="locale.code"
               @click="changeLocale(locale.code)"
-              class="flex items-center gap-4 p-4 rounded-2xl border-2 transition-all group"
+              class="flex items-center gap-3 px-4 py-2.5 rounded-2xl border-2 transition-all group"
               :class="currentLocale === locale.code ? 'border-[#0D1DAD] bg-blue-50' : 'border-gray-100 hover:border-blue-100 hover:bg-gray-50'"
             >
               <img :src="getLocaleFlag(locale.code)" class="h-6 w-8 object-cover rounded shadow-sm border border-gray-200" />
               <div class="text-left flex-1">
-                <div class="text-sm font-bold text-black">{{ locale.name }}</div>
-                <div class="text-xs text-gray-500 uppercase">{{ locale.iso }}</div>
+                <div class="text-xs font-bold text-black">{{ locale.name }}</div>
+                <div class="text-[11px] text-gray-500">{{ locale.iso }}</div>
               </div>
               <!-- Selection Indicator -->
               <div v-if="currentLocale === locale.code" class="shrink-0">
@@ -45,18 +45,18 @@
 
         <!-- Currency Tab -->
         <div v-if="currentTab === 'currency'" class="animate-in">
-          <div class="flex flex-col gap-3">
+          <div class="flex flex-col gap-2">
             <button 
               v-for="currency in currencies" 
               :key="currency.code"
               @click="setCurrency(currency.code)"
-              class="flex items-center gap-4 p-4 rounded-2xl border-2 transition-all group relative"
+              class="flex items-center gap-3 px-4 py-2.5 rounded-2xl border-2 transition-all group relative"
               :class="currentCurrency.code === currency.code ? 'border-[#0D1DAD] bg-blue-50' : 'border-gray-100 hover:border-blue-100 hover:bg-gray-50'"
             >
               <img :src="currency.flag" class="h-6 w-8 object-cover rounded shadow-sm border border-gray-200" />
               <div class="text-left flex-1">
-                <div class="text-sm font-bold text-black">{{ currency.code }}</div>
-                <div class="text-xs text-gray-500 font-bold">{{ currency.symbol }}</div>
+                <div class="text-xs font-bold text-black">{{ currency.code }}</div>
+                <div class="text-[11px] text-gray-500 font-bold">{{ currency.symbol }}</div>
               </div>
               <div v-if="currentCurrency.code === currency.code" class="shrink-0">
                  <div class="h-6 w-6 rounded-full bg-[#0D1DAD] flex items-center justify-center text-white">
@@ -71,12 +71,12 @@
     <template #footer>
       <!-- Footer Action -->
       <div class="px-6 py-5 bg-white flex flex-col justify-between items-center gap-4">
-         <p class="text-[11px] text-gray-500 uppercase text-center font-bold">
+         <p class="text-[11px] text-gray-500 text-center font-bold">
            {{ currentTab === 'language' ? 'Settings will update UI strings' : 'Settings will update price data' }}
          </p>
          <button 
            @click="$emit('close')" 
-           class="w-full py-4 bg-black text-white text-sm uppercase rounded-xl hover:bg-gray-900 transition-all font-bold"
+           class="w-full py-3 bg-black text-white text-xs rounded-xl hover:bg-gray-900 transition-all font-bold"
          >
             {{ $t('settings.applyChanges') }}
          </button>

@@ -3,7 +3,7 @@
 
     <!-- ── Trigger ── -->
     <div
-      @click.stop="toggleCalendar"
+      @click="toggleCalendar"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
       :class="showCalendar ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
     >
@@ -46,8 +46,6 @@
         class="absolute left-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
         :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[520px] rounded-2xl']"
         style="background-color: #ffffff !important;"
-        @mousedown.stop
-        @click.stop
       >
         <!-- Mobile Header with Close Button -->
         <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">
@@ -125,6 +123,11 @@
             <button @click="closeCalendar" class="px-5 py-2 bg-black text-white rounded-xl text-[12px] font-bold hover:bg-gray-900 transition-all active:scale-95">Done</button>
           </div>
         </div> <!-- End flex-1 container -->
+        <!-- Flexible Dates Toggle -->
+        <div class="px-5 py-3 border-t border-gray-200 bg-gray-50 flex items-center gap-2 shrink-0">
+          <input type="checkbox" id="flexibleDates" v-model="isFlexible" @change="$emit('update:flexible', isFlexible)" class="w-4 h-4 text-blue-600 rounded border-gray-300" />
+          <label for="flexibleDates" class="text-xs font-bold text-gray-700 cursor-pointer select-none">My dates are flexible (+/- 3 days) - Find cheaper prices</label>
+        </div>
       </div>
     </Transition>
 
@@ -142,14 +145,16 @@ import {
 const props = defineProps({
   departure: { type: String, default: '' },
   return:    { type: String, default: '' },
+  flexible:  { type: Boolean, default: false },
   mode:      { type: String as () => 'oneway' | 'roundtrip', default: 'roundtrip' },
 })
 
-const emit = defineEmits(['update:departure', 'update:return', 'focus', 'close'])
+const emit = defineEmits(['update:departure', 'update:return', 'update:flexible', 'focus', 'close'])
 
 const pickerRef    = ref<HTMLElement | null>(null)
 const showCalendar = ref(false)
 const hoverDate    = ref<string | null>(null)
+const isFlexible   = ref(props.flexible)
 const isMobile     = ref(false)
 
 const _today = new Date()
@@ -223,9 +228,9 @@ function rangeWrapClass(iso: string): string {
   const s = isStartDay(iso), e = isEndDay(iso), end = effectiveEnd(), inR = inRange(iso)
   
   let classes = 'cursor-pointer'
-  if (s && end && iso < end) classes += ' bg-black rounded-l-lg'
-  else if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) classes += ' bg-black rounded-r-lg'
-  else if (inR) classes += ' bg-black'
+  if (s && end && iso < end) classes += ' bg-gray-100 rounded-l-lg'
+  else if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) classes += ' bg-gray-100 rounded-r-lg'
+  else if (inR) classes += ' bg-gray-100'
   
   return classes
 }
@@ -276,6 +281,7 @@ function clearDates() { startDate.value = null; endDate.value = null; hoverDate.
 const handleClickOutside = (e: MouseEvent) => { if (showCalendar.value && pickerRef.value && !pickerRef.value.contains(e.target as Node)) closeCalendar() }
 watch(() => props.departure, v => { startDate.value = v || null })
 watch(() => props.return,    v => { endDate.value   = v || null })
+watch(() => props.flexible,  v => { isFlexible.value = v })
 const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
 
 onMounted(() => {

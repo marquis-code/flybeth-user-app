@@ -1,7 +1,7 @@
 <template>
   <div class="relative w-full h-full" ref="pickerRef">
     <div
-      @click.stop="togglePicker"
+      @click="togglePicker"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
       :class="showPicker ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
     >
@@ -26,8 +26,6 @@
         class="absolute right-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
         :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[320px] rounded-2xl']"
         style="background-color: #ffffff !important;"
-        @mousedown.stop
-        @click.stop
       >
         <!-- Mobile Header with Close Button -->
         <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">

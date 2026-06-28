@@ -64,42 +64,15 @@
 
           <!-- DATE field -->
           <div class="fp-fld fp-fld--date" :class="{ 'fp-fld--active': activeField === 'date' }" ref="dateRef">
-            <div class="fp-fld-inner" @click="openField('date')">
-              <svg class="fp-fld-ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <div class="fp-fld-text">
-                <span class="fp-fld-lbl">Departure</span>
-                <span class="fp-fld-val" :class="{ 'fp-fld-val--set': searchQuery.departureDate }">
-                  {{ searchQuery.departureDate ? formatDate(searchQuery.departureDate) : 'Select date' }}
-                </span>
-              </div>
-            </div>
-            <!-- Calendar dropdown -->
-            <Transition name="fd">
-              <div v-if="activeField === 'date'" class="fp-drop fp-drop--cal" @mousedown.stop>
-                <div class="fp-cal-nav-row">
-                  <button class="fp-cal-arrow" @click="prevMonth">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-                  </button>
-                  <span class="fp-cal-title">{{ calMonthLabel }}</span>
-                  <button class="fp-cal-arrow" @click="nextMonth">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                  </button>
-                </div>
-                <div class="fp-cal-grid">
-                  <div v-for="d in ['Su','Mo','Tu','We','Th','Fr','Sa']" :key="d" class="fp-cal-dow">{{ d }}</div>
-                  <div v-for="c in calCells" :key="c.key"
-                    class="fp-cal-cell"
-                    :class="{
-                      'fp-cal-cell--blank': !c.date,
-                      'fp-cal-cell--past': c.past,
-                      'fp-cal-cell--sel': c.selected,
-                      'fp-cal-cell--today': c.today
-                    }"
-                    @click="c.date && !c.past && pickDate(c.date)"
-                  >{{ c.day }}</div>
-                </div>
-              </div>
-            </Transition>
+            <FlightDateRangePicker 
+              :departure="searchQuery.departureDate" 
+              :return="searchQuery.returnDate" 
+              :mode="searchQuery.type === 'roundtrip' ? 'roundtrip' : 'oneway'" 
+              @update:departure="(v) => searchQuery.departureDate = v" 
+              @update:return="(v) => searchQuery.returnDate = v" 
+              @focus="activeField = 'date'" 
+              @close="activeField = null" 
+            />
           </div>
 
           <div class="fp-bar-sep"></div>
@@ -496,11 +469,13 @@ import AvailabilityCheckModal from '@/components/AvailabilityCheckModal.vue'
 import { useSettings, localeToCurrency } from '@/composables/useSettings'
 import LocationPicker from '@/components/LocationPicker.vue'
 import Occupancypicker from '@/components/Occupancypicker.vue'
+import { useAmadeusLocations } from '@/composables/modules/flights/useAmadeusLocations'
 
 const { loading, flights, searchFlights } = useSearchFlights()
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights()
 const { loading: purposeLoading, prediction, predictTripPurpose } = useTripPurpose()
 const { setCurrency, formatPrice } = useSettings()
+const { detectNearestAirports } = useAmadeusLocations()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
@@ -529,6 +504,8 @@ const searchQuery = ref({
   origin: '',
   destination: '',
   departureDate: '',
+  returnDate: '',
+  type: 'oneway',
   adults: 1,
   children: 0,
   infantsOnLap: 0,
@@ -942,6 +919,8 @@ const loadFromQuery = (route: any) => {
   if (route.query.origin) { searchQuery.value.origin = String(route.query.origin) }
   if (route.query.destination) { searchQuery.value.destination = String(route.query.destination) }
   if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate)
+  if (route.query.returnDate) searchQuery.value.returnDate = String(route.query.returnDate)
+  if (route.query.type) searchQuery.value.type = String(route.query.type)
   
   // Support both old 'passengers' and new granular props
   if (route.query.adults) searchQuery.value.adults = parseInt(String(route.query.adults)) || 1
@@ -983,6 +962,11 @@ onMounted(async () => {
         }
       }
     } catch(e) {}
+  }
+
+  // Auto-set today's date if departureDate is empty
+  if (!searchQuery.value.departureDate) {
+    searchQuery.value.departureDate = new Date().toISOString().split('T')[0]
   }
 
   // Aggressive tracking: keep URL and localStorage perfectly in sync
@@ -1262,7 +1246,7 @@ onMounted(async () => {
 
 .fp-bar-sep {
   width: 1px;
-  background: #ebebe5;
+  background: #D1D5DB;
   flex-shrink: 0;
   margin: 10px 0;
 }
@@ -1798,7 +1782,7 @@ onMounted(async () => {
   }
   .fp-bar { position: relative; }
   .fp-bar-sep:first-of-type { display: none; }
-  .fp-bar-sep { height: 1px; width: 100%; margin: 0; }
+  .fp-bar-sep { height: 1px; width: 100%; margin: 0; background: #D1D5DB; }
   .fp-fld--date { flex: 1 0 50%; }
   .fp-fld--pax { flex: 1 0 40%; }
   .fp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
@@ -1809,7 +1793,8 @@ onMounted(async () => {
 @media (max-width: 580px) {
   .fp-wrap { padding: 0 14px; }
   .fp-hero { padding: 28px 0 44px; }
-  .fp-fld--from, .fp-fld--to, .fp-fld--date, .fp-fld--pax { flex: 1 0 100%; }
+  .fp-fld--from, .fp-fld--to, .fp-fld--date { flex: 1 0 100%; border-bottom: 1px solid #D1D5DB; }
+  .fp-fld--pax { flex: 1 0 100%; border-bottom: none; }
   /* Removed order based swap positioning */
   .fp-bar-sep { display: none; }
   /* Keep dropdowns inside viewport on mobile */

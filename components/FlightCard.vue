@@ -110,9 +110,9 @@
                   <div>
                     <div class="flex items-baseline gap-2">
                       <span class="text-sm font-bold text-black">{{ formatTime(segment.departing_at || flight.departureTime) }}</span>
-                      <span class="text-sm font-medium text-gray-600">{{ segment.origin_name || flight.origin }}</span>
+                      <span class="text-sm font-medium text-gray-600">{{ segment.origin || flight.origin }}</span>
                     </div>
-                    <span class="text-xs text-gray-500 mt-0.5 block" v-if="segment.origin_terminal">Terminal {{ segment.origin_terminal }}</span>
+                    <span class="text-xs text-gray-500 mt-0.5 block" v-if="segment.originTerminal || segment.origin_terminal">Terminal {{ segment.originTerminal || segment.origin_terminal }}</span>
                   </div>
 
                   <div class="flex items-center gap-2 text-xs font-semibold text-gray-500">
@@ -123,9 +123,9 @@
                   <div>
                     <div class="flex items-baseline gap-2">
                       <span class="text-sm font-bold text-black">{{ formatTime(segment.arriving_at || flight.arrivalTime) }}</span>
-                      <span class="text-sm font-medium text-gray-600">{{ segment.destination_name || flight.destination }}</span>
+                      <span class="text-sm font-medium text-gray-600">{{ segment.destination || flight.destination }}</span>
                     </div>
-                    <span class="text-xs text-gray-500 mt-0.5 block" v-if="segment.destination_terminal">Terminal {{ segment.destination_terminal }}</span>
+                    <span class="text-xs text-gray-500 mt-0.5 block" v-if="segment.destinationTerminal || segment.destination_terminal">Terminal {{ segment.destinationTerminal || segment.destination_terminal }}</span>
                   </div>
                 </div>
               </div>
@@ -134,7 +134,7 @@
               <div v-if="idx < segments.length - 1" class="mt-5 mb-3 py-3.5 px-5 bg-orange-50 rounded-xl border border-orange-100 flex items-center gap-3">
                 <Clock class="w-4 h-4 text-orange-600" />
                 <span class="text-sm font-bold text-orange-800">
-                  Connection in {{ segment.destination_name || segments[idx+1].origin_name || flight.destination }}
+                  Connection in {{ segment.destination || segments[idx+1].origin || flight.destination }}
                 </span>
               </div>
             </div>
@@ -178,6 +178,9 @@ const props = defineProps({
 const isExpanded = ref(false)
 
 const segments = computed(() => {
+  if (props.flight.segments && Array.isArray(props.flight.segments)) {
+    return props.flight.segments
+  }
   // If we have actual Duffel/Amadeus slices array, use it
   if (props.flight.slices && props.flight.slices[0] && props.flight.slices[0].segments) {
     return props.flight.slices[0].segments

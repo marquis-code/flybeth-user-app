@@ -78,12 +78,29 @@ const formattedPrice = computed(() => {
 })
 
 const slices = computed(() => {
-  // If flight has 'slices' (Duffel format), return them, but attach flight-level details if needed
+  // If flight has 'itineraries' (our new unified format), map them
+  if (props.flight.itineraries && Array.isArray(props.flight.itineraries)) {
+    return props.flight.itineraries.map(itin => ({
+      ...itin,
+      airline: itin.segments?.[0]?.airline || props.flight.airline,
+      airlineLogo: itin.segments?.[0]?.airlineLogo || props.flight.airlineLogo,
+      departureTime: itin.departureTime,
+      arrivalTime: itin.arrivalTime,
+      origin: itin.origin,
+      destination: itin.destination,
+      duration: itin.duration,
+      stops: itin.stops,
+      cabinClass: props.flight.cabinClass,
+      conditions: props.flight.conditions
+    }))
+  }
+  
+  // Fallback to old behavior for backward compatibility
   if (props.flight.slices && Array.isArray(props.flight.slices)) {
     return props.flight.slices.map(slice => ({
       ...slice,
       airline: slice.segments?.[0]?.operating_carrier_name || props.flight.airline,
-      airlineLogo: props.flight.airlineLogo, // Will need logic if multiple airlines
+      airlineLogo: props.flight.airlineLogo,
       departureTime: slice.segments?.[0]?.departing_at,
       arrivalTime: slice.segments?.[slice.segments.length - 1]?.arriving_at,
       origin: slice.segments?.[0]?.origin_name,
@@ -95,7 +112,7 @@ const slices = computed(() => {
     }))
   }
   
-  // If it's Amadeus or flat object, just return an array with the flight itself
+  // If it's a flat object, just return an array with the flight itself
   return [props.flight]
 })
 </script>

@@ -95,6 +95,7 @@
                 :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
                 v-model:departure="leg.departureDate"
                 v-model:return="leg.returnDate"
+                v-model:flexible="leg.flexibleDates"
                 @focus="isFocused = true"
                 @close="isFocused = false"
               />
@@ -322,7 +323,7 @@
       <!-- ════ ACTIVITIES ════ -->
       <div v-if="currentTab === 'Activities'" class="sw-section">
         <div class="sw-bar">
-          <div class="sw-field sw-field--grow"><CityPicker v-model="activitiesSearchState.destination" label="Destination" placeholder="City or region" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="activitiesSearchState.destination" label="Destination" placeholder="City or region" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="activitiesSearchState.date" mode="oneway" @update:departure="(v) => activitiesSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
@@ -461,6 +462,7 @@ import { flightsApi } from '@/api_factory/modules/flights'
 import { useAuth } from '@/composables/modules/auth/useAuth'
 import CustomTimePicker from '@/components/ui/CustomTimePicker.vue'
 import { useRoute } from 'vue-router'
+import { useAmadeusLocations } from '@/composables/modules/flights/useAmadeusLocations'
 
 const { isLoggedIn } = useAuth()
 const { trackAction } = useTracking()
@@ -481,6 +483,7 @@ const differentCarDropoff = ref(false)
 const activeCruiseField   = ref<string | null>(null)
 const isMobile            = ref(false)
 const widgetRef           = ref<HTMLElement | null>(null)
+const { detectNearestAirports } = useAmadeusLocations()
 
 const checkMobile = () => {
   if (typeof window !== 'undefined') isMobile.value = window.innerWidth < 768
@@ -567,7 +570,7 @@ const occupancy             = reactive({ rooms: 1, adults: 2, children: 0 })
 const searchState           = reactive({ location: '', checkIn: '', checkOut: '' })
 const bundles               = reactive({ bundleFlight: false, bundleHotel: false, bundleCar: false })
 const flightTravelers       = reactive({ adults: 1, children: 0, infantsOnLap: 0, infantsInSeat: 0, cabinClass: 'economy' })
-const flightSearchState     = reactive({ origin: '', destination: '', departureDate: '', returnDate: '' })
+const flightSearchState     = reactive({ origin: '', destination: '', departureDate: '', returnDate: '', flexibleDates: false })
 const multiFlightLegs       = ref([{ origin: '', destination: '', departureDate: '', returnDate: '' }])
 const multiHotelLegs        = ref([{ location: '', checkIn: '', checkOut: '' }])
 const carSearchState        = reactive({ origin: '', destination: '', pickUpDate: '' })
@@ -653,6 +656,7 @@ const applyRecentSearch = (s: any) => {
   if (s.destination) flightSearchState.destination = s.destination
   if (s.departureDate) flightSearchState.departureDate = s.departureDate
   if (s.returnDate) flightSearchState.returnDate = s.returnDate
+  if (s.flexibleDates !== undefined) flightSearchState.flexibleDates = s.flexibleDates
   if (s.adults) flightTravelers.adults = s.adults
   if (s.children) flightTravelers.children = s.children
   if (s.cabinClass) flightTravelers.cabinClass = s.cabinClass
@@ -706,6 +710,7 @@ onMounted(() => {
   if (route.query.destination) flightSearchState.destination = String(route.query.destination)
   if (route.query.departureDate) flightSearchState.departureDate = String(route.query.departureDate)
   if (route.query.returnDate) flightSearchState.returnDate = String(route.query.returnDate)
+  if (route.query.flexibleDates) flightSearchState.flexibleDates = String(route.query.flexibleDates) === 'true'
   if (route.query.type) flightMode.value = String(route.query.type)
   if (route.query.adults) flightTravelers.adults = Number(route.query.adults)
   if (route.query.children) flightTravelers.children = Number(route.query.children)
@@ -726,6 +731,11 @@ onMounted(() => {
 
   // Restore package state
   if (route.query.packageType) packageType.value = String(route.query.packageType)
+
+  // Auto-set today's date if departureDate is empty
+  if (!flightSearchState.departureDate && !route.query.departureDate) {
+    flightSearchState.departureDate = new Date().toISOString().split('T')[0]
+  }
 
   checkMobile()
   fetchRecentSearches()
@@ -807,7 +817,7 @@ const handleSearch = async () => {
     }
   }
   else if (currentTab.value === 'Cruises')       Object.assign(query, cruiseSearchState)
-  else if (currentTab.value === 'Transfers')     { Object.assign(query, transferSearchState); query.mode = transferMode.value }
+  else if (currentTab.value === 'Transfers')     { Object.assign(query, transferSearchState); Object.assign(query, transferOccupancy); query.mode = transferMode.value }
   else if (currentTab.value === 'Activities')    Object.assign(query, activitiesSearchState)
   else if (currentTab.value === 'Hotels')        { Object.assign(query, searchState); Object.assign(query, occupancy) }
   else if (currentTab.value === 'Packages')      { Object.assign(query, packageSearchState); Object.assign(query, packageOccupancy); query.packageType = packageType.value }
@@ -948,11 +958,10 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-bar {
   display: flex;
   flex-direction: column;       /* MOBILE: vertical stack */
-  border: 0.5px solid #e0e0d8;
+  border: 1px solid #D1D5DB;
   border-radius: 12px;
   overflow: visible;
-  background: #e0e0d8;          /* gap color via bg trick */
-  gap: 0.5px;
+  background: #fff;
 }
 
 @media (min-width: 768px) {
@@ -964,16 +973,16 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
 /* Divider — horizontal line on mobile, vertical on desktop */
 .sw-bar-div {
-  background: #e0e0d8;
+  background: #D1D5DB;
   flex-shrink: 0;
-  /* mobile: 0.5px horizontal */
-  height: 0.5px;
+  /* mobile: 1px horizontal */
+  height: 1px;
   width: 100%;
 }
 @media (min-width: 768px) {
   .sw-bar-div {
     height: auto;
-    width: 0.5px;
+    width: 1px;
   }
 }
 
