@@ -44,7 +44,7 @@
       <div class="p-6">
         <div class="flex flex-col">
           <span class="text-sm font-bold text-gray-900">{{ travellerData.contact?.email }}</span>
-          <span class="text-sm text-gray-500">{{ travellerData.contact?.phoneCountryCode }} {{ travellerData.contact?.phoneNumber }}</span>
+          <span class="text-sm text-gray-500">{{ travellerData.contact?.phone }}</span>
         </div>
       </div>
     </div>

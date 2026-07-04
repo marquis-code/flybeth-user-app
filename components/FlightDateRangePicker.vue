@@ -4,48 +4,67 @@
     <!-- ── Trigger ── -->
     <div
       @click="toggleCalendar"
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
+      class="w-full cursor-pointer min-h-[68px] flex flex-row items-stretch group select-none transition-all rounded-xl"
       :class="showCalendar ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
     >
-      <p 
-        class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
-        :class="showCalendar ? 'text-black' : 'text-black group-hover:text-black'"
-      >
-        {{ mode === 'oneway' ? 'Departure' : 'Check-in – Check-out' }}
-      </p>
-      
-      <div class="flex items-center gap-2">
-        <CalendarDaysIcon class="h-4 w-4 shrink-0 transition-colors" :class="showCalendar ? 'text-black' : 'text-black'" />
-        <div class="flex items-baseline gap-1.5 min-w-0">
-          <template v-if="mode === 'oneway'">
-            <span class="text-[13px] font-bold truncate" :class="startDate ? 'text-black' : 'text-black'">
+      <template v-if="mode === 'oneway'">
+        <div class="flex-1 px-4 pt-3 pb-2 flex flex-col justify-center text-left">
+          <p class="text-xs font-medium text-gray-500 mb-0.5 transition-colors" :class="showCalendar ? 'text-black' : 'text-black group-hover:text-black'">
+            {{ departureLabel }}
+          </p>
+          <div class="flex items-baseline gap-1.5 min-w-0">
+            <span class="text-[13px] font-bold text-black leading-tight truncate">
               {{ startDate ? formatDisplayCompact(startDate) : 'Select date' }}
             </span>
-          </template>
-          <template v-else>
-            <span class="text-[13px] font-bold truncate" :class="startDate ? 'text-black' : 'text-black'">
-              {{ startDate ? formatDisplayCompact(startDate) : 'Check-in' }}
+            <span class="text-xs text-black font-bold shrink-0" v-if="startDate">
+              ({{ formatDayOfWeek(startDate) }})
             </span>
-            <span class="text-black font-bold mx-0.5 text-sm">–</span>
-            <span class="text-[13px] font-bold truncate" :class="endDate ? 'text-black' : 'text-black'">
-              {{ endDate ? formatDisplayCompact(endDate) : 'Check-out' }}
-            </span>
-          </template>
+          </div>
         </div>
-      </div>
-
-      <p v-if="startDate && endDate && mode !== 'oneway' && !showCalendar" class="text-sm text-black font-medium mt-0.5">
-        {{ nightCount }} night{{ nightCount !== 1 ? 's' : '' }}
-      </p>
+      </template>
+      <template v-else>
+        <!-- Two halves for Check-in and Check-out -->
+        <div class="flex-1 px-4 pt-3 pb-2 flex flex-col justify-center text-left">
+          <p class="text-xs font-medium text-gray-500 mb-0.5 transition-colors" :class="showCalendar ? 'text-black' : 'text-black group-hover:text-black'">
+            {{ departureLabel }}
+          </p>
+          <div class="flex items-baseline gap-1.5 min-w-0">
+            <span class="text-[13px] font-bold text-black leading-tight truncate">
+              {{ startDate ? formatDisplayCompact(startDate) : 'Select date' }}
+            </span>
+            <span class="text-xs text-black font-bold shrink-0" v-if="startDate">
+              ({{ formatDayOfWeek(startDate) }})
+            </span>
+          </div>
+        </div>
+        
+        <div class="w-[1px] bg-[#D1D5DB] my-3 flex-shrink-0"></div>
+        
+        <div class="flex-1 px-4 pt-3 pb-2 flex flex-col justify-center text-left">
+          <p class="text-xs font-medium text-gray-500 mb-0.5 transition-colors" :class="showCalendar ? 'text-black' : 'text-black group-hover:text-black'">
+            {{ returnLabel }}
+          </p>
+          <div class="flex items-baseline gap-1.5 min-w-0">
+            <span class="text-[13px] font-bold text-black leading-tight truncate">
+              {{ endDate ? formatDisplayCompact(endDate) : 'Select date' }}
+            </span>
+            <span class="text-xs text-black font-bold shrink-0" v-if="endDate">
+              ({{ formatDayOfWeek(endDate) }})
+            </span>
+          </div>
+        </div>
+      </template>
     </div>
 
     <!-- ── Calendar Dropdown Panel ── -->
-    <Transition name="loc-drop">
-      <div
-        v-show="showCalendar"
-        class="absolute left-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
-        :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[520px] rounded-2xl']"
-        style="background-color: #ffffff !important;"
+    <Teleport to="body" :disabled="!isMobile">
+      <Transition name="loc-drop">
+        <div
+          ref="dropdownRef"
+          v-show="showCalendar"
+          class="z-[100000] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
+          :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4' : 'absolute left-0 top-[calc(100%+6px)] w-[520px] rounded-2xl']"
+          style="background-color: #ffffff !important;"
       >
         <!-- Mobile Header with Close Button -->
         <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">
@@ -122,14 +141,15 @@
             <button v-if="startDate" @click="clearDates" class="text-[11px] font-bold text-black hover:text-black px-3 py-2 transition-colors">Clear</button>
             <button @click="closeCalendar" class="px-5 py-2 bg-black text-white rounded-xl text-[12px] font-bold hover:bg-gray-900 transition-all active:scale-95">Done</button>
           </div>
-        </div> <!-- End flex-1 container -->
+        </div>
         <!-- Flexible Dates Toggle -->
         <div class="px-5 py-3 border-t border-gray-200 bg-gray-50 flex items-center gap-2 shrink-0">
           <input type="checkbox" id="flexibleDates" v-model="isFlexible" @change="$emit('update:flexible', isFlexible)" class="w-4 h-4 text-blue-600 rounded border-gray-300" />
           <label for="flexibleDates" class="text-xs font-bold text-gray-700 cursor-pointer select-none">My dates are flexible (+/- 3 days) - Find cheaper prices</label>
         </div>
       </div>
-    </Transition>
+      </Transition>
+    </Teleport>
 
   </div>
 </template>
@@ -147,11 +167,14 @@ const props = defineProps({
   return:    { type: String, default: '' },
   flexible:  { type: Boolean, default: false },
   mode:      { type: String as () => 'oneway' | 'roundtrip', default: 'roundtrip' },
+  departureLabel: { type: String, default: 'Departure' },
+  returnLabel:    { type: String, default: 'Return' },
 })
 
 const emit = defineEmits(['update:departure', 'update:return', 'update:flexible', 'focus', 'close'])
 
 const pickerRef    = ref<HTMLElement | null>(null)
+const dropdownRef  = ref<HTMLElement | null>(null)
 const showCalendar = ref(false)
 const hoverDate    = ref<string | null>(null)
 const isFlexible   = ref(props.flexible)
@@ -203,6 +226,12 @@ function formatDisplayCompact(iso: string): string {
   if (!iso) return ''
   const [y, m, d] = iso.split('-').map(Number)
   return new Date(y!, m! - 1, d!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function formatDayOfWeek(iso: string): string {
+  if (!iso) return ''
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y!, m! - 1, d!).toLocaleDateString('en-US', { weekday: 'short' })
 }
 
 function cellDay(iso: string): string { return String(parseInt(iso.split('-')[2] || '0', 10)) }
@@ -278,7 +307,15 @@ function openCalendar() { showCalendar.value = true; emit('focus') }
 function closeCalendar() { showCalendar.value = false; hoverDate.value = null; emit('close') }
 function clearDates() { startDate.value = null; endDate.value = null; hoverDate.value = null; emit('update:departure', ''); emit('update:return', '') }
 
-const handleClickOutside = (e: MouseEvent) => { if (showCalendar.value && pickerRef.value && !pickerRef.value.contains(e.target as Node)) closeCalendar() }
+const handleClickOutside = (e: MouseEvent) => { 
+  if (showCalendar.value) {
+    const isOutsidePicker = pickerRef.value && !pickerRef.value.contains(e.target as Node)
+    const isOutsideDropdown = dropdownRef.value && !dropdownRef.value.contains(e.target as Node)
+    if (isOutsidePicker && isOutsideDropdown) {
+      closeCalendar()
+    }
+  }
+}
 watch(() => props.departure, v => { startDate.value = v || null })
 watch(() => props.return,    v => { endDate.value   = v || null })
 watch(() => props.flexible,  v => { isFlexible.value = v })

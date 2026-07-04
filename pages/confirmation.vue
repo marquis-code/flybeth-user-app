@@ -50,7 +50,7 @@
         <p class="text-gray-500 font-medium text-sm mb-8">{{ statusTheme.subtitle }}</p>
 
         <!-- Dynamic Reference Block -->
-        <div v-if="bookingRef" class="bg-gray-50/80 rounded-2xl p-5 border border-gray-100 mb-8 flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
+        <div v-if="bookingRef" class="bg-gray-50/80 rounded-2xl p-5 border border-gray-100 mb-6 flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-200">
            <div class="flex-1 py-2 sm:py-0 text-center">
              <p class="text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-1">Booking Reference</p>
              <p class="text-lg font-black text-[#0D1DAD]">{{ bookingRef }}</p>
@@ -59,6 +59,28 @@
              <p class="text-[10px] font-bold uppercase text-gray-400 tracking-wider mb-1">Status</p>
              <p class="text-sm font-bold mt-1" :class="statusTheme.textClass">{{ statusTheme.badgeText }}</p>
            </div>
+        </div>
+
+        <!-- Next Steps Info -->
+        <div v-if="paymentStatus === 'success'" class="text-left bg-blue-50/80 border border-blue-100 rounded-2xl p-5 mb-8">
+           <h3 class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+             What's Next?
+           </h3>
+           <ul class="text-sm text-blue-800/90 space-y-2.5">
+             <li class="flex items-start gap-2 leading-tight">
+               <span class="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+               <span>We have sent your e-ticket and receipt to your email address.</span>
+             </li>
+             <li class="flex items-start gap-2 leading-tight">
+               <span class="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+               <span>Use your Booking Reference (PNR) to check in on the airline's website.</span>
+             </li>
+             <li class="flex items-start gap-2 leading-tight">
+               <span class="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+               <span>Click "Manage Booking" below to view your full itinerary.</span>
+             </li>
+           </ul>
         </div>
 
         <!-- Call to Action -->

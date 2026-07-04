@@ -1,56 +1,43 @@
 <template>
-  <div class="bg-white rounded-[20px] overflow-hidden mb-6 border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md">
-    <!-- Header: Price and Recommended Badge -->
-    <div class="bg-white px-6 sm:px-8 py-5 sm:py-6 flex flex-wrap items-center justify-between border-b border-gray-100 gap-4">
-      <div class="flex items-center gap-3">
-        <div v-if="isRecommended" class="bg-brand-green/10 text-brand-green text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase ">
-          <Star class="w-3.5 h-3.5 fill-current" />
-          Recommended
-        </div>
-        <div v-else class="text-sm font-semibold text-gray-500 flex items-center gap-2">
-          <Plane class="w-4 h-4 text-gray-400" />
-          Flight Offer
-        </div>
+  <div class="bg-white rounded-xl overflow-hidden mb-4 border border-gray-200 transition-all duration-300 hover:shadow-md relative p-3 sm:p-4 pb-3">
+    
+    <!-- Top left Badge if recommended -->
+    <div v-if="isRecommended" class="absolute top-0 left-0 bg-brand-green/10 text-brand-green text-[10px] font-bold px-2 py-0.5 rounded-br-lg flex items-center gap-1 uppercase z-10">
+      <Star class="w-3 h-3 fill-current" />
+      Best
+    </div>
+
+    <div class="flex items-start justify-between gap-1 sm:gap-2">
+      <!-- Slices wrapper -->
+      <div class="flex-grow space-y-4 pr-1 sm:pr-4 min-w-0">
+        <FlightCard 
+          v-for="(slice, index) in slices" 
+          :key="index"
+          :flight="slice" 
+        />
       </div>
       
-      <div class="flex items-center gap-3 ml-auto">
-        <span class="text-xs font-bold text-gray-400 uppercase ">Total Price</span>
-        <span class="text-2xl font-bold text-black">{{ formattedPrice }}</span>
+      <!-- Price -->
+      <div class="flex flex-col items-end text-right flex-shrink-0 pl-1">
+        <span class="text-[17px] sm:text-[22px] font-extrabold text-black leading-none">{{ formattedPrice }}</span>
+        <span class="text-[10px] font-medium text-gray-500 mt-1">Round-trip</span>
       </div>
     </div>
-
-    <!-- Slices (Outbound, Return, etc.) rendered as FlightCards -->
-    <div class="p-4 sm:p-5 space-y-3 bg-gray-50/50">
-      <FlightCard 
-        v-for="(slice, index) in slices" 
-        :key="index"
-        :flight="slice" 
-      />
-    </div>
-
-    <!-- Footer: Baggage & Next Step -->
-    <div class="bg-white px-6 sm:px-8 py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between border-t border-gray-100 gap-4">
-      <!-- Summary / Baggage -->
-      <div class="flex items-center gap-5 w-full sm:w-auto">
-        <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
-          <Luggage class="w-4 h-4 text-gray-400" />
-          <span class="hidden sm:inline">Carry-on included</span>
-          <span class="sm:hidden">Carry-on</span>
-        </div>
-        <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
-          <Users class="w-4 h-4 text-gray-400" />
-          <span class="hidden sm:inline">{{ passengersCount }} Passengers</span>
-          <span class="sm:hidden">{{ passengersCount }} Pax</span>
-        </div>
-      </div>
-
-      <!-- Action Button -->
+    
+    <!-- Footer -->
+    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
       <button 
-        @click="$emit('select', flight)"
-        class="w-full sm:w-auto bg-[#0D1DAD] hover:bg-[#002a66] text-white px-10 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+        @click.stop="$emit('select', flight)" 
+        class="text-xs font-bold text-[#0D1DAD] hover:underline"
       >
-        Next step
-        <ArrowRight class="w-4 h-4" />
+        Flight Details
+      </button>
+
+      <button 
+        @click.stop="$emit('select', flight)"
+        class="bg-[#0D1DAD] hover:bg-[#002a66] text-white px-5 py-2 rounded-lg font-bold text-sm transition-all shadow-sm flex items-center gap-1.5"
+      >
+        Select <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
   </div>
@@ -58,7 +45,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Star, Plane, Luggage, Users, ArrowRight } from 'lucide-vue-next'
+import { Star } from 'lucide-vue-next'
 import { useSettings } from '@/composables/useSettings'
 import FlightCard from './FlightCard.vue'
 

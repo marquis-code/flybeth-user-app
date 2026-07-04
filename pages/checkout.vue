@@ -166,9 +166,9 @@
             @edit="goToStep"
           />
 
-          <div class="flex flex-col lg:flex-row gap-6 mt-6">
+          <div class="flex flex-col gap-8 mt-6">
             <!-- Payment Section -->
-            <div class="flex-1 bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+            <div class="w-full bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
               <CheckoutPayment 
                 ref="paymentRef"
                 :total-amount="displayPrices.total" 
@@ -182,52 +182,62 @@
               />
             </div>
 
-            <!-- Price Breakdown -->
-            <div class="w-full lg:w-[360px] flex-shrink-0">
-              <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Price breakdown</h3>
-                
-                <div class="space-y-3 mb-6 text-sm text-gray-600">
-                  <div class="flex justify-between items-center">
-                    <span>Flight Fare</span>
-                    <span class="font-medium text-gray-900">{{ currencySymbol }}{{ displayPrices.base.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <span>Taxes & Fees</span>
-                    <span class="font-medium text-gray-900">{{ currencySymbol }}{{ displayPrices.tax.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-                  
-                  <div v-if="seatPrice > 0" class="flex justify-between items-center text-blue-600">
-                    <span>Seat Selection</span>
-                    <span class="font-medium">+{{ currencySymbol }}{{ (seatPrice * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-
-                  <template v-if="selectedAddOns.length > 0">
-                    <div v-for="addon in selectedAddOns.filter(a => a.id !== 'seat-selection')" :key="addon.id" class="flex justify-between items-center text-blue-600">
-                      <span>{{ addon.name }}</span>
-                      <span class="font-medium">+{{ currencySymbol }}{{ (addon.price * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+            <!-- Price Breakdown (Full Width Redesign) -->
+            <div class="w-full bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900 mb-6">Price breakdown</h3>
+                  <div class="space-y-4 text-sm text-gray-600">
+                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                      <span class="font-medium text-gray-500">Flight Fare</span>
+                      <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.base.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
                     </div>
-                  </template>
+                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                      <span class="font-medium text-gray-500">Taxes & Fees</span>
+                      <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.tax.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+                    
+                    <div v-if="seatPrice > 0" class="flex justify-between items-center pb-3 border-b border-gray-100 text-blue-600">
+                      <span class="font-medium">Seat Selection</span>
+                      <span class="font-bold">+{{ currencySymbol }}{{ (seatPrice * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+
+                    <template v-if="selectedAddOns.length > 0">
+                      <div v-for="addon in selectedAddOns.filter(a => a.id !== 'seat-selection')" :key="addon.id" class="flex justify-between items-center pb-3 border-b border-gray-100 text-blue-600">
+                        <span class="font-medium">{{ addon.name }}</span>
+                        <span class="font-bold">+{{ currencySymbol }}{{ (addon.price * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                      </div>
+                    </template>
+                  </div>
                 </div>
 
-                <div class="pt-4 border-t border-gray-200">
-                  <div class="flex justify-between items-center mb-1">
-                    <span class="text-base font-bold text-gray-900">Total</span>
-                    <span class="text-2xl font-black text-gray-900">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-                  <p class="text-xs text-gray-500 mb-6">Includes taxes and charges</p>
-
-                  <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-14 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2">
-                    <template v-if="!paymentProcessing">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                      Pay Securely
-                    </template>
-                    <span v-else class="animate-pulse">Processing...</span>
-                  </button>
-
-                  <div class="flex items-center justify-center gap-1.5 mt-4 text-gray-400">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <span class="text-[10px] font-semibold uppercase ">AES-256 Encrypted</span>
+                <!-- Total & Action Area -->
+                <div class="flex flex-col justify-end">
+                  <div class="bg-gray-50 rounded-2xl p-6">
+                    <div class="flex justify-between items-end mb-2">
+                      <div class="flex flex-col">
+                        <span class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Total Amount</span>
+                        <p class="text-xs text-gray-400">Includes taxes and charges</p>
+                      </div>
+                      <span class="text-4xl font-black text-gray-900 tracking-tight">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+                    
+                    <div class="mt-8" v-show="!paymentRef || paymentRef.requiresExternalSubmit">
+                      <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-16 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-900/20">
+                        <template v-if="!paymentProcessing">
+                          <Lock class="w-5 h-5 opacity-80" />
+                          Complete Booking
+                        </template>
+                        <span v-else class="animate-pulse flex items-center gap-2">
+                          <span class="h-5 w-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                          Processing Securely...
+                        </span>
+                      </button>
+                      <div class="flex items-center justify-center gap-2 mt-4 text-gray-400">
+                        <ShieldCheck class="w-4 h-4" />
+                        <span class="text-xs font-semibold uppercase tracking-wider">AES-256 Bank-Level Encryption</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -753,7 +763,13 @@ const handleWalletAuthorize = async (paymentInfo: any) => {
         }
       }
     } catch (err: any) {
-      showToast({ title: "Wallet Error", message: err.message || "Failed to initialize wallet", toastType: "error" })
+      const errMsg = err.response?.data?.message || err.message || "Failed to complete booking";
+      if (errMsg.toLowerCase().includes('no longer available') || errMsg.toLowerCase().includes('booking failed')) {
+        bookingErrorMsg.value = "The requested offer is no longer available. Prices and availability can change quickly.";
+        bookingError.value = true;
+      } else {
+        showToast({ title: "Booking Error", message: errMsg, toastType: "error" })
+      }
     } finally {
       paymentProcessing.value = false
       showBrandedLoader.value = false
@@ -833,7 +849,13 @@ const handlePayment = async (paymentInfo: any) => {
         class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
         offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId || priceDetailed.value?.id || bookingDetails.value.id,
         provider: bookingDetails.value.provider,
-        passengerIds: []
+        passengerIds: [],
+        metadata: {
+          origin: priceDetailed.value?.origin || priceDetailed.value?.originName || bookingDetails.value.origin,
+          destination: priceDetailed.value?.destination || priceDetailed.value?.destinationName || bookingDetails.value.destination,
+          airline: priceDetailed.value?.airline || bookingDetails.value.airline,
+          departureTime: priceDetailed.value?.departureTime || bookingDetails.value.departureTime,
+        }
       }]
     } else if (bookingDetails.value.type === 'stay') {
       payload.stays = [{
@@ -908,7 +930,8 @@ const handlePayment = async (paymentInfo: any) => {
 
       // For payments that don't require redirection
       clearCheckoutState();
-      router.push(`/confirmation?pnr=${booking.pnr}`)
+      const finalStatus = (booking.payment?.status === 'success' || booking.status === 'ticketed') ? 'success' : 'booked';
+      router.push(`/confirmation?pnr=${booking.pnr}&status=${finalStatus}`);
     } else {
       throw new Error('Booking response was invalid')
     }
@@ -926,9 +949,18 @@ const handlePayment = async (paymentInfo: any) => {
       return
     }
 
+    const errorMessage = err.response?.data?.message || err.message || "Failed to process booking";
+    const lowerMsg = errorMessage.toLowerCase();
+    
+    // Trigger the existing BookingExpiredModal if the offer expired or was already booked
+    if (lowerMsg.includes('expired') || lowerMsg.includes('already been booked')) {
+      isBookingExpired.value = true;
+      return;
+    }
+
     showToast({ 
       title: "Booking Error", 
-      message: err.response?.data?.message || err.message || "Failed to process booking", 
+      message: errorMessage, 
       toastType: "error" 
     })
   } finally {

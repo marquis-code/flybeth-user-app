@@ -20,13 +20,15 @@
     </div>
 
     <!-- Picker Dropdown Panel -->
-    <Transition name="loc-drop">
-      <div
-        v-show="showPicker"
-        class="absolute right-0 top-[calc(100%+6px)] z-[10001] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
-        :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4 z-[100000]' : 'w-[320px] rounded-2xl']"
-        style="background-color: #ffffff !important;"
-      >
+    <Teleport to="body" :disabled="!isMobile">
+      <Transition name="loc-drop">
+        <div
+          ref="dropdownRef"
+          v-show="showPicker"
+          class="z-[100000] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
+          :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4' : 'absolute right-0 top-[calc(100%+6px)] w-[320px] rounded-2xl']"
+          style="background-color: #ffffff !important;"
+        >
         <!-- Mobile Header with Close Button -->
         <div v-if="isMobile" class="flex items-center justify-between px-4 pb-3 mb-2 border-b border-gray-100 shrink-0">
           <h3 class="text-base font-bold text-black">{{ label }}</h3>
@@ -97,7 +99,8 @@
           </div>
         </div>
       </div>
-    </Transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -169,7 +172,8 @@ const summary = computed(() => {
 const increment = (key: string) => { if ((local as any)[key] < 10) (local as any)[key]++ }
 const decrement = (key: string) => { if ((local as any)[key] > 0) (local as any)[key]-- }
 
-const pickerRef  = ref<HTMLElement | null>(null)
+const pickerRef = ref<HTMLElement | null>(null)
+const dropdownRef = ref<HTMLElement | null>(null)
 const showPicker = ref(false)
 const isMobile   = ref(false)
 
@@ -188,7 +192,15 @@ const closePicker = () => {
   emit('close')
 }
 
-const handleClickOutside = (e: MouseEvent) => { if (showPicker.value && pickerRef.value && !pickerRef.value.contains(e.target as Node)) closePicker() }
+const handleClickOutside = (e: MouseEvent) => { 
+  if (showPicker.value) {
+    const isOutsidePicker = pickerRef.value && !pickerRef.value.contains(e.target as Node)
+    const isOutsideDropdown = dropdownRef.value && !dropdownRef.value.contains(e.target as Node)
+    if (isOutsidePicker && isOutsideDropdown) {
+      closePicker()
+    }
+  }
+}
 const checkMobile = () => { isMobile.value = window.innerWidth < 768 }
 
 onMounted(() => {

@@ -229,8 +229,19 @@
             <button class="fp-empty-btn" @click="clearFilters">Clear filters</button>
           </div>
 
-          <!-- Results -->
+          <!-- Results & Carousels -->
           <div v-if="sortedFlights.length" class="fp-groups">
+            <!-- Date Pricing Carousel -->
+            <DatePricingCarousel 
+              v-if="searchQuery.departureDate"
+              :basePrice="minPrice" 
+              :departureDate="searchQuery.departureDate" 
+              :returnDate="searchQuery.returnDate" 
+            />
+
+            <!-- Airline Pricing Carousel -->
+            <AirlinePricingCarousel :flights="sortedFlights" />
+
             <template v-for="(flight, index) in sortedFlights" :key="flight.id || index">
               <FlightGroup
                 :id="`group-${(flight.airline || '').replace(/\\s+/g, '-')}`"
@@ -381,22 +392,40 @@
               :key="variant.offerId || variant.id"
               class="fd-variant-card"
             >
-              <div>
-                <!-- Brand & Cabin -->
-                <div class="fd-variant-card-header">
-                  <div>
-                    <h4 class="fd-variant-title">{{ getFareVariantDetails(variant).brandName }}</h4>
-                    <span class="fd-variant-cabin">{{ getFareVariantDetails(variant).cabinLabel }}</span>
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full">
+                <!-- Left: Brand & Cabin -->
+                <div class="flex-1">
+                  <div class="flex items-center gap-3">
+                    <h4 class="text-xl font-black text-gray-900">{{ getFareVariantDetails(variant).brandName }}</h4>
                   </div>
-                  <span class="fd-variant-price">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
+                  <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mt-0.5">{{ getFareVariantDetails(variant).cabinLabel }}</span>
+                  <div class="mt-3">
+                    <button 
+                      @click="toggleVariant(variant.offerId || variant.id)"
+                      class="text-sm font-bold text-[#0D1DAD] hover:text-[#002a66] flex items-center gap-1 transition-colors"
+                    >
+                      Fare Details
+                      <ChevronDown class="w-3.5 h-3.5 transition-transform duration-300" :class="expandedVariants[variant.offerId || variant.id] ? 'rotate-180' : ''" />
+                    </button>
+                  </div>
                 </div>
-                
-                <p class="fd-variant-price-info">
-                  {{ formatPrice(variant.priceWithCommission || variant.price || 0) }} one way for 1 traveler
-                </p>
 
-                <!-- Features list -->
-                <ul class="fd-variant-features">
+                <!-- Right: Price & Select -->
+                <div class="flex flex-col items-end w-full md:w-auto mt-4 md:mt-0">
+                  <span class="text-2xl font-black text-gray-900">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
+                  <p class="text-[11px] text-gray-500 font-medium mb-3">One way for 1 traveler</p>
+                  <button 
+                    @click="selectVariant(variant)"
+                    class="bg-[#0D1DAD] hover:bg-[#0A1485] text-white px-8 py-2.5 rounded-xl font-bold text-sm transition-colors w-full md:w-auto shadow-md shadow-blue-900/20"
+                  >
+                    Select
+                  </button>
+                </div>
+              </div>
+
+              <!-- Features list (collapsible) -->
+              <div class="grid transition-all duration-300 w-full" :class="expandedVariants[variant.offerId || variant.id] ? 'grid-rows-[1fr] opacity-100 mt-4 pt-4 border-t border-gray-100' : 'grid-rows-[0fr] opacity-0 m-0 border-t-0'">
+                <ul class="fd-variant-features overflow-hidden grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
                   <!-- Seat -->
                   <li class="fd-variant-feature-item">
                     <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" v-if="getFareVariantDetails(variant).seatText.includes('included')" />
@@ -436,14 +465,6 @@
                   </li>
                 </ul>
               </div>
-
-              <!-- Select Button -->
-              <button 
-                @click="selectVariant(variant)"
-                class="fd-variant-select-btn"
-              >
-                Select
-              </button>
             </div>
           </div>
         </div>
@@ -470,6 +491,8 @@ import { useSettings, localeToCurrency } from '@/composables/useSettings'
 import LocationPicker from '@/components/LocationPicker.vue'
 import Occupancypicker from '@/components/Occupancypicker.vue'
 import { useAmadeusLocations } from '@/composables/modules/flights/useAmadeusLocations'
+import DatePricingCarousel from '@/components/flights/DatePricingCarousel.vue'
+import AirlinePricingCarousel from '@/components/flights/AirlinePricingCarousel.vue'
 
 const { loading, flights, searchFlights } = useSearchFlights()
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights()
@@ -485,11 +508,16 @@ const openField = (field: string) => {
 const dateRef = ref<HTMLElement | null>(null)
 const sortRef = ref<HTMLElement | null>(null)
 
+const expandedVariants = ref<Record<string, boolean>>({})
+const toggleVariant = (id: string) => {
+  expandedVariants.value[id] = !expandedVariants.value[id]
+}
+
 // ── Fare Variants side drawer Refs ────────────────────────────────────
 const showVariantsDrawer = ref(false)
 const selectedFlightSchedule = ref<any>(null)
 const activeFlightVariants = ref<any[]>([])
-const showDrawerFlightDetails = ref(false)
+const showDrawerFlightDetails = ref(true)
 const calViewDate = ref(new Date())
 const sortOpen = ref(false)
 const mobileFilters = ref(false)
@@ -680,7 +708,7 @@ const openVariantsDrawer = (flight: any) => {
     return priceA - priceB
   })
   selectedFlightSchedule.value = flight
-  showDrawerFlightDetails.value = false
+  showDrawerFlightDetails.value = true
   showVariantsDrawer.value = true
 }
 
@@ -779,11 +807,12 @@ const formatTime = (isoString: string) => {
   if (!isoString) return '—'
   try {
     const date = new Date(isoString)
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    const timeStr = date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
       minute: '2-digit',
-      hour12: false 
+      hour12: true 
     })
+    return timeStr.replace(' ', '').toLowerCase()
   } catch (e) {
     if (typeof isoString === 'string' && isoString.includes(':')) {
       return isoString.split(':').slice(0, 2).join(':')
@@ -1072,7 +1101,7 @@ onMounted(async () => {
 }
 
 .fp-hero--dest {
-  padding: 120px 0 100px;
+  padding: 48px 0 56px;
   background: #111;
   border-bottom: none;
 }
@@ -1099,11 +1128,12 @@ onMounted(async () => {
 .fp-orb--b { width: 300px; height: 300px; background: radial-gradient(circle, #d4e6ff, transparent); bottom: -100px; left: 8%; }
 
 /* Headline */
-.fp-headline { margin-bottom: 28px; position: relative; z-index: 10; }
+.fp-headline { margin-bottom: 20px; position: relative; z-index: 10; }
+.fp-headline--dest { margin-bottom: 16px; }
 .fp-eyebrow { font-size: 14px; font-weight: 600; letter-spacing: 0.18em; color: #999; display: block; margin-bottom: 10px; }
 .fp-h1 { font-family: 'Onest', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .fp-h1 em { font-style: normal; color: #0D1DAD; }
-.fp-h1--dest { color: #fff; text-shadow: 0 4px 16px rgba(0,0,0,0.3); font-size: clamp(32px, 5vw, 56px); }
+.fp-h1--dest { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.25); font-size: clamp(22px, 3.5vw, 34px); }
 
 /* ── Destination Features ──────────────────────────────────────────── */
 .fp-dest-features {
@@ -1290,22 +1320,23 @@ onMounted(async () => {
   flex-shrink: 0;
   background: #0D1DAD;
   border: none;
-  border-radius: 12px;
+  border-radius: 100px;
   color: #fff;
   font-family: 'Onest', sans-serif;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  padding: 0 24px;
-  margin: 6px;
-  min-width: 100px;
+  padding: 0 20px;
+  margin: 8px 8px 8px 4px;
+  height: 40px;
+  min-width: 0;
   transition: all 0.2s;
-  align-self: stretch;
+  align-self: center;
 }
-.fp-search-btn:hover { background: #0D1DAD; transform: translateY(-1px); }
+.fp-search-btn:hover { background: #0a15a0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,29,173,0.3); }
 .fp-search-btn--busy { opacity: 0.75; cursor: wait; }
-.fp-search-inner { display: flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; }
-.fp-spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+.fp-search-inner { display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.fp-spin { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── Dropdowns — attached to parent field ──────────────────────────── */
@@ -1636,7 +1667,7 @@ onMounted(async () => {
 .fp-mdash { font-size: 13px; color: #000; font-weight: 700; }
 
 /* Body grid */
-.fp-body { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
+.fp-body { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; align-items: start; }
 
 /* Sidebar */
 .fp-sidebar { position: sticky; top: 20px; }
@@ -1753,7 +1784,7 @@ onMounted(async () => {
 
 /* ── Responsive ────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .fp-body { grid-template-columns: 1fr; }
+  .fp-body { grid-template-columns: minmax(0, 1fr); }
   .fp-sidebar { position: static; }
   .fp-sbar { display: none; }
   .fp-sidebar--open .fp-sbar {
@@ -1785,7 +1816,7 @@ onMounted(async () => {
   .fp-bar-sep { height: 1px; width: 100%; margin: 0; background: #D1D5DB; }
   .fp-fld--date { flex: 1 0 50%; }
   .fp-fld--pax { flex: 1 0 40%; }
-  .fp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
+  .fp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 100px; height: 42px; }
   .fp-fares { grid-template-columns: 1fr 1fr; }
   .fp-fares > :last-child { grid-column: 1 / -1; }
 }
@@ -1830,33 +1861,27 @@ onMounted(async () => {
 }
 
 .fd-variant-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding-bottom: 36px;
-}
-
-@media (min-width: 640px) {
-  .fd-variant-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .fd-variant-card {
   border: 1px solid #e5e7eb;
-  border-radius: 24px;
-  padding: 28px;
+  border-radius: 20px;
+  padding: 24px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: flex-start;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fd-variant-card:hover {
-  border-color: #0D1DAD;
-  box-shadow: 0 10px 25px -5px rgba(13, 29, 173, 0.08), 0 8px 10px -6px rgba(13, 29, 173, 0.08);
-  transform: translateY(-2px);
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
 }
 
 .fd-variant-card-header {

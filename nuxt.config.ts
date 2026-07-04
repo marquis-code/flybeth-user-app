@@ -11,6 +11,12 @@ export default defineNuxtConfig({
     }
   },
   
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.startsWith('duffel-')
+    }
+  },
+  
   typescript: {
     shim: false,
     typeCheck: false
@@ -36,6 +42,7 @@ export default defineNuxtConfig({
       googleClientId: process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID,
       paystackPublicKey: process.env.NUXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
       googleMapsApiKey: process.env.GOOGLE_MAP_API_KEY,
+      mapboxAccessToken: process.env.NUXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
       paypalClientId: process.env.NUXT_PUBLIC_PAYPAL_CLIENT_ID,
       paypalMode: process.env.NUXT_PUBLIC_PAYPAL_MODE || 'sandbox',
     },

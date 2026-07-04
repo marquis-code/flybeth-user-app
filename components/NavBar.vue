@@ -11,12 +11,8 @@
       <div class="max-w-7xl mx-auto px-6 lg:px-10">
         <div class="flex justify-between items-center">
 
-          <!-- Logo & Mobile Hamburger -->
+          <!-- Logo (Mobile Hamburger moved to right) -->
           <div class="flex items-center gap-4">
-            <button @click="isMobileMenuOpen = true" class="lg:hidden p-2 rounded-md text-black hover:bg-gray-100 transition-colors">
-              <Menu class="h-5 w-5" />
-            </button>
-
             <NuxtLink to="/" class="flex items-center">
               <img src="@/assets/img/logo.png" class="h-8 lg:h-10 w-auto" alt="Flybeth Logo" />
             </NuxtLink>
@@ -194,9 +190,9 @@
               </div>
             </template>
             <template v-else>
-              <button @click="openAuthModal" class="bg-black text-white px-5 py-2 rounded-md text-[13px] font-semibold hover:bg-black active:bg-black transition-colors">
-                Join Flybeth
-              </button>
+              <NuxtLink to="/bookings" class="bg-black text-white px-5 py-2 rounded-md text-[13px] font-semibold hover:bg-gray-800 active:bg-bg-gray-900 transition-colors">
+                Manage Booking
+              </NuxtLink>
             </template>
           </div>
 
@@ -212,11 +208,17 @@
                 <span v-if="notifications.length > 0" class="absolute top-2 right-2 h-2 w-2 bg-red-500 border border-white rounded-full"></span>
               </button>
             </div>
-            <button v-if="!user" @click="openAuthModal" class="bg-black text-white px-4 py-2 rounded-md text-[12px] font-semibold active:scale-95 transition-all">
-              Sign in
-            </button>
+            <NuxtLink v-if="!user" to="/bookings" class="bg-black text-white px-4 py-2 rounded-md text-[12px] font-semibold active:scale-95 transition-all">
+              Manage Booking
+            </NuxtLink>
             <button v-else @click="showLogoutModal = true" class="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-md text-red-500">
               <LogOut class="h-4 w-4" />
+            </button>
+            <button 
+              @click="isMobileMenuOpen = true" 
+              class="flex items-center justify-center w-9 h-9 bg-brand-blue/10 text-brand-blue hover:bg-brand-blue/20 rounded-full transition-all border border-brand-blue/20 shadow-sm ml-1"
+            >
+              <Menu class="h-4 w-4" />
             </button>
           </div>
 

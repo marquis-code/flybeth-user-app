@@ -1219,10 +1219,10 @@ const startMarketingTimer = () => {
   // Check if already dismissed in this session
   if (sessionStorage.getItem('marketing_dismissed')) return
 
-  // Show after 45 seconds
+  // Show after 15 seconds
   marketingTimer = setTimeout(() => {
     showMarketingModal.value = true
-  }, 45000)
+  }, 15000)
 }
 
 const dismissMarketingModal = () => {

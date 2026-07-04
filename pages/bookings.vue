@@ -78,9 +78,17 @@
               {{ booking.status }}
             </span>
           </div>
-          <div class="text-right">
-            <p class="text-sm  text-black uppercase ">Booking Reference</p>
-            <p class="text-xl  text-black">{{ booking.pnr }}</p>
+          <div class="text-right flex items-center gap-6">
+            <button @click="downloadReceipt" :disabled="downloadingReceipt" class="flex items-center gap-2 text-brand-blue bg-brand-blue/10 hover:bg-brand-blue/20 px-4 py-2 rounded-lg font-bold text-sm transition-colors disabled:opacity-50">
+              <svg v-if="!downloadingReceipt" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              <svg v-else class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+              <span v-if="!downloadingReceipt">Download Receipt</span>
+              <span v-else>Downloading...</span>
+            </button>
+            <div class="text-right">
+              <p class="text-sm  text-black uppercase ">Booking Reference</p>
+              <p class="text-xl  text-black">{{ booking.pnr }}</p>
+            </div>
           </div>
         </div>
 
@@ -89,21 +97,22 @@
           <h3 class="text-sm  uppercase text-black  mb-4">Flight Details</h3>
           <div v-for="(flt, idx) in booking.flights" :key="idx" class="flex items-center justify-between gap-4">
             <div class="text-center">
-              <p class="text-2xl  text-black">{{ flt.flight?.departure?.iataCode || '—' }}</p>
+              <p class="text-2xl  text-black">{{ flt.flight?.departure?.iataCode || flt.metadata?.origin || '—' }}</p>
               <p class="text-sm font-bold text-black">Origin</p>
             </div>
             <div class="flex-1 flex flex-col items-center gap-1">
               <div class="w-full h-[2px] bg-black relative">
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-black bg-white px-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </div>
               </div>
-              <span class="text-sm  text-black uppercase">{{ flt.class || 'Economy' }}</span>
+              <span class="text-sm  text-black uppercase">{{ flt.metadata?.airline ? flt.metadata.airline + ' - ' : '' }}{{ flt.class || 'Economy' }}</span>
+              <span v-if="flt.metadata?.departureTime" class="text-xs text-gray-500 font-bold mt-1">{{ new Date(flt.metadata.departureTime).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) }}</span>
             </div>
             <div class="text-center">
-              <p class="text-2xl  text-black">{{ flt.flight?.arrival?.iataCode || '—' }}</p>
+              <p class="text-2xl  text-black">{{ flt.flight?.arrival?.iataCode || flt.metadata?.destination || '—' }}</p>
               <p class="text-sm font-bold text-black">Destination</p>
             </div>
           </div>
@@ -180,6 +189,8 @@
             <span v-else>Cancel Transfer</span>
           </button>
         </div>
+
+        <BookingReceipt :booking="booking" />
       </div>
     </div>
   </div>
@@ -194,6 +205,8 @@ import { useCustomToast } from '@/composables/core/useCustomToast'
 import { useConfirmation } from '@/composables/core/useConfirmation'
 import { useSettings } from '~/composables/useSettings'
 
+import BookingReceipt from '@/components/bookings/BookingReceipt.vue'
+
 const { confirm } = useConfirmation()
 const { showToast } = useCustomToast()
 const route = useRoute()
@@ -201,11 +214,45 @@ const route = useRoute()
 const loading = ref(false)
 const notFound = ref(false)
 const cancelling = ref(false)
+const downloadingReceipt = ref(false)
 const booking = ref<any>(null)
 const pnrInput = ref('')
 
 const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'
 const { formatPrice } = useSettings()
+
+const downloadReceipt = async () => {
+  if (typeof window === 'undefined') return;
+  downloadingReceipt.value = true;
+  
+  try {
+    const html2canvas = (await import('html2canvas')).default;
+    const { jsPDF } = await import('jspdf');
+    
+    const element = document.getElementById('booking-receipt-container');
+    if (!element) throw new Error('Receipt container not found');
+    
+    // Temporarily show the receipt off-screen for rendering
+    element.style.position = 'absolute';
+    element.style.top = '-9999px';
+    element.style.left = '-9999px';
+    element.style.display = 'block';
+    
+    const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+    
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width / 2, canvas.height / 2] });
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+    pdf.save(`Flybeth_Receipt_${booking.value.pnr || 'Booking'}.pdf`);
+    
+    showToast({ title: 'Success', message: 'Receipt downloaded successfully', toastType: 'success' });
+  } catch (error: any) {
+    showToast({ title: 'Download Error', message: 'Failed to generate receipt PDF', toastType: 'error' });
+  } finally {
+    downloadingReceipt.value = false;
+  }
+}
 
 const searchByPnr = async () => {
   if (!pnrInput.value) return

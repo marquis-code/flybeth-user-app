@@ -135,7 +135,8 @@ const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1).toL
 const formatTime = (iso: string) => {
   if (!iso) return '—'
   const d = new Date(iso)
-  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+  return timeStr.replace(' ', '').toLowerCase()
 }
 
 const formatDate = (iso: string) => {

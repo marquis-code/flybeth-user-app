@@ -156,6 +156,28 @@ const selectCountry = (country: typeof countries[0]) => {
   })
 }
 
+const formatPhone = (val: string, code: string) => {
+  if (!val) return '';
+  if (code === 'US' || code === 'CA') {
+    if (val.length <= 3) return val;
+    if (val.length <= 6) return `(${val.slice(0,3)}) ${val.slice(3)}`;
+    return `(${val.slice(0,3)}) ${val.slice(3,6)}-${val.slice(6,10)}`;
+  }
+  if (code === 'GB') {
+    if (val.length <= 4) return val;
+    return `${val.slice(0,4)} ${val.slice(4,10)}`;
+  }
+  if (code === 'NG') {
+    if (val.length <= 3) return val;
+    if (val.length <= 6) return `${val.slice(0,3)} ${val.slice(3)}`;
+    return `${val.slice(0,3)} ${val.slice(3,6)} ${val.slice(6,10)}`;
+  }
+  // Generic fallback chunking
+  if (val.length <= 3) return val;
+  if (val.length <= 6) return `${val.slice(0,3)} ${val.slice(3)}`;
+  return `${val.slice(0,3)} ${val.slice(3,6)} ${val.slice(6)}`;
+}
+
 const onPhoneInput = (e: Event) => {
   const input = e.target as HTMLInputElement
   // Remove non-digits and leading zeros (E.164 usually doesn't want leading zeros)
@@ -164,9 +186,21 @@ const onPhoneInput = (e: Event) => {
   
   // Truncate to country max length
   phoneNumber.value = val.slice(0, selectedCountry.value.maxLength)
-  input.value = phoneNumber.value // Update UI immediately
+  
+  // Aggressively format the visual input value as the user types
+  input.value = formatPhone(phoneNumber.value, selectedCountry.value.code)
   emitValue()
 }
+
+// Watch for programmatic changes and format them too
+watch(phoneNumber, (newVal) => {
+  if (phoneRef.value) {
+    const input = phoneRef.value.querySelector('input')
+    if (input && input.value !== formatPhone(newVal, selectedCountry.value.code)) {
+      input.value = formatPhone(newVal, selectedCountry.value.code)
+    }
+  }
+})
 
 import { useTracking } from '@/composables/core/useTracking'
 
@@ -187,6 +221,12 @@ const handleClickOutside = (e: MouseEvent) => {
 
 onMounted(async () => {
   window.addEventListener('click', handleClickOutside)
+  
+  // Format initial value if any
+  if (phoneNumber.value && phoneRef.value) {
+    const input = phoneRef.value.querySelector('input')
+    if (input) input.value = formatPhone(phoneNumber.value, selectedCountry.value.code)
+  }
   
   // Auto-detect location if no phone number is provided
   if (!props.modelValue) {

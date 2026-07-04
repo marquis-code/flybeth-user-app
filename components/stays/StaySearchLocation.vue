@@ -34,7 +34,7 @@
 
         <div class="max-h-[380px] overflow-y-auto custom-scrollbar -mx-2 px-2">
           <!-- Recent Searches -->
-          <div v-if="!searchQuery && recentSearches.length > 0" class="mb-6">
+          <!-- <div v-if="!searchQuery && recentSearches.length > 0" class="mb-6">
             <h3 class="px-4 py-2 text-sm  text-black  opacity-40">Previous searches</h3>
             <div 
               v-for="item in recentSearches" 
@@ -47,7 +47,7 @@
               </div>
               <span class="text-sm font-bold text-black group-hover:text-black transition-colors">{{ item.name }}</span>
             </div>
-          </div>
+          </div> -->
 
           <!-- Popular Sections -->
           <div v-if="!searchQuery" class="mb-6">

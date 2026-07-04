@@ -2,7 +2,7 @@
   <div class="checkout-payment space-y-4">
     <h3 class="text-xl font-bold text-gray-900 mb-6">Payment selection</h3>
 
-    <!-- Card Payment (Commented out as requested)
+    <!-- Card Payment -->
     <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'card'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('card')">
         <div class="flex items-center gap-4">
@@ -14,16 +14,21 @@
           <img src="@/assets/icons/master-card.svg" alt="Mastercard" class="h-5" />
         </div>
       </div>
-      <div v-show="activeMethod === 'card'" class="p-4 border-t border-gray-200 bg-gray-50/50">
+      <div v-show="activeMethod === 'card'" class="py-4 px-2 sm:px-4 border-t border-gray-200 bg-gray-50/50">
         <div v-if="provider === 'duffel'">
-           <DuffelCardForm v-model="duffelCardData" />
+           <div v-if="duffelPaymentIntentToken" id="duffel-payments-container" class="bg-white py-4 rounded-xl w-full flex justify-center">
+              <duffel-payments class="w-full max-w-[100%] min-w-0" style="display: block;"></duffel-payments>
+           </div>
+           <div v-else class="flex flex-col items-center justify-center p-6 gap-3">
+             <span class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></span>
+             <span class="text-sm text-gray-500">Initializing secure payment...</span>
+           </div>
         </div>
         <div v-else class="text-sm text-gray-600 p-2">
           You will be redirected to our secure payment partner ({{ provider === 'paystack' ? 'Paystack' : 'PayPal' }}) to complete your purchase safely.
         </div>
       </div>
     </div>
-    -->
 
     <!-- Paystack Payment -->
     <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'paystack'}">
@@ -131,7 +136,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { AlertCircle, Wallet } from 'lucide-vue-next'
-import DuffelCardForm from './DuffelCardForm.vue'
 import DigitalWallets from './DigitalWallets.vue'
 import WalletAdModal from './WalletAdModal.vue'
 import FundWalletModal from './FundWalletModal.vue'
@@ -140,6 +144,12 @@ import { financeApi } from '@/api_factory/modules/finance'
 import { useAuth } from '~/composables/modules/auth/useAuth'
 import { useSettings } from '~/composables/useSettings'
 import { useNuxtApp } from '#app'
+import { flightsApi } from '@/api_factory/modules/flights'
+import {
+  renderDuffelPaymentsCustomElement,
+  onDuffelPaymentsSuccessfulPayment,
+  onDuffelPaymentsFailedPayment
+} from '@duffel/components/custom-elements'
 
 import affirm from '@/assets/img/affirm.svg'
 import klarna from '@/assets/img/klarna.png'
@@ -174,10 +184,9 @@ const bnplProviders = ref([
   { id: 'afterpay', name: 'Afterpay', logo: afterpay },
 ])
 
-const duffelCardData = ref({
-  name: '', number: '', expiry: '', cvv: '', multi_use: false,
-  address_line_1: '', address_line_2: '', address_city: '', address_region: '', address_country_code: '', address_postal_code: ''
-})
+const duffelPaymentIntentToken = ref('')
+const duffelPaymentIntentId = ref('')
+let duffelPaymentInitialized = false
 
 const provider = computed(() => {
   const queryProvider = route.query.provider as string
@@ -224,6 +233,58 @@ const handleAdClose = () => {
 
 const toggleMethod = (method: string) => {
   activeMethod.value = method
+  
+  if (method === 'card' && provider.value === 'duffel' && !duffelPaymentInitialized) {
+    initializeDuffelPayment()
+  }
+}
+
+const initializeDuffelPayment = async () => {
+  const { $toast } = useNuxtApp()
+  try {
+    const { data } = await flightsApi.createDuffelPaymentIntent({
+      amount: Number(props.totalAmount).toFixed(2),
+      currency: props.currency
+    })
+    
+    const responseData = data?.data || data
+    if (responseData && responseData.client_token) {
+      duffelPaymentIntentToken.value = responseData.client_token
+      duffelPaymentIntentId.value = responseData.id
+      duffelPaymentInitialized = true
+      
+      // Give Vue time to render the <duffel-payments> tag
+      setTimeout(() => {
+        renderDuffelPaymentsCustomElement({
+          paymentIntentClientToken: responseData.client_token
+        })
+        
+        onDuffelPaymentsSuccessfulPayment(async () => {
+          try {
+            emit('wallet-authorize', true) // Show loader in parent if needed
+            // Confirm with our backend
+            await flightsApi.confirmDuffelPaymentIntent(duffelPaymentIntentId.value)
+            
+            // Proceed to booking creation
+            emit('complete-payment', { 
+              provider: 'duffel', 
+              channel: 'card',
+              paymentIntentId: duffelPaymentIntentId.value 
+            })
+          } catch (err: any) {
+            $toast.error('Payment confirmation failed. Please contact support.', { position: 'top-right' })
+            emit('wallet-authorize', false)
+          }
+        })
+        
+        onDuffelPaymentsFailedPayment((error) => {
+          $toast.error('Payment failed. Please try a different card.', { position: 'top-right' })
+        })
+      }, 50)
+    }
+  } catch (error: any) {
+    $toast.error('Failed to initialize secure payment form', { position: 'top-right' })
+  }
 }
 
 const formatAmount = (val: number) => {
@@ -236,6 +297,13 @@ const formatAmount = (val: number) => {
 
 const handlePay = () => {
   const { $toast } = useNuxtApp()
+  if (activeMethod.value === 'card' && provider.value === 'duffel') {
+    // Duffel payments are handled inside the Web Component directly.
+    // The user should click the "Pay" button rendered by <duffel-payments>.
+    $toast.info('Please complete your payment using the form above.', { position: 'top-center' })
+    return
+  }
+  
   if (activeMethod.value === 'wallet') {
     $toast.info('Please tap the Apple Pay or Google Pay button above to authorize your payment.', { position: 'top-center' })
     return
@@ -252,8 +320,7 @@ const handlePay = () => {
   } else {
     emit('complete-payment', { 
       provider: provider.value, 
-      channel: provider.value === 'paystack' ? paystackChannel.value : 'card',
-      cardData: provider.value === 'duffel' ? duffelCardData.value : null 
+      channel: provider.value === 'paystack' ? paystackChannel.value : 'card'
     })
   }
 }
@@ -262,5 +329,11 @@ const handleHold = () => {
   emit('complete-payment', { provider: 'manual', channel: 'hold', paymentModel: 'on_hold' })
 }
 
-defineExpose({ handlePay, handleHold })
+const requiresExternalSubmit = computed(() => {
+  if (activeMethod.value === 'wallet') return false;
+  if (activeMethod.value === 'card' && provider.value === 'duffel') return false;
+  return true;
+})
+
+defineExpose({ handlePay, handleHold, requiresExternalSubmit })
 </script>

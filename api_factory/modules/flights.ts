@@ -66,6 +66,12 @@ export const flightsApi = {
     getDuffelPlacesSuggestions(params: any) {
         return GATEWAY_ENDPOINT.get("/integrations/duffel/places/suggestions", { params });
     },
+    createDuffelPaymentIntent(data: { amount: string; currency: string }) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/integrations/duffel/payments/payment-intents", data);
+    },
+    confirmDuffelPaymentIntent(id: string) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post(`/integrations/duffel/payments/payment-intents/${id}/actions/confirm`);
+    },
 
     // Legacy/Individual Provider Endpoints (Keep for compatibility if needed, but mark as deprecated)
     /** @deprecated Use searchLive */
