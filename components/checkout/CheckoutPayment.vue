@@ -169,7 +169,7 @@ const props = defineProps({
 
 const emit = defineEmits(['complete-payment', 'change-currency', 'wallet-authorize'])
 
-const activeMethod = ref('wallet')
+const activeMethod = ref('card')
 const paystackChannel = ref('card')
 const walletBalance = ref(0)
 const walletPin = ref('')
@@ -223,6 +223,10 @@ onMounted(() => {
   const isDismissed = localStorage.getItem('flybeth_wallet_ad_dismissed')
   if (!isDismissed && isLoggedIn.value) {
     setTimeout(() => { showAdModal.value = true }, 1000)
+  }
+
+  if (activeMethod.value === 'card' && provider.value === 'duffel' && !duffelPaymentInitialized) {
+    initializeDuffelPayment()
   }
 })
 

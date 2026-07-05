@@ -33,73 +33,10 @@
             </h1>
           </template>
         </div>
-
-        <!-- ── SEARCH BAR ── -->
-        <div class="fp-bar">
-
-          <!-- FROM field -->
-          <div class="fp-fld fp-fld--from">
-            <LocationPicker
-              v-model="searchQuery.origin"
-              label="From"
-              placeholder="City or airport"
-            />
-          </div>
-
-          <!-- SWAP -->
-          <button class="fp-swap" @click="swapLocations" title="Swap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
-          </button>
-
-          <!-- TO field -->
-          <div class="fp-fld fp-fld--to">
-            <LocationPicker
-              v-model="searchQuery.destination"
-              label="To"
-              placeholder="City or airport"
-            />
-          </div>
-
-          <div class="fp-bar-sep"></div>
-
-          <!-- DATE field -->
-          <div class="fp-fld fp-fld--date" :class="{ 'fp-fld--active': activeField === 'date' }" ref="dateRef">
-            <FlightDateRangePicker 
-              :departure="searchQuery.departureDate" 
-              :return="searchQuery.returnDate" 
-              :mode="searchQuery.type === 'roundtrip' ? 'roundtrip' : 'oneway'" 
-              @update:departure="(v) => searchQuery.departureDate = v" 
-              @update:return="(v) => searchQuery.returnDate = v" 
-              @focus="activeField = 'date'" 
-              @close="activeField = null" 
-            />
-          </div>
-
-          <div class="fp-bar-sep"></div>
-
-          <!-- TRAVELERS field -->
-          <div class="fp-fld fp-fld--pax">
-            <Occupancypicker
-              label="Travelers"
-              variant="flight"
-              v-model:adults="searchQuery.adults"
-              v-model:children="searchQuery.children"
-              v-model:infantsOnLap="searchQuery.infantsOnLap"
-              v-model:infantsInSeat="searchQuery.infantsInSeat"
-              v-model:cabinClass="searchQuery.cabinClass"
-            />
-          </div>
-
-          <!-- SEARCH BTN -->
-          <button class="fp-search-btn" :class="{ 'fp-search-btn--busy': loading }" @click="handleSearch">
-            <span class="fp-search-inner">
-              <svg v-if="!loading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <span v-if="loading" class="fp-spin"></span>
-              <span>{{ loading ? 'Searching' : 'Search' }}</span>
-            </span>
-          </button>
-
-        </div><!-- /fp-bar -->
+        <!-- ── HOME PAGE SEARCH WIDGET ── -->
+        <div class="mt-6 w-full max-w-5xl mx-auto relative z-20">
+          <SearchWidget />
+        </div>
       </div><!-- /fp-wrap -->
     </section>
 
@@ -237,10 +174,15 @@
               :basePrice="minPrice" 
               :departureDate="searchQuery.departureDate" 
               :returnDate="searchQuery.returnDate" 
+              @select="handleDateSelect"
             />
 
             <!-- Airline Pricing Carousel -->
-            <AirlinePricingCarousel :flights="sortedFlights" />
+            <AirlinePricingCarousel 
+              :flights="sortedFlights" 
+              :activeAirlines="activeAirlines" 
+              @toggle="toggleAirline" 
+            />
 
             <template v-for="(flight, index) in sortedFlights" :key="flight.id || index">
               <FlightGroup
@@ -413,7 +355,7 @@
                 <!-- Right: Price & Select -->
                 <div class="flex flex-col items-end w-full md:w-auto mt-4 md:mt-0">
                   <span class="text-2xl font-black text-gray-900">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
-                  <p class="text-[11px] text-gray-500 font-medium mb-3">One way for 1 traveler</p>
+                  <p class="text-[11px] text-gray-500 font-medium mb-3">{{ searchQuery.type === 'roundtrip' ? 'Round trip' : searchQuery.type === 'multicity' ? 'Multi-city' : 'One way' }} for {{ searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat }} traveler{{ (searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat) !== 1 ? 's' : '' }}</p>
                   <button 
                     @click="selectVariant(variant)"
                     class="bg-[#0D1DAD] hover:bg-[#0A1485] text-white px-8 py-2.5 rounded-xl font-bold text-sm transition-colors w-full md:w-auto shadow-md shadow-blue-900/20"
@@ -907,6 +849,12 @@ const handleSearch = () => {
   predictTripPurpose({ origin: searchQuery.value.origin, destination: searchQuery.value.destination, departureDate: searchQuery.value.departureDate })
 }
 
+const handleDateSelect = (dates: { departureDate: string, returnDate?: string }) => {
+  if (dates.departureDate) searchQuery.value.departureDate = dates.departureDate
+  if (dates.returnDate) searchQuery.value.returnDate = dates.returnDate
+  handleSearch()
+}
+
 const swapLocations = () => {
   const t = searchQuery.value.origin; searchQuery.value.origin = searchQuery.value.destination; searchQuery.value.destination = t
 }
@@ -1068,6 +1016,16 @@ onMounted(async () => {
     handleSearch()
   }
   fetchPopularFlights()
+
+  // React to SearchWidget updating the route query
+  watch(() => route.query, (newQuery, oldQuery) => {
+    // Check if the query actually changed in a meaningful way
+    const isDifferent = Object.keys(newQuery).some(k => newQuery[k] !== oldQuery[k])
+    if (isDifferent) {
+      loadFromQuery(route)
+      handleSearch()
+    }
+  }, { deep: true })
 })
 </script>
 
@@ -1205,17 +1163,62 @@ onMounted(async () => {
 }
 
 /* ── Search bar ────────────────────────────────────────────────────── */
+.fp-trip-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 10;
+}
+.fp-trip-tab {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 8px 20px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Onest', sans-serif;
+}
+.fp-trip-tab:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.fp-trip-tab--active {
+  color: #111 !important;
+  background: #fff !important;
+  border-color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.fp-hero:not(.fp-hero--dest) .fp-trip-tab {
+  color: #111;
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.fp-hero:not(.fp-hero--dest) .fp-trip-tab:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+.fp-hero:not(.fp-hero--dest) .fp-trip-tab--active {
+  color: #fff !important;
+  background: #0D1DAD !important;
+  border-color: #0D1DAD !important;
+}
+
 .fp-bar {
   background: #fff;
   border: 1.5px solid #e0e0d8;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
   display: flex;
   align-items: stretch;
   position: relative;
   z-index: 50;
   overflow: visible;
   gap: 0;
+  width: 100%;
+  min-height: 76px;
 }
 
 /* Fields */
@@ -1233,11 +1236,11 @@ onMounted(async () => {
 .fp-fld-inner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 12px;
+  padding: 16px 24px;
   height: 100%;
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 18px;
   transition: background 0.15s;
   min-width: 0;
 }
@@ -1323,12 +1326,12 @@ onMounted(async () => {
   border-radius: 100px;
   color: #fff;
   font-family: 'Onest', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  padding: 0 20px;
-  margin: 8px 8px 8px 4px;
-  height: 40px;
+  padding: 0 32px;
+  margin: 8px 8px 8px 8px;
+  height: 60px;
   min-width: 0;
   transition: all 0.2s;
   align-self: center;

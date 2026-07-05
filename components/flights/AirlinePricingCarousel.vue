@@ -11,15 +11,18 @@
           <div 
             v-for="(airline, idx) in sortedAirlines" 
             :key="idx"
-            class="flex flex-col items-center justify-center min-w-[70px] cursor-pointer hover:bg-gray-50/50 p-2 rounded-xl transition-colors"
+            class="flex flex-col items-center justify-center min-w-[70px] cursor-pointer p-2 rounded-xl transition-all"
+            :class="activeAirlines.includes(airline.name) ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50/50 border border-transparent'"
+            @click="emit('toggle', airline.name)"
           >
-            <div class="w-12 h-12 rounded-full bg-white border border-gray-100 flex items-center justify-center p-1.5 mb-2 shadow-sm">
+            <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center p-1.5 mb-2 shadow-sm transition-all"
+                 :class="activeAirlines.includes(airline.name) ? 'border-2 border-[#0D1DAD] ring-4 ring-blue-500/10' : 'border border-gray-100'">
               <img v-if="airline.logo" :src="airline.logo" :alt="airline.name" class="max-h-full max-w-full object-contain" />
               <div v-else class="h-full w-full bg-gray-50 rounded-full flex items-center justify-center">
                 <span class="text-black font-bold text-[10px] text-center px-1 truncate w-full">{{ (airline.name || 'FL').slice(0, 3).toUpperCase() }}</span>
               </div>
             </div>
-            <span class="text-xs font-bold text-black">{{ formatPrice(airline.price) }}</span>
+            <span class="text-xs font-bold" :class="activeAirlines.includes(airline.name) ? 'text-[#0D1DAD]' : 'text-black'">{{ formatPrice(airline.price) }}</span>
           </div>
         </div>
       </div>
@@ -39,8 +42,14 @@ const props = defineProps({
     type: Array,
     required: true,
     default: () => []
+  },
+  activeAirlines: {
+    type: Array,
+    default: () => []
   }
 })
+
+const emit = defineEmits(['toggle'])
 
 const { formatPrice } = useSettings()
 const scrollContainer = ref<HTMLElement | null>(null)

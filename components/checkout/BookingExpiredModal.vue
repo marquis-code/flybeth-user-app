@@ -8,9 +8,9 @@
       </div>
 
       <!-- Content -->
-      <h3 class="text-xl font-bold text-gray-900 mb-2">Booking expired</h3>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">{{ title }}</h3>
       <p class="text-gray-500 text-sm mb-8 leading-relaxed">
-        This booking has expired. Please start a new search to continue.
+        {{ message }}
       </p>
 
       <!-- Action -->
@@ -30,7 +30,9 @@ import { Clock } from 'lucide-vue-next'
 import { useRouter } from '#app'
 
 const props = defineProps({
-  visible: { type: Boolean, default: false }
+  visible: { type: Boolean, default: false },
+  title: { type: String, default: 'Booking expired' },
+  message: { type: String, default: 'This booking has expired. Please start a new search to continue.' }
 })
 
 const router = useRouter()

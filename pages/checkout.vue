@@ -13,7 +13,7 @@
     @confirm="handleManualConfirm"
   />
 
-  <BookingExpiredModal :visible="isBookingExpired" />
+  <BookingExpiredModal :visible="isBookingExpired" :title="bookingErrorTitle" :message="bookingErrorMsg" />
 
   <!-- Klarna Widget Modal -->
   <div v-if="showKlarnaWidget" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
@@ -298,6 +298,8 @@ const router = useRouter()
 const currentStep = ref(0)
 const showBrandedLoader = ref(false)
 const isBookingExpired = ref(false)
+const bookingErrorTitle = ref('Booking expired')
+const bookingErrorMsg = ref('This booking has expired. Please start a new search to continue.')
 const loaderStatus = ref('Confirming best fare with airline...')
 const paymentProcessing = ref(false)
 const selectedAddOns = ref<{ id: string; name: string; price: number }[]>([])
@@ -570,6 +572,7 @@ const normalizeFlightData = (rawFlight: any) => {
       airlineLogo: rawFlight.owner?.logo_symbol_url || firstSegment?.marketing_carrier?.logo_symbol_url,
       totalEmissionsKg: rawFlight.total_emissions_kg,
       conditions: { refundable: canRefund, changeable: canChange },
+      isRoundTrip: rawFlight.slices ? rawFlight.slices.length > 1 : false,
       rawOffer: rawFlight,
     }
   }
@@ -765,8 +768,9 @@ const handleWalletAuthorize = async (paymentInfo: any) => {
     } catch (err: any) {
       const errMsg = err.response?.data?.message || err.message || "Failed to complete booking";
       if (errMsg.toLowerCase().includes('no longer available') || errMsg.toLowerCase().includes('booking failed')) {
+        bookingErrorTitle.value = "Offer Unavailable";
         bookingErrorMsg.value = "The requested offer is no longer available. Prices and availability can change quickly.";
-        bookingError.value = true;
+        isBookingExpired.value = true;
       } else {
         showToast({ title: "Booking Error", message: errMsg, toastType: "error" })
       }
@@ -844,6 +848,7 @@ const handlePayment = async (paymentInfo: any) => {
     }
 
     if (bookingDetails.value.type === 'flight') {
+      payload.isRoundTrip = priceDetailed.value?.isRoundTrip || false;
       payload.flights = [{
         flightId: bookingDetails.value.id,
         class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
@@ -855,6 +860,7 @@ const handlePayment = async (paymentInfo: any) => {
           destination: priceDetailed.value?.destination || priceDetailed.value?.destinationName || bookingDetails.value.destination,
           airline: priceDetailed.value?.airline || bookingDetails.value.airline,
           departureTime: priceDetailed.value?.departureTime || bookingDetails.value.departureTime,
+          slices: priceDetailed.value?.slices || priceDetailed.value?.segments || []
         }
       }]
     } else if (bookingDetails.value.type === 'stay') {
@@ -952,8 +958,12 @@ const handlePayment = async (paymentInfo: any) => {
     const errorMessage = err.response?.data?.message || err.message || "Failed to process booking";
     const lowerMsg = errorMessage.toLowerCase();
     
-    // Trigger the existing BookingExpiredModal if the offer expired or was already booked
-    if (lowerMsg.includes('expired') || lowerMsg.includes('already been booked')) {
+    // Trigger the existing BookingExpiredModal if the offer expired, was already booked, or is no longer available
+    if (lowerMsg.includes('expired') || lowerMsg.includes('already been booked') || lowerMsg.includes('no longer available') || lowerMsg.includes('booking failed')) {
+      bookingErrorTitle.value = lowerMsg.includes('no longer available') || lowerMsg.includes('booking failed') ? "Offer Unavailable" : "Booking Expired";
+      bookingErrorMsg.value = lowerMsg.includes('no longer available') || lowerMsg.includes('booking failed')
+        ? "The requested offer is no longer available. Prices and availability can change quickly."
+        : "This booking has expired. Please start a new search to continue.";
       isBookingExpired.value = true;
       return;
     }

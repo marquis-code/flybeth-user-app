@@ -2,15 +2,22 @@
   <div class="space-y-6 font-sans">
     
     <!-- Header -->
-    <div class="flex items-start gap-4">
-      <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D1DAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.5l-1.3 1.3c-.2.2-.1.6.2.8L9 12l-4 4-2.2-.6c-.3-.1-.6 0-.8.2L1 16.5c-.2.2-.1.5.2.6L5 19l2 3.8c.1.3.4.4.6.2l.9-1c.2-.2.3-.5.2-.8L8 19l4-4 3.2 6.4c.2.3.6.4.8.2l1.3-1.3c.3-.2.6-.6.5-1.1z"/>
-        </svg>
-      </div>
-      <div>
-        <h2 class="text-[22px] font-bold text-gray-900">Flight details</h2>
-        <p class="text-sm text-gray-500 mt-1">Review your selected flights</p>
+    <div class="flex items-start justify-between">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D1DAD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.5l-1.3 1.3c-.2.2-.1.6.2.8L9 12l-4 4-2.2-.6c-.3-.1-.6 0-.8.2L1 16.5c-.2.2-.1.5.2.6L5 19l2 3.8c.1.3.4.4.6.2l.9-1c.2-.2.3-.5.2-.8L8 19l4-4 3.2 6.4c.2.3.6.4.8.2l1.3-1.3c.3-.2.6-.6.5-1.1z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-3">
+            <h2 class="text-[22px] font-bold text-gray-900">Flight details</h2>
+            <div v-if="tripType" class="bg-[#C9A24B] text-white px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm mt-0.5">
+              {{ tripType }}
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 mt-1">Review your selected flights</p>
+        </div>
       </div>
     </div>
 
@@ -119,9 +126,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   flightOffer: { type: Object, default: null },
   hideContinue: { type: Boolean, default: false }
 })
@@ -129,6 +136,14 @@ defineProps({
 defineEmits(['continue'])
 
 const expanded = ref(true)
+
+const tripType = computed(() => {
+  if (!props.flightOffer) return ''
+  if (props.flightOffer.isRoundTrip) return 'Round Trip'
+  if (props.flightOffer.slices && props.flightOffer.slices.length > 1) return 'Round Trip'
+  if (props.flightOffer.itineraries && props.flightOffer.itineraries.length > 1) return 'Round Trip'
+  return 'One Way'
+})
 
 const capitalize = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : ''
 

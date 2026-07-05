@@ -173,92 +173,7 @@
       @close="showDrawer = false" 
     />
 
-    <!-- Hidden Receipt Template for PDF Generation -->
-    <div v-if="receiptBooking" id="pdf-receipt-template" class="absolute left-[-9999px] top-0 w-[800px] bg-white p-12 font-sans text-gray-900 border border-gray-100">
-      <div class="flex justify-between items-center border-b border-gray-200 pb-8 mb-8">
-        <div>
-          <img src="@/assets/img/logo.png" alt="Flybeth Logo" class="h-10 mb-2" crossorigin="anonymous" />
-          <p class="text-sm text-gray-500 font-medium">Your trusted travel partner</p>
-        </div>
-        <div class="text-right">
-          <h2 class="text-4xl font-black text-brand-blue tracking-tight mb-2">RECEIPT</h2>
-          <p class="text-lg font-bold text-gray-700">#{{ receiptBooking.pnr }}</p>
-          <p class="text-sm text-gray-500 mt-1">{{ formatDate(receiptBooking.createdAt) }}</p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-8 mb-10">
-        <div>
-          <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Billed To</p>
-          <p class="text-base font-bold text-gray-900">{{ receiptBooking.contactDetails?.name || 'Customer' }}</p>
-          <p class="text-sm text-gray-600 mt-1">{{ receiptBooking.contactDetails?.email }}</p>
-          <p class="text-sm text-gray-600">{{ receiptBooking.contactDetails?.phone }}</p>
-        </div>
-        <div class="text-right">
-          <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Payment Status</p>
-          <p class="text-base font-bold"
-            :class="{
-              'text-green-600': receiptBooking.payment?.status === 'success' || receiptBooking.payment?.status === 'completed',
-              'text-amber-600': receiptBooking.payment?.status === 'pending',
-              'text-red-600': receiptBooking.payment?.status === 'failed'
-            }"
-          >
-            {{ (receiptBooking.payment?.status || 'Pending').toUpperCase() }}
-          </p>
-          <p class="text-sm text-gray-600 mt-1" v-if="receiptBooking.payment?.paidAt">
-            Paid: {{ formatDate(receiptBooking.payment.paidAt) }}
-          </p>
-        </div>
-      </div>
-
-      <div class="mb-10">
-        <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4 border-b border-gray-100 pb-2">Itinerary Summary</p>
-        <div class="flex justify-between items-center bg-gray-50 p-4 rounded-xl">
-          <div>
-             <h3 class="text-xl font-black text-gray-900">
-               {{ receiptBooking.flights?.[0]?.flight?.departure?.iataCode || 'Origin' }} 
-               <ArrowRight class="inline w-4 h-4 mx-2 text-gray-400" /> 
-               {{ receiptBooking.flights?.[0]?.flight?.arrival?.iataCode || 'Destination' }}
-             </h3>
-             <p class="text-sm text-gray-600 mt-1 capitalize">{{ receiptBooking.isRoundTrip ? 'Round Trip' : 'One Way' }} • {{ receiptBooking.flights?.[0]?.class || 'Economy' }} Class</p>
-          </div>
-          <div class="text-right">
-             <p class="text-sm font-bold text-gray-700">{{ receiptBooking.totalPassengers }} Passenger(s)</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="mb-10">
-        <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4 border-b border-gray-100 pb-2">Charge Breakdown</p>
-        <div class="space-y-3 text-sm">
-          <div class="flex justify-between">
-            <span class="text-gray-600 font-medium">Base Fare</span>
-            <span class="font-bold text-gray-900">{{ formatPrice(receiptBooking.pricing?.baseFare, receiptBooking.pricing?.currency) }}</span>
-          </div>
-          <div class="flex justify-between" v-if="receiptBooking.pricing?.taxes">
-            <span class="text-gray-600 font-medium">Taxes & Fees</span>
-            <span class="font-bold text-gray-900">{{ formatPrice(receiptBooking.pricing?.taxes, receiptBooking.pricing?.currency) }}</span>
-          </div>
-          <div class="flex justify-between" v-if="receiptBooking.pricing?.insuranceAmount">
-            <span class="text-gray-600 font-medium">Travel Insurance</span>
-            <span class="font-bold text-gray-900">{{ formatPrice(receiptBooking.pricing?.insuranceAmount, receiptBooking.pricing?.currency) }}</span>
-          </div>
-          <div class="flex justify-between" v-if="receiptBooking.pricing?.vipSupportAmount">
-            <span class="text-gray-600 font-medium">VIP Support</span>
-            <span class="font-bold text-gray-900">{{ formatPrice(receiptBooking.pricing?.vipSupportAmount, receiptBooking.pricing?.currency) }}</span>
-          </div>
-          <div class="flex justify-between pt-4 border-t border-gray-200 mt-4">
-            <span class="text-base font-black text-gray-900">Total Amount</span>
-            <span class="text-xl font-black text-brand-blue">{{ formatPrice(receiptBooking.pricing?.totalAmount, receiptBooking.pricing?.currency) }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-center pt-8 border-t border-gray-100 mt-16">
-        <p class="text-xs text-gray-400 font-medium">Thank you for booking with Flybeth!</p>
-        <p class="text-xs text-gray-400">For support, please contact us at support@flybeth.com</p>
-      </div>
-    </div>
+    <!-- Hidden Receipt Template Removed -->
   </div>
 </template>
 
@@ -269,8 +184,6 @@ import { useCustomToast } from '@/composables/core/useCustomToast'
 import { useSettings } from '~/composables/useSettings'
 import { Briefcase, Plane, ArrowRight, ChevronRight, Download, Users, Calendar, Hash, RefreshCcw } from 'lucide-vue-next'
 import BookingDetailsDrawer from '@/components/checkout/BookingDetailsDrawer.vue'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 
 definePageMeta({
   layout: 'profile'
@@ -325,55 +238,40 @@ const viewBooking = (booking: any) => {
 }
 
 const downloadReceipt = async (booking: any) => {
-  if (isDownloading.value) return;
+  if (isDownloading.value || !booking?.pnr) return;
   isDownloading.value = true;
-  receiptBooking.value = booking;
   
   showToast({
-    title: "Generating Receipt",
-    message: `PDF receipt for ${booking.pnr} is being generated...`,
+    title: "Downloading Receipt",
+    message: `Receipt for ${booking.pnr} is downloading...`,
     toastType: "info"
   });
 
-  // Wait for Vue to render the hidden template
-  setTimeout(async () => {
-    try {
-      const element = document.getElementById('pdf-receipt-template');
-      if (!element) throw new Error("Receipt template not found");
-
-      const canvas = await html2canvas(element, { 
-        scale: 2, 
-        useCORS: true,
-        logging: false
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: [canvas.width / 2, canvas.height / 2]
-      });
-
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
-      pdf.save(`Flybeth_Receipt_${booking.pnr}.pdf`);
-      
-      showToast({
-        title: "Success",
-        message: "Receipt downloaded successfully",
-        toastType: "success"
-      });
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-      showToast({
-        title: "Error",
-        message: "Failed to generate receipt",
-        toastType: "error"
-      });
-    } finally {
-      receiptBooking.value = null;
-      isDownloading.value = false;
-    }
-  }, 500);
+  try {
+    const response = await bookingsApi.downloadReceipt(booking.pnr);
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Receipt_${booking.pnr}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast({
+      title: "Success",
+      message: "Receipt downloaded successfully",
+      toastType: "success"
+    });
+  } catch (error: any) {
+    console.error("Receipt download failed:", error);
+    showToast({
+      title: "Error",
+      message: "Failed to download receipt",
+      toastType: "error"
+    });
+  } finally {
+    isDownloading.value = false;
+  }
 }
 
 onMounted(() => {

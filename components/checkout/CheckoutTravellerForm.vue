@@ -242,7 +242,7 @@
        <button 
           @click="handleContinue" 
           :disabled="!canContinue" 
-          class="ck-tf-btn w-full md:w-fit"
+          class="ck-tf-btn w-full"
           :class="{ 'ck-tf-btn--off': !canContinue }"
        >
           <span>Continue to Extras</span>
@@ -551,7 +551,7 @@ const handleContinue = async () => {
 
 .ck-tf-btn {
   background: #0D1DAD; color: #fff; border: none; border-radius: 14px; height: 52px;
-  padding: 0 28px; width: fit-content;
+  padding: 0 28px; width: 100%;
   display: flex; align-items: center; justify-content: center; gap: 12px;
   font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 10px 20px -5px rgba(13, 29, 173, 0.2); letter-spacing: 0.05em;

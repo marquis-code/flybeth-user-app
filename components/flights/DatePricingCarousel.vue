@@ -4,7 +4,7 @@
       <button 
         v-for="(item, idx) in dateOptions" 
         :key="idx"
-        @click="selectedIndex = idx"
+        @click="selectDate(item, idx)"
         class="flex flex-col items-center justify-center min-w-[120px] px-4 py-2 rounded-full border transition-colors whitespace-nowrap"
         :class="selectedIndex === idx 
           ? 'border-[#0D1DAD] bg-blue-50/30' 
@@ -38,9 +38,16 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['select'])
+
 const { formatPrice } = useSettings()
 
 const selectedIndex = ref(3) // 4th item is active (middle)
+
+const selectDate = (item: any, idx: number) => {
+  selectedIndex.value = idx
+  emit('select', { departureDate: item.departureDate, returnDate: item.returnDate })
+}
 
 // Mock 7 days surrounding the selected date
 const dateOptions = computed(() => {
@@ -67,7 +74,9 @@ const dateOptions = computed(() => {
     
     options.push({
       label: `${depStr}${retStr}`,
-      price: price > 0 ? price : props.basePrice // Ensure no negative prices
+      price: price > 0 ? price : props.basePrice, // Ensure no negative prices
+      departureDate: depDate.toISOString().split('T')[0],
+      returnDate: props.returnDate ? retDate.toISOString().split('T')[0] : null
     })
   }
   
