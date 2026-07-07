@@ -338,13 +338,13 @@
                 <!-- Left: Brand & Cabin -->
                 <div class="flex-1">
                   <div class="flex items-center gap-3">
-                    <h4 class="text-xl font-black text-gray-900">{{ getFareVariantDetails(variant).brandName }}</h4>
+                    <h4 class="text-base font-black text-gray-900">{{ getFareVariantDetails(variant).brandName }}</h4>
                   </div>
-                  <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mt-0.5">{{ getFareVariantDetails(variant).cabinLabel }}</span>
+                  <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mt-0.5">{{ getFareVariantDetails(variant).cabinLabel }}</span>
                   <div class="mt-3">
                     <button 
                       @click="toggleVariant(variant.offerId || variant.id)"
-                      class="text-sm font-bold text-[#0D1DAD] hover:text-[#002a66] flex items-center gap-1 transition-colors"
+                      class="text-xs font-bold text-[#0D1DAD] hover:text-[#002a66] flex items-center gap-1 transition-colors"
                     >
                       Fare Details
                       <ChevronDown class="w-3.5 h-3.5 transition-transform duration-300" :class="expandedVariants[variant.offerId || variant.id] ? 'rotate-180' : ''" />
@@ -354,11 +354,11 @@
 
                 <!-- Right: Price & Select -->
                 <div class="flex flex-col items-end w-full md:w-auto mt-4 md:mt-0">
-                  <span class="text-2xl font-black text-gray-900">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
-                  <p class="text-[11px] text-gray-500 font-medium mb-3">{{ searchQuery.type === 'roundtrip' ? 'Round trip' : searchQuery.type === 'multicity' ? 'Multi-city' : 'One way' }} for {{ searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat }} traveler{{ (searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat) !== 1 ? 's' : '' }}</p>
+                  <span class="text-lg font-black text-gray-900">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
+                  <p class="text-[10px] text-gray-500 font-medium mb-2">{{ searchQuery.type === 'roundtrip' ? 'Round trip' : searchQuery.type === 'multicity' ? 'Multi-city' : 'One way' }} for {{ searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat }} traveler{{ (searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat) !== 1 ? 's' : '' }}</p>
                   <button 
                     @click="selectVariant(variant)"
-                    class="bg-[#0D1DAD] hover:bg-[#0A1485] text-white px-8 py-2.5 rounded-xl font-bold text-sm transition-colors w-full md:w-auto shadow-md shadow-blue-900/20"
+                    class="bg-[#0D1DAD] hover:bg-[#0A1485] text-white px-6 py-2 rounded-lg font-bold text-sm transition-colors w-full md:w-auto shadow-sm"
                   >
                     Select
                   </button>
@@ -480,7 +480,8 @@ const searchQuery = ref({
   children: 0,
   infantsOnLap: 0,
   infantsInSeat: 0,
-  cabinClass: 'economy'
+  cabinClass: 'economy',
+  slices: [] as any[]
 })
 
 const cabinClasses = [
@@ -898,6 +899,13 @@ const loadFromQuery = (route: any) => {
   if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate)
   if (route.query.returnDate) searchQuery.value.returnDate = String(route.query.returnDate)
   if (route.query.type) searchQuery.value.type = String(route.query.type)
+  if (route.query.slices) {
+    try {
+      searchQuery.value.slices = JSON.parse(String(route.query.slices))
+    } catch (e) {
+      console.error('Failed to parse slices', e)
+    }
+  }
   
   // Support both old 'passengers' and new granular props
   if (route.query.adults) searchQuery.value.adults = parseInt(String(route.query.adults)) || 1
@@ -1849,7 +1857,7 @@ onMounted(async () => {
 
 /* --- Premium Flight Variant Side Drawer Custom Styles --- */
 .fd-drawer-content {
-  padding: 28px 36px 36px 36px;
+  padding: 16px 20px 24px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1858,9 +1866,9 @@ onMounted(async () => {
 .fd-flight-summary-card {
   background: #f9fafb;
   border: 1px solid #f3f4f6;
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 28px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
 .fd-variant-grid {
@@ -1872,8 +1880,8 @@ onMounted(async () => {
 
 .fd-variant-card {
   border: 1px solid #e5e7eb;
-  border-radius: 20px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 16px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;

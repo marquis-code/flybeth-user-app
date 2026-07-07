@@ -16,14 +16,14 @@
       <!-- Top Accent Banner -->
       <div class="h-2 w-full bg-[#0D1DAD]"></div>
 
-      <div class="p-8 text-center">
+        <div v-if="!isSuccess" class="p-8 text-center">
         <!-- Logo / Icon -->
         <div class="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0D1DAD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 7V4h16v3" />
             <path d="M9 20h6" />
             <path d="M12 14v6" />
-            <path d="M4 11l8-4 8 4-8 4-8-4z" />
+            <path d="M4 11l8-4 8 4-8-4z" />
           </svg>
         </div>
 
@@ -57,7 +57,6 @@
             <span>{{ isLoading ? 'Subscribing...' : 'Subscribe and Get Deals' }}</span>
           </button>
           
-          <div v-if="successMsg" class="text-green-600 text-sm font-medium mt-2">{{ successMsg }}</div>
           <div v-if="errorMsg" class="text-red-500 text-sm font-medium mt-2">{{ errorMsg }}</div>
         </form>
 
@@ -77,6 +76,27 @@
           </div>
         </div>
       </div>
+
+      <!-- Success State -->
+      <div v-else class="p-10 text-center flex flex-col items-center justify-center space-y-4 animate-in fade-in duration-300">
+        <div class="mx-auto w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-2 animate-in zoom-in duration-500">
+          <svg class="text-green-500 w-12 h-12" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        
+        <h2 class="text-3xl font-bold text-gray-900 mb-2 font-[Onest]">Woohoo! 🎉</h2>
+        <p class="text-gray-500 text-sm leading-relaxed mb-6">
+          Congratulations! You're officially on the list. We'll be sending you the best flight deals and updates regularly so you never miss out.
+        </p>
+
+        <button 
+          @click="closeModal" 
+          class="w-full py-3 px-4 bg-[#0D1DAD] hover:bg-[#0a15a0] text-white font-semibold rounded-xl shadow-md transition-all mt-4"
+        >
+          Awesome, Thanks!
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -87,7 +107,7 @@ import { ref, onMounted } from 'vue'
 const isVisible = ref(false)
 const email = ref('')
 const isLoading = ref(false)
-const successMsg = ref('')
+const isSuccess = ref(false)
 const errorMsg = ref('')
 
 const config = useRuntimeConfig()
@@ -115,7 +135,6 @@ const handleSubscribe = async () => {
   
   isLoading.value = true
   errorMsg.value = ''
-  successMsg.value = ''
   
   try {
     const res = await $fetch(`${config.public.apiBase}/marketing/subscribe`, {
@@ -123,13 +142,9 @@ const handleSubscribe = async () => {
       body: { email: email.value, source: 'popup' }
     })
     
-    successMsg.value = 'Successfully subscribed!'
+    isSuccess.value = true
     localStorage.setItem('flybeth_newsletter_subscribed', 'true')
     
-    // Auto close after 2s
-    setTimeout(() => {
-      closeModal()
-    }, 2000)
   } catch (e: any) {
     errorMsg.value = e.data?.message || 'Something went wrong. Please try again.'
   } finally {

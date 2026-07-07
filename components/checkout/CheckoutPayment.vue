@@ -1,32 +1,46 @@
 <template>
   <div class="checkout-payment space-y-4">
-    <h3 class="text-xl font-bold text-gray-900 mb-6">Payment selection</h3>
+    <h3 class="text-lg font-bold text-gray-900 mb-6">Payment selection</h3>
 
-    <!-- Card Payment -->
+    <!-- ═══ International (USD) Section ═══ -->
+    <div class="flex items-center gap-2 mb-1">
+      <div class="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-lg">
+        <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span class="text-[11px] font-bold text-blue-700 uppercase tracking-wider">International (USD)</span>
+      </div>
+    </div>
+
+    <!-- Card Payment (Always Visible) -->
     <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'card'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('card')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'card'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
-          <span class="text-sm font-bold text-gray-900">Debit / Credit card</span>
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-gray-900">Debit / Credit card</span>
+            <span class="text-[11px] text-amber-600 font-medium">USD transactions only · Dollar card required</span>
+          </div>
         </div>
         <div class="flex gap-2">
           <img src="@/assets/icons/visa.svg" alt="Visa" class="h-5" />
           <img src="@/assets/icons/master-card.svg" alt="Mastercard" class="h-5" />
         </div>
       </div>
-      <div v-show="activeMethod === 'card'" class="py-4 px-2 sm:px-4 border-t border-gray-200 bg-gray-50/50">
-        <div v-if="provider === 'duffel'">
-           <div v-if="duffelPaymentIntentToken" id="duffel-payments-container" class="bg-white py-4 rounded-xl w-full flex justify-center">
-              <duffel-payments class="w-full max-w-[100%] min-w-0" style="display: block;"></duffel-payments>
-           </div>
-           <div v-else class="flex flex-col items-center justify-center p-6 gap-3">
-             <span class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></span>
-             <span class="text-sm text-gray-500">Initializing secure payment...</span>
-           </div>
+      <div v-show="activeMethod === 'card'" class="py-4 px-0 sm:px-4 border-t border-gray-200 bg-gray-50/50 w-full overflow-hidden box-border">
+        <div v-if="duffelPaymentIntentToken" id="duffel-payments-container" class="bg-white py-4 rounded-xl w-full flex justify-center overflow-hidden box-border">
+           <duffel-payments class="w-full max-w-full min-w-0" style="display: block; width: 100%; box-sizing: border-box;"></duffel-payments>
         </div>
-        <div v-else class="text-sm text-gray-600 p-2">
-          You will be redirected to our secure payment partner ({{ provider === 'paystack' ? 'Paystack' : 'PayPal' }}) to complete your purchase safely.
+        <div v-else class="flex flex-col items-center justify-center p-6 gap-3">
+          <span class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></span>
+          <span class="text-sm text-gray-500">Initializing secure payment...</span>
         </div>
+      </div>
+    </div>
+
+    <!-- ═══ Local Currency Section ═══ -->
+    <div class="flex items-center gap-2 mt-6 mb-1">
+      <div class="flex items-center gap-1.5 px-2.5 py-1 bg-green-50 rounded-lg">
+        <svg class="w-3.5 h-3.5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="text-[11px] font-bold text-green-700 uppercase tracking-wider">Local Currency (NGN)</span>
       </div>
     </div>
 
@@ -37,7 +51,7 @@
           <input type="radio" :checked="activeMethod === 'paystack'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
           <span class="text-sm font-bold text-gray-900">Paystack</span>
         </div>
-        <img src="@/assets/img/paystack.png" alt="PayPal" class="h-4" />
+        <img src="@/assets/img/paystack.png" alt="Paystack" class="h-4" />
       </div>
       <div v-show="activeMethod === 'paystack'" class="p-4 border-t border-gray-200 bg-gray-50/50">
         <div class="text-sm text-gray-600 p-2">
@@ -225,7 +239,7 @@ onMounted(() => {
     setTimeout(() => { showAdModal.value = true }, 1000)
   }
 
-  if (activeMethod.value === 'card' && provider.value === 'duffel' && !duffelPaymentInitialized) {
+  if (activeMethod.value === 'card' && !duffelPaymentInitialized) {
     initializeDuffelPayment()
   }
 })
@@ -238,7 +252,7 @@ const handleAdClose = () => {
 const toggleMethod = (method: string) => {
   activeMethod.value = method
   
-  if (method === 'card' && provider.value === 'duffel' && !duffelPaymentInitialized) {
+  if (method === 'card' && !duffelPaymentInitialized) {
     initializeDuffelPayment()
   }
 }
@@ -301,10 +315,9 @@ const formatAmount = (val: number) => {
 
 const handlePay = () => {
   const { $toast } = useNuxtApp()
-  if (activeMethod.value === 'card' && provider.value === 'duffel') {
-    // Duffel payments are handled inside the Web Component directly.
-    // The user should click the "Pay" button rendered by <duffel-payments>.
-    $toast.info('Please complete your payment using the form above.', { position: 'top-center' })
+  if (activeMethod.value === 'card') {
+    // Card payments are always handled via the Duffel Web Component.
+    $toast.info('Please complete your payment using the card form above.', { position: 'top-center' })
     return
   }
   
@@ -335,7 +348,7 @@ const handleHold = () => {
 
 const requiresExternalSubmit = computed(() => {
   if (activeMethod.value === 'wallet') return false;
-  if (activeMethod.value === 'card' && provider.value === 'duffel') return false;
+  if (activeMethod.value === 'card') return false;
   return true;
 })
 

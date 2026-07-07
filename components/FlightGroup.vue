@@ -7,38 +7,41 @@
       Best
     </div>
 
-    <div class="flex items-start justify-between gap-1 sm:gap-2">
+    <div class="flex items-start justify-between">
       <!-- Slices wrapper -->
-      <div class="flex-grow space-y-4 pr-1 sm:pr-4 min-w-0">
+      <div class="flex-grow space-y-4 w-full min-w-0">
         <FlightCard 
           v-for="(slice, index) in slices" 
           :key="index"
           :flight="slice" 
         />
       </div>
-      
-      <!-- Price -->
-      <div class="flex flex-col items-end text-right flex-shrink-0 pl-1">
-        <span class="text-[17px] sm:text-[22px] font-extrabold text-black leading-none">{{ formattedPrice }}</span>
-        <span class="text-[10px] font-medium text-gray-500 mt-1">Round-trip</span>
-      </div>
     </div>
     
     <!-- Footer -->
-    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-      <button 
-        @click.stop="$emit('select', flight)" 
-        class="text-xs font-bold text-[#0D1DAD] hover:underline"
-      >
-        Flight Details
-      </button>
+    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+      <div class="flex flex-col">
+        <span class="text-[20px] sm:text-[24px] font-extrabold text-black leading-none mb-1.5">{{ formattedPrice }}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-medium text-gray-500">{{ slices.length > 2 ? 'Multi-city' : (slices.length > 1 ? 'Round-trip' : 'One-way') }}</span>
+          <span class="text-gray-300 text-xs">•</span>
+          <button 
+            @click.stop="$emit('select', flight)" 
+            class="text-xs font-bold text-[#0D1DAD] hover:underline whitespace-nowrap"
+          >
+            Flight Details
+          </button>
+        </div>
+      </div>
 
-      <button 
-        @click.stop="$emit('select', flight)"
-        class="bg-[#0D1DAD] hover:bg-[#002a66] text-white px-5 py-2 rounded-lg font-bold text-sm transition-all shadow-sm flex items-center gap-1.5"
-      >
-        Select <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
+      <div class="flex items-center flex-shrink-0">
+        <button 
+          @click.stop="$emit('select', flight)"
+          class="bg-[#0D1DAD] hover:bg-[#002a66] text-white px-5 sm:px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap"
+        >
+          Select <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 </template>

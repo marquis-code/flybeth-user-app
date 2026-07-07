@@ -11,7 +11,7 @@
           <div 
             v-for="(airline, idx) in sortedAirlines" 
             :key="idx"
-            class="flex flex-col items-center justify-center min-w-[70px] cursor-pointer p-2 rounded-xl transition-all"
+            class="flex flex-col items-center justify-center min-w-max cursor-pointer p-2 rounded-xl transition-all"
             :class="activeAirlines.includes(airline.name) ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50/50 border border-transparent'"
             @click="emit('toggle', airline.name)"
           >
@@ -22,7 +22,7 @@
                 <span class="text-black font-bold text-[10px] text-center px-1 truncate w-full">{{ (airline.name || 'FL').slice(0, 3).toUpperCase() }}</span>
               </div>
             </div>
-            <span class="text-xs font-bold" :class="activeAirlines.includes(airline.name) ? 'text-[#0D1DAD]' : 'text-black'">{{ formatPrice(airline.price) }}</span>
+            <span class="text-xs font-bold whitespace-nowrap" :class="activeAirlines.includes(airline.name) ? 'text-[#0D1DAD]' : 'text-black'">{{ formatPrice(airline.price) }}</span>
           </div>
         </div>
       </div>

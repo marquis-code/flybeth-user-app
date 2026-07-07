@@ -53,66 +53,82 @@
           <div
             v-for="(leg, idx) in flightMode === 'multicity' ? multiFlightLegs : [flightSearchState]"
             :key="idx"
-            class="sw-bar"
+            class="sw-multi-leg-wrapper"
           >
-            <div class="sw-loc-group">
-              <div class="sw-field sw-field--grow" @click="isFocused = true">
-                <LocationPicker v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
-              </div>
-              <!-- Swap button: sits between From and To -->
-              <div class="sw-swap-wrap">
-                <div class="sw-bar-div" />
-                <button
-                  v-if="flightMode !== 'multicity'"
-                  class="sw-swap-btn"
-                  @click.stop="swapFlightLocations(leg)"
-                  title="Swap locations"
-                  type="button"
-                >
-                  <ArrowUpDown class="sw-ico-sm" />
-                </button>
-                <div v-else class="sw-bar-div" />
-              </div>
-              <div class="sw-field sw-field--grow" @click="isFocused = true">
-                <LocationPicker v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
-              </div>
-            </div>
-            <div class="sw-bar-div" />
-            <div class="sw-field sw-field--date" @click="isFocused = true">
-              <FlightDateRangePicker
-                :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
-                v-model:departure="leg.departureDate"
-                v-model:return="leg.returnDate"
-                v-model:flexible="leg.flexibleDates"
-                @focus="isFocused = true"
-                @close="isFocused = false"
-              />
-            </div>
-            <div v-if="idx === 0" class="sw-bar-div" />
-            <div v-if="idx === 0" class="sw-field sw-field--pax-class" @click="isFocused = true">
-              <Occupancypicker 
-                label="Passengers & Class" 
-                variant="flight" 
-                v-model:adults="flightTravelers.adults" 
-                v-model:children="flightTravelers.children" 
-                v-model:infantsOnLap="flightTravelers.infantsOnLap"
-                v-model:infantsInSeat="flightTravelers.infantsInSeat"
-                v-model:cabinClass="flightTravelers.cabinClass"
-                @focus="isFocused = true" 
-                @close="isFocused = false" 
-              />
+            <!-- Flight Header for Multi-city -->
+            <div v-if="flightMode === 'multicity'" class="flex items-center justify-between mb-2 px-4 pt-4 pb-1">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Flight {{ idx + 1 }}</span>
+              <button 
+                v-if="multiFlightLegs.length > 1"
+                @click="multiFlightLegs.splice(idx, 1)" 
+                class="text-gray-400 hover:text-red-500 flex items-center gap-1.5 text-[11px] font-semibold transition-colors"
+                type="button"
+              >
+                <Trash2 class="w-3.5 h-3.5" /> Remove
+              </button>
             </div>
 
+            <div class="sw-bar">
+              <div class="sw-loc-group">
+                <div class="sw-field sw-field--grow" @click="isFocused = true">
+                  <LocationPicker v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
+                </div>
+                <!-- Swap button: sits between From and To -->
+                <div class="sw-swap-wrap">
+                  <div class="sw-bar-div" />
+                  <button
+                    v-if="flightMode !== 'multicity'"
+                    class="sw-swap-btn"
+                    @click.stop="swapFlightLocations(leg)"
+                    title="Swap locations"
+                    type="button"
+                  >
+                    <ArrowUpDown class="sw-ico-sm" />
+                  </button>
+                  <div v-else class="sw-bar-div" />
+                </div>
+                <div class="sw-field sw-field--grow" @click="isFocused = true">
+                  <LocationPicker v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
+                </div>
+              </div>
+              <div class="sw-bar-div" />
+              <div class="sw-field sw-field--date" @click="isFocused = true">
+                <FlightDateRangePicker
+                  :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
+                  v-model:departure="leg.departureDate"
+                  v-model:return="leg.returnDate"
+                  v-model:flexible="leg.flexibleDates"
+                  @focus="isFocused = true"
+                  @close="isFocused = false"
+                />
+              </div>
+              <div v-if="idx === 0" class="sw-bar-div" />
+              <div v-if="idx === 0" class="sw-field sw-field--pax-class" @click="isFocused = true">
+                <Occupancypicker 
+                  label="Passengers & Class" 
+                  variant="flight" 
+                  v-model:adults="flightTravelers.adults" 
+                  v-model:children="flightTravelers.children" 
+                  v-model:infantsOnLap="flightTravelers.infantsOnLap"
+                  v-model:infantsInSeat="flightTravelers.infantsInSeat"
+                  v-model:cabinClass="flightTravelers.cabinClass"
+                  @focus="isFocused = true" 
+                  @close="isFocused = false" 
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <button
-          v-if="flightMode === 'multicity' && multiFlightLegs.length < 5"
-          @click="multiFlightLegs.push({ origin: '', destination: '', departureDate: '', returnDate: '' })"
-          class="sw-add-btn"
-        >
-          <Plus class="sw-ico-xs" /> Add flight
-        </button>
+        <div v-if="flightMode === 'multicity' && multiFlightLegs.length < 5" class="pt-4 px-4 pb-2">
+          <button
+            @click="multiFlightLegs.push({ origin: '', destination: '', departureDate: '', returnDate: '' })"
+            class="bg-blue-50 hover:bg-blue-100 text-[#0D1DAD] border border-blue-200 px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all"
+            type="button"
+          >
+            <Plus class="w-4 h-4" /> Add another flight
+          </button>
+        </div>
 
         <!-- Recent Searches -->
         <!-- <div v-if="recentSearches.length > 0" class="mt-4 flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-top-2">
@@ -453,7 +469,7 @@ import { ref, reactive, watch, computed, onMounted, onUnmounted, nextTick } from
 import {
   Plane, Bed, Car, Package, Anchor, Ticket, Truck,
   Search, CalendarDays, Clock, Timer, Check, Plus,
-  ChevronDown, MapPin, History, X, ArrowUpDown, Loader2
+  ChevronDown, MapPin, History, X, ArrowUpDown, Loader2, Trash2
 } from 'lucide-vue-next'
 import { useTracking } from '@/composables/core/useTracking'
 import { flightsApi } from '@/api_factory/modules/flights'
@@ -781,10 +797,17 @@ const handleSearch = async () => {
 
     try {
       // Secure Search Session
-      const searchCriteria = {
+      const searchCriteria: any = {
         ...flightSearchState,
         ...flightTravelers,
         type: flightMode.value
+      }
+      
+      if (flightMode.value === 'multicity') {
+        // Only keep valid legs (must have origin, destination, and departureDate)
+        const validLegs = multiFlightLegs.value.filter(leg => leg.origin && leg.destination && leg.departureDate)
+        searchCriteria.slices = JSON.stringify(validLegs)
+        query.slices = JSON.stringify(validLegs)
       }
       
       const { data } = await flightsApi.createSearchSession(searchCriteria)
@@ -1291,7 +1314,11 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 /* ═══════════════════════════════════════════════════
    ADD / MULTI-LEG
 ═══════════════════════════════════════════════════ */
-.sw-rows { display: flex; flex-direction: column; gap: 10px; }
+.sw-rows { display: flex; flex-direction: column; gap: 16px; }
+.sw-multi-leg-wrapper {
+  display: flex;
+  flex-direction: column;
+}
 .sw-multi-leg { display: flex; flex-direction: column; gap: 4px; }
 .sw-leg-lbl { font-size: 11px; font-weight: 700; color: #9ca3af;  letter-spacing: 0.05em; }
 .sw-add-btn {

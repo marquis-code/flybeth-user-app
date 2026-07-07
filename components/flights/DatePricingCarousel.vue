@@ -5,7 +5,7 @@
         v-for="(item, idx) in dateOptions" 
         :key="idx"
         @click="selectDate(item, idx)"
-        class="flex flex-col items-center justify-center min-w-[120px] px-4 py-2 rounded-full border transition-colors whitespace-nowrap"
+        class="flex flex-col items-center justify-center min-w-max px-5 py-2.5 rounded-full border transition-colors whitespace-nowrap flex-shrink-0"
         :class="selectedIndex === idx 
           ? 'border-[#0D1DAD] bg-blue-50/30' 
           : 'border-gray-200 hover:border-gray-300 bg-white'"

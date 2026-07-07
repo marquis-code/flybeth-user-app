@@ -51,7 +51,8 @@
             <div class="flex items-center gap-2 truncate">
               <span class="text-[14px] lg:text-[15px] font-bold text-gray-900 truncate">
                 <template v-if="bookingDetails.type === 'flight' && priceDetailed">
-                  {{ priceDetailed.originName || priceDetailed.origin }} <span class="text-gray-400 font-normal">→</span> {{ priceDetailed.destinationName || priceDetailed.destination }}
+                  <span v-if="priceDetailed.tripType === 'Multi-city'">Multi-city Itinerary</span>
+                  <span v-else>{{ priceDetailed.originName || priceDetailed.origin }} <span class="text-gray-400 font-normal">→</span> {{ priceDetailed.destinationName || priceDetailed.destination }}</span>
                 </template>
                 <template v-else>
                   {{ bookingDetails.name }}
@@ -97,8 +98,8 @@
         <!-- Step 0: Details (Flight Details + Contact Details + Passenger Details) -->
         <div v-if="currentStep === 0" class="space-y-6 animate-in">
           
-          <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
-            <div class="p-4 md:p-6">
+          <div class="bg-white rounded-3xl sm:rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-3 sm:p-4 md:p-6">
               <CheckoutFlightDetails
                 v-if="bookingDetails.type === 'flight'"
                 :flightOffer="priceDetailed"
@@ -123,7 +124,7 @@
         <!-- Step 1: Customise (Seats & Baggage) -->
         <div v-if="currentStep === 1" class="animate-in space-y-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[28px] font-bold text-[#111827]">Customise your booking</h2>
+            <h2 class="text-[20px] font-bold text-[#111827]">Customise your booking</h2>
           </div>
           <CheckoutTripCustomization
             :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
@@ -141,7 +142,7 @@
         <!-- Step 2: Protect (Cancellation & Baggage Protection) -->
         <div v-if="currentStep === 2" class="animate-in space-y-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[28px] font-bold text-[#111827]">Protect your booking</h2>
+            <h2 class="text-[20px] font-bold text-[#111827]">Protect your booking</h2>
           </div>
           <CheckoutProtection 
             :flightOffer="priceDetailed"
@@ -168,7 +169,7 @@
 
           <div class="flex flex-col gap-8 mt-6">
             <!-- Payment Section -->
-            <div class="w-full bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+            <div class="w-full bg-white rounded-3xl sm:rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-4 sm:p-6 md:p-8">
               <CheckoutPayment 
                 ref="paymentRef"
                 :total-amount="displayPrices.total" 
@@ -183,10 +184,10 @@
             </div>
 
             <!-- Price Breakdown (Full Width Redesign) -->
-            <div class="w-full bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+            <div class="w-full bg-white rounded-3xl sm:rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-4 sm:p-6 md:p-8">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <h3 class="text-xl font-bold text-gray-900 mb-6">Price breakdown</h3>
+                  <h3 class="text-lg font-bold text-gray-900 mb-6">Price breakdown</h3>
                   <div class="space-y-4 text-sm text-gray-600">
                     <div class="flex justify-between items-center pb-3 border-b border-gray-100">
                       <span class="font-medium text-gray-500">Flight Fare</span>
@@ -219,11 +220,11 @@
                         <span class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Total Amount</span>
                         <p class="text-xs text-gray-400">Includes taxes and charges</p>
                       </div>
-                      <span class="text-4xl font-black text-gray-900 tracking-tight">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                      <span class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
                     </div>
                     
-                    <div class="mt-8" v-show="!paymentRef || paymentRef.requiresExternalSubmit">
-                      <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-16 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-3 shadow-lg shadow-blue-900/20">
+                    <div class="mt-6" v-show="!paymentRef || paymentRef.requiresExternalSubmit">
+                      <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-12 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-lg font-bold text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
                         <template v-if="!paymentProcessing">
                           <Lock class="w-5 h-5 opacity-80" />
                           Complete Booking
@@ -296,7 +297,7 @@ const router = useRouter()
 
 // State
 const currentStep = ref(0)
-const showBrandedLoader = ref(false)
+const showBrandedLoader = ref(true)
 const isBookingExpired = ref(false)
 const bookingErrorTitle = ref('Booking expired')
 const bookingErrorMsg = ref('This booking has expired. Please start a new search to continue.')
@@ -524,31 +525,50 @@ const normalizeFlightData = (rawFlight: any) => {
   }
 
   if (rawFlight.slices && rawFlight.slices.length > 0) {
-    const slice = rawFlight.slices[0]
-    const segments = slice.segments || []
-    const firstSegment = segments[0]
-    const lastSegment = segments[segments.length - 1]
     const basePrice = Number(rawFlight.base_amount || 0)
     const totalPrice = Number(rawFlight.total_amount || 0)
     const taxPrice = Number(rawFlight.tax_amount || 0)
+    
+    const itineraries = rawFlight.slices.map((slice: any) => {
+      const segments = slice.segments || []
+      const normalizedSegments = segments.map((s: any) => ({
+        flightNumber: s.marketing_carrier_flight_number || s.operating_carrier_flight_number || 'N/A',
+        airline: s.marketing_carrier?.name || s.operating_carrier?.name || 'Airline',
+        airlineLogo: s.marketing_carrier?.logo_symbol_url || s.operating_carrier?.logo_symbol_url || `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.marketing_carrier?.iata_code || s.operating_carrier?.iata_code}.svg`,
+        origin: s.origin?.iata_code || s.origin?.iata_city_code || 'N/A',
+        originName: s.origin?.name || s.origin?.city_name || 'N/A',
+        destination: s.destination?.iata_code || s.destination?.iata_city_code || 'N/A',
+        destinationName: s.destination?.name || s.destination?.city_name || 'N/A',
+        departureTime: s.departing_at,
+        arrivalTime: s.arriving_at,
+        duration: parseDuration(s.duration),
+        originTerminal: s.origin_terminal,
+        destinationTerminal: s.destination_terminal,
+        aircraft: s.aircraft?.name || s.aircraft?.code || 'Aircraft',
+      }))
+      const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + (s.duration || 0), 0)
+      return {
+        origin: normalizedSegments[0]?.origin || 'N/A',
+        destination: normalizedSegments[normalizedSegments.length - 1]?.destination || 'N/A',
+        departureTime: normalizedSegments[0]?.departureTime,
+        arrivalTime: normalizedSegments[normalizedSegments.length - 1]?.arrivalTime,
+        duration: totalDuration,
+        stops: segments.length - 1,
+        segments: normalizedSegments,
+        cabinClass: (slice.fare_brand_name || segments[0]?.passengers?.[0]?.cabin_class || 'Economy').toLowerCase(),
+      }
+    })
 
-    const normalizedSegments = segments.map((s: any) => ({
-      flightNumber: s.marketing_carrier_flight_number || s.operating_carrier_flight_number || 'N/A',
-      airline: s.marketing_carrier?.name || s.operating_carrier?.name || 'Airline',
-      airlineLogo: s.marketing_carrier?.logo_symbol_url || s.operating_carrier?.logo_symbol_url || `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.marketing_carrier?.iata_code || s.operating_carrier?.iata_code}.svg`,
-      origin: s.origin?.iata_code || s.origin?.iata_city_code || 'N/A',
-      originName: s.origin?.name || s.origin?.city_name || 'N/A',
-      destination: s.destination?.iata_code || s.destination?.iata_city_code || 'N/A',
-      destinationName: s.destination?.name || s.destination?.city_name || 'N/A',
-      departureTime: s.departing_at,
-      arrivalTime: s.arriving_at,
-      duration: parseDuration(s.duration),
-      originTerminal: s.origin_terminal,
-      destinationTerminal: s.destination_terminal,
-      aircraft: s.aircraft?.name || s.aircraft?.code || 'Aircraft',
-    }))
+    const firstSegment = rawFlight.slices[0]?.segments?.[0]
+    const lastSegment = rawFlight.slices[rawFlight.slices.length - 1]?.segments?.slice(-1)[0]
+    
+    let tripType = 'One Way'
+    if (rawFlight.slices.length > 2) {
+      tripType = 'Multi-city'
+    } else if (rawFlight.slices.length === 2) {
+      tripType = 'Round Trip'
+    }
 
-    const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + (s.duration || 0), 0)
     const canChange = rawFlight.conditions?.change_before_departure?.allowed || false
     const canRefund = rawFlight.conditions?.refund_before_departure?.allowed || false
 
@@ -560,47 +580,66 @@ const normalizeFlightData = (rawFlight: any) => {
       destinationName: lastSegment?.destination?.city_name || 'N/A',
       departureTime: firstSegment?.departing_at,
       arrivalTime: lastSegment?.arriving_at,
-      duration: totalDuration,
+      duration: itineraries.reduce((sum: number, it: any) => sum + it.duration, 0),
       price: basePrice,
       tax: taxPrice,
       priceWithCommission: totalPrice,
       currency: rawFlight.total_currency || 'USD',
-      stops: segments.length - 1,
-      segments: normalizedSegments,
-      cabinClass: (slice.fare_brand_name || segments[0]?.passengers?.[0]?.cabin_class || 'Economy').toLowerCase(),
+      itineraries,
+      segments: itineraries[0].segments, // Keep for backward compatibility with simple views
+      cabinClass: itineraries[0].cabinClass,
       airline: rawFlight.owner?.name || firstSegment?.marketing_carrier?.name || 'Airline',
       airlineLogo: rawFlight.owner?.logo_symbol_url || firstSegment?.marketing_carrier?.logo_symbol_url,
       totalEmissionsKg: rawFlight.total_emissions_kg,
       conditions: { refundable: canRefund, changeable: canChange },
       isRoundTrip: rawFlight.slices ? rawFlight.slices.length > 1 : false,
+      tripType,
       rawOffer: rawFlight,
     }
   }
 
   if (rawFlight.itineraries && rawFlight.itineraries.length > 0) {
-    const itinerary = rawFlight.itineraries[0]
-    const segments = itinerary.segments || []
-    const firstSegment = segments[0]
-    const lastSegment = segments[segments.length - 1]
     const basePrice = Number(rawFlight.price?.base || rawFlight.price?.total || 0)
     const totalPrice = Number(rawFlight.price?.total || rawFlight.price?.grandTotal || 0)
     const cabin = (rawFlight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY').toLowerCase()
 
-    const normalizedSegments = segments.map((s: any) => ({
-      flightNumber: `${s.carrierCode}${s.number}`,
-      airline: s.carrierCode,
-      airlineLogo: `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.carrierCode}.svg`,
-      origin: s.departure?.iataCode,
-      destination: s.arrival?.iataCode,
-      departureTime: s.departure?.at,
-      arrivalTime: s.arrival?.at,
-      duration: parseDuration(s.duration),
-      originTerminal: s.departure?.terminal,
-      destinationTerminal: s.arrival?.terminal,
-      aircraft: s.aircraft?.code,
-    }))
+    const itineraries = rawFlight.itineraries.map((itinerary: any) => {
+      const segments = itinerary.segments || []
+      const normalizedSegments = segments.map((s: any) => ({
+        flightNumber: `${s.carrierCode}${s.number}`,
+        airline: s.carrierCode,
+        airlineLogo: `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.carrierCode}.svg`,
+        origin: s.departure?.iataCode,
+        destination: s.arrival?.iataCode,
+        departureTime: s.departure?.at,
+        arrivalTime: s.arrival?.at,
+        duration: parseDuration(s.duration),
+        originTerminal: s.departure?.terminal,
+        destinationTerminal: s.arrival?.terminal,
+        aircraft: s.aircraft?.code,
+      }))
+      const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + s.duration, 0)
+      return {
+        origin: normalizedSegments[0]?.origin || 'N/A',
+        destination: normalizedSegments[normalizedSegments.length - 1]?.destination || 'N/A',
+        departureTime: normalizedSegments[0]?.departureTime,
+        arrivalTime: normalizedSegments[normalizedSegments.length - 1]?.arrivalTime,
+        duration: totalDuration,
+        stops: segments.length - 1,
+        segments: normalizedSegments,
+        cabinClass: cabin,
+      }
+    })
 
-    const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + s.duration, 0)
+    const firstSegment = rawFlight.itineraries[0]?.segments?.[0]
+    const lastSegment = rawFlight.itineraries[rawFlight.itineraries.length - 1]?.segments?.slice(-1)[0]
+    
+    let tripType = 'One Way'
+    if (rawFlight.itineraries.length > 2) {
+      tripType = 'Multi-city'
+    } else if (rawFlight.itineraries.length === 2) {
+      tripType = 'Round Trip'
+    }
 
     return {
       ...rawFlight,
@@ -608,15 +647,17 @@ const normalizeFlightData = (rawFlight: any) => {
       destination: lastSegment?.arrival?.iataCode || 'N/A',
       departureTime: firstSegment?.departure?.at,
       arrivalTime: lastSegment?.arrival?.at,
-      duration: totalDuration,
+      duration: itineraries.reduce((sum: number, it: any) => sum + it.duration, 0),
       price: basePrice,
       priceWithCommission: totalPrice,
       currency: rawFlight.price?.currency || 'USD',
-      stops: segments.length - 1,
-      segments: normalizedSegments,
+      itineraries,
+      segments: itineraries[0].segments, // Keep for backward compatibility
       cabinClass: cabin,
       airline: rawFlight.validatingAirlineCodes?.[0] || firstSegment?.carrierCode || 'Airline',
       airlineLogo: `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${rawFlight.validatingAirlineCodes?.[0] || firstSegment?.carrierCode}.svg`,
+      tripType,
+      isRoundTrip: rawFlight.itineraries.length > 1,
       rawOffer: rawFlight,
     }
   }
@@ -1062,8 +1103,8 @@ watch([currentStep, travellerData, selectedSeats, selectedAddOns], () => { saveC
 
 @media (max-width: 640px) {
   .ck-wrap {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
 
