@@ -6,18 +6,18 @@
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
         
         <!-- Modal Card -->
-        <div class="relative bg-white w-full max-w-[560px] rounded-[32px] shadow-2xl flex flex-col z-10 scale-transition p-10 pb-8">
+        <div class="relative bg-white w-full max-w-[560px] rounded-3xl sm:rounded-[32px] shadow-2xl flex flex-col z-10 scale-transition p-6 sm:p-10 pb-6 sm:pb-8">
           
           <!-- Top Content: Text -->
-          <div class="text-center mb-8 mt-2">
-            <h2 class="text-[26px] font-semibold text-[#1a1a1a] mb-2 font-sans ">
+          <div class="text-center mb-6 sm:mb-8 mt-1 sm:mt-2">
+            <h2 class="text-xl sm:text-[26px] font-semibold text-[#1a1a1a] mb-1.5 sm:mb-2 font-sans ">
               We're checking availability
             </h2>
-            <p class="text-[15px] text-gray-500 font-medium">This might take us a minute</p>
+            <p class="text-sm sm:text-[15px] text-gray-500 font-medium">This might take us a minute</p>
           </div>
 
           <!-- Bottom Half: Promotional Carousel Card -->
-          <div class="relative w-full h-[260px] rounded-[24px] bg-[#9B8DFE] overflow-hidden mb-6 shadow-inner">
+          <div class="relative w-full h-[200px] sm:h-[260px] rounded-2xl sm:rounded-[24px] bg-[#9B8DFE] overflow-hidden mb-4 sm:mb-6 shadow-inner">
             <div 
               class="flex h-full transition-transform duration-700 ease-in-out w-full"
               :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
@@ -25,17 +25,17 @@
               <div 
                 v-for="(slide, index) in slides" 
                 :key="index"
-                class="w-full h-full flex-shrink-0 p-8 flex flex-col justify-between relative"
+                class="w-full h-full flex-shrink-0 p-5 sm:p-8 flex flex-col justify-between relative"
               >
                 <!-- Icon top left -->
-                <div class="w-[38px] h-[38px] bg-white rounded-full flex items-center justify-center shadow-sm relative z-20">
-                  <component :is="slide.icon" class="w-5 h-5 text-[#9B8DFE]" />
+                <div class="w-8 h-8 sm:w-[38px] sm:h-[38px] bg-white rounded-full flex items-center justify-center shadow-sm relative z-20">
+                  <component :is="slide.icon" class="w-4 h-4 sm:w-5 sm:h-5 text-[#9B8DFE]" />
                 </div>
 
                 <!-- Text bottom left -->
-                <div class="relative z-20 w-[60%] mt-auto">
-                  <h3 class="font-bold text-white text-[18px] mb-1.5">{{ slide.title }}</h3>
-                  <p class="text-white/95 text-[14px] leading-relaxed">{{ slide.description }}</p>
+                <div class="relative z-20 w-[65%] sm:w-[60%] mt-auto">
+                  <h3 class="font-bold text-white text-base sm:text-[18px] mb-1 sm:mb-1.5">{{ slide.title }}</h3>
+                  <p class="text-white/95 text-xs sm:text-[14px] leading-snug sm:leading-relaxed">{{ slide.description }}</p>
                 </div>
 
                 <!-- Right Illustration -->

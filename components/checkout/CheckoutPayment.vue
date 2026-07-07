@@ -1,29 +1,48 @@
 <template>
   <div class="checkout-payment space-y-4">
-    <h3 class="text-xl font-bold text-gray-900 mb-6">Payment selection</h3>
+    <h3 class="text-lg font-bold text-gray-900 mb-6">Payment selection</h3>
 
-    <!-- Card Payment (Commented out as requested)
+    <!-- ═══ International (USD) Section ═══ -->
+    <div class="flex items-center gap-2 mb-1">
+      <div class="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-lg">
+        <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span class="text-[11px] font-bold text-blue-700 uppercase tracking-wider">International (USD)</span>
+      </div>
+    </div>
+
+    <!-- Card Payment (Always Visible) -->
     <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'card'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('card')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'card'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
-          <span class="text-sm font-bold text-gray-900">Debit / Credit card</span>
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-gray-900">Debit / Credit card</span>
+            <span class="text-[11px] text-amber-600 font-medium">USD transactions only · Dollar card required</span>
+          </div>
         </div>
         <div class="flex gap-2">
           <img src="@/assets/icons/visa.svg" alt="Visa" class="h-5" />
           <img src="@/assets/icons/master-card.svg" alt="Mastercard" class="h-5" />
         </div>
       </div>
-      <div v-show="activeMethod === 'card'" class="p-4 border-t border-gray-200 bg-gray-50/50">
-        <div v-if="provider === 'duffel'">
-           <DuffelCardForm v-model="duffelCardData" />
+      <div v-show="activeMethod === 'card'" class="py-4 px-0 sm:px-4 border-t border-gray-200 bg-gray-50/50 w-full overflow-hidden box-border">
+        <div v-if="duffelPaymentIntentToken" id="duffel-payments-container" class="bg-white py-4 rounded-xl w-full flex justify-center overflow-hidden box-border">
+           <duffel-payments class="w-full max-w-full min-w-0" style="display: block; width: 100%; box-sizing: border-box;"></duffel-payments>
         </div>
-        <div v-else class="text-sm text-gray-600 p-2">
-          You will be redirected to our secure payment partner ({{ provider === 'paystack' ? 'Paystack' : 'PayPal' }}) to complete your purchase safely.
+        <div v-else class="flex flex-col items-center justify-center p-6 gap-3">
+          <span class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></span>
+          <span class="text-sm text-gray-500">Initializing secure payment...</span>
         </div>
       </div>
     </div>
-    -->
+
+    <!-- ═══ Local Currency Section ═══ -->
+    <div class="flex items-center gap-2 mt-6 mb-1">
+      <div class="flex items-center gap-1.5 px-2.5 py-1 bg-green-50 rounded-lg">
+        <svg class="w-3.5 h-3.5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="text-[11px] font-bold text-green-700 uppercase tracking-wider">Local Currency (NGN)</span>
+      </div>
+    </div>
 
     <!-- Paystack Payment -->
     <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'paystack'}">
@@ -32,7 +51,7 @@
           <input type="radio" :checked="activeMethod === 'paystack'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
           <span class="text-sm font-bold text-gray-900">Paystack</span>
         </div>
-        <img src="@/assets/img/paystack.png" alt="PayPal" class="h-4" />
+        <img src="@/assets/img/paystack.png" alt="Paystack" class="h-4" />
       </div>
       <div v-show="activeMethod === 'paystack'" class="p-4 border-t border-gray-200 bg-gray-50/50">
         <div class="text-sm text-gray-600 p-2">
@@ -131,7 +150,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { AlertCircle, Wallet } from 'lucide-vue-next'
-import DuffelCardForm from './DuffelCardForm.vue'
 import DigitalWallets from './DigitalWallets.vue'
 import WalletAdModal from './WalletAdModal.vue'
 import FundWalletModal from './FundWalletModal.vue'
@@ -140,6 +158,12 @@ import { financeApi } from '@/api_factory/modules/finance'
 import { useAuth } from '~/composables/modules/auth/useAuth'
 import { useSettings } from '~/composables/useSettings'
 import { useNuxtApp } from '#app'
+import { flightsApi } from '@/api_factory/modules/flights'
+import {
+  renderDuffelPaymentsCustomElement,
+  onDuffelPaymentsSuccessfulPayment,
+  onDuffelPaymentsFailedPayment
+} from '@duffel/components/custom-elements'
 
 import affirm from '@/assets/img/affirm.svg'
 import klarna from '@/assets/img/klarna.png'
@@ -159,7 +183,7 @@ const props = defineProps({
 
 const emit = defineEmits(['complete-payment', 'change-currency', 'wallet-authorize'])
 
-const activeMethod = ref('wallet')
+const activeMethod = ref('card')
 const paystackChannel = ref('card')
 const walletBalance = ref(0)
 const walletPin = ref('')
@@ -174,10 +198,9 @@ const bnplProviders = ref([
   { id: 'afterpay', name: 'Afterpay', logo: afterpay },
 ])
 
-const duffelCardData = ref({
-  name: '', number: '', expiry: '', cvv: '', multi_use: false,
-  address_line_1: '', address_line_2: '', address_city: '', address_region: '', address_country_code: '', address_postal_code: ''
-})
+const duffelPaymentIntentToken = ref('')
+const duffelPaymentIntentId = ref('')
+let duffelPaymentInitialized = false
 
 const provider = computed(() => {
   const queryProvider = route.query.provider as string
@@ -215,6 +238,10 @@ onMounted(() => {
   if (!isDismissed && isLoggedIn.value) {
     setTimeout(() => { showAdModal.value = true }, 1000)
   }
+
+  if (activeMethod.value === 'card' && !duffelPaymentInitialized) {
+    initializeDuffelPayment()
+  }
 })
 
 const handleAdClose = () => {
@@ -224,6 +251,58 @@ const handleAdClose = () => {
 
 const toggleMethod = (method: string) => {
   activeMethod.value = method
+  
+  if (method === 'card' && !duffelPaymentInitialized) {
+    initializeDuffelPayment()
+  }
+}
+
+const initializeDuffelPayment = async () => {
+  const { $toast } = useNuxtApp()
+  try {
+    const { data } = await flightsApi.createDuffelPaymentIntent({
+      amount: Number(props.totalAmount).toFixed(2),
+      currency: props.currency
+    })
+    
+    const responseData = data?.data || data
+    if (responseData && responseData.client_token) {
+      duffelPaymentIntentToken.value = responseData.client_token
+      duffelPaymentIntentId.value = responseData.id
+      duffelPaymentInitialized = true
+      
+      // Give Vue time to render the <duffel-payments> tag
+      setTimeout(() => {
+        renderDuffelPaymentsCustomElement({
+          paymentIntentClientToken: responseData.client_token
+        })
+        
+        onDuffelPaymentsSuccessfulPayment(async () => {
+          try {
+            emit('wallet-authorize', true) // Show loader in parent if needed
+            // Confirm with our backend
+            await flightsApi.confirmDuffelPaymentIntent(duffelPaymentIntentId.value)
+            
+            // Proceed to booking creation
+            emit('complete-payment', { 
+              provider: 'duffel', 
+              channel: 'card',
+              paymentIntentId: duffelPaymentIntentId.value 
+            })
+          } catch (err: any) {
+            $toast.error('Payment confirmation failed. Please contact support.', { position: 'top-right' })
+            emit('wallet-authorize', false)
+          }
+        })
+        
+        onDuffelPaymentsFailedPayment((error) => {
+          $toast.error('Payment failed. Please try a different card.', { position: 'top-right' })
+        })
+      }, 50)
+    }
+  } catch (error: any) {
+    $toast.error('Failed to initialize secure payment form', { position: 'top-right' })
+  }
 }
 
 const formatAmount = (val: number) => {
@@ -236,6 +315,12 @@ const formatAmount = (val: number) => {
 
 const handlePay = () => {
   const { $toast } = useNuxtApp()
+  if (activeMethod.value === 'card') {
+    // Card payments are always handled via the Duffel Web Component.
+    $toast.info('Please complete your payment using the card form above.', { position: 'top-center' })
+    return
+  }
+  
   if (activeMethod.value === 'wallet') {
     $toast.info('Please tap the Apple Pay or Google Pay button above to authorize your payment.', { position: 'top-center' })
     return
@@ -252,8 +337,7 @@ const handlePay = () => {
   } else {
     emit('complete-payment', { 
       provider: provider.value, 
-      channel: provider.value === 'paystack' ? paystackChannel.value : 'card',
-      cardData: provider.value === 'duffel' ? duffelCardData.value : null 
+      channel: provider.value === 'paystack' ? paystackChannel.value : 'card'
     })
   }
 }
@@ -262,5 +346,11 @@ const handleHold = () => {
   emit('complete-payment', { provider: 'manual', channel: 'hold', paymentModel: 'on_hold' })
 }
 
-defineExpose({ handlePay, handleHold })
+const requiresExternalSubmit = computed(() => {
+  if (activeMethod.value === 'wallet') return false;
+  if (activeMethod.value === 'card') return false;
+  return true;
+})
+
+defineExpose({ handlePay, handleHold, requiresExternalSubmit })
 </script>

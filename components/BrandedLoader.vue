@@ -73,8 +73,8 @@ defineProps({
 
 .loader-visual {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,8 +83,8 @@ defineProps({
 .logo-wrapper {
   position: relative;
   z-index: 10;
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: 100px;
   background: white;
   border-radius: 50%;
   display: flex;
@@ -94,8 +94,8 @@ defineProps({
 }
 
 .brand-logo {
-  width: 45px;
-  height: 45px;
+  width: 65px;
+  height: 65px;
   object-fit: contain;
   animation: logo-float 3s ease-in-out infinite;
 }
@@ -113,9 +113,9 @@ defineProps({
 
 .orbit-svg {
   position: absolute;
-  inset: -15px;
-  width: 150px;
-  height: 150px;
+  inset: -25px;
+  width: 230px;
+  height: 230px;
   transform: rotate(-90deg);
 }
 
@@ -126,7 +126,7 @@ defineProps({
 
 .orbit-dot {
   stroke: #0D1DAD;
-  stroke-width: 2px;
+  stroke-width: 3px;
   stroke-dasharray: 1, 300;
   stroke-linecap: round;
   animation: orbit-rotation 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
@@ -136,28 +136,28 @@ defineProps({
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .status-title {
   color: #1a1a1b;
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: -0.01em;
 }
 
 .status-subtitle {
-  color: #a1a1a5;
-  font-size: 0.75rem;
+  color: #6b7280;
+  font-size: 0.95rem;
   font-weight: 500;
 }
 
 .loading-bar {
-  width: 60px;
-  height: 2px;
+  width: 120px;
+  height: 3px;
   background: #f0f0f2;
   border-radius: 10px;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   overflow: hidden;
 }
 

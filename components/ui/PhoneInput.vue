@@ -23,11 +23,11 @@
         <input
           type="tel"
           :placeholder="placeholder || '812 345 6789'"
-          :value="phoneNumber"
+          :value="formatPhone(phoneNumber, selectedCountry.code)"
           @input="onPhoneInput"
           class="w-full px-5 py-4 bg-white border border-gray-200 border-l-0 rounded-r-2xl focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-500 font-bold text-black placeholder-brand-gray/30"
         />
-        <div v-if="phoneNumber" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#0D1DAD] pointer-events-none transition-all duration-300">
+        <div v-if="phoneNumber && phoneNumber.length >= 7" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#0D1DAD] pointer-events-none transition-all duration-300">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>
@@ -76,7 +76,7 @@ const props = defineProps({
   placeholder: { type: String, default: '' },
 })
 
-const emit = defineEmits(['update:modelValue', 'country-change'])
+const emit = defineEmits(['update:modelValue', 'update:isValid', 'country-change'])
 
 const phoneRef = ref<HTMLElement | null>(null)
 const showDropdown = ref(false)
@@ -156,23 +156,83 @@ const selectCountry = (country: typeof countries[0]) => {
   })
 }
 
+const formatPhone = (val: string, code: string) => {
+  if (!val) return '';
+  if (code === 'US' || code === 'CA') {
+    if (val.length <= 3) return val;
+    if (val.length <= 6) return `(${val.slice(0,3)}) ${val.slice(3)}`;
+    return `(${val.slice(0,3)}) ${val.slice(3,6)}-${val.slice(6,10)}`;
+  }
+  if (code === 'GB') {
+    if (val.length <= 4) return val;
+    return `${val.slice(0,4)} ${val.slice(4,10)}`;
+  }
+  if (code === 'NG') {
+    if (val.length <= 3) return val;
+    if (val.length <= 6) return `${val.slice(0,3)} ${val.slice(3)}`;
+    return `${val.slice(0,3)} ${val.slice(3,6)} ${val.slice(6,10)}`;
+  }
+  // Generic fallback chunking
+  if (val.length <= 3) return val;
+  if (val.length <= 6) return `${val.slice(0,3)} ${val.slice(3)}`;
+  return `${val.slice(0,3)} ${val.slice(3,6)} ${val.slice(6)}`;
+}
+
 const onPhoneInput = (e: Event) => {
   const input = e.target as HTMLInputElement
+  let rawValue = input.value
+  
+  // Aggressively detect pasted country codes
+  const normalized = rawValue.replace(/\s+/g, '')
+  if (normalized.startsWith('+')) {
+    // Sort by dialCode length descending to match longest code first (e.g. +234 before +2)
+    const sortedCountries = [...countries].sort((a, b) => b.dialCode.length - a.dialCode.length)
+    const match = sortedCountries.find(c => normalized.startsWith(c.dialCode))
+    
+    if (match) {
+      if (match.code !== selectedCountry.value.code) {
+        selectedCountry.value = match
+        emit('country-change', { 
+          code: match.code, 
+          currency: match.currency, 
+          dialCode: match.dialCode,
+          name: match.name 
+        })
+      }
+      // Remove the dial code from the raw string to parse the rest
+      rawValue = normalized.slice(match.dialCode.length)
+    }
+  }
+
   // Remove non-digits and leading zeros (E.164 usually doesn't want leading zeros)
-  let val = input.value.replace(/\D/g, '')
+  let val = rawValue.replace(/\D/g, '')
   if (val.startsWith('0')) val = val.substring(1)
   
   // Truncate to country max length
   phoneNumber.value = val.slice(0, selectedCountry.value.maxLength)
-  input.value = phoneNumber.value // Update UI immediately
+  
+  // Aggressively format the visual input value as the user types
+  input.value = formatPhone(phoneNumber.value, selectedCountry.value.code)
   emitValue()
 }
+
+// Watch for programmatic changes and format them too
+watch(phoneNumber, (newVal) => {
+  if (phoneRef.value) {
+    const input = phoneRef.value.querySelector('input')
+    if (input && input.value !== formatPhone(newVal, selectedCountry.value.code)) {
+      input.value = formatPhone(newVal, selectedCountry.value.code)
+    }
+  }
+})
 
 import { useTracking } from '@/composables/core/useTracking'
 
 const emitValue = () => {
   const fullNumber = `${selectedCountry.value.dialCode}${phoneNumber.value}`
+  const isValid = phoneNumber.value.length >= 7 // Relaxed validation to allow 9-digit inputs etc.
   emit('update:modelValue', fullNumber)
+  emit('update:isValid', isValid)
   if (phoneNumber.value.length > 3) {
     useTracking().trackAction('phone_input', { field: props.label || 'phone' })
   }
@@ -187,6 +247,12 @@ const handleClickOutside = (e: MouseEvent) => {
 
 onMounted(async () => {
   window.addEventListener('click', handleClickOutside)
+  
+  // Format initial value if any
+  if (phoneNumber.value && phoneRef.value) {
+    const input = phoneRef.value.querySelector('input')
+    if (input) input.value = formatPhone(phoneNumber.value, selectedCountry.value.code)
+  }
   
   // Auto-detect location if no phone number is provided
   if (!props.modelValue) {

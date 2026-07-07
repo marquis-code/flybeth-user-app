@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <!-- Header with horizontal padding -->
-    <div class="ck-tf-hd  flex flex-col md:flex-row md:items-start justify-between gap-6">
+    <div class="ck-tf-hd  flex flex-col md:flex-row md:items-start justify-between gap-6 px-2 sm:px-4">
         <div class="flex-1">
           <div class="ck-tf-badge">Batch & Group Booking</div>
           <h2 class="ck-tf-h">Traveler Details</h2>
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Autofill Toggle Banner -->
-    <div v-if="hasSavedData" class="mt-6 mb-2 p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-center justify-between transition-all">
+    <div v-if="hasSavedData" class="mx-2 sm:mx-4 mt-6 mb-2 p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-center justify-between transition-all">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
           <User class="w-4 h-4" />
@@ -101,7 +101,7 @@
         </div>
 
         <!-- Form Box with reduced internal padding -->
-        <div class="ck-tf-grid bg-white border-neutral-100 rounded-[2rem] p-5 shadow-sm">
+        <div class="ck-tf-grid bg-white border-neutral-100 rounded-3xl sm:rounded-[2rem] p-3 sm:p-5 shadow-sm">
            <!-- Basic Info Group -->
            <div class="ck-tf-sec">
               <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
@@ -184,7 +184,7 @@
     </div>
 
     <!-- Contact Group -->
-    <div class="mt-8 p-5  bg-[#0D1DAD]/[0.02] rounded-[2rem] border border-[#0D1DAD]/10">
+    <div class="mt-8 p-3 sm:p-5 bg-[#0D1DAD]/[0.02] rounded-3xl sm:rounded-[2rem] border border-[#0D1DAD]/10">
         <div class="flex items-center gap-3 mb-6">
           <div class="relative w-9 h-9 rounded-full bg-[#F0F4FF] flex items-center justify-center flex-shrink-0">
             <MessageSquare class="w-4 h-4 text-[#0D1DAD]" />
@@ -202,6 +202,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <PhoneInput
                 v-model="contact.phone"
+                @update:isValid="isPhoneValid = $event"
                 label="Mobile Number"
                 class="w-full"
               />
@@ -219,7 +220,7 @@
         </div>
     </div>
 
-    <div class="ck-tf-foot">
+    <div class="ck-tf-foot px-2 sm:px-4">
        <div class="flex flex-col gap-3 mb-4">
           <label class="ck-tf-terms">
              <input type="checkbox" v-model="saveForFuture" class="ck-tf-chk custom-checkbox" />
@@ -242,7 +243,7 @@
        <button 
           @click="handleContinue" 
           :disabled="!canContinue" 
-          class="ck-tf-btn w-full md:w-fit"
+          class="ck-tf-btn w-full"
           :class="{ 'ck-tf-btn--off': !canContinue }"
        >
           <span>Continue to Extras</span>
@@ -301,6 +302,7 @@ const savedBackendContact = ref<any>({})
 const saveForFuture = ref(false)
 const termsAccepted = ref(false)
 const countries = ref<{ code: string; name: string }[]>([])
+const isPhoneValid = ref(false)
 
 const isPassengerComplete = (traveler: any) => {
   return traveler.title && traveler.firstName && traveler.lastName && traveler.dateOfBirth && traveler.gender;
@@ -311,7 +313,7 @@ const isIdentityComplete = (traveler: any) => {
 }
 
 const isContactComplete = () => {
-  return contact.value.phone && contact.value.email;
+  return isPhoneValid.value && contact.value.email;
 }
 
 const addTraveler = () => {
@@ -459,7 +461,7 @@ const countriesNames = computed(() => countries.value.map(c => c.name))
 
 const isComplete = computed(() => {
   const travelersComplete = travelers.value.every(t => t.firstName && t.lastName && t.dateOfBirth)
-  const contactComplete = !!(contact.value.email && contact.value.phone)
+  const contactComplete = !!(contact.value.email && isPhoneValid.value)
   return travelersComplete && contactComplete
 })
 
@@ -528,7 +530,7 @@ const handleContinue = async () => {
   letter-spacing: 0.1em; color: #0D1DAD; background: rgba(13,29,173,0.08); padding: 6px 14px; 
   border-radius: 100px; margin-bottom: 12px; 
 }
-.ck-tf-h { font-size: 28px; font-weight: 800; color: #111; margin-bottom: 6px; letter-spacing: -0.025em; white-space: normal; }
+.ck-tf-h { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 6px; letter-spacing: -0.025em; white-space: normal; }
 @media (min-width: 768px) {
   .ck-tf-h { white-space: nowrap; }
 }
@@ -551,7 +553,7 @@ const handleContinue = async () => {
 
 .ck-tf-btn {
   background: #0D1DAD; color: #fff; border: none; border-radius: 14px; height: 52px;
-  padding: 0 28px; width: fit-content;
+  padding: 0 28px; width: 100%;
   display: flex; align-items: center; justify-content: center; gap: 12px;
   font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 10px 20px -5px rgba(13, 29, 173, 0.2); letter-spacing: 0.05em;

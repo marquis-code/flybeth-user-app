@@ -10,6 +10,9 @@ export const bookingsApi = {
     getByPnr(pnr: string) {
         return GATEWAY_ENDPOINT_WITH_AUTH.get(`/bookings/reference/${pnr}`);
     },
+    downloadReceipt(pnr: string) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.get(`/bookings/reference/${pnr}/receipt`, { responseType: 'blob' });
+    },
     getById(id: string) {
         return GATEWAY_ENDPOINT_WITH_AUTH.get(`/bookings/${id}`);
     },

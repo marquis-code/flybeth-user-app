@@ -10,21 +10,7 @@
 
     <!-- ─── Tab Bar ─── -->
     <div class="sw-tabs">
-      <!-- Mobile pill scroll -->
-      <div class="sw-tabs-mobile">
-        <button
-          v-for="tab in tabs"
-          :key="tab.name"
-          @click="currentTab = tab.name"
-          class="sw-tab-pill"
-          :class="currentTab === tab.name ? 'sw-tab-pill--on' : ''"
-        >
-          <component :is="tab.icon" class="sw-tab-ico" />
-          {{ tab.label }}
-        </button>
-      </div>
-      <!-- Desktop underline nav -->
-      <nav class="sw-tabs-desk" aria-label="Search tabs">
+      <nav class="sw-tabs-nav" aria-label="Search tabs">
         <button
           v-for="tab in tabs"
           :key="tab.name"
@@ -67,67 +53,85 @@
           <div
             v-for="(leg, idx) in flightMode === 'multicity' ? multiFlightLegs : [flightSearchState]"
             :key="idx"
-            class="sw-bar"
+            class="sw-multi-leg-wrapper"
           >
-            <div class="sw-field sw-field--grow" @click="isFocused = true">
-              <LocationPicker v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
-            </div>
-            <!-- Swap button: sits between From and To -->
-            <div class="sw-swap-wrap">
-              <div class="sw-bar-div" />
-              <button
-                v-if="flightMode !== 'multicity'"
-                class="sw-swap-btn"
-                @click.stop="swapFlightLocations(leg)"
-                title="Swap locations"
+            <!-- Flight Header for Multi-city -->
+            <div v-if="flightMode === 'multicity'" class="flex items-center justify-between mb-2 px-4 pt-4 pb-1">
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Flight {{ idx + 1 }}</span>
+              <button 
+                v-if="multiFlightLegs.length > 1"
+                @click="multiFlightLegs.splice(idx, 1)" 
+                class="text-gray-400 hover:text-red-500 flex items-center gap-1.5 text-[11px] font-semibold transition-colors"
                 type="button"
               >
-                <ArrowUpDown class="sw-ico-sm" />
+                <Trash2 class="w-3.5 h-3.5" /> Remove
               </button>
-              <div v-else class="sw-bar-div" />
-            </div>
-            <div class="sw-field sw-field--grow" @click="isFocused = true">
-              <LocationPicker v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
-            </div>
-            <div class="sw-bar-div" />
-            <div class="sw-field sw-field--date" @click="isFocused = true">
-              <FlightDateRangePicker
-                :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
-                v-model:departure="leg.departureDate"
-                v-model:return="leg.returnDate"
-                v-model:flexible="leg.flexibleDates"
-                @focus="isFocused = true"
-                @close="isFocused = false"
-              />
-            </div>
-            <div v-if="idx === 0" class="sw-bar-div" />
-            <div v-if="idx === 0" class="sw-field sw-field--pax-class" @click="isFocused = true">
-              <Occupancypicker 
-                label="Passengers & Class" 
-                variant="flight" 
-                v-model:adults="flightTravelers.adults" 
-                v-model:children="flightTravelers.children" 
-                v-model:infantsOnLap="flightTravelers.infantsOnLap"
-                v-model:infantsInSeat="flightTravelers.infantsInSeat"
-                v-model:cabinClass="flightTravelers.cabinClass"
-                @focus="isFocused = true" 
-                @close="isFocused = false" 
-              />
             </div>
 
+            <div class="sw-bar">
+              <div class="sw-loc-group">
+                <div class="sw-field sw-field--grow" @click="isFocused = true">
+                  <LocationPicker v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
+                </div>
+                <!-- Swap button: sits between From and To -->
+                <div class="sw-swap-wrap">
+                  <div class="sw-bar-div" />
+                  <button
+                    v-if="flightMode !== 'multicity'"
+                    class="sw-swap-btn"
+                    @click.stop="swapFlightLocations(leg)"
+                    title="Swap locations"
+                    type="button"
+                  >
+                    <ArrowUpDown class="sw-ico-sm" />
+                  </button>
+                  <div v-else class="sw-bar-div" />
+                </div>
+                <div class="sw-field sw-field--grow" @click="isFocused = true">
+                  <LocationPicker v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
+                </div>
+              </div>
+              <div class="sw-bar-div" />
+              <div class="sw-field sw-field--date" @click="isFocused = true">
+                <FlightDateRangePicker
+                  :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
+                  v-model:departure="leg.departureDate"
+                  v-model:return="leg.returnDate"
+                  v-model:flexible="leg.flexibleDates"
+                  @focus="isFocused = true"
+                  @close="isFocused = false"
+                />
+              </div>
+              <div v-if="idx === 0" class="sw-bar-div" />
+              <div v-if="idx === 0" class="sw-field sw-field--pax-class" @click="isFocused = true">
+                <Occupancypicker 
+                  label="Passengers & Class" 
+                  variant="flight" 
+                  v-model:adults="flightTravelers.adults" 
+                  v-model:children="flightTravelers.children" 
+                  v-model:infantsOnLap="flightTravelers.infantsOnLap"
+                  v-model:infantsInSeat="flightTravelers.infantsInSeat"
+                  v-model:cabinClass="flightTravelers.cabinClass"
+                  @focus="isFocused = true" 
+                  @close="isFocused = false" 
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <button
-          v-if="flightMode === 'multicity' && multiFlightLegs.length < 5"
-          @click="multiFlightLegs.push({ origin: '', destination: '', departureDate: '', returnDate: '' })"
-          class="sw-add-btn"
-        >
-          <Plus class="sw-ico-xs" /> Add flight
-        </button>
+        <div v-if="flightMode === 'multicity' && multiFlightLegs.length < 5" class="pt-4 px-4 pb-2">
+          <button
+            @click="multiFlightLegs.push({ origin: '', destination: '', departureDate: '', returnDate: '' })"
+            class="bg-blue-50 hover:bg-blue-100 text-[#0D1DAD] border border-blue-200 px-4 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all"
+            type="button"
+          >
+            <Plus class="w-4 h-4" /> Add another flight
+          </button>
+        </div>
 
         <!-- Recent Searches -->
-        <div v-if="recentSearches.length > 0" class="mt-4 flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-top-2">
+        <!-- <div v-if="recentSearches.length > 0" class="mt-4 flex flex-wrap items-center gap-3 animate-in fade-in slide-in-from-top-2">
           <span class="text-xs font-medium text-gray-500 flex items-center gap-1.5">
             <History class="w-3 h-3" />
             Recent
@@ -141,7 +145,7 @@
               <X class="w-3 h-3" />
             </button>
           </div>
-        </div>
+        </div> -->
 
         <div class="sw-footer">
           <div class="sw-bundles">
@@ -168,12 +172,14 @@
         </div>
 
         <div v-if="stayMode === 'single'" class="sw-bar">
-          <div class="sw-field sw-field--grow">
-            <LocationPicker v-model="searchState.location" label="Where to" placeholder="City, hotel or area" @focus="isFocused = true" @close="isFocused = false" />
+          <div class="sw-loc-group">
+            <div class="sw-field sw-field--grow">
+              <LocationPicker v-model="searchState.location" label="Where to" placeholder="City, hotel or area" @focus="isFocused = true" @close="isFocused = false" />
+            </div>
           </div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--date">
-            <FlightDateRangePicker :departure="searchState.checkIn" :return="searchState.checkOut" mode="roundtrip" @focus="isFocused = true" @close="isFocused = false" @update:departure="(v: string) => searchState.checkIn = v" @update:return="(v: string) => searchState.checkOut = v" />
+            <FlightDateRangePicker :departure="searchState.checkIn" :return="searchState.checkOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @focus="isFocused = true" @close="isFocused = false" @update:departure="(v: string) => searchState.checkIn = v" @update:return="(v: string) => searchState.checkOut = v" />
           </div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--pax">
@@ -185,9 +191,11 @@
           <div v-for="(hotel, idx) in multiHotelLegs" :key="idx" class="sw-multi-leg">
             <span class="sw-leg-lbl">Hotel {{ idx + 1 }}</span>
             <div class="sw-bar">
-              <div class="sw-field sw-field--grow"><LocationPicker v-model="hotel.location" label="Where to" placeholder="City or area" /></div>
+              <div class="sw-loc-group">
+                <div class="sw-field sw-field--grow"><LocationPicker v-model="hotel.location" label="Where to" placeholder="City or area" /></div>
+              </div>
               <div class="sw-bar-div" />
-              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="hotel.checkIn" :return="hotel.checkOut" mode="roundtrip" @update:departure="(v: string) => hotel.checkIn = v" @update:return="(v: string) => hotel.checkOut = v" /></div>
+              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="hotel.checkIn" :return="hotel.checkOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @update:departure="(v: string) => hotel.checkIn = v" @update:return="(v: string) => hotel.checkOut = v" /></div>
             </div>
           </div>
           <button v-if="multiHotelLegs.length < 5" @click="addHotelLeg" class="sw-add-btn"><Plus class="sw-ico-xs" /> Add hotel</button>
@@ -218,9 +226,11 @@
         </div>
 
         <div class="sw-bar">
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.origin" label="From" placeholder="Origin" @focus="isFocused = true" @close="isFocused = false" /></div>
-          <div class="sw-bar-div" />
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.destination" label="To" placeholder="Destination" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-loc-group">
+            <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <div class="sw-bar-div sw-bar-div--vert" />
+            <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+          </div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="packageSearchState.departureDate" :return="packageSearchState.returnDate" mode="roundtrip" @update:departure="(v) => packageSearchState.departureDate = v" @update:return="(v) => packageSearchState.returnDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
@@ -244,7 +254,7 @@
           <div v-if="onlyPartialHotel" class="sw-extra-dates">
             <span class="sw-leg-lbl">Hotel dates</span>
             <div class="sw-bar sw-bar--compact">
-              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="packageSearchState.hotelCheckIn" :return="packageSearchState.hotelCheckOut" mode="roundtrip" @update:departure="(v: string) => packageSearchState.hotelCheckIn = v" @update:return="(v: string) => packageSearchState.hotelCheckOut = v" /></div>
+              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="packageSearchState.hotelCheckIn" :return="packageSearchState.hotelCheckOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @update:departure="(v: string) => packageSearchState.hotelCheckIn = v" @update:return="(v: string) => packageSearchState.hotelCheckOut = v" /></div>
             </div>
           </div>
         </Transition>
@@ -265,11 +275,15 @@
           <button v-for="m in modeModes" :key="m.value" @click="carMode = m.value" class="sw-seg-btn" :class="carMode === m.value ? 'sw-seg-btn--on' : ''">{{ m.label }}</button>
         </div>
         <div class="sw-bar">
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.origin" label="Pick-up" placeholder="Location or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-loc-group">
+            <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.pickup" label="Pick-up" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <template v-if="carMode === 'different'">
+              <div class="sw-bar-div sw-bar-div--vert" />
+              <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.dropoff" label="Drop-off" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+            </template>
+          </div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.destination" label="Drop-off" placeholder="Same as pick-up" @focus="isFocused = true" @close="isFocused = false" /></div>
-          <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="carSearchState.pickUpDate" mode="oneway" @update:departure="(v) => carSearchState.pickUpDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="carSearchState.pickUpDate" mode="oneway" departureLabel="Pick-up date" @update:departure="(v) => carSearchState.pickUpDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
         </div>
         <div class="sw-footer">
           <label class="sw-chk">
@@ -295,7 +309,7 @@
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.destination" label="To" placeholder="Hotel or address" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="transferSearchState.date" mode="oneway" @update:departure="(v) => transferSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="transferSearchState.date" mode="oneway" departureLabel="Date" @update:departure="(v) => transferSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--time">
             <span class="sw-fld-lbl">Time</span>
@@ -325,7 +339,7 @@
         <div class="sw-bar">
           <div class="sw-field sw-field--grow"><LocationPicker v-model="activitiesSearchState.destination" label="Destination" placeholder="City or region" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="activitiesSearchState.date" mode="oneway" @update:departure="(v) => activitiesSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="activitiesSearchState.date" mode="oneway" departureLabel="Date" @update:departure="(v) => activitiesSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--cat">
             <span class="sw-fld-lbl">Category</span>
@@ -455,7 +469,7 @@ import { ref, reactive, watch, computed, onMounted, onUnmounted, nextTick } from
 import {
   Plane, Bed, Car, Package, Anchor, Ticket, Truck,
   Search, CalendarDays, Clock, Timer, Check, Plus,
-  ChevronDown, MapPin, History, X, ArrowUpDown, Loader2
+  ChevronDown, MapPin, History, X, ArrowUpDown, Loader2, Trash2
 } from 'lucide-vue-next'
 import { useTracking } from '@/composables/core/useTracking'
 import { flightsApi } from '@/api_factory/modules/flights'
@@ -486,7 +500,7 @@ const widgetRef           = ref<HTMLElement | null>(null)
 const { detectNearestAirports } = useAmadeusLocations()
 
 const checkMobile = () => {
-  if (typeof window !== 'undefined') isMobile.value = window.innerWidth < 768
+  if (typeof window !== 'undefined') isMobile.value = window.innerWidth < 1024
 }
 
 const destRef   = ref<HTMLElement | null>(null)
@@ -783,10 +797,17 @@ const handleSearch = async () => {
 
     try {
       // Secure Search Session
-      const searchCriteria = {
+      const searchCriteria: any = {
         ...flightSearchState,
         ...flightTravelers,
         type: flightMode.value
+      }
+      
+      if (flightMode.value === 'multicity') {
+        // Only keep valid legs (must have origin, destination, and departureDate)
+        const validLegs = multiFlightLegs.value.filter(leg => leg.origin && leg.destination && leg.departureDate)
+        searchCriteria.slices = JSON.stringify(validLegs)
+        query.slices = JSON.stringify(validLegs)
       }
       
       const { data } = await flightsApi.createSearchSession(searchCriteria)
@@ -856,97 +877,94 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
    ROOT
 ═══════════════════════════════════════════════════ */
 .sw-root {
-  background: #fff;
-  border: 0.5px solid #e0e0d8;
-  border-radius: 16px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   overflow: visible;
 }
 .sw-root--sticky {
   border-radius: 0 0 14px 14px;
-  border-top: none;
 }
 
 /* ═══════════════════════════════════════════════════
    TABS
 ═══════════════════════════════════════════════════ */
 .sw-tabs {
-  border-bottom: 0.5px solid #ebebE3;
+  border-bottom: none;
 }
 
-/* Mobile pills */
-.sw-tabs-mobile {
+.sw-tabs-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.sw-tabs-mobile::-webkit-scrollbar { display: none; }
-
-/* Desktop underline */
-.sw-tabs-desk {
-  display: none;
-  align-items: center;
-  padding: 0 16px;
+  padding: 0;
   gap: 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
-.sw-tabs-desk::-webkit-scrollbar { display: none; }
-
-@media (min-width: 768px) {
-  .sw-tabs-mobile { display: none; }
-  .sw-tabs-desk   { display: flex; }
-}
-
-.sw-tab-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 99px;
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-  flex-shrink: 0;
-  border: 0.5px solid #e0e0d8;
-  background: #fff;
-  color: #888;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.sw-tab-pill--on { background: #111; color: #fff; border-color: #111; }
-.sw-tab-pill:not(.sw-tab-pill--on):hover { border-color: #aaa; color: #333; }
+.sw-tabs-nav::-webkit-scrollbar { display: none; }
 
 .sw-tab-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 15px 22px;
-  font-size: 14.5px;
+  gap: 6px;
+  padding: 12px 18px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
-  border-bottom: 2.5px solid transparent;
-  color: #888;
-  background: none;
-  border-top: none;
-  border-left: none;
-  border-right: none;
+  border: 1px solid transparent;
+  color: #fff;
+  background: #092147;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+  z-index: 1;
+  margin-bottom: -1px; /* Overlap panel top border */
 }
-.sw-tab-btn--on  { color: #111; border-bottom-color: #111; }
-.sw-tab-btn:not(.sw-tab-btn--on):hover { color: #555; }
+@media (min-width: 1024px) {
+  .sw-tab-btn {
+    gap: 8px;
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+}
+.sw-tab-btn:first-child {
+  border-top-left-radius: 12px;
+}
+.sw-tab-btn:last-child {
+  border-top-right-radius: 12px;
+}
+.sw-tab-btn--on  { 
+  color: #111; 
+  background: #fff;
+  border-color: #e0e0d8;
+  border-bottom: 1px solid #fff; /* Blend with panel */
+  z-index: 3; 
+}
+.sw-tab-btn:not(.sw-tab-btn--on):hover { 
+  background: #112d59; 
+}
 
 .sw-tab-ico { width: 17px; height: 17px; flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════════
    PANEL
 ═══════════════════════════════════════════════════ */
-.sw-panel { padding: 16px; }
-.sw-panel--sm { padding: 12px; }
-@media (min-width: 768px) { .sw-panel { padding: 20px; } }
+.sw-panel { 
+  padding: 0; 
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  position: relative;
+  z-index: 2;
+}
+.sw-panel--sm { padding: 0; }
+@media (min-width: 1024px) { 
+  .sw-panel, .sw-panel--sm { 
+    padding: 24px;
+    border: 1px solid #e0e0d8;
+    border-radius: 0 12px 12px 12px;
+  } 
+}
 
 .sw-section { display: flex; flex-direction: column; gap: 12px; }
 
@@ -958,16 +976,20 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-bar {
   display: flex;
   flex-direction: column;       /* MOBILE: vertical stack */
-  border: 1px solid #D1D5DB;
-  border-radius: 12px;
+  border: none;
+  border-top: 1px solid #D1D5DB;
+  border-bottom: 1px solid #D1D5DB;
+  border-radius: 0;
   overflow: visible;
   background: #fff;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-bar {
     flex-direction: row;        /* DESKTOP: horizontal */
     align-items: stretch;
+    border: 1px solid #D1D5DB;
+    border-radius: 12px;
   }
 }
 
@@ -975,14 +997,33 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-bar-div {
   background: #D1D5DB;
   flex-shrink: 0;
-  /* mobile: 1px horizontal */
   height: 1px;
   width: 100%;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-bar-div {
     height: auto;
     width: 1px;
+  }
+}
+
+.sw-bar-div--vert {
+  height: auto;
+  width: 1px;
+}
+
+.sw-loc-group {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.sw-loc-group > .sw-field {
+  flex: 1;
+  width: 50%;
+}
+@media (min-width: 1024px) {
+  .sw-loc-group {
+    display: contents;
   }
 }
 
@@ -993,14 +1034,15 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  /* mobile: horizontal divider context */
-  width: 100%;
-  height: 0;
+  width: 1px; /* mobile: vertical divider */
+  height: auto;
+  background: #D1D5DB;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-swap-wrap {
     width: 0;
     height: auto;
+    background: transparent;
   }
 }
 
@@ -1024,7 +1066,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   top: 50%;
   transform: translate(-50%, -50%);
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-swap-btn {
     width: 34px;
     height: 34px;
@@ -1034,17 +1076,17 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   background: #111;
   color: #fff;
   border-color: #111;
-  transform: translateY(-50%) rotate(180deg);
+  transform: translate(-50%, -50%) rotate(180deg);
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-swap-btn:hover {
     transform: translate(-50%, -50%) rotate(180deg);
   }
 }
 .sw-swap-btn:active {
-  transform: translateY(-50%) scale(0.9);
+  transform: translate(-50%, -50%) scale(0.9);
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-swap-btn:active {
     transform: translate(-50%, -50%) scale(0.9);
   }
@@ -1060,9 +1102,9 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
 /* First cell: rounded top on mobile, left on desktop */
 .sw-bar .sw-field:first-child {
-  border-radius: 10.5px 10.5px 0 0;
+  border-radius: 0;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-bar .sw-field:first-child {
     border-radius: 10.5px 0 0 10.5px;
   }
@@ -1070,16 +1112,16 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
 /* Last field cell */
 .sw-bar .sw-field:last-child {
-  border-radius: 0 0 10.5px 10.5px;
+  border-radius: 0;
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-bar .sw-field:last-child {
     border-radius: 0 10.5px 10.5px 0;
   }
 }
 
 /* Flex widths — only apply on desktop */
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .sw-field--grow  { flex: 1; }
   .sw-field--date  { flex: 1.3; }
   .sw-field--pax   { flex: 0.8; min-width: 120px; }
@@ -1128,8 +1170,11 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 /* ═══════════════════════════════════════════════════
    RADIOS & CHECKBOXES
 ═══════════════════════════════════════════════════ */
-.sw-radios { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-bottom: 4px; }
+.sw-radios { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-bottom: 4px; padding: 16px 16px 4px; }
 .sw-radios--wrap { gap: 12px 28px; }
+@media (min-width: 1024px) {
+  .sw-radios { padding: 0; }
+}
 
 .sw-radio { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 .sw-radio-dot {
@@ -1216,9 +1261,15 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-footer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 12px;
-  border-top: 0.5px solid #f0f0ea;
+  gap: 16px;
+  padding: 16px;
+  border-top: none;
+}
+@media (min-width: 1024px) {
+  .sw-footer {
+    border-top: 0.5px solid #f0f0ea;
+    padding: 12px 0 0;
+  }
 }
 @media (min-width: 640px) {
   .sw-footer {
@@ -1263,7 +1314,11 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 /* ═══════════════════════════════════════════════════
    ADD / MULTI-LEG
 ═══════════════════════════════════════════════════ */
-.sw-rows { display: flex; flex-direction: column; gap: 10px; }
+.sw-rows { display: flex; flex-direction: column; gap: 16px; }
+.sw-multi-leg-wrapper {
+  display: flex;
+  flex-direction: column;
+}
 .sw-multi-leg { display: flex; flex-direction: column; gap: 4px; }
 .sw-leg-lbl { font-size: 11px; font-weight: 700; color: #9ca3af;  letter-spacing: 0.05em; }
 .sw-add-btn {

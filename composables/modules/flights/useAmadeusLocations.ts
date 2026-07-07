@@ -82,26 +82,146 @@ export const useAmadeusLocations = () => {
         error.value = null;
 
         try {
-            // LAYER 1: Primary search using Duffel
-            console.log(`${LOG_PREFIX} ➡️ Attempt 1: GET Duffel places suggestions`);
+            // LAYER 1: Primary search using Duffel places/suggestions
+            console.log(`${LOG_PREFIX} ➡️ Attempt 1: GET Duffel places suggestions for "${keyword}"`);
             const response = await flightsApi.getDuffelPlacesSuggestions({ query: keyword });
             
             const rawData = response.data?.data || response.data || [];
             const results = Array.isArray(rawData) ? rawData : [];
 
-            // Map Duffel places to expected shape
-            const mappedResults = results.map((item: any) => ({
-                ...item,
-                iataCode: item.iata_code || item.iataCode || item.code || item.id,
-                name: item.name || item.city_name || item.cityName,
-                address: {
-                   cityName: item.city_name || item.cityName || item.name
-                },
-                subType: item.type === 'airport' ? 'AIRPORT' : 'CITY'
-            })).filter((item: any) => item.iataCode); // Ensure we only return locations with an IATA code
+            console.log(`${LOG_PREFIX} Raw Duffel results count: ${results.length}`);
 
-            console.log(`${LOG_PREFIX} Found ${mappedResults.length} results after Duffel search.`);
-            locations.value = mappedResults;
+            // Flatten: extract nested airports from city results AND include direct airport results
+            const flatResults: any[] = [];
+            const seenCodes = new Set<string>();
+
+            for (const item of results) {
+                const iata = item.iata_code || item.iataCode || item.code || '';
+                const itemType = item.type || '';
+
+                // If this is a direct airport result, add it
+                if (itemType === 'airport' && iata && !seenCodes.has(iata)) {
+                    seenCodes.add(iata);
+                    flatResults.push({
+                        ...item,
+                        iataCode: iata,
+                        name: item.name || '',
+                        address: {
+                            cityName: item.city_name || item.cityName || item.city?.name || item.name || ''
+                        },
+                        subType: 'AIRPORT'
+                    });
+                }
+
+                // If this is a city with nested airports, flatten them out
+                if (itemType === 'city' && Array.isArray(item.airports) && item.airports.length > 0) {
+                    // First add the city itself as a selectable option
+                    const cityIata = item.iata_city_code || item.iata_code || iata;
+                    if (cityIata && !seenCodes.has(cityIata)) {
+                        seenCodes.add(cityIata);
+                        flatResults.push({
+                            ...item,
+                            iataCode: cityIata,
+                            name: `${item.name || ''} (All Airports)`,
+                            address: {
+                                cityName: item.name || item.city_name || ''
+                            },
+                            subType: 'CITY'
+                        });
+                    }
+
+                    // Then add each nested airport
+                    for (const airport of item.airports) {
+                        const apIata = airport.iata_code || airport.iataCode || '';
+                        if (apIata && !seenCodes.has(apIata)) {
+                            seenCodes.add(apIata);
+                            flatResults.push({
+                                ...airport,
+                                iataCode: apIata,
+                                name: airport.name || '',
+                                address: {
+                                    cityName: airport.city_name || airport.cityName || item.name || ''
+                                },
+                                subType: 'AIRPORT'
+                            });
+                        }
+                    }
+                } else if (itemType === 'city' && iata && !seenCodes.has(iata)) {
+                    // City without nested airports — still selectable
+                    seenCodes.add(iata);
+                    flatResults.push({
+                        ...item,
+                        iataCode: iata,
+                        name: item.name || '',
+                        address: {
+                            cityName: item.name || item.city_name || ''
+                        },
+                        subType: 'CITY'
+                    });
+                }
+            }
+
+            console.log(`${LOG_PREFIX} Flattened results count: ${flatResults.length}`);
+
+            if (flatResults.length > 0) {
+                locations.value = flatResults;
+                return;
+            }
+
+            // LAYER 2: Fallback to Amadeus location search if Duffel returned nothing
+            console.log(`${LOG_PREFIX} ➡️ Attempt 2: Amadeus location search for "${keyword}"`);
+            try {
+                const amadeusResponse = await flightsApi.searchAirports(keyword, countryCode);
+                const amadeusData = amadeusResponse.data?.data || amadeusResponse.data || [];
+                const amadeusResults = Array.isArray(amadeusData) ? amadeusData : [];
+
+                if (amadeusResults.length > 0) {
+                    console.log(`${LOG_PREFIX} ✅ Amadeus fallback returned ${amadeusResults.length} results`);
+                    locations.value = amadeusResults.map((item: any) => ({
+                        ...item,
+                        iataCode: item.iataCode || item.iata_code || item.code || '',
+                        name: item.name || item.detailedName || '',
+                        address: {
+                            cityName: item.address?.cityName || item.city_name || item.name || ''
+                        },
+                        subType: item.subType || 'AIRPORT'
+                    })).filter((item: any) => item.iataCode);
+                    return;
+                }
+            } catch (amadeusErr: any) {
+                console.warn(`${LOG_PREFIX} Amadeus fallback failed:`, amadeusErr?.message);
+            }
+
+            // LAYER 3: If the keyword looks like an IATA code (2-4 uppercase letters),
+            // try fetching the airport directly by ID
+            const isLikelyIataCode = /^[A-Z]{2,4}$/i.test(keyword.trim());
+            if (isLikelyIataCode) {
+                console.log(`${LOG_PREFIX} ➡️ Attempt 3: Direct Duffel airport lookup for code "${keyword.toUpperCase()}"`);
+                try {
+                    const directResponse = await flightsApi.getDuffelAirport(`arp_${keyword.toLowerCase()}_`);
+                    const directData = directResponse.data?.data || directResponse.data;
+                    if (directData && (directData.iata_code || directData.iataCode)) {
+                        const ap = directData;
+                        locations.value = [{
+                            ...ap,
+                            iataCode: ap.iata_code || ap.iataCode,
+                            name: ap.name || '',
+                            address: {
+                                cityName: ap.city_name || ap.cityName || ap.name || ''
+                            },
+                            subType: 'AIRPORT'
+                        }];
+                        console.log(`${LOG_PREFIX} ✅ Direct lookup found: ${ap.name}`);
+                        return;
+                    }
+                } catch {
+                    // Direct lookup didn't work — that's ok
+                }
+            }
+
+            // Nothing found anywhere
+            console.log(`${LOG_PREFIX} ❌ No results found for "${keyword}" across all sources`);
+            locations.value = [];
         } catch (err: any) {
             if (err?.name !== 'CanceledError' && err?.code !== 'ERR_CANCELED') {
                 console.error(`${LOG_PREFIX} ❌ API error:`, err?.message);

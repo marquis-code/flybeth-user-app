@@ -99,11 +99,11 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex justify-end pt-4 gap-4">
-       <button @click="$emit('back')" class="px-8 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-[12px] font-bold transition-all text-sm">
+    <div class="flex w-full pt-4 gap-4">
+       <button @click="$emit('back')" class="flex-1 px-8 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-[12px] font-bold transition-all text-sm">
           Go Back
        </button>
-       <button @click="$emit('continue')" class="px-8 py-3 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-[12px] font-bold transition-all text-sm">
+       <button @click="$emit('continue')" class="flex-1 px-8 py-3 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-[12px] font-bold transition-all text-sm">
           Continue
        </button>
     </div>

@@ -13,7 +13,7 @@
     @confirm="handleManualConfirm"
   />
 
-  <BookingExpiredModal :visible="isBookingExpired" />
+  <BookingExpiredModal :visible="isBookingExpired" :title="bookingErrorTitle" :message="bookingErrorMsg" />
 
   <!-- Klarna Widget Modal -->
   <div v-if="showKlarnaWidget" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
@@ -51,7 +51,8 @@
             <div class="flex items-center gap-2 truncate">
               <span class="text-[14px] lg:text-[15px] font-bold text-gray-900 truncate">
                 <template v-if="bookingDetails.type === 'flight' && priceDetailed">
-                  {{ priceDetailed.originName || priceDetailed.origin }} <span class="text-gray-400 font-normal">→</span> {{ priceDetailed.destinationName || priceDetailed.destination }}
+                  <span v-if="priceDetailed.tripType === 'Multi-city'">Multi-city Itinerary</span>
+                  <span v-else>{{ priceDetailed.originName || priceDetailed.origin }} <span class="text-gray-400 font-normal">→</span> {{ priceDetailed.destinationName || priceDetailed.destination }}</span>
                 </template>
                 <template v-else>
                   {{ bookingDetails.name }}
@@ -97,8 +98,8 @@
         <!-- Step 0: Details (Flight Details + Contact Details + Passenger Details) -->
         <div v-if="currentStep === 0" class="space-y-6 animate-in">
           
-          <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
-            <div class="p-4 md:p-6">
+          <div class="bg-white rounded-3xl sm:rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-3 sm:p-4 md:p-6">
               <CheckoutFlightDetails
                 v-if="bookingDetails.type === 'flight'"
                 :flightOffer="priceDetailed"
@@ -123,7 +124,7 @@
         <!-- Step 1: Customise (Seats & Baggage) -->
         <div v-if="currentStep === 1" class="animate-in space-y-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[28px] font-bold text-[#111827]">Customise your booking</h2>
+            <h2 class="text-[20px] font-bold text-[#111827]">Customise your booking</h2>
           </div>
           <CheckoutTripCustomization
             :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
@@ -141,7 +142,7 @@
         <!-- Step 2: Protect (Cancellation & Baggage Protection) -->
         <div v-if="currentStep === 2" class="animate-in space-y-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[28px] font-bold text-[#111827]">Protect your booking</h2>
+            <h2 class="text-[20px] font-bold text-[#111827]">Protect your booking</h2>
           </div>
           <CheckoutProtection 
             :flightOffer="priceDetailed"
@@ -166,9 +167,9 @@
             @edit="goToStep"
           />
 
-          <div class="flex flex-col lg:flex-row gap-6 mt-6">
+          <div class="flex flex-col gap-8 mt-6">
             <!-- Payment Section -->
-            <div class="flex-1 bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6 md:p-8">
+            <div class="w-full bg-white rounded-3xl sm:rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-4 sm:p-6 md:p-8">
               <CheckoutPayment 
                 ref="paymentRef"
                 :total-amount="displayPrices.total" 
@@ -182,52 +183,62 @@
               />
             </div>
 
-            <!-- Price Breakdown -->
-            <div class="w-full lg:w-[360px] flex-shrink-0">
-              <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">Price breakdown</h3>
-                
-                <div class="space-y-3 mb-6 text-sm text-gray-600">
-                  <div class="flex justify-between items-center">
-                    <span>Flight Fare</span>
-                    <span class="font-medium text-gray-900">{{ currencySymbol }}{{ displayPrices.base.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <span>Taxes & Fees</span>
-                    <span class="font-medium text-gray-900">{{ currencySymbol }}{{ displayPrices.tax.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-                  
-                  <div v-if="seatPrice > 0" class="flex justify-between items-center text-blue-600">
-                    <span>Seat Selection</span>
-                    <span class="font-medium">+{{ currencySymbol }}{{ (seatPrice * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-
-                  <template v-if="selectedAddOns.length > 0">
-                    <div v-for="addon in selectedAddOns.filter(a => a.id !== 'seat-selection')" :key="addon.id" class="flex justify-between items-center text-blue-600">
-                      <span>{{ addon.name }}</span>
-                      <span class="font-medium">+{{ currencySymbol }}{{ (addon.price * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+            <!-- Price Breakdown (Full Width Redesign) -->
+            <div class="w-full bg-white rounded-3xl sm:rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-4 sm:p-6 md:p-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-900 mb-6">Price breakdown</h3>
+                  <div class="space-y-4 text-sm text-gray-600">
+                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                      <span class="font-medium text-gray-500">Flight Fare</span>
+                      <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.base.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
                     </div>
-                  </template>
+                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                      <span class="font-medium text-gray-500">Taxes & Fees</span>
+                      <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.tax.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+                    
+                    <div v-if="seatPrice > 0" class="flex justify-between items-center pb-3 border-b border-gray-100 text-blue-600">
+                      <span class="font-medium">Seat Selection</span>
+                      <span class="font-bold">+{{ currencySymbol }}{{ (seatPrice * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+
+                    <template v-if="selectedAddOns.length > 0">
+                      <div v-for="addon in selectedAddOns.filter(a => a.id !== 'seat-selection')" :key="addon.id" class="flex justify-between items-center pb-3 border-b border-gray-100 text-blue-600">
+                        <span class="font-medium">{{ addon.name }}</span>
+                        <span class="font-bold">+{{ currencySymbol }}{{ (addon.price * (currentCurrency.rate || 1)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                      </div>
+                    </template>
+                  </div>
                 </div>
 
-                <div class="pt-4 border-t border-gray-200">
-                  <div class="flex justify-between items-center mb-1">
-                    <span class="text-base font-bold text-gray-900">Total</span>
-                    <span class="text-2xl font-black text-gray-900">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-                  </div>
-                  <p class="text-xs text-gray-500 mb-6">Includes taxes and charges</p>
-
-                  <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-14 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2">
-                    <template v-if="!paymentProcessing">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                      Pay Securely
-                    </template>
-                    <span v-else class="animate-pulse">Processing...</span>
-                  </button>
-
-                  <div class="flex items-center justify-center gap-1.5 mt-4 text-gray-400">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <span class="text-[10px] font-semibold uppercase ">AES-256 Encrypted</span>
+                <!-- Total & Action Area -->
+                <div class="flex flex-col justify-end">
+                  <div class="bg-gray-50 rounded-2xl p-6">
+                    <div class="flex justify-between items-end mb-2">
+                      <div class="flex flex-col">
+                        <span class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Total Amount</span>
+                        <p class="text-xs text-gray-400">Includes taxes and charges</p>
+                      </div>
+                      <span class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+                    
+                    <div class="mt-6" v-show="!paymentRef || paymentRef.requiresExternalSubmit">
+                      <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-12 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-lg font-bold text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
+                        <template v-if="!paymentProcessing">
+                          <Lock class="w-5 h-5 opacity-80" />
+                          Complete Booking
+                        </template>
+                        <span v-else class="animate-pulse flex items-center gap-2">
+                          <span class="h-5 w-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                          Processing Securely...
+                        </span>
+                      </button>
+                      <div class="flex items-center justify-center gap-2 mt-4 text-gray-400">
+                        <ShieldCheck class="w-4 h-4" />
+                        <span class="text-xs font-semibold uppercase tracking-wider">AES-256 Bank-Level Encryption</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -286,8 +297,10 @@ const router = useRouter()
 
 // State
 const currentStep = ref(0)
-const showBrandedLoader = ref(false)
+const showBrandedLoader = ref(true)
 const isBookingExpired = ref(false)
+const bookingErrorTitle = ref('Booking expired')
+const bookingErrorMsg = ref('This booking has expired. Please start a new search to continue.')
 const loaderStatus = ref('Confirming best fare with airline...')
 const paymentProcessing = ref(false)
 const selectedAddOns = ref<{ id: string; name: string; price: number }[]>([])
@@ -512,31 +525,50 @@ const normalizeFlightData = (rawFlight: any) => {
   }
 
   if (rawFlight.slices && rawFlight.slices.length > 0) {
-    const slice = rawFlight.slices[0]
-    const segments = slice.segments || []
-    const firstSegment = segments[0]
-    const lastSegment = segments[segments.length - 1]
     const basePrice = Number(rawFlight.base_amount || 0)
     const totalPrice = Number(rawFlight.total_amount || 0)
     const taxPrice = Number(rawFlight.tax_amount || 0)
+    
+    const itineraries = rawFlight.slices.map((slice: any) => {
+      const segments = slice.segments || []
+      const normalizedSegments = segments.map((s: any) => ({
+        flightNumber: s.marketing_carrier_flight_number || s.operating_carrier_flight_number || 'N/A',
+        airline: s.marketing_carrier?.name || s.operating_carrier?.name || 'Airline',
+        airlineLogo: s.marketing_carrier?.logo_symbol_url || s.operating_carrier?.logo_symbol_url || `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.marketing_carrier?.iata_code || s.operating_carrier?.iata_code}.svg`,
+        origin: s.origin?.iata_code || s.origin?.iata_city_code || 'N/A',
+        originName: s.origin?.name || s.origin?.city_name || 'N/A',
+        destination: s.destination?.iata_code || s.destination?.iata_city_code || 'N/A',
+        destinationName: s.destination?.name || s.destination?.city_name || 'N/A',
+        departureTime: s.departing_at,
+        arrivalTime: s.arriving_at,
+        duration: parseDuration(s.duration),
+        originTerminal: s.origin_terminal,
+        destinationTerminal: s.destination_terminal,
+        aircraft: s.aircraft?.name || s.aircraft?.code || 'Aircraft',
+      }))
+      const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + (s.duration || 0), 0)
+      return {
+        origin: normalizedSegments[0]?.origin || 'N/A',
+        destination: normalizedSegments[normalizedSegments.length - 1]?.destination || 'N/A',
+        departureTime: normalizedSegments[0]?.departureTime,
+        arrivalTime: normalizedSegments[normalizedSegments.length - 1]?.arrivalTime,
+        duration: totalDuration,
+        stops: segments.length - 1,
+        segments: normalizedSegments,
+        cabinClass: (slice.fare_brand_name || segments[0]?.passengers?.[0]?.cabin_class || 'Economy').toLowerCase(),
+      }
+    })
 
-    const normalizedSegments = segments.map((s: any) => ({
-      flightNumber: s.marketing_carrier_flight_number || s.operating_carrier_flight_number || 'N/A',
-      airline: s.marketing_carrier?.name || s.operating_carrier?.name || 'Airline',
-      airlineLogo: s.marketing_carrier?.logo_symbol_url || s.operating_carrier?.logo_symbol_url || `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.marketing_carrier?.iata_code || s.operating_carrier?.iata_code}.svg`,
-      origin: s.origin?.iata_code || s.origin?.iata_city_code || 'N/A',
-      originName: s.origin?.name || s.origin?.city_name || 'N/A',
-      destination: s.destination?.iata_code || s.destination?.iata_city_code || 'N/A',
-      destinationName: s.destination?.name || s.destination?.city_name || 'N/A',
-      departureTime: s.departing_at,
-      arrivalTime: s.arriving_at,
-      duration: parseDuration(s.duration),
-      originTerminal: s.origin_terminal,
-      destinationTerminal: s.destination_terminal,
-      aircraft: s.aircraft?.name || s.aircraft?.code || 'Aircraft',
-    }))
+    const firstSegment = rawFlight.slices[0]?.segments?.[0]
+    const lastSegment = rawFlight.slices[rawFlight.slices.length - 1]?.segments?.slice(-1)[0]
+    
+    let tripType = 'One Way'
+    if (rawFlight.slices.length > 2) {
+      tripType = 'Multi-city'
+    } else if (rawFlight.slices.length === 2) {
+      tripType = 'Round Trip'
+    }
 
-    const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + (s.duration || 0), 0)
     const canChange = rawFlight.conditions?.change_before_departure?.allowed || false
     const canRefund = rawFlight.conditions?.refund_before_departure?.allowed || false
 
@@ -548,46 +580,66 @@ const normalizeFlightData = (rawFlight: any) => {
       destinationName: lastSegment?.destination?.city_name || 'N/A',
       departureTime: firstSegment?.departing_at,
       arrivalTime: lastSegment?.arriving_at,
-      duration: totalDuration,
+      duration: itineraries.reduce((sum: number, it: any) => sum + it.duration, 0),
       price: basePrice,
       tax: taxPrice,
       priceWithCommission: totalPrice,
       currency: rawFlight.total_currency || 'USD',
-      stops: segments.length - 1,
-      segments: normalizedSegments,
-      cabinClass: (slice.fare_brand_name || segments[0]?.passengers?.[0]?.cabin_class || 'Economy').toLowerCase(),
+      itineraries,
+      segments: itineraries[0].segments, // Keep for backward compatibility with simple views
+      cabinClass: itineraries[0].cabinClass,
       airline: rawFlight.owner?.name || firstSegment?.marketing_carrier?.name || 'Airline',
       airlineLogo: rawFlight.owner?.logo_symbol_url || firstSegment?.marketing_carrier?.logo_symbol_url,
       totalEmissionsKg: rawFlight.total_emissions_kg,
       conditions: { refundable: canRefund, changeable: canChange },
+      isRoundTrip: rawFlight.slices ? rawFlight.slices.length > 1 : false,
+      tripType,
       rawOffer: rawFlight,
     }
   }
 
   if (rawFlight.itineraries && rawFlight.itineraries.length > 0) {
-    const itinerary = rawFlight.itineraries[0]
-    const segments = itinerary.segments || []
-    const firstSegment = segments[0]
-    const lastSegment = segments[segments.length - 1]
     const basePrice = Number(rawFlight.price?.base || rawFlight.price?.total || 0)
     const totalPrice = Number(rawFlight.price?.total || rawFlight.price?.grandTotal || 0)
     const cabin = (rawFlight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY').toLowerCase()
 
-    const normalizedSegments = segments.map((s: any) => ({
-      flightNumber: `${s.carrierCode}${s.number}`,
-      airline: s.carrierCode,
-      airlineLogo: `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.carrierCode}.svg`,
-      origin: s.departure?.iataCode,
-      destination: s.arrival?.iataCode,
-      departureTime: s.departure?.at,
-      arrivalTime: s.arrival?.at,
-      duration: parseDuration(s.duration),
-      originTerminal: s.departure?.terminal,
-      destinationTerminal: s.arrival?.terminal,
-      aircraft: s.aircraft?.code,
-    }))
+    const itineraries = rawFlight.itineraries.map((itinerary: any) => {
+      const segments = itinerary.segments || []
+      const normalizedSegments = segments.map((s: any) => ({
+        flightNumber: `${s.carrierCode}${s.number}`,
+        airline: s.carrierCode,
+        airlineLogo: `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${s.carrierCode}.svg`,
+        origin: s.departure?.iataCode,
+        destination: s.arrival?.iataCode,
+        departureTime: s.departure?.at,
+        arrivalTime: s.arrival?.at,
+        duration: parseDuration(s.duration),
+        originTerminal: s.departure?.terminal,
+        destinationTerminal: s.arrival?.terminal,
+        aircraft: s.aircraft?.code,
+      }))
+      const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + s.duration, 0)
+      return {
+        origin: normalizedSegments[0]?.origin || 'N/A',
+        destination: normalizedSegments[normalizedSegments.length - 1]?.destination || 'N/A',
+        departureTime: normalizedSegments[0]?.departureTime,
+        arrivalTime: normalizedSegments[normalizedSegments.length - 1]?.arrivalTime,
+        duration: totalDuration,
+        stops: segments.length - 1,
+        segments: normalizedSegments,
+        cabinClass: cabin,
+      }
+    })
 
-    const totalDuration = normalizedSegments.reduce((sum: number, s: any) => sum + s.duration, 0)
+    const firstSegment = rawFlight.itineraries[0]?.segments?.[0]
+    const lastSegment = rawFlight.itineraries[rawFlight.itineraries.length - 1]?.segments?.slice(-1)[0]
+    
+    let tripType = 'One Way'
+    if (rawFlight.itineraries.length > 2) {
+      tripType = 'Multi-city'
+    } else if (rawFlight.itineraries.length === 2) {
+      tripType = 'Round Trip'
+    }
 
     return {
       ...rawFlight,
@@ -595,15 +647,17 @@ const normalizeFlightData = (rawFlight: any) => {
       destination: lastSegment?.arrival?.iataCode || 'N/A',
       departureTime: firstSegment?.departure?.at,
       arrivalTime: lastSegment?.arrival?.at,
-      duration: totalDuration,
+      duration: itineraries.reduce((sum: number, it: any) => sum + it.duration, 0),
       price: basePrice,
       priceWithCommission: totalPrice,
       currency: rawFlight.price?.currency || 'USD',
-      stops: segments.length - 1,
-      segments: normalizedSegments,
+      itineraries,
+      segments: itineraries[0].segments, // Keep for backward compatibility
       cabinClass: cabin,
       airline: rawFlight.validatingAirlineCodes?.[0] || firstSegment?.carrierCode || 'Airline',
       airlineLogo: `https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/${rawFlight.validatingAirlineCodes?.[0] || firstSegment?.carrierCode}.svg`,
+      tripType,
+      isRoundTrip: rawFlight.itineraries.length > 1,
       rawOffer: rawFlight,
     }
   }
@@ -753,7 +807,14 @@ const handleWalletAuthorize = async (paymentInfo: any) => {
         }
       }
     } catch (err: any) {
-      showToast({ title: "Wallet Error", message: err.message || "Failed to initialize wallet", toastType: "error" })
+      const errMsg = err.response?.data?.message || err.message || "Failed to complete booking";
+      if (errMsg.toLowerCase().includes('no longer available') || errMsg.toLowerCase().includes('booking failed')) {
+        bookingErrorTitle.value = "Offer Unavailable";
+        bookingErrorMsg.value = "The requested offer is no longer available. Prices and availability can change quickly.";
+        isBookingExpired.value = true;
+      } else {
+        showToast({ title: "Booking Error", message: errMsg, toastType: "error" })
+      }
     } finally {
       paymentProcessing.value = false
       showBrandedLoader.value = false
@@ -828,12 +889,20 @@ const handlePayment = async (paymentInfo: any) => {
     }
 
     if (bookingDetails.value.type === 'flight') {
+      payload.isRoundTrip = priceDetailed.value?.isRoundTrip || false;
       payload.flights = [{
         flightId: bookingDetails.value.id,
         class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
         offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId || priceDetailed.value?.id || bookingDetails.value.id,
         provider: bookingDetails.value.provider,
-        passengerIds: []
+        passengerIds: [],
+        metadata: {
+          origin: priceDetailed.value?.origin || priceDetailed.value?.originName || bookingDetails.value.origin,
+          destination: priceDetailed.value?.destination || priceDetailed.value?.destinationName || bookingDetails.value.destination,
+          airline: priceDetailed.value?.airline || bookingDetails.value.airline,
+          departureTime: priceDetailed.value?.departureTime || bookingDetails.value.departureTime,
+          slices: priceDetailed.value?.slices || priceDetailed.value?.segments || []
+        }
       }]
     } else if (bookingDetails.value.type === 'stay') {
       payload.stays = [{
@@ -908,7 +977,8 @@ const handlePayment = async (paymentInfo: any) => {
 
       // For payments that don't require redirection
       clearCheckoutState();
-      router.push(`/confirmation?pnr=${booking.pnr}`)
+      const finalStatus = (booking.payment?.status === 'success' || booking.status === 'ticketed') ? 'success' : 'booked';
+      router.push(`/confirmation?pnr=${booking.pnr}&status=${finalStatus}`);
     } else {
       throw new Error('Booking response was invalid')
     }
@@ -926,9 +996,22 @@ const handlePayment = async (paymentInfo: any) => {
       return
     }
 
+    const errorMessage = err.response?.data?.message || err.message || "Failed to process booking";
+    const lowerMsg = errorMessage.toLowerCase();
+    
+    // Trigger the existing BookingExpiredModal if the offer expired, was already booked, or is no longer available
+    if (lowerMsg.includes('expired') || lowerMsg.includes('already been booked') || lowerMsg.includes('no longer available') || lowerMsg.includes('booking failed')) {
+      bookingErrorTitle.value = lowerMsg.includes('no longer available') || lowerMsg.includes('booking failed') ? "Offer Unavailable" : "Booking Expired";
+      bookingErrorMsg.value = lowerMsg.includes('no longer available') || lowerMsg.includes('booking failed')
+        ? "The requested offer is no longer available. Prices and availability can change quickly."
+        : "This booking has expired. Please start a new search to continue.";
+      isBookingExpired.value = true;
+      return;
+    }
+
     showToast({ 
       title: "Booking Error", 
-      message: err.response?.data?.message || err.message || "Failed to process booking", 
+      message: errorMessage, 
       toastType: "error" 
     })
   } finally {
@@ -1020,8 +1103,8 @@ watch([currentStep, travellerData, selectedSeats, selectedAddOns], () => { saveC
 
 @media (max-width: 640px) {
   .ck-wrap {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
 

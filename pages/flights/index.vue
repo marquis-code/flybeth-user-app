@@ -33,73 +33,10 @@
             </h1>
           </template>
         </div>
-
-        <!-- ── SEARCH BAR ── -->
-        <div class="fp-bar">
-
-          <!-- FROM field -->
-          <div class="fp-fld fp-fld--from">
-            <LocationPicker
-              v-model="searchQuery.origin"
-              label="From"
-              placeholder="City or airport"
-            />
-          </div>
-
-          <!-- SWAP -->
-          <button class="fp-swap" @click="swapLocations" title="Swap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
-          </button>
-
-          <!-- TO field -->
-          <div class="fp-fld fp-fld--to">
-            <LocationPicker
-              v-model="searchQuery.destination"
-              label="To"
-              placeholder="City or airport"
-            />
-          </div>
-
-          <div class="fp-bar-sep"></div>
-
-          <!-- DATE field -->
-          <div class="fp-fld fp-fld--date" :class="{ 'fp-fld--active': activeField === 'date' }" ref="dateRef">
-            <FlightDateRangePicker 
-              :departure="searchQuery.departureDate" 
-              :return="searchQuery.returnDate" 
-              :mode="searchQuery.type === 'roundtrip' ? 'roundtrip' : 'oneway'" 
-              @update:departure="(v) => searchQuery.departureDate = v" 
-              @update:return="(v) => searchQuery.returnDate = v" 
-              @focus="activeField = 'date'" 
-              @close="activeField = null" 
-            />
-          </div>
-
-          <div class="fp-bar-sep"></div>
-
-          <!-- TRAVELERS field -->
-          <div class="fp-fld fp-fld--pax">
-            <Occupancypicker
-              label="Travelers"
-              variant="flight"
-              v-model:adults="searchQuery.adults"
-              v-model:children="searchQuery.children"
-              v-model:infantsOnLap="searchQuery.infantsOnLap"
-              v-model:infantsInSeat="searchQuery.infantsInSeat"
-              v-model:cabinClass="searchQuery.cabinClass"
-            />
-          </div>
-
-          <!-- SEARCH BTN -->
-          <button class="fp-search-btn" :class="{ 'fp-search-btn--busy': loading }" @click="handleSearch">
-            <span class="fp-search-inner">
-              <svg v-if="!loading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              <span v-if="loading" class="fp-spin"></span>
-              <span>{{ loading ? 'Searching' : 'Search' }}</span>
-            </span>
-          </button>
-
-        </div><!-- /fp-bar -->
+        <!-- ── HOME PAGE SEARCH WIDGET ── -->
+        <div class="mt-6 w-full max-w-5xl mx-auto relative z-20">
+          <SearchWidget />
+        </div>
       </div><!-- /fp-wrap -->
     </section>
 
@@ -229,8 +166,24 @@
             <button class="fp-empty-btn" @click="clearFilters">Clear filters</button>
           </div>
 
-          <!-- Results -->
+          <!-- Results & Carousels -->
           <div v-if="sortedFlights.length" class="fp-groups">
+            <!-- Date Pricing Carousel -->
+            <DatePricingCarousel 
+              v-if="searchQuery.departureDate"
+              :basePrice="minPrice" 
+              :departureDate="searchQuery.departureDate" 
+              :returnDate="searchQuery.returnDate" 
+              @select="handleDateSelect"
+            />
+
+            <!-- Airline Pricing Carousel -->
+            <AirlinePricingCarousel 
+              :flights="sortedFlights" 
+              :activeAirlines="activeAirlines" 
+              @toggle="toggleAirline" 
+            />
+
             <template v-for="(flight, index) in sortedFlights" :key="flight.id || index">
               <FlightGroup
                 :id="`group-${(flight.airline || '').replace(/\\s+/g, '-')}`"
@@ -381,22 +334,40 @@
               :key="variant.offerId || variant.id"
               class="fd-variant-card"
             >
-              <div>
-                <!-- Brand & Cabin -->
-                <div class="fd-variant-card-header">
-                  <div>
-                    <h4 class="fd-variant-title">{{ getFareVariantDetails(variant).brandName }}</h4>
-                    <span class="fd-variant-cabin">{{ getFareVariantDetails(variant).cabinLabel }}</span>
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full">
+                <!-- Left: Brand & Cabin -->
+                <div class="flex-1">
+                  <div class="flex items-center gap-3">
+                    <h4 class="text-base font-black text-gray-900">{{ getFareVariantDetails(variant).brandName }}</h4>
                   </div>
-                  <span class="fd-variant-price">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
+                  <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mt-0.5">{{ getFareVariantDetails(variant).cabinLabel }}</span>
+                  <div class="mt-3">
+                    <button 
+                      @click="toggleVariant(variant.offerId || variant.id)"
+                      class="text-xs font-bold text-[#0D1DAD] hover:text-[#002a66] flex items-center gap-1 transition-colors"
+                    >
+                      Fare Details
+                      <ChevronDown class="w-3.5 h-3.5 transition-transform duration-300" :class="expandedVariants[variant.offerId || variant.id] ? 'rotate-180' : ''" />
+                    </button>
+                  </div>
                 </div>
-                
-                <p class="fd-variant-price-info">
-                  {{ formatPrice(variant.priceWithCommission || variant.price || 0) }} one way for 1 traveler
-                </p>
 
-                <!-- Features list -->
-                <ul class="fd-variant-features">
+                <!-- Right: Price & Select -->
+                <div class="flex flex-col items-end w-full md:w-auto mt-4 md:mt-0">
+                  <span class="text-lg font-black text-gray-900">{{ formatPrice(variant.priceWithCommission || variant.price || 0) }}</span>
+                  <p class="text-[10px] text-gray-500 font-medium mb-2">{{ searchQuery.type === 'roundtrip' ? 'Round trip' : searchQuery.type === 'multicity' ? 'Multi-city' : 'One way' }} for {{ searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat }} traveler{{ (searchQuery.adults + searchQuery.children + searchQuery.infantsOnLap + searchQuery.infantsInSeat) !== 1 ? 's' : '' }}</p>
+                  <button 
+                    @click="selectVariant(variant)"
+                    class="bg-[#0D1DAD] hover:bg-[#0A1485] text-white px-6 py-2 rounded-lg font-bold text-sm transition-colors w-full md:w-auto shadow-sm"
+                  >
+                    Select
+                  </button>
+                </div>
+              </div>
+
+              <!-- Features list (collapsible) -->
+              <div class="grid transition-all duration-300 w-full" :class="expandedVariants[variant.offerId || variant.id] ? 'grid-rows-[1fr] opacity-100 mt-4 pt-4 border-t border-gray-100' : 'grid-rows-[0fr] opacity-0 m-0 border-t-0'">
+                <ul class="fd-variant-features overflow-hidden grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
                   <!-- Seat -->
                   <li class="fd-variant-feature-item">
                     <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" v-if="getFareVariantDetails(variant).seatText.includes('included')" />
@@ -436,14 +407,6 @@
                   </li>
                 </ul>
               </div>
-
-              <!-- Select Button -->
-              <button 
-                @click="selectVariant(variant)"
-                class="fd-variant-select-btn"
-              >
-                Select
-              </button>
             </div>
           </div>
         </div>
@@ -470,6 +433,8 @@ import { useSettings, localeToCurrency } from '@/composables/useSettings'
 import LocationPicker from '@/components/LocationPicker.vue'
 import Occupancypicker from '@/components/Occupancypicker.vue'
 import { useAmadeusLocations } from '@/composables/modules/flights/useAmadeusLocations'
+import DatePricingCarousel from '@/components/flights/DatePricingCarousel.vue'
+import AirlinePricingCarousel from '@/components/flights/AirlinePricingCarousel.vue'
 
 const { loading, flights, searchFlights } = useSearchFlights()
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights()
@@ -485,11 +450,16 @@ const openField = (field: string) => {
 const dateRef = ref<HTMLElement | null>(null)
 const sortRef = ref<HTMLElement | null>(null)
 
+const expandedVariants = ref<Record<string, boolean>>({})
+const toggleVariant = (id: string) => {
+  expandedVariants.value[id] = !expandedVariants.value[id]
+}
+
 // ── Fare Variants side drawer Refs ────────────────────────────────────
 const showVariantsDrawer = ref(false)
 const selectedFlightSchedule = ref<any>(null)
 const activeFlightVariants = ref<any[]>([])
-const showDrawerFlightDetails = ref(false)
+const showDrawerFlightDetails = ref(true)
 const calViewDate = ref(new Date())
 const sortOpen = ref(false)
 const mobileFilters = ref(false)
@@ -510,7 +480,8 @@ const searchQuery = ref({
   children: 0,
   infantsOnLap: 0,
   infantsInSeat: 0,
-  cabinClass: 'economy'
+  cabinClass: 'economy',
+  slices: [] as any[]
 })
 
 const cabinClasses = [
@@ -680,7 +651,7 @@ const openVariantsDrawer = (flight: any) => {
     return priceA - priceB
   })
   selectedFlightSchedule.value = flight
-  showDrawerFlightDetails.value = false
+  showDrawerFlightDetails.value = true
   showVariantsDrawer.value = true
 }
 
@@ -779,11 +750,12 @@ const formatTime = (isoString: string) => {
   if (!isoString) return '—'
   try {
     const date = new Date(isoString)
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    const timeStr = date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
       minute: '2-digit',
-      hour12: false 
+      hour12: true 
     })
+    return timeStr.replace(' ', '').toLowerCase()
   } catch (e) {
     if (typeof isoString === 'string' && isoString.includes(':')) {
       return isoString.split(':').slice(0, 2).join(':')
@@ -878,6 +850,12 @@ const handleSearch = () => {
   predictTripPurpose({ origin: searchQuery.value.origin, destination: searchQuery.value.destination, departureDate: searchQuery.value.departureDate })
 }
 
+const handleDateSelect = (dates: { departureDate: string, returnDate?: string }) => {
+  if (dates.departureDate) searchQuery.value.departureDate = dates.departureDate
+  if (dates.returnDate) searchQuery.value.returnDate = dates.returnDate
+  handleSearch()
+}
+
 const swapLocations = () => {
   const t = searchQuery.value.origin; searchQuery.value.origin = searchQuery.value.destination; searchQuery.value.destination = t
 }
@@ -921,6 +899,13 @@ const loadFromQuery = (route: any) => {
   if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate)
   if (route.query.returnDate) searchQuery.value.returnDate = String(route.query.returnDate)
   if (route.query.type) searchQuery.value.type = String(route.query.type)
+  if (route.query.slices) {
+    try {
+      searchQuery.value.slices = JSON.parse(String(route.query.slices))
+    } catch (e) {
+      console.error('Failed to parse slices', e)
+    }
+  }
   
   // Support both old 'passengers' and new granular props
   if (route.query.adults) searchQuery.value.adults = parseInt(String(route.query.adults)) || 1
@@ -1039,6 +1024,16 @@ onMounted(async () => {
     handleSearch()
   }
   fetchPopularFlights()
+
+  // React to SearchWidget updating the route query
+  watch(() => route.query, (newQuery, oldQuery) => {
+    // Check if the query actually changed in a meaningful way
+    const isDifferent = Object.keys(newQuery).some(k => newQuery[k] !== oldQuery[k])
+    if (isDifferent) {
+      loadFromQuery(route)
+      handleSearch()
+    }
+  }, { deep: true })
 })
 </script>
 
@@ -1072,7 +1067,7 @@ onMounted(async () => {
 }
 
 .fp-hero--dest {
-  padding: 120px 0 100px;
+  padding: 48px 0 56px;
   background: #111;
   border-bottom: none;
 }
@@ -1099,11 +1094,12 @@ onMounted(async () => {
 .fp-orb--b { width: 300px; height: 300px; background: radial-gradient(circle, #d4e6ff, transparent); bottom: -100px; left: 8%; }
 
 /* Headline */
-.fp-headline { margin-bottom: 28px; position: relative; z-index: 10; }
+.fp-headline { margin-bottom: 20px; position: relative; z-index: 10; }
+.fp-headline--dest { margin-bottom: 16px; }
 .fp-eyebrow { font-size: 14px; font-weight: 600; letter-spacing: 0.18em; color: #999; display: block; margin-bottom: 10px; }
 .fp-h1 { font-family: 'Onest', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .fp-h1 em { font-style: normal; color: #0D1DAD; }
-.fp-h1--dest { color: #fff; text-shadow: 0 4px 16px rgba(0,0,0,0.3); font-size: clamp(32px, 5vw, 56px); }
+.fp-h1--dest { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.25); font-size: clamp(22px, 3.5vw, 34px); }
 
 /* ── Destination Features ──────────────────────────────────────────── */
 .fp-dest-features {
@@ -1175,17 +1171,62 @@ onMounted(async () => {
 }
 
 /* ── Search bar ────────────────────────────────────────────────────── */
+.fp-trip-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 10;
+}
+.fp-trip-tab {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 8px 20px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Onest', sans-serif;
+}
+.fp-trip-tab:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.fp-trip-tab--active {
+  color: #111 !important;
+  background: #fff !important;
+  border-color: #fff !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.fp-hero:not(.fp-hero--dest) .fp-trip-tab {
+  color: #111;
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.fp-hero:not(.fp-hero--dest) .fp-trip-tab:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+.fp-hero:not(.fp-hero--dest) .fp-trip-tab--active {
+  color: #fff !important;
+  background: #0D1DAD !important;
+  border-color: #0D1DAD !important;
+}
+
 .fp-bar {
   background: #fff;
   border: 1.5px solid #e0e0d8;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
   display: flex;
   align-items: stretch;
   position: relative;
   z-index: 50;
   overflow: visible;
   gap: 0;
+  width: 100%;
+  min-height: 76px;
 }
 
 /* Fields */
@@ -1203,11 +1244,11 @@ onMounted(async () => {
 .fp-fld-inner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 12px;
+  padding: 16px 24px;
   height: 100%;
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 18px;
   transition: background 0.15s;
   min-width: 0;
 }
@@ -1290,22 +1331,23 @@ onMounted(async () => {
   flex-shrink: 0;
   background: #0D1DAD;
   border: none;
-  border-radius: 12px;
+  border-radius: 100px;
   color: #fff;
   font-family: 'Onest', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  padding: 0 24px;
-  margin: 6px;
-  min-width: 100px;
+  padding: 0 32px;
+  margin: 8px 8px 8px 8px;
+  height: 60px;
+  min-width: 0;
   transition: all 0.2s;
-  align-self: stretch;
+  align-self: center;
 }
-.fp-search-btn:hover { background: #0D1DAD; transform: translateY(-1px); }
+.fp-search-btn:hover { background: #0a15a0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13,29,173,0.3); }
 .fp-search-btn--busy { opacity: 0.75; cursor: wait; }
-.fp-search-inner { display: flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; }
-.fp-spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+.fp-search-inner { display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.fp-spin { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── Dropdowns — attached to parent field ──────────────────────────── */
@@ -1636,7 +1678,7 @@ onMounted(async () => {
 .fp-mdash { font-size: 13px; color: #000; font-weight: 700; }
 
 /* Body grid */
-.fp-body { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: start; }
+.fp-body { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; align-items: start; }
 
 /* Sidebar */
 .fp-sidebar { position: sticky; top: 20px; }
@@ -1753,7 +1795,7 @@ onMounted(async () => {
 
 /* ── Responsive ────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .fp-body { grid-template-columns: 1fr; }
+  .fp-body { grid-template-columns: minmax(0, 1fr); }
   .fp-sidebar { position: static; }
   .fp-sbar { display: none; }
   .fp-sidebar--open .fp-sbar {
@@ -1785,7 +1827,7 @@ onMounted(async () => {
   .fp-bar-sep { height: 1px; width: 100%; margin: 0; background: #D1D5DB; }
   .fp-fld--date { flex: 1 0 50%; }
   .fp-fld--pax { flex: 1 0 40%; }
-  .fp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
+  .fp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 100px; height: 42px; }
   .fp-fares { grid-template-columns: 1fr 1fr; }
   .fp-fares > :last-child { grid-column: 1 / -1; }
 }
@@ -1815,7 +1857,7 @@ onMounted(async () => {
 
 /* --- Premium Flight Variant Side Drawer Custom Styles --- */
 .fd-drawer-content {
-  padding: 28px 36px 36px 36px;
+  padding: 16px 20px 24px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1824,39 +1866,33 @@ onMounted(async () => {
 .fd-flight-summary-card {
   background: #f9fafb;
   border: 1px solid #f3f4f6;
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 28px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
 
 .fd-variant-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding-bottom: 36px;
-}
-
-@media (min-width: 640px) {
-  .fd-variant-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .fd-variant-card {
   border: 1px solid #e5e7eb;
-  border-radius: 24px;
-  padding: 28px;
+  border-radius: 12px;
+  padding: 16px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: flex-start;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fd-variant-card:hover {
-  border-color: #0D1DAD;
-  box-shadow: 0 10px 25px -5px rgba(13, 29, 173, 0.08), 0 8px 10px -6px rgba(13, 29, 173, 0.08);
-  transform: translateY(-2px);
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
 }
 
 .fd-variant-card-header {

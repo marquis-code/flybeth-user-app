@@ -1,21 +1,46 @@
 <template>
   <div class="space-y-6">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-[28px] font-bold text-[#111827]">Review your booking</h2>
+      <h2 class="text-[20px] font-bold text-[#111827]">Review your booking</h2>
     </div>
 
     <!-- Flight Details Summary -->
     <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
       <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
-        <h3 class="text-lg font-bold text-gray-900">Flight details</h3>
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-bold text-gray-900">Flight details</h3>
+          <span class="px-2 py-1 bg-blue-100 text-blue-800 text-[11px] font-bold uppercase tracking-wider rounded-md">
+            {{ flightOffer.tripType || (flightOffer.isRoundTrip ? 'Round Trip' : 'One-way') }}
+          </span>
+        </div>
         <button @click="$emit('edit', 0)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
       </div>
       <div class="p-6">
-        <div class="flex items-center gap-4 mb-4">
+        <div v-if="flightOffer.itineraries" class="space-y-4">
+          <div 
+            v-for="(itinerary, idx) in flightOffer.itineraries" 
+            :key="idx" 
+            class="flex items-center gap-4"
+            :class="{ 'pt-4 border-t border-gray-100': idx > 0 }"
+          >
+            <img v-if="itinerary.segments?.[0]?.airlineLogo || flightOffer.airlineLogo" :src="itinerary.segments?.[0]?.airlineLogo || flightOffer.airlineLogo" class="w-8 h-8 object-contain" />
+            <div class="flex flex-col">
+              <span class="text-base font-bold text-gray-900">{{ itinerary.origin }} ➔ {{ itinerary.destination }}</span>
+              <span class="text-sm text-gray-500">
+                {{ itinerary.segments?.[0]?.airline || flightOffer.airline }} • 
+                <span v-if="flightOffer.tripType === 'Multi-city'">Flight {{ idx + 1 }}</span>
+                <span v-else-if="flightOffer.tripType === 'Round Trip'">{{ idx === 0 ? 'Outbound' : 'Return' }}</span>
+                <span v-else>Outbound</span> • 
+                {{ formatDate(itinerary.departureTime) }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div v-else class="flex items-center gap-4">
           <img v-if="flightOffer.airlineLogo" :src="flightOffer.airlineLogo" :alt="flightOffer.airline" class="w-8 h-8 object-contain" />
           <div class="flex flex-col">
             <span class="text-base font-bold text-gray-900">{{ flightOffer.origin }} ➔ {{ flightOffer.destination }}</span>
-            <span class="text-sm text-gray-500">{{ flightOffer.airline }} • {{ formatDate(flightOffer.departureTime) }}</span>
+            <span class="text-sm text-gray-500">{{ flightOffer.airline }} • Outbound • {{ formatDate(flightOffer.departureTime) }}</span>
           </div>
         </div>
       </div>
@@ -44,7 +69,7 @@
       <div class="p-6">
         <div class="flex flex-col">
           <span class="text-sm font-bold text-gray-900">{{ travellerData.contact?.email }}</span>
-          <span class="text-sm text-gray-500">{{ travellerData.contact?.phoneCountryCode }} {{ travellerData.contact?.phoneNumber }}</span>
+          <span class="text-sm text-gray-500">{{ travellerData.contact?.phone }}</span>
         </div>
       </div>
     </div>

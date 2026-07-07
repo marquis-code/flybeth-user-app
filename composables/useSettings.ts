@@ -87,6 +87,17 @@ export function useSettings() {
                 })
             }
 
+            // Ensure base currency (USD) is always available in the list
+            if (!currencies.value.find(c => c.code === 'USD')) {
+                currencies.value.unshift({
+                    code: 'USD',
+                    name: 'US Dollar',
+                    symbol: '$',
+                    rate: 1,
+                    flag: 'https://flagcdn.com/us.svg'
+                })
+            }
+
             // Also try to get richer currency names from /currency/supported
             try {
                 const curRes = await GATEWAY_ENDPOINT.get('/currency/supported')

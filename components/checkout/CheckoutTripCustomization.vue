@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Seat Preference Card -->
-    <div class="relative bg-white rounded-[24px] border border-gray-200 shadow-sm p-6 overflow-visible mt-8">
+    <div class="relative bg-white rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 overflow-visible mt-8">
       <div class="absolute -top-3 left-6 px-3 py-1 bg-[#E2FCA4] text-[#2F4F2F] text-[10px] font-bold rounded-full ">
         Recommended
       </div>
@@ -10,7 +10,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18v3"/><path d="M20 18v3"/><path d="M12 18v3"/><path d="M4 8v10"/><path d="M20 8v10"/><path d="M12 8v10"/><path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4"/><path d="M4 14h16"/></svg>
         </div>
         <div class="flex-1">
-          <h3 class="text-xl font-bold text-gray-900">Seat preference</h3>
+          <h3 class="text-lg font-bold text-gray-900">Seat preference</h3>
           <p class="text-sm text-gray-500 mt-1">Select seats together or pick your own</p>
         </div>
       </div>
@@ -26,7 +26,7 @@
           <button 
             @click="openDrawer('window')"
             :disabled="!windowSeats.length"
-            class="text-left border rounded-2xl p-4 cursor-pointer flex flex-col transition-all duration-300 relative focus:outline-none"
+            class="text-left border rounded-2xl p-3 sm:p-4 cursor-pointer flex flex-col transition-all duration-300 relative focus:outline-none"
             :class="[
               seatPreference === 'window' ? 'border-[#0D1DAD] bg-white ring-1 ring-[#0D1DAD]' : 'border-gray-200 bg-white hover:border-[#0D1DAD]',
               !windowSeats.length ? 'opacity-50 cursor-not-allowed hover:border-gray-200' : ''
@@ -51,7 +51,7 @@
           <button 
             @click="openDrawer('aisle')"
             :disabled="!aisleSeats.length"
-            class="text-left border rounded-2xl p-4 cursor-pointer flex flex-col transition-all duration-300 relative focus:outline-none"
+            class="text-left border rounded-2xl p-3 sm:p-4 cursor-pointer flex flex-col transition-all duration-300 relative focus:outline-none"
             :class="[
               seatPreference === 'aisle' ? 'border-[#0D1DAD] bg-white ring-1 ring-[#0D1DAD]' : 'border-gray-200 bg-white hover:border-[#0D1DAD]',
               !aisleSeats.length ? 'opacity-50 cursor-not-allowed hover:border-gray-200' : ''
@@ -75,7 +75,7 @@
           <!-- Random Seats -->
           <button 
             @click="openDrawer('random')"
-            class="text-left border rounded-2xl p-4 cursor-pointer flex flex-col transition-all duration-300 relative focus:outline-none"
+            class="text-left border rounded-2xl p-3 sm:p-4 cursor-pointer flex flex-col transition-all duration-300 relative focus:outline-none"
             :class="seatPreference === 'random' ? 'border-[#0D1DAD] bg-white ring-1 ring-[#0D1DAD]' : 'border-gray-200 bg-white hover:border-[#0D1DAD]'"
           >
             <div class="text-[#0D1DAD] font-bold text-base mb-1">{{ formatPriceValue(0) }}</div>
@@ -103,7 +103,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
         </div>
         <div class="flex-1">
-          <h3 class="text-xl font-bold text-gray-900">Baggage</h3>
+          <h3 class="text-lg font-bold text-gray-900">Baggage</h3>
           <p class="text-sm text-gray-500 mt-1">Travel your style and bring what matters to you the most</p>
         </div>
       </div>
@@ -138,7 +138,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
         </div>
         <div class="flex-1">
-          <h3 class="text-xl font-bold text-gray-900">VIP Priority Support</h3>
+          <h3 class="text-lg font-bold text-gray-900">VIP Priority Support</h3>
           <p class="text-sm text-gray-500 mt-1">Skip the queue. Get dedicated 24/7 priority phone support and expedited handling for modifications.</p>
         </div>
       </div>
@@ -160,11 +160,11 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex justify-end pt-4 gap-4">
-       <button @click="$emit('back')" class="px-8 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-[12px] font-bold transition-all text-sm">
+    <div class="flex w-full pt-4 gap-4">
+       <button @click="$emit('back')" class="flex-1 px-8 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-[12px] font-bold transition-all text-sm">
           Go Back
        </button>
-       <button @click="$emit('continue')" class="px-8 py-3 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-[12px] font-bold transition-all text-sm">
+       <button @click="$emit('continue')" class="flex-1 px-8 py-3 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-[12px] font-bold transition-all text-sm">
           Continue
        </button>
     </div>
