@@ -276,14 +276,14 @@
         </div>
         <div class="sw-bar">
           <div class="sw-loc-group">
-            <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.pickup" label="Pick-up" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.origin" label="Pick-up" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
             <template v-if="carMode === 'different'">
               <div class="sw-bar-div sw-bar-div--vert" />
-              <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.dropoff" label="Drop-off" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+              <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.destination" label="Drop-off" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
             </template>
           </div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="carSearchState.pickUpDate" mode="oneway" departureLabel="Pick-up date" @update:departure="(v) => carSearchState.pickUpDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker v-model:departure="carSearchState.pickUpDate" v-model:return="carSearchState.dropOffDate" label="Dates" /></div>
         </div>
         <div class="sw-footer">
           <label class="sw-chk">
@@ -301,13 +301,22 @@
 
       <!-- ════ TRANSFERS ════ -->
       <div v-if="currentTab === 'Transfers'" class="sw-section">
-        <div class="sw-seg">
-          <button v-for="m in modeModes" :key="m.value" @click="transferMode = m.value" class="sw-seg-btn" :class="transferMode === m.value ? 'sw-seg-btn--on' : ''">{{ m.label }}</button>
+        <div class="sw-radios" style="margin-bottom: 16px;">
+          <label class="sw-radio">
+            <input type="radio" value="oneway" v-model="transferTripType" class="sr-only" />
+            <span class="sw-radio-dot" :class="transferTripType === 'oneway' ? 'sw-radio-dot--on' : ''" />
+            <span class="sw-radio-txt" :class="transferTripType === 'oneway' ? 'sw-radio-txt--on' : ''">One-way</span>
+          </label>
+          <label class="sw-radio">
+            <input type="radio" value="return" v-model="transferTripType" class="sr-only" />
+            <span class="sw-radio-dot" :class="transferTripType === 'return' ? 'sw-radio-dot--on' : ''" />
+            <span class="sw-radio-txt" :class="transferTripType === 'return' ? 'sw-radio-txt--on' : ''">Return</span>
+          </label>
         </div>
         <div class="sw-bar">
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.origin" label="From" placeholder="Airport or address" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.origin" label="From" placeholder="Airport or address" allowFreeText @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.destination" label="To" placeholder="Hotel or address" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.destination" label="To" placeholder="Hotel or address" allowFreeText @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="transferSearchState.date" mode="oneway" departureLabel="Date" @update:departure="(v) => transferSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
@@ -323,6 +332,24 @@
             </CustomTimePicker>
           </div>
           <div class="sw-bar-div" />
+
+          <!-- Return Date/Time -->
+          <template v-if="transferTripType === 'return'">
+            <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="transferSearchState.returnDate" mode="oneway" departureLabel="Return Date" @update:departure="(v) => transferSearchState.returnDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <div class="sw-bar-div" />
+            <div class="sw-field sw-field--time">
+              <span class="sw-fld-lbl">Return Time</span>
+              <CustomTimePicker v-model="transferSearchState.returnTime" @focus="isFocused = true" @close="isFocused = false">
+                <template #default="{ value }">
+                  <div class="sw-time-row">
+                    <Clock class="sw-ico-sm sw-ico-muted" />
+                    <span class="sw-fld-val">{{ value }}</span>
+                  </div>
+                </template>
+              </CustomTimePicker>
+            </div>
+            <div class="sw-bar-div" />
+          </template>
           <div class="sw-field sw-field--pax"><Occupancypicker label="Passengers" variant="flight" v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" @focus="isFocused = true" @close="isFocused = false" /></div>
         </div>
         <div class="sw-footer sw-footer--end">
@@ -480,17 +507,20 @@ import { useAmadeusLocations } from '@/composables/modules/flights/useAmadeusLoc
 
 const { isLoggedIn } = useAuth()
 const { trackAction } = useTracking()
-const props = defineProps({ isSticky: { type: Boolean, default: false } })
+const props = defineProps({ 
+  isSticky: { type: Boolean, default: false },
+  defaultTab: { type: String, default: 'Flights' }
+})
 const emit  = defineEmits(['focus-change', 'update:tab'])
 
 // ─── State ──────────────────────────────────────────────────
 const isFocused           = ref(false)
 const isSearching         = ref(false)
-const currentTab          = ref('Flights')
+const currentTab          = ref(props.defaultTab)
 const stayMode            = ref('single')
 const flightMode          = ref('oneway')
 const carMode             = ref('pickup')
-const transferMode        = ref('pickup')
+const transferTripType        = ref('oneway')
 const packageType         = ref('Hotel+Flight')
 const onlyPartialHotel    = ref(false)
 const differentCarDropoff = ref(false)
@@ -564,7 +594,6 @@ const tabs = [
 
 const flightModes  = [{ label: 'One way', value: 'oneway' }, { label: 'Round trip', value: 'roundtrip' }, { label: 'Multi-city', value: 'multicity' }]
 const stayModes    = [{ label: 'Single hotel', value: 'single' }, { label: 'Multi hotel', value: 'multi' }]
-const modeModes    = [{ label: 'Airport pick-up', value: 'pickup' }, { label: 'Airport drop-off', value: 'dropoff' }]
 const packageTypes = [
   { label: 'Hotel + Flight', value: 'Hotel+Flight' },
   { label: 'Hotel + Flight + Car', value: 'Hotel+Flight+Car' },
@@ -587,8 +616,8 @@ const flightTravelers       = reactive({ adults: 1, children: 0, infantsOnLap: 0
 const flightSearchState     = reactive({ origin: '', destination: '', departureDate: '', returnDate: '', flexibleDates: false })
 const multiFlightLegs       = ref([{ origin: '', destination: '', departureDate: '', returnDate: '' }])
 const multiHotelLegs        = ref([{ location: '', checkIn: '', checkOut: '' }])
-const carSearchState        = reactive({ origin: '', destination: '', pickUpDate: '' })
-const transferSearchState   = reactive({ origin: '', destination: '', date: '', time: '10:00' })
+const carSearchState        = reactive({ origin: '', destination: '', pickUpDate: '', dropOffDate: '' })
+const transferSearchState   = reactive({ origin: '', destination: '', date: '', time: '10:00', returnDate: '', returnTime: '10:00' })
 const transferOccupancy     = reactive({ adults: 1, children: 0 })
 const activitiesSearchState = reactive({ destination: '', date: '' })
 const packageOccupancy      = reactive({ rooms: 1, adults: 2, children: 0 })
@@ -740,8 +769,22 @@ onMounted(() => {
   if (route.query.adults && currentTab.value === 'Hotels') occupancy.adults = Number(route.query.adults)
 
   // Restore car state
+  if (route.query.origin && currentTab.value === 'Cars') carSearchState.origin = String(route.query.origin)
+  if (route.query.destination && currentTab.value === 'Cars') carSearchState.destination = String(route.query.destination)
   if (route.query.pickUpDate && currentTab.value === 'Cars') carSearchState.pickUpDate = String(route.query.pickUpDate)
+  if (route.query.dropOffDate && currentTab.value === 'Cars') carSearchState.dropOffDate = String(route.query.dropOffDate)
   if (route.query.carMode) carMode.value = String(route.query.carMode)
+
+  // Restore transfer state
+  if (route.query.origin && currentTab.value === 'Transfers') transferSearchState.origin = String(route.query.origin)
+  if (route.query.destination && currentTab.value === 'Transfers') transferSearchState.destination = String(route.query.destination)
+  if (route.query.date && currentTab.value === 'Transfers') transferSearchState.date = String(route.query.date)
+  if (route.query.time && currentTab.value === 'Transfers') transferSearchState.time = String(route.query.time)
+  if (route.query.returnDate && currentTab.value === 'Transfers') transferSearchState.returnDate = String(route.query.returnDate)
+  if (route.query.returnTime && currentTab.value === 'Transfers') transferSearchState.returnTime = String(route.query.returnTime)
+  if (route.query.adults && currentTab.value === 'Transfers') transferOccupancy.adults = Number(route.query.adults)
+  if (route.query.children && currentTab.value === 'Transfers') transferOccupancy.children = Number(route.query.children)
+  if (route.query.tripType && currentTab.value === 'Transfers') transferTripType.value = String(route.query.tripType)
 
   // Restore package state
   if (route.query.packageType) packageType.value = String(route.query.packageType)
@@ -838,7 +881,7 @@ const handleSearch = async () => {
     }
   }
   else if (currentTab.value === 'Cruises')       Object.assign(query, cruiseSearchState)
-  else if (currentTab.value === 'Transfers')     { Object.assign(query, transferSearchState); Object.assign(query, transferOccupancy); query.mode = transferMode.value }
+  else if (currentTab.value === 'Transfers')     { Object.assign(query, transferSearchState); Object.assign(query, transferOccupancy); query.tripType = transferTripType.value }
   else if (currentTab.value === 'Activities')    Object.assign(query, activitiesSearchState)
   else if (currentTab.value === 'Hotels')        { Object.assign(query, searchState); Object.assign(query, occupancy) }
   else if (currentTab.value === 'Packages')      { Object.assign(query, packageSearchState); Object.assign(query, packageOccupancy); query.packageType = packageType.value }

@@ -4,7 +4,7 @@
       <!-- Vehicle Image/Icon -->
       <div class="md:w-48 h-32 bg-white rounded-2xl flex items-center justify-center p-4 overflow-hidden relative">
         <img v-if="vehicleImage" :src="vehicleImage" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
-        <div v-else class="text-4xl">🚗</div>
+        <Car v-else class="h-12 w-12 text-gray-400 stroke-[1.5]" />
         <div class="absolute top-2 left-2 bg-brand-green text-white text-[8px]  px-2 py-0.5 rounded-full uppercase ">
           {{ transfer.category?.name || transfer.category || 'Standard' }}
         </div>
@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { UserIcon, BriefcaseIcon, ClockIcon, ShieldCheckIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
+import { Car } from 'lucide-vue-next'
 import { useSettings } from '~/composables/useSettings'
 
 const { formatPrice, currentCurrency } = useSettings()

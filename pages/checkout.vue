@@ -94,7 +94,7 @@
   <div class="ck-wrap mx-auto">
     <!-- Replace the flex div and its two children's class attributes -->
       <!-- Main column: center aligned without sidebar -->
-      <div class="w-full max-w-3xl mx-auto space-y-8 pb-32 pt-8">
+      <div class="w-full max-w-3xl mx-auto space-y-8 pb-32 pt-0">
         <!-- Step 0: Details (Flight Details + Contact Details + Passenger Details) -->
         <div v-if="currentStep === 0" class="space-y-6 animate-in">
           
@@ -111,6 +111,31 @@
                 :currency-symbol="currencySymbol"
                 hideContinue
               />
+              <CheckoutTransferDetails
+                v-if="bookingDetails.type === 'transfer'"
+                :name="priceDetailed?.name"
+                :provider="priceDetailed?.provider"
+                :hideContinue="true"
+              />
+              <template v-if="bookingDetails.type === 'package'">
+                <CheckoutPackageDetails
+                  v-if="!priceDetailed?.flightDetails && !priceDetailed?.stayDetails"
+                  :name="bookingDetails.name"
+                  :packageDetails="priceDetailed"
+                />
+                <CheckoutFlightDetails
+                  v-if="priceDetailed?.flightDetails"
+                  :flightOffer="priceDetailed.flightDetails"
+                  hideContinue
+                />
+                <hr v-if="priceDetailed?.flightDetails && priceDetailed?.stayDetails" class="my-6 border-gray-200" />
+                <CheckoutStayDetails
+                  v-if="priceDetailed?.stayDetails"
+                  :stay="priceDetailed.stayDetails"
+                  :currency-symbol="currencySymbol"
+                  hideContinue
+                />
+              </template>
             </div>
           </div>
 
@@ -158,6 +183,7 @@
           
           <!-- Summary Modules (Read-only views) -->
           <CheckoutSummary 
+            :bookingType="bookingDetails.type"
             :flightOffer="priceDetailed"
             :travellerData="travellerData"
             :selectedSeats="selectedSeats"
@@ -272,6 +298,7 @@ import ManualPaymentDetailsModal from '~/components/checkout/ManualPaymentDetail
 import CheckoutSidebar from '~/components/checkout/CheckoutSidebar.vue'
 import SeatSelection from '~/components/checkout/SeatSelection.vue'
 import CheckoutStayDetails from '~/components/checkout/CheckoutStayDetails.vue'
+import CheckoutPackageDetails from '~/components/checkout/CheckoutPackageDetails.vue'
 import BookingExpiredModal from '~/components/checkout/BookingExpiredModal.vue'
 import { flightsApi } from '~/api_factory/modules/flights'
 import { transfersApi } from '~/api_factory/modules/transfers'
@@ -456,6 +483,9 @@ const bookingDetails = computed(() => ({
   adults: route.query.adults ? Number(route.query.adults) : 2,
   children: route.query.children ? Number(route.query.children) : 0,
   rooms: route.query.rooms ? Number(route.query.rooms) : 1,
+  returnId: route.query.returnId as string,
+  returnName: route.query.returnName as string,
+  returnPrice: route.query.returnPrice ? Number(route.query.returnPrice) : 0,
 }))
 
 const currencySymbol = computed(() => {
@@ -781,6 +811,31 @@ const handleWalletAuthorize = async (paymentInfo: any) => {
             children: bookingDetails.value.children
           }
         }]
+      } else if (bookingDetails.value.type === 'package') {
+        payload.packageId = bookingDetails.value.id;
+        const pkgDetails = priceDetailed.value;
+        if (pkgDetails?.flightDetails) {
+          payload.flights = [{
+            flightId: pkgDetails.flightDetails.id,
+            class: (pkgDetails.flightDetails.cabinClass || 'economy').toLowerCase(),
+            offerId: pkgDetails.flightDetails.id,
+            provider: 'duffel',
+            passengerIds: [],
+          }]
+        }
+        if (pkgDetails?.stayDetails) {
+          payload.stays = [{
+            hotelId: pkgDetails.stayDetails.id || pkgDetails.stayDetails.hotelId,
+            roomId: pkgDetails.stayDetails.roomId || 'unknown',
+            checkIn: pkgDetails.stayDetails.checkIn || bookingDetails.value.checkIn,
+            checkOut: pkgDetails.stayDetails.checkOut || bookingDetails.value.checkOut,
+            occupancy: {
+              rooms: 1,
+              adults: bookingDetails.value.adults,
+              children: bookingDetails.value.children
+            }
+          }]
+        }
       }
 
       const { data: rawData } = await bookingsApi.create(payload)
@@ -916,10 +971,75 @@ const handlePayment = async (paymentInfo: any) => {
           children: bookingDetails.value.children
         }
       }]
+    } else if (bookingDetails.value.type === 'transfer') {
+      payload.transfers = [{
+        offerId: bookingDetails.value.id,
+        provider: bookingDetails.value.provider
+      }]
+      if (bookingDetails.value.returnId) {
+        payload.transfers.push({
+          offerId: bookingDetails.value.returnId,
+          provider: bookingDetails.value.provider
+        })
+      }
+    } else if (bookingDetails.value.type === 'package') {
+      payload.packageId = bookingDetails.value.id;
+      const pkgDetails = priceDetailed.value;
+      if (pkgDetails?.flightDetails) {
+        payload.flights = [{
+          flightId: pkgDetails.flightDetails.id,
+          class: (pkgDetails.flightDetails.cabinClass || 'economy').toLowerCase(),
+          offerId: pkgDetails.flightDetails.id,
+          provider: 'duffel',
+          passengerIds: [],
+        }]
+      }
+      if (pkgDetails?.stayDetails) {
+        payload.stays = [{
+          hotelId: pkgDetails.stayDetails.id || pkgDetails.stayDetails.hotelId,
+          roomId: pkgDetails.stayDetails.roomId || 'unknown',
+          checkIn: pkgDetails.stayDetails.checkIn || bookingDetails.value.checkIn,
+          checkOut: pkgDetails.stayDetails.checkOut || bookingDetails.value.checkOut,
+          occupancy: {
+            rooms: 1,
+            adults: bookingDetails.value.adults,
+            children: bookingDetails.value.children
+          }
+        }]
+      }
     }
 
     const { data: rawData } = await bookingsApi.create(payload)
     const booking = rawData?.data || rawData;
+
+    // The backend booking schema currently doesn't process transfers.
+    // We aggressively make sure the transfer is actually booked with the provider end-to-end.
+    if (bookingDetails.value.type === 'transfer') {
+      try {
+        const passengerDetails = {
+          firstName: contactData.value.firstName,
+          lastName: contactData.value.lastName,
+          email: contactData.value.email,
+          phone: contactData.value.phone,
+          remarks: `Booked via Flybeth`
+        };
+        await transfersApi.book({
+          offerId: bookingDetails.value.id,
+          provider: bookingDetails.value.provider,
+          passengerDetails
+        });
+        if (bookingDetails.value.returnId) {
+          await transfersApi.book({
+            offerId: bookingDetails.value.returnId,
+            provider: bookingDetails.value.provider,
+            passengerDetails
+          });
+        }
+      } catch (e) {
+        console.error('Failed to book transfer with provider', e);
+        showToast({ title: 'Warning', message: 'Transfer booking recorded but provider sync failed.', toastType: 'warning' })
+      }
+    }
     
     if (booking && booking.pnr) {
       // Handle BNPL or any payment that requires redirection
@@ -1081,6 +1201,57 @@ onMounted(async () => {
           })
         }
         priceDetailed.value = { ...selectedFlight.value, provider: bookingDetails.value.provider } 
+      }
+    }
+  } else if (bookingDetails.value.type === 'stay') {
+    // Populate priceDetailed from URL query parameters so the Stay Summary renders
+    priceDetailed.value = {
+      ...bookingDetails.value,
+      hotelName: bookingDetails.value.name,
+      checkInDate: bookingDetails.value.checkIn,
+      checkOutDate: bookingDetails.value.checkOut,
+      priceWithCommission: bookingDetails.value.price,
+      price: bookingDetails.value.price
+    }
+
+    // Attempt to merge more detailed data if available in session storage (e.g. from bundle flow)
+    const pendingStayStr = sessionStorage.getItem('pendingStayBooking')
+    if (pendingStayStr) {
+      try {
+        const pendingStay = JSON.parse(pendingStayStr)
+        if (pendingStay.id === bookingDetails.value.id) {
+          priceDetailed.value = { ...priceDetailed.value, ...pendingStay }
+          if (pendingStay.stay?.name) {
+             priceDetailed.value.hotelName = pendingStay.stay.name
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse pendingStayBooking', e)
+      }
+    }
+  } else if (bookingDetails.value.type === 'transfer') {
+    const totalTransferPrice = bookingDetails.value.price + (bookingDetails.value.returnPrice || 0)
+    priceDetailed.value = {
+      ...bookingDetails.value,
+      name: bookingDetails.value.name + (bookingDetails.value.returnName ? ` + ${bookingDetails.value.returnName}` : ''),
+      provider: bookingDetails.value.provider,
+      priceWithCommission: totalTransferPrice,
+      price: totalTransferPrice,
+      currency: bookingDetails.value.currency
+    }
+  } else if (bookingDetails.value.type === 'package') {
+    const saved = sessionStorage.getItem('selectedPackage')
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        priceDetailed.value = {
+          ...parsed,
+          priceWithCommission: parsed.totalPrice || parsed.basePrice || 0,
+          price: parsed.totalPrice || parsed.basePrice || 0,
+          currency: 'USD'
+        }
+      } catch (e) {
+        console.error('Failed to parse selectedPackage', e)
       }
     }
   }

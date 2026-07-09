@@ -5,7 +5,7 @@
     </div>
 
     <!-- Flight Details Summary -->
-    <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+    <div v-if="bookingType === 'flight'" class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
       <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
         <div class="flex items-center gap-3">
           <h3 class="text-lg font-bold text-gray-900">Flight details</h3>
@@ -41,6 +41,74 @@
           <div class="flex flex-col">
             <span class="text-base font-bold text-gray-900">{{ flightOffer.origin }} ➔ {{ flightOffer.destination }}</span>
             <span class="text-sm text-gray-500">{{ flightOffer.airline }} • Outbound • {{ formatDate(flightOffer.departureTime) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stay Details Summary -->
+    <div v-else-if="bookingType === 'stay'" class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-bold text-gray-900">Stay details</h3>
+        </div>
+        <button @click="$emit('edit', 0)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-base font-bold text-gray-900">{{ flightOffer.hotelName }}</span>
+            <span class="text-sm text-gray-500">
+              {{ flightOffer.roomType }} • {{ formatDate(flightOffer.checkInDate) }} – {{ formatDate(flightOffer.checkOutDate) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Package Details Summary -->
+    <div v-else-if="bookingType === 'package'" class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-bold text-gray-900">Package details</h3>
+          <span class="px-2 py-1 bg-green-100 text-green-800 text-[11px] font-bold uppercase tracking-wider rounded-md">
+            Curated
+          </span>
+        </div>
+        <button @click="$emit('edit', 0)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600 flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-base font-bold text-gray-900">{{ flightOffer?.name || 'Exclusive Vacation Package' }}</span>
+            <span class="text-sm text-gray-500">Multi-Day Experience</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transfer Details Summary -->
+    <div v-else-if="bookingType === 'transfer'" class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-bold text-gray-900">Transfer details</h3>
+        </div>
+        <button @click="$emit('edit', 0)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.18a2 2 0 0 1 1.9.95l1.6 2.4A2 2 0 0 0 11.36 10H21a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="16.5" cy="18.5" r="2.5"/><circle cx="5.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-base font-bold text-gray-900">{{ flightOffer.name }}</span>
+            <span class="text-sm text-gray-500">Provider: {{ flightOffer.provider }}</span>
           </div>
         </div>
       </div>
@@ -98,6 +166,7 @@ import { computed } from 'vue'
 import { useSettings } from '~/composables/useSettings'
 
 const props = defineProps({
+  bookingType: { type: String, default: 'flight' },
   flightOffer: { type: Object, required: true },
   travellerData: { type: Object, required: true },
   selectedAddOns: { type: Array as () => any[], default: () => [] },

@@ -27,15 +27,13 @@
         <div class="pk-bar">
 
           <!-- DESTINATION field -->
-          <div class="pk-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+          <div class="pk-fld-wrap" style="flex: 1;">
             <LocationPicker 
               v-model="searchQuery.destination" 
               label="Destination" 
               placeholder="Where to?" 
             />
           </div>
-
-          <div class="pk-bar-sep"></div>
 
           <!-- DURATION field -->
           <div class="pk-fld pk-fld--dur" :class="{ 'pk-fld--active': activeField === 'dur' }" ref="durRef">
@@ -63,8 +61,6 @@
               </div>
             </Transition>
           </div>
-
-          <div class="pk-bar-sep"></div>
 
           <!-- BUDGET field -->
           <div class="pk-fld pk-fld--bud" :class="{ 'pk-fld--active': activeField === 'bud' }" ref="budRef">
@@ -115,7 +111,7 @@
           class="pk-cat"
           :class="{ 'pk-cat--on': activeCategory === c.value }"
           @click="activeCategory = activeCategory === c.value ? '' : c.value">
-          <span>{{ c.icon }}</span>
+          <component :is="c.icon" class="w-4 h-4 mr-1.5" />
           <span>{{ c.label }}</span>
         </button>
       </div>
@@ -135,7 +131,7 @@
               class="pk-featured-card"
               @click="selectPackage(pkg)">
               <div class="pk-fc-img-wrap">
-                <img v-if="pkg.image || pkg.thumbnail" :src="pkg.image || pkg.thumbnail" :alt="pkg.name" class="pk-fc-img" />
+                <img v-if="pkg.image || pkg.thumbnail || pkg.images?.[0]" :src="pkg.image || pkg.thumbnail || pkg.images?.[0]" :alt="pkg.name" class="pk-fc-img" />
                 <div v-else class="pk-fc-img-ph">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </div>
@@ -152,7 +148,7 @@
                 <div class="pk-fc-footer">
                   <div class="pk-fc-price">
                     <span class="pk-fc-from">from</span>
-                    <span class="pk-fc-amt">{{ formatPrice(pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
+                    <span class="pk-fc-amt">{{ formatPrice(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
                     <span class="pk-fc-per">/ person</span>
                   </div>
                   <button class="pk-fc-btn">View deal →</button>
@@ -182,7 +178,7 @@
                   class="pk-chip"
                   :class="{ 'pk-chip--on': activeCategory === c.value }"
                   @click="activeCategory = activeCategory === c.value ? '' : c.value">
-                  {{ c.icon }} {{ c.label }}
+                  <component :is="c.icon" class="w-4 h-4 mr-1.5 inline-block" /> {{ c.label }}
                 </button>
               </div>
             </div>
@@ -288,12 +284,12 @@
 
           <!-- Package grid -->
           <div v-else class="pk-grid">
-            <div v-for="pkg in sortedPackages" :key="pkg._id || pkg.id"
+            <div v-for="pkg in paginatedPackages" :key="pkg._id || pkg.id"
               class="pk-card"
               @click="selectPackage(pkg)">
               <!-- Image -->
               <div class="pk-card-img-wrap">
-                <img v-if="pkg.image || pkg.thumbnail" :src="pkg.image || pkg.thumbnail" :alt="pkg.name" class="pk-card-img" />
+                <img v-if="pkg.image || pkg.thumbnail || pkg.images?.[0]" :src="pkg.image || pkg.thumbnail || pkg.images?.[0]" :alt="pkg.name" class="pk-card-img" />
                 <div v-else class="pk-card-img-ph">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
                 </div>
@@ -330,7 +326,7 @@
                 <div class="pk-card-footer">
                   <div class="pk-card-price">
                     <span class="pk-card-from">from</span>
-                    <span class="pk-card-amt">{{ formatPrice(pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
+                    <span class="pk-card-amt">{{ formatPrice(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
                     <span class="pk-card-per">/ person</span>
                   </div>
                   <button class="pk-card-btn" @click="selectPackage(pkg)">View →</button>
@@ -339,6 +335,26 @@
             </div>
           </div>
 
+          <!-- Pagination Controls -->
+          <div v-if="totalPages > 1" class="pk-pagination">
+            <button 
+              @click="currentPage--" 
+              :disabled="currentPage === 1"
+              class="pk-page-btn"
+            >
+              Previous
+            </button>
+            <span class="pk-page-info">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+            <button 
+              @click="currentPage++" 
+              :disabled="currentPage === totalPages"
+              class="pk-page-btn"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -377,18 +393,23 @@ const activeStars = ref<number[]>([])
 const maxPriceFilter = ref(99999)
 const sortBy = ref('recommended')
 
+const currentPage = ref(1)
+const itemsPerPage = 6
+
 const searchQuery = ref({ destination: '', duration: null as number | null, budget: '' })
 
 // ── Data ─────────────────────────────────────────────────────────────
+import { Umbrella, Building2, Binoculars, Gem, MountainSnow, Heart, Users, Landmark } from 'lucide-vue-next'
+
 const categories = [
-  { value: 'beach', label: 'Beach', icon: '🏖️' },
-  { value: 'city', label: 'City Break', icon: '🏙️' },
-  { value: 'safari', label: 'Safari', icon: '🦁' },
-  { value: 'luxury', label: 'Luxury', icon: '💎' },
-  { value: 'adventure', label: 'Adventure', icon: '🧗' },
-  { value: 'honeymoon', label: 'Honeymoon', icon: '💕' },
-  { value: 'family', label: 'Family', icon: '👨‍👩‍👧' },
-  { value: 'cultural', label: 'Cultural', icon: '🏛️' },
+  { value: 'beach', label: 'Beach', icon: Umbrella },
+  { value: 'city', label: 'City Break', icon: Building2 },
+  { value: 'safari', label: 'Safari', icon: Binoculars },
+  { value: 'luxury', label: 'Luxury', icon: Gem },
+  { value: 'adventure', label: 'Adventure', icon: MountainSnow },
+  { value: 'honeymoon', label: 'Honeymoon', icon: Heart },
+  { value: 'family', label: 'Family', icon: Users },
+  { value: 'cultural', label: 'Cultural', icon: Landmark },
 ]
 
 const durationOptions = [
@@ -462,6 +483,17 @@ const sortedPackages = computed(() =>
   })
 )
 
+const paginatedPackages = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return sortedPackages.value.slice(start, start + itemsPerPage)
+})
+
+const totalPages = computed(() => Math.ceil(sortedPackages.value.length / itemsPerPage))
+
+watch([filteredPackages, sortBy], () => {
+  currentPage.value = 1
+})
+
 const activeFilterCount = computed(() =>
   (activeCategory.value ? 1 : 0) + activeStars.value.length + (maxPriceFilter.value < maxPrice.value ? 1 : 0)
 )
@@ -481,7 +513,7 @@ const selectPackage = (pkg: any) => {
       type: 'package',
       id: String(pkg._id || pkg.id || 'unknown'),
       name: String(pkg.name),
-      price: String(pkg.price?.total || pkg.price?.amount || pkg.price || 0),
+      price: String(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0),
     }
   })
 }
@@ -503,7 +535,6 @@ onMounted(() => {
   const destParam = route.query.q || route.query.destination
   if (destParam) {
     searchQuery.value.destination = String(destParam)
-    destQuery.value = String(destParam)
   }
   fetchFeaturedPackages()
   handleSearch()
@@ -558,12 +589,20 @@ onMounted(() => {
   position: relative;
   z-index: 50;
   overflow: visible;
+  padding: 8px;
+  gap: 8px;
 }
 
 .pk-fld { position: relative; flex: 1; min-width: 0; }
 .pk-fld--dest { flex: 2; }
 .pk-fld--dur { flex: 1.2; }
 .pk-fld--bud { flex: 1.4; }
+
+.pk-fld-wrap {
+  border: 1px solid #e0e0d8;
+  border-radius: 12px;
+  background: #fff;
+}
 
 .pk-fld-inner {
   display: flex;
@@ -572,20 +611,20 @@ onMounted(() => {
   padding: 14px 16px;
   height: 100%;
   cursor: pointer;
-  border-radius: 14px;
-  transition: background 0.15s;
+  border: 1px solid #e0e0d8;
+  border-radius: 12px;
+  transition: all 0.15s;
+  background: #fff;
   min-width: 0;
 }
-.pk-fld-inner:hover { background: #f5f5f0; }
-.pk-fld--active .pk-fld-inner { background: #f0f7f3; }
+.pk-fld-inner:hover { border-color: #1d7a4f; background: #f0f7f3; }
+.pk-fld--active .pk-fld-inner { border-color: #1d7a4f; background: #f0f7f3; }
 
 .pk-fld-ico { color: #aaa; flex-shrink: 0; }
 .pk-fld-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; overflow: hidden; }
 .pk-fld-lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #bbb; white-space: nowrap; }
 .pk-fld-val { font-size: 13px; font-weight: 500; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pk-fld-val--set { color: #111; }
-
-.pk-bar-sep { width: 1px; background: #ebebe5; flex-shrink: 0; margin: 10px 0; }
 
 /* Search button */
 .pk-search-btn {
@@ -702,7 +741,7 @@ onMounted(() => {
 .pk-bud-dot--lux { background: #1d7a4f; }
 
 /* ── Main content ──────────────────────────────────────────────────── */
-.pk-main { padding-top: 36px; padding-bottom: 60px; }
+.pk-main { padding-top: 64px; padding-bottom: 60px; }
 
 /* Category pills */
 .pk-cats {
@@ -883,6 +922,13 @@ onMounted(() => {
 /* Overlay */
 .pk-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 150; backdrop-filter: blur(2px); }
 
+/* Pagination */
+.pk-pagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 40px; padding: 20px 0; }
+.pk-page-btn { padding: 8px 16px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.pk-page-btn:hover:not(:disabled) { background: #1d7a4f; }
+.pk-page-btn:disabled { background: #e0e0d8; color: #aaa; cursor: not-allowed; }
+.pk-page-info { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; color: #111; letter-spacing: 0.02em; }
+
 /* ── Transitions ───────────────────────────────────────────────────── */
 .fd-enter-active, .fd-leave-active { transition: opacity 0.16s ease, transform 0.16s ease; }
 .fd-enter-from { opacity: 0; transform: translateY(-6px) scale(0.98); }
@@ -911,20 +957,17 @@ onMounted(() => {
 }
 
 @media (max-width: 860px) {
-  .pk-bar { flex-wrap: wrap; border-radius: 14px; padding: 6px; }
-  .pk-fld--dest { flex: 1 0 100%; }
-  .pk-fld--dur { flex: 1 0 calc(50% - 6px); }
-  .pk-fld--bud { flex: 1 0 calc(50% - 6px); }
-  .pk-bar-sep:first-of-type { display: none; }
-  .pk-bar-sep { height: 1px; width: 100%; margin: 0; }
-  .pk-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
+  .pk-bar { flex-wrap: wrap; border-radius: 16px; padding: 12px; gap: 8px; }
+  .pk-fld-wrap { flex: 1 0 100%; border: 1px solid #e0e0d8; }
+  .pk-fld--dur { flex: 1 0 calc(50% - 4px); }
+  .pk-fld--bud { flex: 1 0 calc(50% - 4px); }
+  .pk-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 12px; min-height: 48px; }
 }
 
 @media (max-width: 640px) {
   .pk-wrap { padding: 0 14px; }
   .pk-hero { padding: 28px 0 44px; }
   .pk-fld--dur, .pk-fld--bud { flex: 1 0 100%; }
-  .pk-bar-sep { display: none; }
   .pk-drop--dest { max-width: calc(100vw - 28px); }
   .pk-drop--dur, .pk-drop--bud { width: calc(100vw - 28px); }
   .pk-featured-grid { grid-template-columns: 1fr; }

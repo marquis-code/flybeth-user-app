@@ -1,44 +1,44 @@
 <template>
-  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+  <div class="fixed inset-0 z-[100000] flex items-center justify-center p-4 sm:p-6">
     <!-- Backdrop -->
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="$emit('close')"></div>
     
     <!-- Modal Content -->
-    <div class="relative bg-white rounded-3xl overflow-hidden shadow-2xl max-w-2xl w-full transform transition-all animate-in fade-in zoom-in duration-300">
+    <div class="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl max-w-lg w-full transform transition-all animate-in fade-in zoom-in duration-300">
       <!-- Image Header -->
-      <div class="h-64 relative">
+      <div class="h-40 sm:h-48 relative">
         <img :src="stayPhotos[0] || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80'" 
              class="w-full h-full object-cover" />
-        <button @click="$emit('close')" class="absolute top-6 right-6 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-all border border-white/20">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        <button @click="$emit('close')" class="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-all border border-white/20">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
       <!-- Body -->
-      <div class="p-10 text-center">
-        <h2 class="text-3xl font-bold text-black mb-4 ">We have secured your selected hotel</h2>
+      <div class="p-6 sm:p-8 text-center">
+        <h2 class="text-xl sm:text-2xl font-bold text-black mb-3">We have secured your selected hotel</h2>
         
         <!-- Price summary -->
-        <div v-if="selectedRoom?.rates?.[0]?.priceWithCommission" class="mb-6">
-          <div class="text-sm text-black font-medium">Total price</div>
-          <div class="text-3xl font-bold text-black">{{ formatPrice(Math.round(selectedRoom.rates[0].priceWithCommission)) }}</div>
+        <div v-if="selectedRoom?.rates?.[0]?.priceWithCommission" class="mb-5">
+          <div class="text-xs sm:text-sm text-black font-medium">Total price</div>
+          <div class="text-2xl sm:text-3xl font-bold text-black">{{ formatPrice(Math.round(selectedRoom.rates[0].priceWithCommission)) }}</div>
         </div>
 
-        <div class="flex items-center justify-center text-black mb-10 gap-2">
-           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-           <span class="text-sm font-bold opacity-80 ">Add flight to get bundle discount and earn Flybeth points</span>
+        <div class="flex items-center justify-center text-black mb-6 gap-2">
+           <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+           <span class="text-xs sm:text-sm font-bold opacity-80 leading-tight">Add flight to get bundle discount and earn Flybeth points</span>
         </div>
 
-        <div class="space-y-4">
+        <div class="space-y-3 sm:space-y-4">
             <button 
               @click="handleContinueWithoutFlight" 
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-5 rounded-xl transition-all shadow-xl shadow-green-100 active:scale-[0.98]  text-sm"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 sm:py-4 rounded-lg sm:rounded-xl transition-all shadow-lg shadow-green-100 active:scale-[0.98] text-sm"
             >
               Continue without flight
             </button>
             <button 
               @click="handleAddFlight"
-              class="w-full text-black font-bold py-4 hover:underline transition-all  text-xs"
+              class="w-full text-black font-bold py-3 hover:underline transition-all text-xs sm:text-sm"
             >
               Add flight to booking
             </button>

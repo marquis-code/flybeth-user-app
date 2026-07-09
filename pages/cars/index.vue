@@ -230,71 +230,11 @@ const searchQuery = ref({
   type: 'rental',
 })
 
-const selectLocation = (loc: any) => {
-  searchQuery.value.pickUpLocation = `${loc.city} (${loc.code})`
-  locQuery.value = `${loc.city} (${loc.code})`
-  activeField.value = null
-  nextTick(() => { activeField.value = 'pickup' })
-}
-
 // ── Field management ──────────────────────────────────────────────────
 const handleGlobalMousedown = (e: MouseEvent) => {
   if (sortRef.value && !sortRef.value.contains(e.target as Node)) {
     sortOpen.value = false
   }
-}
-
-// ── Calendar ──────────────────────────────────────────────────────────
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
-
-const calMonthLabel = (which: string) => {
-  const d = calViewDates.value[which]
-  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`
-}
-
-const calCells = (which: string) => {
-  const view = calViewDates.value[which]
-  const y = view.getFullYear()
-  const m = view.getMonth()
-  const firstDay = new Date(y, m, 1).getDay()
-  const days = new Date(y, m + 1, 0).getDate()
-  const today = new Date(); today.setHours(0, 0, 0, 0)
-  const selectedIso = which === 'pickup' ? searchQuery.value.pickUpDate : searchQuery.value.dropOffDate
-  const cells: any[] = []
-  for (let i = 0; i < firstDay; i++) cells.push({ key: `b${i}`, date: null, day: '', past: false, selected: false, today: false })
-  for (let d = 1; d <= days; d++) {
-    const dt = new Date(y, m, d)
-    const iso = dt.toISOString().split('T')[0]
-    cells.push({ key: iso, date: iso, day: d, past: dt < today, selected: selectedIso === iso, today: dt.getTime() === today.getTime() })
-  }
-  return cells
-}
-
-const prevMonth = (which: string) => {
-  const d = new Date(calViewDates.value[which])
-  d.setMonth(d.getMonth() - 1)
-  calViewDates.value[which] = d
-}
-const nextMonth = (which: string) => {
-  const d = new Date(calViewDates.value[which])
-  d.setMonth(d.getMonth() + 1)
-  calViewDates.value[which] = d
-}
-
-const pickDate = (which: string, iso: string) => {
-  if (which === 'pickup') {
-    searchQuery.value.pickUpDate = iso
-    activeField.value = null
-    nextTick(() => { activeField.value = 'return' })
-  } else {
-    searchQuery.value.dropOffDate = iso
-    activeField.value = null
-  }
-}
-
-const formatDate = (iso: string) => {
-  const [y, m, d] = iso.split('-').map(Number)
-  return `${d} ${MONTHS[m - 1].slice(0, 3)} ${y}`
 }
 
 // ── Filters ───────────────────────────────────────────────────────────
@@ -361,7 +301,6 @@ const currentSort = computed(() => sortOptions.find(o => o.value === sortBy.valu
 
 // ── Actions ───────────────────────────────────────────────────────────
 const handleSearch = () => {
-  activeField.value = null
   if (!searchQuery.value.pickUpLocation) return
   searchCars(searchQuery.value)
 }
@@ -408,22 +347,29 @@ onMounted(() => {
   const defaultReturn = new Date(defaultPickup)
   defaultReturn.setDate(defaultPickup.getDate() + 3)
 
-  if (route.query.pickUpLocation || route.query.location || route.query.origin) {
-    searchQuery.value.pickUpLocation = String(route.query.pickUpLocation || route.query.location || route.query.origin)
-    locQuery.value = searchQuery.value.pickUpLocation
-  } else {
-    searchQuery.value.pickUpLocation = 'Dubai International Airport (DXB)'
-    locQuery.value = 'Dubai International Airport (DXB)'
+  const getQueryVal = (key: string) => {
+    const val = route.query[key]
+    if (Array.isArray(val)) return val[0] ? String(val[0]) : ''
+    return val ? String(val) : ''
   }
 
-  if (route.query.pickUpDate || route.query.date) {
-    searchQuery.value.pickUpDate = String(route.query.pickUpDate || route.query.date)
+  const queryLoc = getQueryVal('pickUpLocation') || getQueryVal('location') || getQueryVal('origin')
+  if (queryLoc) {
+    searchQuery.value.pickUpLocation = queryLoc
+  } else {
+    searchQuery.value.pickUpLocation = 'Dubai International Airport (DXB)'
+  }
+
+  const queryDate = getQueryVal('pickUpDate') || getQueryVal('date')
+  if (queryDate) {
+    searchQuery.value.pickUpDate = queryDate
   } else {
     searchQuery.value.pickUpDate = defaultPickup.toISOString().split('T')[0]
   }
 
-  if (route.query.dropOffDate) {
-    searchQuery.value.dropOffDate = String(route.query.dropOffDate)
+  const queryDropOffDate = getQueryVal('dropOffDate')
+  if (queryDropOffDate) {
+    searchQuery.value.dropOffDate = queryDropOffDate
   } else if (searchQuery.value.pickUpDate) {
     const d = new Date(searchQuery.value.pickUpDate)
     d.setDate(d.getDate() + 3)

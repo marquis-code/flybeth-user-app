@@ -187,6 +187,9 @@ const todayStr = toISO(_today)
 const startDate = ref<string | null>(props.departure || null)
 const endDate   = ref<string | null>(props.return    || null)
 
+watch(() => props.departure, (val) => { startDate.value = val || null })
+watch(() => props.return, (val) => { endDate.value = val || null })
+
 const currentMonth = ref(_today.getMonth())
 const currentYear  = ref(_today.getFullYear())
 

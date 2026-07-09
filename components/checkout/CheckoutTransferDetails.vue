@@ -22,10 +22,10 @@
       </div>
     </div>
 
-    <div class="mt-8 pt-6 border-t border-gray-200">
+    <div v-if="!hideContinue" class="mt-8 pt-6 border-t border-gray-200">
       <button 
         @click="$emit('continue')"
-        class="w-full bg-brand-blue text-white py-4 rounded-xl  text-lg hover:bg-brand-blue/90 transition-colors"
+        class="w-full bg-[#0D1DAD] text-white py-4 rounded-xl text-lg hover:bg-[#0A1485] transition-colors"
       >
         Continue to Traveller Details
       </button>
@@ -39,6 +39,7 @@ import { TruckIcon } from '@heroicons/vue/24/outline'
 defineProps<{
   name: string
   provider: string
+  hideContinue?: boolean
 }>()
 
 defineEmits(['continue'])
