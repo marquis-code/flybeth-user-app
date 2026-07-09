@@ -482,7 +482,7 @@ const displayDeals = computed(() => {
   let deals = (packages.value || []).map((pkg: any) => ({
     id: pkg.id || pkg._id,
     name: pkg.name,
-    price: pkg.price?.total || pkg.price?.amount || pkg.price || 0,
+    price: pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0,
     route: pkg.location || pkg.destination || 'Global Package',
     dates: pkg.duration ? `${pkg.duration} nights` : 'Flexible',
     image: pkg.image || pkg.images?.[0] || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80',

@@ -742,6 +742,10 @@ onMounted(async () => {
 })
 
 useHead({
+  title: computed(() => stayDetails.value?.name ? `${stayDetails.value.name} - Flybeth` : 'Hotel Details - Flybeth'),
+  meta: [
+    { name: 'description', content: computed(() => stayDetails.value?.description?.substring(0, 160) || 'View hotel details, photos, and book your stay on Flybeth.') }
+  ],
   script: [{
     src: `https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Rx0TJ9BGkQ9NC23BZc51zCql_Xrhs0&libraries=places`,
     async: true, defer: true, onload: () => setTimeout(initMiniMap, 500)
@@ -759,6 +763,12 @@ useHead({
   background: #f8f9f7;
   font-family: 'Sora', system-ui, sans-serif;
   color: #111;
+  padding-top: 8px; /* Offset the 64px global navbar height (64 - 56 = 8px) */
+}
+@media (min-width: 1024px) {
+  .sd-root {
+    padding-top: 24px; /* Offset the 80px global navbar height on desktop (80 - 56 = 24px) */
+  }
 }
 
 .sd-wrap {
@@ -772,7 +782,7 @@ useHead({
   background: #fff;
   border-bottom: 1px solid #e8e8e2;
   position: sticky;
-  top: 0;
+  top: 64px; /* Stick below the global navbar which shrinks to 64px on scroll */
   z-index: 80;
 }
 .sd-nav-inner {
@@ -1315,7 +1325,7 @@ useHead({
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Full map modal */
-.sd-fullmap-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+.sd-fullmap-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
 .sd-fullmap-box { width: 90vw; height: 80vh; border-radius: 16px; overflow: hidden; position: relative; }
 .sd-fullmap { width: 100%; height: 100%; }
 .sd-fullmap-close { position: absolute; top: 14px; right: 14px; z-index: 10; width: 38px; height: 38px; background: #fff; border: none; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #111; box-shadow: 0 2px 10px rgba(0,0,0,0.12); transition: all 0.14s; }

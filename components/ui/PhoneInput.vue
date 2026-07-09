@@ -117,6 +117,7 @@ const phoneNumber = ref('')
 watch(() => props.modelValue, (newVal) => {
   if (!newVal) {
     phoneNumber.value = ''
+    emit('update:isValid', false)
     return
   }
   
@@ -128,6 +129,7 @@ watch(() => props.modelValue, (newVal) => {
     if (cleanNum !== phoneNumber.value) {
       phoneNumber.value = cleanNum.slice(0, match.maxLength)
     }
+    emit('update:isValid', phoneNumber.value.length >= 7)
   }
 }, { immediate: true })
 

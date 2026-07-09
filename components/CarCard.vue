@@ -39,23 +39,23 @@
           </div>
         </div>
 
-        <!-- Features Grid -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-gray-200">
-            <UserIcon class="h-4 w-4 text-brand-blue" />
-            <span class="text-xs font-bold text-black">{{ car.seats }} {{ car.seats > 1 ? 'Seats' : 'Seat' }}</span>
+        <!-- Features List -->
+        <div class="flex flex-wrap items-center gap-2 mt-2">
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#F8FAFC] border border-gray-100">
+            <UserIcon class="h-3.5 w-3.5 text-[#64748B]" />
+            <span class="text-[11px] font-bold text-[#334155]">{{ car.vehicle?.passengers || car.capacity?.passengers || car.seats || 4 }} {{ (car.vehicle?.passengers || car.capacity?.passengers || car.seats || 4) > 1 ? 'Seats' : 'Seat' }}</span>
           </div>
-          <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-gray-200">
-            <BriefcaseIcon class="h-4 w-4 text-brand-blue" />
-            <span class="text-xs font-bold text-black">{{ car.bags }} {{ car.bags > 1 ? 'Bags' : 'Bag' }}</span>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#F8FAFC] border border-gray-100">
+            <BriefcaseIcon class="h-3.5 w-3.5 text-[#64748B]" />
+            <span class="text-[11px] font-bold text-[#334155]">{{ car.vehicle?.bagsLarge || car.bags || 2 }} {{ (car.vehicle?.bagsLarge || car.bags || 2) > 1 ? 'Bags' : 'Bag' }}</span>
           </div>
-          <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-gray-200">
-            <CogIcon class="h-4 w-4 text-brand-blue" />
-            <span class="text-xs font-bold text-black truncate">{{ car.transmission }}</span>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#F8FAFC] border border-gray-100">
+            <CogIcon class="h-3.5 w-3.5 text-[#64748B]" />
+            <span class="text-[11px] font-bold text-[#334155] truncate">{{ car.vehicle?.transmission || car.transmission || 'Auto' }}</span>
           </div>
-          <div class="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-gray-200">
-            <CheckCircleIcon class="h-4 w-4 text-brand-green" />
-            <span class="text-[11px] font-bold text-brand-green uppercase ">Unlimited km</span>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-green/10 border border-brand-green/20">
+            <CheckCircleIcon class="h-3.5 w-3.5 text-brand-green" />
+            <span class="text-[10px] font-bold text-brand-green uppercase tracking-wide">Unlimited km</span>
           </div>
         </div>
       </div>

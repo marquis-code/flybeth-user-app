@@ -136,15 +136,28 @@
           </div>
         </div>
 
-        <!-- Empty State -->
+        <!-- Empty State / Free Text Option -->
         <div v-show="!isLoading && searchQuery.length >= 2 && results.length === 0" class="py-8 px-5 text-center flex flex-col items-center justify-center">
-          <div class="h-10 w-10 bg-gray-50 rounded-full flex items-center justify-center mb-2">
-            <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <p class="text-sm font-bold text-black">No locations found</p>
-          <p class="text-[12px] text-gray-500 mt-0.5">Try searching for a different city or airport</p>
+          <template v-if="allowFreeText">
+            <div @click="selectFreeText" class="w-full p-4 border border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-xl cursor-pointer transition-colors flex items-center gap-3">
+              <div class="h-10 w-10 bg-white rounded-full flex items-center justify-center shrink-0">
+                <MapPinIcon class="w-5 h-5 text-blue-600" />
+              </div>
+              <div class="text-left">
+                <p class="text-sm font-bold text-gray-900">Use "{{ searchQuery }}"</p>
+                <p class="text-[12px] text-gray-500 mt-0.5">Set as exact address</p>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div class="h-10 w-10 bg-gray-50 rounded-full flex items-center justify-center mb-2">
+              <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <p class="text-sm font-bold text-black">No locations found</p>
+            <p class="text-[12px] text-gray-500 mt-0.5">Try searching for a different city or airport</p>
+          </template>
         </div>
 
         <!-- Initial Prompt State (Cute empty state) -->
@@ -178,9 +191,10 @@ import { useMapboxGeolocation } from '@/composables/useMapboxGeolocation'
 import { flightsApi } from '@/api_factory/modules/flights'
 
 const props = defineProps({
-  modelValue:  { type: String, default: '' },
-  label:       { type: String, default: '' },
-  placeholder: { type: String, default: '' },
+  modelValue:    { type: String, default: '' },
+  label:         { type: String, default: '' },
+  placeholder:   { type: String, default: '' },
+  allowFreeText: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:modelValue', 'select', 'focus', 'close'])
@@ -257,6 +271,18 @@ const selectAmadeusResult = (location: any) => {
   selectedLocationSub.value  = sub
   emit('update:modelValue', iataCode)
   emit('select', location)
+  closeDropdown()
+}
+
+const selectFreeText = () => {
+  const text = searchQuery.value.trim()
+  if (!text) return
+  
+  locationCache.set(text, { name: text, sub: 'Custom Location' })
+  selectedLocationName.value = text
+  selectedLocationSub.value = 'Custom Location'
+  emit('update:modelValue', text)
+  emit('select', { name: text, isCustom: true })
   closeDropdown()
 }
 

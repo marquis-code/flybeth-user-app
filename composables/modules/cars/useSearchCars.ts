@@ -18,7 +18,18 @@ export const useSearchCars = () => {
         cars.value = [];
         try {
             const { data } = await carsApi.search(searchParams);
-            cars.value = data?.results || data?.data || data || [];
+            
+            // The backend returns { data: { dbResults: [], liveResults: [] } }
+            let results: any[] = [];
+            if (data?.data && Array.isArray(data.data.dbResults)) {
+                results = [...data.data.dbResults, ...(data.data.liveResults || [])];
+            } else if (Array.isArray(data?.data)) {
+                results = data.data;
+            } else {
+                results = data?.results || data || [];
+            }
+            
+            cars.value = results;
             return data;
         } catch (error) {
             console.error('Error searching cars:', error);

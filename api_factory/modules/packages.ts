@@ -9,5 +9,8 @@ export const packagesApi = {
     },
     getFeatured() {
         return GATEWAY_ENDPOINT.get("/packages/featured");
+    },
+    getDynamic(params: any = {}) {
+        return GATEWAY_ENDPOINT.get("/packages/dynamic", { params });
     }
 };

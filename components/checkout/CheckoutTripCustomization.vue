@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Seat Preference Card -->
-    <div class="relative bg-white rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 overflow-visible mt-8">
+    <div v-if="flightOffer" class="relative bg-white rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 overflow-visible mt-8">
       <div class="absolute -top-3 left-6 px-3 py-1 bg-[#E2FCA4] text-[#2F4F2F] text-[10px] font-bold rounded-full ">
         Recommended
       </div>
@@ -97,7 +97,7 @@
     </div>
 
     <!-- Baggage Card -->
-    <div class="relative bg-white rounded-[24px] border border-gray-200 shadow-sm p-6 mt-6">
+    <div v-if="flightOffer" class="relative bg-white rounded-[24px] border border-gray-200 shadow-sm p-6 mt-6">
       <div class="flex items-start gap-4 mb-6">
         <div class="w-10 h-10 bg-[#F0F4FF] rounded-xl flex items-center justify-center flex-shrink-0 text-[#0D1DAD]">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -363,6 +363,8 @@ const confirmSelection = () => {
 }
 
 const fetchSeatmap = async () => {
+  if (!props.flightOffer) return; // Do not fetch seatmaps if there is no flight (e.g. hotel-only booking)
+  
   loadingSeats.value = true
   try {
     const rawOffer = props.flightOffer?.rawOffer || props.flightOffer

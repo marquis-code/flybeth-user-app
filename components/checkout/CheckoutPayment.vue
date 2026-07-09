@@ -26,13 +26,22 @@
         </div>
       </div>
       <div v-show="activeMethod === 'card'" class="py-4 px-0 sm:px-4 border-t border-gray-200 bg-gray-50/50 w-full overflow-hidden box-border">
-        <div v-if="duffelPaymentIntentToken" id="duffel-payments-container" class="bg-white py-4 rounded-xl w-full flex justify-center overflow-hidden box-border">
-           <duffel-payments class="w-full max-w-full min-w-0" style="display: block; width: 100%; box-sizing: border-box;"></duffel-payments>
-        </div>
-        <div v-else class="flex flex-col items-center justify-center p-6 gap-3">
-          <span class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></span>
-          <span class="text-sm text-gray-500">Initializing secure payment...</span>
-        </div>
+        <!-- Duffel Flight Provider -->
+        <template v-if="provider === 'duffel'">
+          <div v-if="duffelPaymentIntentToken" id="duffel-payments-container" class="bg-white py-4 rounded-xl w-full flex justify-center overflow-hidden box-border">
+             <duffel-payments class="w-full max-w-full min-w-0" style="display: block; width: 100%; box-sizing: border-box;"></duffel-payments>
+          </div>
+          <div v-else class="flex flex-col items-center justify-center p-6 gap-3">
+            <span class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></span>
+            <span class="text-sm text-gray-500">Initializing secure payment...</span>
+          </div>
+        </template>
+        <!-- Non-Duffel Provider (e.g. Hotel Bookings) -->
+        <template v-else>
+          <div class="text-sm text-gray-600 p-2 text-center font-medium">
+            You will be redirected to complete your secure card payment upon confirming the booking.
+          </div>
+        </template>
       </div>
     </div>
 
@@ -239,7 +248,7 @@ onMounted(() => {
     setTimeout(() => { showAdModal.value = true }, 1000)
   }
 
-  if (activeMethod.value === 'card' && !duffelPaymentInitialized) {
+  if (activeMethod.value === 'card' && !duffelPaymentInitialized && provider.value === 'duffel') {
     initializeDuffelPayment()
   }
 })
@@ -252,7 +261,7 @@ const handleAdClose = () => {
 const toggleMethod = (method: string) => {
   activeMethod.value = method
   
-  if (method === 'card' && !duffelPaymentInitialized) {
+  if (method === 'card' && !duffelPaymentInitialized && provider.value === 'duffel') {
     initializeDuffelPayment()
   }
 }
@@ -316,9 +325,18 @@ const formatAmount = (val: number) => {
 const handlePay = () => {
   const { $toast } = useNuxtApp()
   if (activeMethod.value === 'card') {
-    // Card payments are always handled via the Duffel Web Component.
-    $toast.info('Please complete your payment using the card form above.', { position: 'top-center' })
-    return
+    if (provider.value === 'duffel') {
+      // Card payments are always handled via the Duffel Web Component.
+      $toast.info('Please complete your payment using the card form above.', { position: 'top-center' })
+      return
+    } else {
+      // For non-duffel card payments, fallback to default provider (Paystack/PayPal/Stripe etc.)
+      emit('complete-payment', { 
+        provider: provider.value, 
+        channel: provider.value === 'paystack' ? paystackChannel.value : 'card'
+      })
+      return
+    }
   }
   
   if (activeMethod.value === 'wallet') {

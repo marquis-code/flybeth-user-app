@@ -115,7 +115,7 @@
           class="pk-cat"
           :class="{ 'pk-cat--on': activeCategory === c.value }"
           @click="activeCategory = activeCategory === c.value ? '' : c.value">
-          <span>{{ c.icon }}</span>
+          <component :is="c.icon" class="w-4 h-4 mr-1.5" />
           <span>{{ c.label }}</span>
         </button>
       </div>
@@ -135,7 +135,7 @@
               class="pk-featured-card"
               @click="selectPackage(pkg)">
               <div class="pk-fc-img-wrap">
-                <img v-if="pkg.image || pkg.thumbnail" :src="pkg.image || pkg.thumbnail" :alt="pkg.name" class="pk-fc-img" />
+                <img v-if="pkg.image || pkg.thumbnail || pkg.images?.[0]" :src="pkg.image || pkg.thumbnail || pkg.images?.[0]" :alt="pkg.name" class="pk-fc-img" />
                 <div v-else class="pk-fc-img-ph">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </div>
@@ -152,7 +152,7 @@
                 <div class="pk-fc-footer">
                   <div class="pk-fc-price">
                     <span class="pk-fc-from">from</span>
-                    <span class="pk-fc-amt">{{ formatPrice(pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
+                    <span class="pk-fc-amt">{{ formatPrice(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
                     <span class="pk-fc-per">/ person</span>
                   </div>
                   <button class="pk-fc-btn">View deal →</button>
@@ -182,7 +182,7 @@
                   class="pk-chip"
                   :class="{ 'pk-chip--on': activeCategory === c.value }"
                   @click="activeCategory = activeCategory === c.value ? '' : c.value">
-                  {{ c.icon }} {{ c.label }}
+                  <component :is="c.icon" class="w-4 h-4 mr-1.5 inline-block" /> {{ c.label }}
                 </button>
               </div>
             </div>
@@ -288,12 +288,12 @@
 
           <!-- Package grid -->
           <div v-else class="pk-grid">
-            <div v-for="pkg in sortedPackages" :key="pkg._id || pkg.id"
+            <div v-for="pkg in paginatedPackages" :key="pkg._id || pkg.id"
               class="pk-card"
               @click="selectPackage(pkg)">
               <!-- Image -->
               <div class="pk-card-img-wrap">
-                <img v-if="pkg.image || pkg.thumbnail" :src="pkg.image || pkg.thumbnail" :alt="pkg.name" class="pk-card-img" />
+                <img v-if="pkg.image || pkg.thumbnail || pkg.images?.[0]" :src="pkg.image || pkg.thumbnail || pkg.images?.[0]" :alt="pkg.name" class="pk-card-img" />
                 <div v-else class="pk-card-img-ph">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
                 </div>
@@ -330,7 +330,7 @@
                 <div class="pk-card-footer">
                   <div class="pk-card-price">
                     <span class="pk-card-from">from</span>
-                    <span class="pk-card-amt">{{ formatPrice(pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
+                    <span class="pk-card-amt">{{ formatPrice(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
                     <span class="pk-card-per">/ person</span>
                   </div>
                   <button class="pk-card-btn" @click="selectPackage(pkg)">View →</button>
@@ -339,6 +339,26 @@
             </div>
           </div>
 
+          <!-- Pagination Controls -->
+          <div v-if="totalPages > 1" class="pk-pagination">
+            <button 
+              @click="currentPage--" 
+              :disabled="currentPage === 1"
+              class="pk-page-btn"
+            >
+              Previous
+            </button>
+            <span class="pk-page-info">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+            <button 
+              @click="currentPage++" 
+              :disabled="currentPage === totalPages"
+              class="pk-page-btn"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -377,18 +397,23 @@ const activeStars = ref<number[]>([])
 const maxPriceFilter = ref(99999)
 const sortBy = ref('recommended')
 
+const currentPage = ref(1)
+const itemsPerPage = 6
+
 const searchQuery = ref({ destination: '', duration: null as number | null, budget: '' })
 
 // ── Data ─────────────────────────────────────────────────────────────
+import { Umbrella, Building2, Binoculars, Gem, MountainSnow, Heart, Users, Landmark } from 'lucide-vue-next'
+
 const categories = [
-  { value: 'beach', label: 'Beach', icon: '🏖️' },
-  { value: 'city', label: 'City Break', icon: '🏙️' },
-  { value: 'safari', label: 'Safari', icon: '🦁' },
-  { value: 'luxury', label: 'Luxury', icon: '💎' },
-  { value: 'adventure', label: 'Adventure', icon: '🧗' },
-  { value: 'honeymoon', label: 'Honeymoon', icon: '💕' },
-  { value: 'family', label: 'Family', icon: '👨‍👩‍👧' },
-  { value: 'cultural', label: 'Cultural', icon: '🏛️' },
+  { value: 'beach', label: 'Beach', icon: Umbrella },
+  { value: 'city', label: 'City Break', icon: Building2 },
+  { value: 'safari', label: 'Safari', icon: Binoculars },
+  { value: 'luxury', label: 'Luxury', icon: Gem },
+  { value: 'adventure', label: 'Adventure', icon: MountainSnow },
+  { value: 'honeymoon', label: 'Honeymoon', icon: Heart },
+  { value: 'family', label: 'Family', icon: Users },
+  { value: 'cultural', label: 'Cultural', icon: Landmark },
 ]
 
 const durationOptions = [
@@ -462,6 +487,17 @@ const sortedPackages = computed(() =>
   })
 )
 
+const paginatedPackages = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return sortedPackages.value.slice(start, start + itemsPerPage)
+})
+
+const totalPages = computed(() => Math.ceil(sortedPackages.value.length / itemsPerPage))
+
+watch([filteredPackages, sortBy], () => {
+  currentPage.value = 1
+})
+
 const activeFilterCount = computed(() =>
   (activeCategory.value ? 1 : 0) + activeStars.value.length + (maxPriceFilter.value < maxPrice.value ? 1 : 0)
 )
@@ -481,7 +517,7 @@ const selectPackage = (pkg: any) => {
       type: 'package',
       id: String(pkg._id || pkg.id || 'unknown'),
       name: String(pkg.name),
-      price: String(pkg.price?.total || pkg.price?.amount || pkg.price || 0),
+      price: String(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0),
     }
   })
 }
@@ -503,7 +539,6 @@ onMounted(() => {
   const destParam = route.query.q || route.query.destination
   if (destParam) {
     searchQuery.value.destination = String(destParam)
-    destQuery.value = String(destParam)
   }
   fetchFeaturedPackages()
   handleSearch()
@@ -882,6 +917,13 @@ onMounted(() => {
 
 /* Overlay */
 .pk-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 150; backdrop-filter: blur(2px); }
+
+/* Pagination */
+.pk-pagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 40px; padding: 20px 0; }
+.pk-page-btn { padding: 8px 16px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.pk-page-btn:hover:not(:disabled) { background: #1d7a4f; }
+.pk-page-btn:disabled { background: #e0e0d8; color: #aaa; cursor: not-allowed; }
+.pk-page-info { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; color: #111; letter-spacing: 0.02em; }
 
 /* ── Transitions ───────────────────────────────────────────────────── */
 .fd-enter-active, .fd-leave-active { transition: opacity 0.16s ease, transform 0.16s ease; }
