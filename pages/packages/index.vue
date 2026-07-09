@@ -106,7 +106,7 @@
     <div class="pk-wrap pk-main">
 
       <!-- Category pills -->
-      <div class="pk-cats">
+      <div class="pk-cats mt-6">
         <button v-for="c in categories" :key="c.value"
           class="pk-cat"
           :class="{ 'pk-cat--on': activeCategory === c.value }"
