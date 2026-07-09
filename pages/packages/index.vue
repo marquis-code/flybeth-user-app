@@ -27,15 +27,13 @@
         <div class="pk-bar">
 
           <!-- DESTINATION field -->
-          <div class="pk-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+          <div class="pk-fld-wrap" style="flex: 1;">
             <LocationPicker 
               v-model="searchQuery.destination" 
               label="Destination" 
               placeholder="Where to?" 
             />
           </div>
-
-          <div class="pk-bar-sep"></div>
 
           <!-- DURATION field -->
           <div class="pk-fld pk-fld--dur" :class="{ 'pk-fld--active': activeField === 'dur' }" ref="durRef">
@@ -63,8 +61,6 @@
               </div>
             </Transition>
           </div>
-
-          <div class="pk-bar-sep"></div>
 
           <!-- BUDGET field -->
           <div class="pk-fld pk-fld--bud" :class="{ 'pk-fld--active': activeField === 'bud' }" ref="budRef">
@@ -593,12 +589,20 @@ onMounted(() => {
   position: relative;
   z-index: 50;
   overflow: visible;
+  padding: 8px;
+  gap: 8px;
 }
 
 .pk-fld { position: relative; flex: 1; min-width: 0; }
 .pk-fld--dest { flex: 2; }
 .pk-fld--dur { flex: 1.2; }
 .pk-fld--bud { flex: 1.4; }
+
+.pk-fld-wrap {
+  border: 1px solid #e0e0d8;
+  border-radius: 12px;
+  background: #fff;
+}
 
 .pk-fld-inner {
   display: flex;
@@ -607,20 +611,20 @@ onMounted(() => {
   padding: 14px 16px;
   height: 100%;
   cursor: pointer;
-  border-radius: 14px;
-  transition: background 0.15s;
+  border: 1px solid #e0e0d8;
+  border-radius: 12px;
+  transition: all 0.15s;
+  background: #fff;
   min-width: 0;
 }
-.pk-fld-inner:hover { background: #f5f5f0; }
-.pk-fld--active .pk-fld-inner { background: #f0f7f3; }
+.pk-fld-inner:hover { border-color: #1d7a4f; background: #f0f7f3; }
+.pk-fld--active .pk-fld-inner { border-color: #1d7a4f; background: #f0f7f3; }
 
 .pk-fld-ico { color: #aaa; flex-shrink: 0; }
 .pk-fld-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; overflow: hidden; }
 .pk-fld-lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #bbb; white-space: nowrap; }
 .pk-fld-val { font-size: 13px; font-weight: 500; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pk-fld-val--set { color: #111; }
-
-.pk-bar-sep { width: 1px; background: #ebebe5; flex-shrink: 0; margin: 10px 0; }
 
 /* Search button */
 .pk-search-btn {
@@ -737,7 +741,7 @@ onMounted(() => {
 .pk-bud-dot--lux { background: #1d7a4f; }
 
 /* ── Main content ──────────────────────────────────────────────────── */
-.pk-main { padding-top: 36px; padding-bottom: 60px; }
+.pk-main { padding-top: 64px; padding-bottom: 60px; }
 
 /* Category pills */
 .pk-cats {
@@ -953,20 +957,17 @@ onMounted(() => {
 }
 
 @media (max-width: 860px) {
-  .pk-bar { flex-wrap: wrap; border-radius: 14px; padding: 6px; }
-  .pk-fld--dest { flex: 1 0 100%; }
-  .pk-fld--dur { flex: 1 0 calc(50% - 6px); }
-  .pk-fld--bud { flex: 1 0 calc(50% - 6px); }
-  .pk-bar-sep:first-of-type { display: none; }
-  .pk-bar-sep { height: 1px; width: 100%; margin: 0; }
-  .pk-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
+  .pk-bar { flex-wrap: wrap; border-radius: 16px; padding: 12px; gap: 8px; }
+  .pk-fld-wrap { flex: 1 0 100%; border: 1px solid #e0e0d8; }
+  .pk-fld--dur { flex: 1 0 calc(50% - 4px); }
+  .pk-fld--bud { flex: 1 0 calc(50% - 4px); }
+  .pk-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 12px; min-height: 48px; }
 }
 
 @media (max-width: 640px) {
   .pk-wrap { padding: 0 14px; }
   .pk-hero { padding: 28px 0 44px; }
   .pk-fld--dur, .pk-fld--bud { flex: 1 0 100%; }
-  .pk-bar-sep { display: none; }
   .pk-drop--dest { max-width: calc(100vw - 28px); }
   .pk-drop--dur, .pk-drop--bud { width: calc(100vw - 28px); }
   .pk-featured-grid { grid-template-columns: 1fr; }

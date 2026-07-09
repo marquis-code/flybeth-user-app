@@ -11,6 +11,6 @@ export const packagesApi = {
         return GATEWAY_ENDPOINT.get("/packages/featured");
     },
     getDynamic(params: any = {}) {
-        return GATEWAY_ENDPOINT.get("/packages/dynamic", { params });
+        return GATEWAY_ENDPOINT.get("/packages/dynamic", { params, hideToast: true } as any);
     }
 };

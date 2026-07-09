@@ -239,12 +239,14 @@ instanceArray.forEach((instance) => {
       }
 
       // ── All other errors ───────────────────────────────────────────
-      const errorMessage = err.response.data?.message || err.response.data?.errors?.[0]?.message || "Something went wrong";
-      showToast({
-        title: "Request Error",
-        message: errorMessage,
-        toastType: "error"
-      });
+      if (!originalRequest.hideToast) {
+        const errorMessage = err.response.data?.message || err.response.data?.errors?.[0]?.message || "Something went wrong";
+        showToast({
+          title: "Request Error",
+          message: errorMessage,
+          toastType: "error"
+        });
+      }
       return Promise.reject(err);
     }
   );
