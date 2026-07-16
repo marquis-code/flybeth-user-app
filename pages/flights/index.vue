@@ -67,37 +67,225 @@
           <div class="fp-sbar">
             <div class="fp-sbar-hd">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-              <span>Refine results</span>
+              <span>Filter by</span>
               <button class="fp-reset" @click="clearFilters">Reset</button>
             </div>
 
-            <div class="fp-sb-block">
-              <p class="fp-sb-label">Stops</p>
-              <div class="fp-chips">
-                <button v-for="s in stopOptions" :key="s.value" class="fp-chip" :class="{ 'fp-chip--on': activeStops.includes(s.value) }" @click="toggleStop(s.value)">{{ s.label }}</button>
+            <!-- Steps -->
+            <div class="fp-sb-block" v-if="Object.keys(filterMetadata.stops).length">
+              <div class="flex justify-between items-end mb-2">
+                <p class="fp-sb-label m-0">Steps</p>
+                <span class="text-xs text-gray-500 font-semibold">From</span>
               </div>
-            </div>
-
-            <div class="fp-sb-block" v-if="availableAirlines.length">
-              <p class="fp-sb-label">Airlines</p>
-              <label v-for="al in availableAirlines" :key="al" class="fp-chk-row">
-                <span class="fp-chk" :class="{ 'fp-chk--on': activeAirlines.includes(al) }" @click="toggleAirline(al)">
-                  <svg v-if="activeAirlines.includes(al)" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
-                </span>
-                <span class="fp-chk-label">{{ al }}</span>
+              <label v-for="s in [{label: 'Nonstop', value: 0}, {label: '1 Stop', value: 1}, {label: '2+ Stops', value: 2}]" :key="s.value" class="fp-chk-row" style="justify-content: space-between;" v-show="filterMetadata.stops[s.value]">
+                <div class="flex items-center gap-2">
+                  <span class="fp-chk" :class="{ 'fp-chk--on': activeStops.includes(s.value) }" @click.prevent="toggleStop(s.value)">
+                    <svg v-if="activeStops.includes(s.value)" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="fp-chk-label">{{ s.label }} ({{ filterMetadata.stops[s.value]?.count }})</span>
+                </div>
+                <span class="text-xs font-semibold text-gray-700">{{ formatPrice(filterMetadata.stops[s.value]?.minPrice) }}</span>
               </label>
             </div>
 
+            <!-- Airlines -->
+            <div class="fp-sb-block" v-if="Object.keys(filterMetadata.airlines).length">
+              <div class="flex justify-between items-end mb-2">
+                <p class="fp-sb-label m-0">Airlines</p>
+                <span class="text-xs text-gray-500 font-semibold">From</span>
+              </div>
+              <template v-for="(meta, al, index) in filterMetadata.airlines" :key="al">
+                <label v-if="showAllAirlines || index < 5" class="fp-chk-row" style="justify-content: space-between;">
+                  <div class="flex items-center gap-2">
+                    <span class="fp-chk" :class="{ 'fp-chk--on': activeAirlines.includes(String(al)) }" @click.prevent="toggleAirline(String(al))">
+                      <svg v-if="activeAirlines.includes(String(al))" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="fp-chk-label">{{ al }} ({{ meta.count }})</span>
+                  </div>
+                  <span class="text-xs font-semibold text-gray-700">{{ formatPrice(meta.minPrice) }}</span>
+                </label>
+              </template>
+              <button v-if="Object.keys(filterMetadata.airlines).length > 5" @click="showAllAirlines = !showAllAirlines" class="text-xs text-[#0D1DAD] font-semibold mt-2 text-left w-full hover:underline">
+                {{ showAllAirlines ? 'Show less' : 'Show more' }}
+              </button>
+            </div>
+
+            <!-- Preferred Class -->
+            <div class="fp-sb-block" v-if="Object.keys(filterMetadata.cabinClasses).length">
+              <div class="flex justify-between items-end mb-2">
+                <p class="fp-sb-label m-0">Preferred class</p>
+                <span class="text-xs text-gray-500 font-semibold">From</span>
+              </div>
+              <template v-for="c in [{value: 'economy', label: 'Economy'}, {value: 'premium_economy', label: 'Premium economy'}, {value: 'business', label: 'Business class'}, {value: 'first', label: 'First class'}]" :key="c.value">
+                <label class="fp-chk-row" style="justify-content: space-between;" v-if="filterMetadata.cabinClasses[c.value]">
+                  <div class="flex items-center gap-2">
+                    <span class="fp-chk" :class="{ 'fp-chk--on': activeCabinClasses.includes(c.value) }" @click.prevent="toggleCabinClass(c.value)">
+                      <svg v-if="activeCabinClasses.includes(c.value)" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="fp-chk-label">{{ c.label }} ({{ filterMetadata.cabinClasses[c.value]?.count }})</span>
+                  </div>
+                  <span class="text-xs font-semibold text-gray-700">{{ formatPrice(filterMetadata.cabinClasses[c.value]?.minPrice) }}</span>
+                </label>
+              </template>
+            </div>
+
+            <!-- Travel and Baggage -->
             <div class="fp-sb-block">
-              <p class="fp-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}</strong></p>
-              <div class="fp-range-wrap">
-                <input type="range" :min="minPrice" :max="maxPrice" step="1" v-model.number="maxPriceFilter" class="fp-range" />
-                <div class="fp-range-ends">
-                  <span>{{ formatPrice(minPrice) }}</span>
-                  <span>{{ formatPrice(maxPrice) }}</span>
+              <div class="flex justify-between items-end mb-2">
+                <p class="fp-sb-label m-0">Travel and baggage</p>
+              </div>
+              <label class="fp-chk-row">
+                <div class="flex items-center gap-2">
+                  <span class="fp-chk" :class="{ 'fp-chk--on': activeTravelBaggage.includes('seat') }" @click.prevent="toggleTravelBaggage('seat')">
+                    <svg v-if="activeTravelBaggage.includes('seat')" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="fp-chk-label">Seat choice included</span>
                 </div>
+              </label>
+              <label class="fp-chk-row">
+                <div class="flex items-center gap-2">
+                  <span class="fp-chk" :class="{ 'fp-chk--on': activeTravelBaggage.includes('carryon') }" @click.prevent="toggleTravelBaggage('carryon')">
+                    <svg v-if="activeTravelBaggage.includes('carryon')" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="fp-chk-label">Carry-on bag included</span>
+                </div>
+              </label>
+              <label class="fp-chk-row">
+                <div class="flex items-center gap-2">
+                  <span class="fp-chk" :class="{ 'fp-chk--on': activeTravelBaggage.includes('nocancel') }" @click.prevent="toggleTravelBaggage('nocancel')">
+                    <svg v-if="activeTravelBaggage.includes('nocancel')" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="fp-chk-label">No cancel fee</span>
+                </div>
+              </label>
+              <label class="fp-chk-row">
+                <div class="flex items-center gap-2">
+                  <span class="fp-chk" :class="{ 'fp-chk--on': activeTravelBaggage.includes('changes') }" @click.prevent="toggleTravelBaggage('changes')">
+                    <svg v-if="activeTravelBaggage.includes('changes')" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="fp-chk-label">Changes included</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Total Travel Time -->
+            <div class="fp-sb-block">
+              <p class="fp-sb-label mb-2">Total travel time</p>
+              <span class="text-xs font-semibold text-gray-700 block mb-2">Under {{ Math.ceil(maxDurationFilter / 60) }}h</span>
+              <div class="fp-range-wrap">
+                <input type="range" :min="minDuration" :max="maxDuration" step="30" v-model.number="maxDurationFilter" class="fp-range fp-range-blue" />
               </div>
             </div>
+
+            <!-- Departure Time in Origin -->
+            <div class="fp-sb-block" v-if="searchQuery.origin">
+              <p class="fp-sb-label mb-2">Departure time in {{ lookupCity(searchQuery.origin).split(' (')[0] }}</p>
+              <div class="grid grid-cols-2 gap-2 mt-2">
+                <button 
+                  class="flex flex-col items-center justify-center p-2 rounded-lg border text-xs text-gray-600 transition-colors"
+                  :class="activeDepTimes.includes('morning') ? 'border-[#0D1DAD] bg-blue-50/50 font-bold text-black' : 'border-gray-200 hover:border-gray-300 bg-white'"
+                  @click="toggleDepTime('morning')"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  Morning
+                  <span class="text-[9px] font-normal mt-0.5 text-gray-400 block whitespace-nowrap text-center">(5am - 12pm)</span>
+                </button>
+                <button 
+                  class="flex flex-col items-center justify-center p-2 rounded-lg border text-xs text-gray-600 transition-colors"
+                  :class="activeDepTimes.includes('afternoon') ? 'border-[#0D1DAD] bg-blue-50/50 font-bold text-black' : 'border-gray-200 hover:border-gray-300 bg-white'"
+                  @click="toggleDepTime('afternoon')"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  Afternoon
+                  <span class="text-[9px] font-normal mt-0.5 text-gray-400 block whitespace-nowrap text-center">(12pm - 6pm)</span>
+                </button>
+                <button 
+                  class="flex flex-col items-center justify-center p-2 rounded-lg border text-xs text-gray-600 transition-colors col-span-2 sm:col-span-1"
+                  :class="activeDepTimes.includes('evening') ? 'border-[#0D1DAD] bg-blue-50/50 font-bold text-black' : 'border-gray-200 hover:border-gray-300 bg-white'"
+                  @click="toggleDepTime('evening')"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                  Evening
+                  <span class="text-[9px] font-normal mt-0.5 text-gray-400 block whitespace-nowrap text-center">(6pm - 12am)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Arrival Time in Destination -->
+            <div class="fp-sb-block" v-if="searchQuery.destination">
+              <p class="fp-sb-label mb-2">Arrival time in {{ lookupCity(searchQuery.destination).split(' (')[0] }}</p>
+              <div class="grid grid-cols-2 gap-2 mt-2">
+                <button 
+                  class="flex flex-col items-center justify-center p-2 rounded-lg border text-xs text-gray-600 transition-colors"
+                  :class="activeArrTimes.includes('morning') ? 'border-[#0D1DAD] bg-blue-50/50 font-bold text-black' : 'border-gray-200 hover:border-gray-300 bg-white'"
+                  @click="toggleArrTime('morning')"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  Morning
+                  <span class="text-[9px] font-normal mt-0.5 text-gray-400 block whitespace-nowrap text-center">(5am - 12pm)</span>
+                </button>
+                <button 
+                  class="flex flex-col items-center justify-center p-2 rounded-lg border text-xs text-gray-600 transition-colors"
+                  :class="activeArrTimes.includes('afternoon') ? 'border-[#0D1DAD] bg-blue-50/50 font-bold text-black' : 'border-gray-200 hover:border-gray-300 bg-white'"
+                  @click="toggleArrTime('afternoon')"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                  Afternoon
+                  <span class="text-[9px] font-normal mt-0.5 text-gray-400 block whitespace-nowrap text-center">(12pm - 6pm)</span>
+                </button>
+                <button 
+                  class="flex flex-col items-center justify-center p-2 rounded-lg border text-xs text-gray-600 transition-colors col-span-2 sm:col-span-1"
+                  :class="activeArrTimes.includes('evening') ? 'border-[#0D1DAD] bg-blue-50/50 font-bold text-black' : 'border-gray-200 hover:border-gray-300 bg-white'"
+                  @click="toggleArrTime('evening')"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                  Evening
+                  <span class="text-[9px] font-normal mt-0.5 text-gray-400 block whitespace-nowrap text-center">(6pm - 12am)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Arrival Airports -->
+            <div class="fp-sb-block" v-if="Object.keys(filterMetadata.arrivalAirports).length">
+              <div class="flex justify-between items-end mb-2">
+                <p class="fp-sb-label m-0">Arrival airports</p>
+                <span class="text-xs text-gray-500 font-semibold">From</span>
+              </div>
+              <template v-for="(meta, code) in filterMetadata.arrivalAirports" :key="code">
+                <label class="fp-chk-row" style="justify-content: space-between;">
+                  <div class="flex items-center gap-2">
+                    <span class="fp-chk" :class="{ 'fp-chk--on': activeArrivalAirports.includes(String(code)) }" @click.prevent="toggleArrivalAirport(String(code))">
+                      <svg v-if="activeArrivalAirports.includes(String(code))" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="fp-chk-label">{{ code }} ({{ lookupCity(String(code)).split(' (')[0] }}) ({{ meta.count }})</span>
+                  </div>
+                  <span class="text-xs font-semibold text-gray-700">{{ formatPrice(meta.minPrice) }}</span>
+                </label>
+              </template>
+            </div>
+
+            <!-- Layover Airport -->
+            <div class="fp-sb-block" v-if="Object.keys(filterMetadata.layovers).length">
+              <div class="flex justify-between items-end mb-2">
+                <p class="fp-sb-label m-0">Layover airport</p>
+                <span class="text-xs text-gray-500 font-semibold">From</span>
+              </div>
+              <template v-for="(meta, code, index) in filterMetadata.layovers" :key="code">
+                <label v-if="showAllLayovers || index < 5" class="fp-chk-row" style="justify-content: space-between;">
+                  <div class="flex items-center gap-2">
+                    <span class="fp-chk" :class="{ 'fp-chk--on': activeLayoverAirports.includes(String(code)) }" @click.prevent="toggleLayoverAirport(String(code))">
+                      <svg v-if="activeLayoverAirports.includes(String(code))" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="fp-chk-label">{{ code }} ({{ lookupCity(String(code)).split(' (')[0] }}) ({{ meta.count }})</span>
+                  </div>
+                  <span class="text-xs font-semibold text-gray-700">{{ formatPrice(meta.minPrice) }}</span>
+                </label>
+              </template>
+              <button v-if="Object.keys(filterMetadata.layovers).length > 5" @click="showAllLayovers = !showAllLayovers" class="text-xs text-[#0D1DAD] font-semibold mt-2 text-left w-full hover:underline">
+                {{ showAllLayovers ? 'Show less' : 'Show more' }}
+              </button>
+            </div>
+            
           </div>
         </aside>
 
@@ -378,7 +566,10 @@
                   </li>
                   <!-- Carry-on -->
                   <li class="fd-variant-feature-item">
-                    <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <Check class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" v-if="getFareVariantDetails(variant).carryOn.includes('included')" />
+                    <svg class="w-4 h-4 text-gray-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" v-else>
+                      <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+                    </svg>
                     <span>{{ getFareVariantDetails(variant).carryOn }}</span>
                   </li>
                   <!-- Checked bags -->
@@ -463,12 +654,25 @@ const showDrawerFlightDetails = ref(true)
 const calViewDate = ref(new Date())
 const sortOpen = ref(false)
 const mobileFilters = ref(false)
+
+// Advanced Filter States
 const activeStops = ref<number[]>([])
 const activeAirlines = ref<string[]>([])
+const activeCabinClasses = ref<string[]>([])
+const activeTravelBaggage = ref<string[]>([])
+const activeDepTimes = ref<string[]>([])
+const activeArrTimes = ref<string[]>([])
+const activeArrivalAirports = ref<string[]>([])
+const activeLayoverAirports = ref<string[]>([])
+
 const maxPriceFilter = ref(99999)
+const maxDurationFilter = ref(99999)
+
 const activeFare = ref('cheapest')
 const sortBy = ref('price')
 const checkingAvailability = ref(false)
+const showAllAirlines = ref(false)
+const showAllLayovers = ref(false)
 
 const searchQuery = ref({
   origin: '',
@@ -588,19 +792,154 @@ const maxPrice = computed(() => {
 })
 watch(maxPrice, v => { maxPriceFilter.value = v }, { immediate: true })
 
+const minDuration = computed(() => {
+  if (!displayedFlights.value.length) return 0
+  return Math.min(...displayedFlights.value.map((f: any) => f.duration || 0))
+})
+const maxDuration = computed(() => {
+  if (!displayedFlights.value.length) return 38 * 60
+  return Math.max(...displayedFlights.value.map((f: any) => f.duration || 0))
+})
+watch(maxDuration, v => { maxDurationFilter.value = v }, { immediate: true })
+
+const getTimeOfDay = (isoString: string) => {
+  if (!isoString) return 'unknown'
+  let date: Date;
+  try {
+    date = new Date(isoString)
+  } catch (e) {
+    if (typeof isoString === 'string' && isoString.includes(':')) {
+      const h = parseInt(isoString.split(':')[0])
+      if (h >= 5 && h < 12) return 'morning'
+      if (h >= 12 && h < 18) return 'afternoon'
+      return 'evening'
+    }
+    return 'unknown'
+  }
+  const hour = date.getHours()
+  if (hour >= 5 && hour < 12) return 'morning'
+  if (hour >= 12 && hour < 18) return 'afternoon'
+  return 'evening'
+}
+
 const filteredFlights = computed(() =>
   displayedFlights.value.filter((f: any) => {
     const price = f.priceWithCommission || f.price || 0
     if (price > maxPriceFilter.value) return false
+    
+    // Duration
+    if ((f.duration || 0) > maxDurationFilter.value) return false
+    
+    // Stops
     if (activeStops.value.length) {
       const stops = f.stops ?? 0
       const ns = stops >= 2 ? 2 : stops
       if (!activeStops.value.includes(ns)) return false
     }
+    
+    // Airlines
     if (activeAirlines.value.length && !activeAirlines.value.includes(f.airline)) return false
+    
+    // Cabin Classes
+    if (activeCabinClasses.value.length && !activeCabinClasses.value.includes(f.cabinClass || 'economy')) return false
+    
+    // Travel & Baggage
+    if (activeTravelBaggage.value.length) {
+      const variant = getFareVariantDetails(f)
+      if (activeTravelBaggage.value.includes('seat') && variant.seatText.includes('for a fee')) return false
+      if (activeTravelBaggage.value.includes('nocancel') && !f.conditions?.refundable) return false
+      if (activeTravelBaggage.value.includes('changes') && !f.conditions?.changeable) return false
+    }
+    
+    // Departure Times
+    if (activeDepTimes.value.length) {
+      if (!activeDepTimes.value.includes(getTimeOfDay(f.departureTime))) return false
+    }
+    
+    // Arrival Times
+    if (activeArrTimes.value.length) {
+      if (!activeArrTimes.value.includes(getTimeOfDay(f.arrivalTime))) return false
+    }
+    
+    // Arrival Airports
+    if (activeArrivalAirports.value.length) {
+      if (!activeArrivalAirports.value.includes(f.destination)) return false
+    }
+    
+    // Layover Airports
+    if (activeLayoverAirports.value.length) {
+      if (!f.segments || f.segments.length <= 1) return false
+      const layovers = f.segments.slice(0, -1).map((s: any) => s.destination)
+      if (!layovers.some((l: string) => activeLayoverAirports.value.includes(l))) return false
+    }
+    
     return true
   })
 )
+
+// Computed metadata for filters (counts and min prices)
+const filterMetadata = computed(() => {
+  const meta = {
+    stops: {} as Record<number, { count: number, minPrice: number }>,
+    airlines: {} as Record<string, { count: number, minPrice: number }>,
+    cabinClasses: {} as Record<string, { count: number, minPrice: number }>,
+    arrivalAirports: {} as Record<string, { count: number, minPrice: number }>,
+    layovers: {} as Record<string, { count: number, minPrice: number }>,
+  }
+  
+  displayedFlights.value.forEach((f: any) => {
+    const price = f.priceWithCommission || f.price || 0
+    
+    // Stops
+    const stops = f.stops ?? 0
+    const ns = stops >= 2 ? 2 : stops
+    if (!meta.stops[ns]) meta.stops[ns] = { count: 0, minPrice: price }
+    meta.stops[ns].count++
+    meta.stops[ns].minPrice = Math.min(meta.stops[ns].minPrice, price)
+    
+    // Airlines
+    if (f.airline) {
+      if (!meta.airlines[f.airline]) meta.airlines[f.airline] = { count: 0, minPrice: price }
+      meta.airlines[f.airline].count++
+      meta.airlines[f.airline].minPrice = Math.min(meta.airlines[f.airline].minPrice, price)
+    }
+    
+    // Cabin Class
+    const cc = f.cabinClass || 'economy'
+    if (!meta.cabinClasses[cc]) meta.cabinClasses[cc] = { count: 0, minPrice: price }
+    meta.cabinClasses[cc].count++
+    meta.cabinClasses[cc].minPrice = Math.min(meta.cabinClasses[cc].minPrice, price)
+    
+    // Arrival Airports
+    if (f.destination) {
+      if (!meta.arrivalAirports[f.destination]) meta.arrivalAirports[f.destination] = { count: 0, minPrice: price }
+      meta.arrivalAirports[f.destination].count++
+      meta.arrivalAirports[f.destination].minPrice = Math.min(meta.arrivalAirports[f.destination].minPrice, price)
+    }
+    
+    // Layovers
+    if (f.segments && f.segments.length > 1) {
+      const layovers = f.segments.slice(0, -1).map((s: any) => s.destination)
+      const uniqueLayovers = [...new Set(layovers)] as string[]
+      uniqueLayovers.forEach((l) => {
+        if (!meta.layovers[l]) meta.layovers[l] = { count: 0, minPrice: price }
+        meta.layovers[l].count++
+        meta.layovers[l].minPrice = Math.min(meta.layovers[l].minPrice, price)
+      })
+    }
+  })
+  
+  // Sort dictionaries nicely
+  const sortedMeta = {
+    stops: meta.stops,
+    airlines: Object.fromEntries(Object.entries(meta.airlines).sort((a,b) => b[1].count - a[1].count)),
+    cabinClasses: meta.cabinClasses,
+    arrivalAirports: Object.fromEntries(Object.entries(meta.arrivalAirports).sort((a,b) => b[1].count - a[1].count)),
+    layovers: Object.fromEntries(Object.entries(meta.layovers).sort((a,b) => b[1].count - a[1].count)),
+  }
+  
+  return sortedMeta
+})
 
 const getScheduleKey = (flight: any) => {
   if (!flight || !Array.isArray(flight.segments)) return flight?.offerId || String(Math.random())
@@ -645,11 +984,32 @@ const sortedFlights = computed(() => {
 const openVariantsDrawer = (flight: any) => {
   const key = getScheduleKey(flight)
   const variants = groupedSchedules.value[key] || [flight]
-  activeFlightVariants.value = [...variants].sort((a: any, b: any) => {
+  
+  // Sort by price first
+  const sorted = [...variants].sort((a: any, b: any) => {
     const priceA = a.priceWithCommission || a.price || 0
     const priceB = b.priceWithCommission || b.price || 0
     return priceA - priceB
   })
+  
+  // Deduplicate: keep only the cheapest offer per unique fare brand + cabin + conditions
+  const seen = new Map<string, any>()
+  sorted.forEach((v: any) => {
+    const details = getFareVariantDetails(v)
+    const dedupeKey = [
+      details.brandName,
+      details.cabinLabel,
+      v.conditions?.refundable ? 'R' : 'NR',
+      v.conditions?.changeable ? 'C' : 'NC',
+      details.checkedBags,
+    ].join('|')
+    if (!seen.has(dedupeKey)) {
+      seen.set(dedupeKey, v)
+    }
+    // else skip — we already have a cheaper one
+  })
+  
+  activeFlightVariants.value = Array.from(seen.values())
   selectedFlightSchedule.value = flight
   showDrawerFlightDetails.value = true
   showVariantsDrawer.value = true
@@ -663,81 +1023,146 @@ const selectVariant = async (variant: any) => {
 const getFareVariantDetails = (variant: any) => {
   const cabin = variant.cabinClass || 'economy'
   const isDuffel = variant.provider === 'duffel'
+  const rawOffer = variant.rawOffer
   
+  // === BRAND NAME ===
   let brandName = ''
-  if (variant.rawOffer?.fare_brand_name) {
-    brandName = variant.rawOffer.fare_brand_name
-  } else if (variant.rawOffer?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.brandedFare) {
-    brandName = variant.rawOffer.travelerPricings[0].fareDetailsBySegment[0].brandedFare
+  if (variant.fareBrandName) {
+    brandName = variant.fareBrandName
+  } else if (rawOffer?.slices?.[0]?.fare_brand_name) {
+    brandName = rawOffer.slices[0].fare_brand_name
+  } else if (rawOffer?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.brandedFare) {
+    brandName = rawOffer.travelerPricings[0].fareDetailsBySegment[0].brandedFare
+  } else if (rawOffer?.slices?.[0]?.segments?.[0]?.passengers?.[0]?.cabin_class_marketing_name) {
+    brandName = rawOffer.slices[0].segments[0].passengers[0].cabin_class_marketing_name
+  } else if (rawOffer?.slices?.[0]?.segments?.[0]?.passengers?.[0]?.fare_basis_code) {
+    brandName = rawOffer.slices[0].segments[0].passengers[0].fare_basis_code
   }
   
   if (!brandName) {
     if (cabin === 'economy') {
-      if (variant.conditions?.refundable) brandName = 'Plus Select'
-      else if (variant.conditions?.changeable) brandName = 'Plus'
-      else brandName = 'Basic'
+      if (variant.conditions?.refundable) brandName = 'Flexible Economy'
+      else if (variant.conditions?.changeable) brandName = 'Standard Economy'
+      else brandName = 'Basic Economy'
     } else if (cabin === 'premium_economy') {
-      brandName = 'Premium Select'
+      brandName = 'Premium Economy'
     } else if (cabin === 'business') {
-      brandName = 'Club Plus'
+      brandName = 'Business'
     } else {
-      brandName = 'First Elite'
+      brandName = 'First Class'
     }
   }
   
   brandName = brandName.split('_').join(' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
 
+  // === CABIN LABEL ===
+  // Use airline's marketing name when available 
+  let cabinLabel = ''
+  if (isDuffel && rawOffer?.slices?.[0]?.segments?.[0]?.passengers?.[0]?.cabin_class_marketing_name) {
+    cabinLabel = rawOffer.slices[0].segments[0].passengers[0].cabin_class_marketing_name
+  } else {
+    cabinLabel = cabin.split('_').join(' ').split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+  }
+
+  // === BAGGAGE (read REAL data from Duffel's `baggages` array) ===
   let carryOn = 'Carry-on bag included'
-  let checkedBags = '1st checked bag: fee applies'
+  let checkedBags = '1st checked bag: for a fee'
   
   if (isDuffel) {
-    const allowances = variant.rawOffer?.slices?.[0]?.segments?.[0]?.passengers?.[0]?.baggage_allowances || []
+    // Duffel uses `baggages` array on each passenger within each segment
+    const firstPax = rawOffer?.slices?.[0]?.segments?.[0]?.passengers?.[0]
+    const baggages = firstPax?.baggages || []
+    
+    let carryOnCount = 0
     let checkedCount = 0
-    allowances.forEach((allowance: any) => {
-      if (allowance.type === 'checked') checkedCount += allowance.quantity || 0
+    
+    baggages.forEach((bag: any) => {
+      if (bag.type === 'carry_on') {
+        carryOnCount += bag.quantity || 0
+      } else if (bag.type === 'checked') {
+        checkedCount += bag.quantity || 0
+      }
     })
+    
+    // Carry-on
+    if (carryOnCount > 0) {
+      carryOn = `${carryOnCount} carry-on bag${carryOnCount > 1 ? 's' : ''} included`
+    } else if (baggages.length > 0 && carryOnCount === 0) {
+      // If baggages exist but no carry_on type, it's not included
+      carryOn = 'Carry-on bag: for a fee'
+    }
+    
+    // Checked bags
     if (checkedCount > 0) {
       checkedBags = `${checkedCount} checked bag${checkedCount > 1 ? 's' : ''} included`
     } else {
       checkedBags = '1st checked bag: for a fee'
     }
   } else {
+    // Amadeus / other providers
     const baggage = variant.baggageIncluded || variant.rawOffer?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.includedCheckedBags
     if (baggage) {
       const quantity = baggage.quantity !== undefined ? baggage.quantity : (typeof baggage === 'object' ? 1 : parseInt(String(baggage)))
       if (quantity > 0) {
         checkedBags = `${quantity} checked bag${quantity > 1 ? 's' : ''} included`
-      } else {
-        checkedBags = '1st checked bag: for a fee'
       }
-    } else {
-      checkedBags = '1st checked bag: for a fee'
     }
   }
 
+  // === REFUND & CHANGE CONDITIONS (read REAL data from Duffel conditions) ===
   let refundText = 'Non-refundable'
-  let changeText = 'Changes for a fee'
+  let changeText = 'Non-changeable'
   
-  if (variant.conditions?.refundable) {
-    const penalty = variant.conditions.refundPenalty
-    refundText = penalty ? `Refundable (fee: ${formatPrice(Number(penalty))})` : 'Fully refundable'
-  }
-  
-  if (variant.conditions?.changeable) {
-    const penalty = variant.conditions.changePenalty
-    changeText = penalty ? `Changes for a fee (from ${formatPrice(Number(penalty))})` : 'Changes included, only pay fare difference'
-  } else {
-    changeText = 'Non-changeable'
+  if (isDuffel && rawOffer?.conditions) {
+    // Duffel conditions are at offer.conditions.refund_before_departure / change_before_departure
+    const refundCond = rawOffer.conditions.refund_before_departure
+    const changeCond = rawOffer.conditions.change_before_departure
+    
+    if (refundCond?.allowed === true) {
+      if (refundCond.penalty_amount) {
+        refundText = `Refundable (fee: ${formatPrice(parseFloat(refundCond.penalty_amount))})`
+      } else {
+        refundText = 'Fully refundable'
+      }
+    } else if (refundCond?.allowed === false) {
+      refundText = 'Non-refundable'
+    }
+    
+    if (changeCond?.allowed === true) {
+      if (changeCond.penalty_amount) {
+        changeText = `Changes for a fee (from ${formatPrice(parseFloat(changeCond.penalty_amount))})`
+      } else {
+        changeText = 'Changes included, only pay fare difference'
+      }
+    } else if (changeCond?.allowed === false) {
+      changeText = 'Non-changeable'
+    }
+  } else if (variant.conditions) {
+    // Fallback to mapped conditions
+    if (variant.conditions.refundable) {
+      const penalty = variant.conditions.refundPenalty
+      refundText = penalty ? `Refundable (fee: ${formatPrice(Number(penalty))})` : 'Fully refundable'
+    }
+    if (variant.conditions.changeable) {
+      const penalty = variant.conditions.changePenalty
+      changeText = penalty ? `Changes for a fee (from ${formatPrice(Number(penalty))})` : 'Changes included, only pay fare difference'
+    }
   }
 
+  // === SEAT SELECTION ===
   let seatText = 'Seat choice for a fee'
-  if (cabin === 'business' || cabin === 'first' || brandName.includes('Select') || brandName.includes('Elite')) {
+  // Higher fare brands typically include seat selection
+  const brandLower = brandName.toLowerCase()
+  if (cabin === 'business' || cabin === 'first' ||
+      brandLower.includes('flex') || brandLower.includes('plus') || 
+      brandLower.includes('select') || brandLower.includes('elite') ||
+      brandLower.includes('delight') || brandLower.includes('classic')) {
     seatText = 'Seat choice included'
   }
 
   return {
     brandName,
-    cabinLabel: cabin.split('_').join(' ').split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '),
+    cabinLabel,
     seatText,
     carryOn,
     checkedBags,
@@ -870,7 +1295,43 @@ const toggleAirline = (al: string) => {
   const i = activeAirlines.value.indexOf(al)
   if (i >= 0) activeAirlines.value.splice(i, 1); else activeAirlines.value.push(al)
 }
-const clearFilters = () => { activeStops.value = []; activeAirlines.value = []; maxPriceFilter.value = maxPrice.value }
+const toggleCabinClass = (val: string) => {
+  const i = activeCabinClasses.value.indexOf(val)
+  if (i >= 0) activeCabinClasses.value.splice(i, 1); else activeCabinClasses.value.push(val)
+}
+const toggleTravelBaggage = (val: string) => {
+  const i = activeTravelBaggage.value.indexOf(val)
+  if (i >= 0) activeTravelBaggage.value.splice(i, 1); else activeTravelBaggage.value.push(val)
+}
+const toggleDepTime = (val: string) => {
+  const i = activeDepTimes.value.indexOf(val)
+  if (i >= 0) activeDepTimes.value.splice(i, 1); else activeDepTimes.value.push(val)
+}
+const toggleArrTime = (val: string) => {
+  const i = activeArrTimes.value.indexOf(val)
+  if (i >= 0) activeArrTimes.value.splice(i, 1); else activeArrTimes.value.push(val)
+}
+const toggleArrivalAirport = (val: string) => {
+  const i = activeArrivalAirports.value.indexOf(val)
+  if (i >= 0) activeArrivalAirports.value.splice(i, 1); else activeArrivalAirports.value.push(val)
+}
+const toggleLayoverAirport = (val: string) => {
+  const i = activeLayoverAirports.value.indexOf(val)
+  if (i >= 0) activeLayoverAirports.value.splice(i, 1); else activeLayoverAirports.value.push(val)
+}
+
+const clearFilters = () => { 
+  activeStops.value = []; 
+  activeAirlines.value = []; 
+  activeCabinClasses.value = [];
+  activeTravelBaggage.value = [];
+  activeDepTimes.value = [];
+  activeArrTimes.value = [];
+  activeArrivalAirports.value = [];
+  activeLayoverAirports.value = [];
+  maxPriceFilter.value = maxPrice.value;
+  maxDurationFilter.value = maxDuration.value;
+}
 
 const selectFlight = async (flight: any) => {
   if (!flight) return
@@ -885,7 +1346,15 @@ const selectFlight = async (flight: any) => {
     
     sessionStorage.setItem('selectedFlight', JSON.stringify(flight))
     const provider = flight.provider || 'duffel'
-    navigateTo({ path: '/checkout', query: { type: 'flight', id: String(flight.offerId||flight._id||flight.id||'unknown'), name: String(flight.flightNumbers?.[0]||`${flight.airline} flight`), price: String(flight.priceWithCommission||flight.price||0), provider } })
+    
+    if (import.meta.client) {
+      sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
+        type: 'flight',
+        id: String(flight.offerId||flight._id||flight.id||'unknown'),
+        provider
+      }))
+    }
+    navigateTo({ path: '/checkout' })
   } catch (error) {
     console.error('Fare validation failed', error)
   } finally {
@@ -954,25 +1423,11 @@ onMounted(async () => {
     searchQuery.value.departureDate = new Date().toISOString().split('T')[0]
   }
 
-  // Aggressive tracking: keep URL and localStorage perfectly in sync
+  // Keep localStorage in sync for session restoration (NOT the URL)
   watch(searchQuery, (newVal) => {
     if (import.meta.client) {
       localStorage.setItem('flybeth_last_flight_search', JSON.stringify(newVal))
     }
-    const currentQuery = route.query
-    router.replace({ 
-      query: { 
-        ...currentQuery, 
-        origin: newVal.origin || undefined,
-        destination: newVal.destination || undefined,
-        departureDate: newVal.departureDate || undefined,
-        adults: newVal.adults > 1 ? String(newVal.adults) : undefined,
-        children: newVal.children > 0 ? String(newVal.children) : undefined,
-        infantsOnLap: newVal.infantsOnLap > 0 ? String(newVal.infantsOnLap) : undefined,
-        infantsInSeat: newVal.infantsInSeat > 0 ? String(newVal.infantsInSeat) : undefined,
-        cabinClass: newVal.cabinClass !== 'economy' ? newVal.cabinClass : undefined
-      } 
-    })
   }, { deep: true })
 
   if (route.query.sid) {
@@ -1678,7 +2133,7 @@ onMounted(async () => {
 .fp-mdash { font-size: 13px; color: #000; font-weight: 700; }
 
 /* Body grid */
-.fp-body { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; align-items: start; }
+.fp-body { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 32px; align-items: start; }
 
 /* Sidebar */
 .fp-sidebar { position: sticky; top: 20px; }
@@ -1703,12 +2158,12 @@ onMounted(async () => {
   border-bottom: 1px solid #f0f0ea;
   margin-bottom: 18px;
 }
-.fp-reset { margin-left: auto; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: #bbb; background: none; border: none; cursor: pointer; transition: color 0.15s; }
+.fp-reset { margin-left: auto; font-size: 13px; font-weight: 600; color: #888; background: none; border: none; cursor: pointer; transition: color 0.15s; }
 .fp-reset:hover { color: #0D1DAD; }
 
 .fp-sb-block { margin-bottom: 24px; }
-.fp-sb-label { font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #bbb; display: block; margin-bottom: 12px; }
-.fp-sb-label strong { color: #111;  letter-spacing: 0; font-size: 12px; }
+.fp-sb-label { font-size: 15px; font-weight: 700; color: #111; display: block; margin-bottom: 12px; }
+.fp-sb-label strong { color: #111; font-size: 13px; }
 
 .fp-chips { display: flex; flex-direction: column; gap: 5px; }
 .fp-chip {
@@ -1730,7 +2185,7 @@ onMounted(async () => {
 .fp-chk-row { display: flex; align-items: center; gap: 9px; padding: 6px 0; cursor: pointer; }
 .fp-chk { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid #d8d8d0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; transition: all 0.14s; cursor: pointer; }
 .fp-chk--on { background: #0D1DAD; border-color: #0D1DAD; }
-.fp-chk-label { font-size: 12px; color: #333; }
+.fp-chk-label { font-size: 14px; font-weight: 600; color: #222; }
 
 .fp-range-wrap { display: flex; flex-direction: column; gap: 7px; }
 .fp-range { width: 100%; -webkit-appearance: none; height: 3px; background: #e8e8e0; border-radius: 2px; outline: none; cursor: pointer; accent-color: #0D1DAD; }
@@ -1739,7 +2194,7 @@ onMounted(async () => {
 
 /* Toolbar */
 .fp-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-.fp-rcount { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #aaa; }
+.fp-rcount { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: #222; }
 .fp-toolbar-r { display: flex; align-items: center; gap: 8px; }
 
 .fp-sort-wrap { position: relative; }

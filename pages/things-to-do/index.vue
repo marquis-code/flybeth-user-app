@@ -215,8 +215,8 @@ const { formatPrice } = useSettings()
 const mobileFilters = ref(false)
 
 const searchQuery = reactive({
-  destinationIata: (route.query.destination as string) || '',
-  date: (route.query.date as string) || '',
+  destinationIata: '',
+  date: '',
 })
 
 // ── Constants ─────────────────────────────────────────────────────────
@@ -270,12 +270,23 @@ const handleSearch = async () => {
 
 const goToDetail = (activity: any) => {
   sessionStorage.setItem('selectedActivity', JSON.stringify(activity))
-  navigateTo({ path: `/things-to-do/${activity.experienceId}`, query: { provider: activity.provider } })
+  navigateTo({ path: `/things-to-do/${activity.experienceId}` })
 }
 
 // ── Calendar (Removed - using FlightDateRangePicker) ─────────────────
 
 onMounted(() => {
+  if (import.meta.client) {
+    try {
+      const saved = localStorage.getItem('flybeth_last_things-to-do_search')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.destinationIata) searchQuery.destinationIata = parsed.destinationIata
+        if (parsed.date) searchQuery.date = parsed.date
+      }
+    } catch(e) {}
+  }
+
   if (searchQuery.destinationIata) handleSearch()
   else {
     currentCityName.value = 'Paris'

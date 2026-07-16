@@ -37,6 +37,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   runtimeConfig: {
+    sherpaApiKey: process.env.SHERPA_API_KEY,
     public: {
       apiBase: process.env.VITE_BASE_URL || process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3000/api/v1',
       googleClientId: process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID,

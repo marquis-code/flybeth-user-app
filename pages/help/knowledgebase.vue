@@ -45,6 +45,10 @@
 import { ref, computed } from 'vue'
 import { BookOpenIcon, ArrowLongRightIcon } from '@heroicons/vue/24/outline'
 
+definePageMeta({
+  middleware: 'auth'
+})
+
 useHead({
   title: 'Knowledgebase | Flybeth Support'
 })

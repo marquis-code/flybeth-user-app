@@ -507,15 +507,15 @@ const handleSearch = () => {
 const selectPackage = (pkg: any) => {
   if (!pkg) return
   try { sessionStorage.setItem('selectedPackage', JSON.stringify(pkg)) } catch {}
-  navigateTo({
-    path: '/checkout',
-    query: {
+  if (import.meta.client) {
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'package',
       id: String(pkg._id || pkg.id || 'unknown'),
       name: String(pkg.name),
       price: String(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0),
-    }
-  })
+    }))
+  }
+  navigateTo({ path: '/checkout' })
 }
 
 const toggleStar = (s: number) => {
@@ -531,10 +531,15 @@ const clearFilters = () => {
 }
 
 onMounted(() => {
-  const route = useRoute()
-  const destParam = route.query.q || route.query.destination
-  if (destParam) {
-    searchQuery.value.destination = String(destParam)
+  if (import.meta.client) {
+    try {
+      const saved = localStorage.getItem('flybeth_last_packages_search')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.destination) searchQuery.value.destination = String(parsed.destination)
+        if (parsed.duration) searchQuery.value.duration = Number(parsed.duration)
+      }
+    } catch(e) {}
   }
   fetchFeaturedPackages()
   handleSearch()

@@ -796,10 +796,13 @@ const goToDetails = (stay: any) => {
 }
  
 const goToCheckout = (booking: any) => {
-  navigateTo({ path: '/checkout', query: {
-    type: 'stay', roomId: booking.roomId, provider: booking.provider,
-    id: booking.id, price: booking.price, currency: booking.currency || 'USD', hotelName: booking.stay?.name
-  }})
+  if (import.meta.client) {
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
+      type: 'stay', roomId: booking.roomId, provider: booking.provider,
+      id: booking.id, price: booking.price, currency: booking.currency || 'USD', hotelName: booking.stay?.name
+    }))
+  }
+  navigateTo({ path: '/checkout' })
 }
  
 const clearPendingBooking = () => {
@@ -808,15 +811,25 @@ const clearPendingBooking = () => {
 }
  
 onMounted(() => {
-  const route = useRoute()
-  if (route.query.location) { searchQuery.value.location = String(route.query.location); locQuery.value = String(route.query.location) }
-  if (route.query.lat) searchQuery.value.lat = parseFloat(String(route.query.lat))
-  if (route.query.lng) searchQuery.value.lng = parseFloat(String(route.query.lng))
-  if (route.query.checkIn) searchQuery.value.checkIn = String(route.query.checkIn)
-  if (route.query.checkOut) searchQuery.value.checkOut = String(route.query.checkOut)
-  if (route.query.adults) searchQuery.value.adults = parseInt(String(route.query.adults)) || 2
-  if (route.query.children) searchQuery.value.children = parseInt(String(route.query.children)) || 0
-  if (route.query.rooms) searchQuery.value.rooms = parseInt(String(route.query.rooms)) || 1
+  if (import.meta.client) {
+    try {
+      const saved = localStorage.getItem('flybeth_last_stays_search')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.location) {
+          searchQuery.value.location = parsed.location
+          locQuery.value = parsed.location
+        }
+        if (parsed.lat) searchQuery.value.lat = parsed.lat
+        if (parsed.lng) searchQuery.value.lng = parsed.lng
+        if (parsed.checkIn) searchQuery.value.checkIn = parsed.checkIn
+        if (parsed.checkOut) searchQuery.value.checkOut = parsed.checkOut
+        if (parsed.adults) searchQuery.value.adults = parsed.adults
+        if (parsed.children) searchQuery.value.children = parsed.children
+        if (parsed.rooms) searchQuery.value.rooms = parsed.rooms
+      }
+    } catch(e) {}
+  }
  
   if (!searchQuery.value.location) {
     searchQuery.value.location = 'Dubai'

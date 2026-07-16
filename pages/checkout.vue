@@ -468,25 +468,42 @@ const prefillFromUser = () => {
     }
 }
 
-// Booking details from query
-const bookingDetails = computed(() => ({
-  type: route.query.type as string,
-  id: route.query.id as string,
-  roomId: route.query.roomId as string,
-  name: (route.query.hotelName as string) || (route.query.name as string) || 'Selected trip',
-  provider: route.query.provider as string,
-  price: route.query.price ? Number(route.query.price) : 0,
-  currency: (route.query.currency as string) || 'USD',
-  quoteId: route.query.quoteId as string,
-  checkIn: route.query.checkIn as string,
-  checkOut: route.query.checkOut as string,
-  adults: route.query.adults ? Number(route.query.adults) : 2,
-  children: route.query.children ? Number(route.query.children) : 0,
-  rooms: route.query.rooms ? Number(route.query.rooms) : 1,
-  returnId: route.query.returnId as string,
-  returnName: route.query.returnName as string,
-  returnPrice: route.query.returnPrice ? Number(route.query.returnPrice) : 0,
-}))
+// Booking details from secure session storage instead of URL
+const checkoutPayload = ref<any>({})
+onMounted(() => {
+  if (import.meta.client) {
+    const payloadStr = sessionStorage.getItem('flybeth_checkout_payload')
+    if (payloadStr) {
+      try {
+        checkoutPayload.value = JSON.parse(payloadStr)
+      } catch (e) {
+        console.error('Failed to parse checkout payload', e)
+      }
+    }
+  }
+})
+
+const bookingDetails = computed(() => {
+  const p = checkoutPayload.value || {}
+  return {
+    type: p.type as string,
+    id: p.id as string,
+    roomId: p.roomId as string,
+    name: p.hotelName || p.name || 'Selected trip',
+    provider: p.provider as string,
+    price: p.price ? Number(p.price) : 0,
+    currency: p.currency || 'USD',
+    quoteId: p.quoteId as string,
+    checkIn: p.checkIn as string,
+    checkOut: p.checkOut as string,
+    adults: p.adults ? Number(p.adults) : 2,
+    children: p.children ? Number(p.children) : 0,
+    rooms: p.rooms ? Number(p.rooms) : 1,
+    returnId: p.returnId as string,
+    returnName: p.returnName as string,
+    returnPrice: p.returnPrice ? Number(p.returnPrice) : 0,
+  }
+})
 
 const currencySymbol = computed(() => {
   return currentCurrency.value.symbol || '$'
