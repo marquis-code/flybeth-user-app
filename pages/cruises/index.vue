@@ -267,12 +267,12 @@ const sortOpen = ref(false)
 const mobileFilters = ref(false)
 
 const searchQuery = reactive({
-  destination: String(route.query.destination || 'BH'),
+  destination: 'BH',
   destinationLabel: '',
-  departingMonth: String(route.query.departingMonth || '03/1/2026'),
+  departingMonth: '03/1/2026',
   departingLabel: '',
-  length: String(route.query.length || ''),
-  line: String(route.query.line || ''),
+  length: '',
+  line: '',
 })
 
 // ── Constants ─────────────────────────────────────────────────────────
@@ -378,15 +378,15 @@ const handleSearch = async () => {
 }
 
 const selectCruise = (cruise: any) => {
-  navigateTo({
-    path: '/checkout',
-    query: {
+  if (import.meta.client) {
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'cruise',
       id: String(cruise._id || cruise.id),
       name: String(cruise.name),
       price: String(cruise.pricing?.startingPrice || cruise.price)
-    }
-  })
+    }))
+  }
+  navigateTo({ path: '/checkout' })
 }
 
 const resolveLabels = () => {
@@ -399,6 +399,19 @@ const resolveLabels = () => {
 
 // ── Lifecycle ─────────────────────────────────────────────────────────
 onMounted(() => {
+  if (import.meta.client) {
+    try {
+      const saved = localStorage.getItem('flybeth_last_cruises_search')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.destination) searchQuery.destination = parsed.destination
+        if (parsed.departingMonth) searchQuery.departingMonth = parsed.departingMonth
+        if (parsed.length) searchQuery.length = parsed.length
+        if (parsed.line) searchQuery.line = parsed.line
+      }
+    } catch(e) {}
+  }
+
   resolveLabels()
   handleSearch()
 })

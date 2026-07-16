@@ -62,6 +62,10 @@ import {
   ArrowSmallRightIcon 
 } from '@heroicons/vue/24/outline'
 
+definePageMeta({
+  middleware: 'auth'
+})
+
 useHead({
   title: 'My Tickets | Flybeth Support'
 })

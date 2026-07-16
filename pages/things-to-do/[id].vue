@@ -238,22 +238,31 @@ const handleBook = () => {
 };
 
 const handleBookInternal = () => {
-  router.push({
-    path: '/checkout',
-    query: {
+  if (import.meta.client) {
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'activity',
       id: activity.value?.experienceId,
       name: activity.value?.name,
       price: String(activity.value?.price || 0),
       currency: activity.value?.currency || 'EUR',
       provider: activity.value?.provider
-    }
-  });
+    }))
+  }
+  router.push({ path: '/checkout' });
 };
 
 onMounted(async () => {
   const id = route.params.id as string;
-  const provider = (route.query.provider as string) || 'duffel';
+  let provider = 'duffel';
+  if (import.meta.client) {
+    try {
+      const saved = sessionStorage.getItem('selectedActivity')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        provider = parsed.provider || 'duffel'
+      }
+    } catch(e) {}
+  }
 
   loading.value = true;
   try {

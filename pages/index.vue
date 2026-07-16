@@ -1055,14 +1055,21 @@ const navigateToFlightSearch = (destination: string) => {
     });
     return;
   }
-  const query = {
+  const payload = {
     origin,
     destination: destination.toUpperCase().slice(0, 3), // Simple heuristic for demo
     departureDate: new Date().toISOString().split('T')[0],
     adults: 1,
-    cabinClass: 'ECONOMY'
+    cabinClass: 'ECONOMY',
+    type: 'flight',
+    provider: 'duffel'
   };
-  navigateTo({ path: '/checkout', query: { ...query, type: 'flight', provider: 'duffel' } });
+  
+  if (import.meta.client) {
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify(payload));
+  }
+  
+  navigateTo({ path: '/checkout' });
 };
 
 const currentFareDeals = computed(() => {

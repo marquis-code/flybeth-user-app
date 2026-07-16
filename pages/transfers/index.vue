@@ -237,19 +237,35 @@ const selectTransfer = (t: any) => {
     query.price = selectedOutbound.value.price
   }
 
-  navigateTo({ path: '/checkout', query })
+  if (import.meta.client) {
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify(query))
+  }
+  navigateTo({ path: '/checkout' })
 }
 
 onMounted(() => {
-  const route = useRoute();
-  tripType.value = (route.query.tripType as string) || 'oneway'
-  searchQuery.value.origin = (route.query.origin as string) || 'DXB'
-  searchQuery.value.destination = (route.query.destination as string) || 'Dubai Marina'
-  searchQuery.value.date = (route.query.date as string) || new Date(Date.now() + 86400000 * 7).toISOString().split('T')[0]
-  if (route.query.time) searchQuery.value.time = route.query.time as string;
-  if (route.query.returnDate) searchQuery.value.returnDate = route.query.returnDate as string;
-  if (route.query.returnTime) searchQuery.value.returnTime = route.query.returnTime as string;
-  if (route.query.adults) searchQuery.value.adults = Number(route.query.adults);
+  tripType.value = 'oneway'
+  searchQuery.value.origin = 'DXB'
+  searchQuery.value.destination = 'Dubai Marina'
+  searchQuery.value.date = new Date(Date.now() + 86400000 * 7).toISOString().split('T')[0]
+  
+  if (import.meta.client) {
+    try {
+      const saved = localStorage.getItem('flybeth_last_transfers_search')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.tripType) tripType.value = parsed.tripType
+        if (parsed.origin) searchQuery.value.origin = parsed.origin
+        if (parsed.destination) searchQuery.value.destination = parsed.destination
+        if (parsed.date) searchQuery.value.date = parsed.date
+        if (parsed.time) searchQuery.value.time = parsed.time
+        if (parsed.returnDate) searchQuery.value.returnDate = parsed.returnDate
+        if (parsed.returnTime) searchQuery.value.returnTime = parsed.returnTime
+        if (parsed.adults) searchQuery.value.adults = Number(parsed.adults)
+      }
+    } catch(e) {}
+  }
+  
   handleSearch()
 })
 </script>

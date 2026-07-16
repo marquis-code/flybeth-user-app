@@ -48,10 +48,10 @@
               Help center
             </NuxtLink>
 
-            <button @click="handleManageBookingClick" class="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-black hover:text-black hover:bg-white rounded-md transition-colors">
-              <Briefcase class="h-3.5 w-3.5 text-black" />
-              Manage Bookings
-            </button>
+            <NuxtLink to="/login" class="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-black hover:text-black hover:bg-white rounded-md transition-colors">
+              <User class="h-3.5 w-3.5 text-black" />
+              Sign in
+            </NuxtLink>
           </div>
 
           <!-- Desktop Actions -->
@@ -378,7 +378,9 @@ import {
   Gift,
   Map,
   Percent,
-  Briefcase
+  Briefcase,
+  ClipboardList,
+  User
 } from 'lucide-vue-next'
 
 import { useSettings } from '@/composables/useSettings'
@@ -428,6 +430,7 @@ const exploreLinks = [
   { name: 'Cars',     path: '/cars',     icon: Car },
   { name: 'Packages', path: '/packages', icon: Gift },
   { name: 'Explore',  path: '/explore',  icon: Map },
+  { name: 'Requirements', path: '/requirements', icon: ClipboardList },
   // { name: 'Deals',    path: '/deals',    icon: Percent, hasArrow: true },
 ]
 

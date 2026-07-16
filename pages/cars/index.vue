@@ -328,46 +328,52 @@ const clearFilters = () => {
 const selectCar = (car: any) => {
   if (!car) return
   try { sessionStorage.setItem('selectedCar', JSON.stringify(car)) } catch {}
-  navigateTo({
-    path: '/checkout',
-    query: {
+  if (import.meta.client) {
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'car',
       id: String(car._id || car.id || 'unknown'),
       name: String(car.name || `${car.category} car`),
       price: String(car.pricing?.basePrice || car.price || 0),
-    }
-  })
+    }))
+  }
+  navigateTo({ path: '/checkout' })
 }
 
 onMounted(() => {
-  const route = useRoute()
   const today = new Date()
   const defaultPickup = new Date(today)
   defaultPickup.setDate(today.getDate() + 14)
   const defaultReturn = new Date(defaultPickup)
   defaultReturn.setDate(defaultPickup.getDate() + 3)
 
-  const getQueryVal = (key: string) => {
-    const val = route.query[key]
-    if (Array.isArray(val)) return val[0] ? String(val[0]) : ''
-    return val ? String(val) : ''
+  let queryLoc = ''
+  let queryDate = ''
+  let queryDropOffDate = ''
+
+  if (import.meta.client) {
+    try {
+      const saved = localStorage.getItem('flybeth_last_cars_search')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        queryLoc = parsed.pickUpLocation || parsed.location || parsed.destination || ''
+        queryDate = parsed.pickUpDate || parsed.date || ''
+        queryDropOffDate = parsed.dropOffDate || ''
+      }
+    } catch (e) {}
   }
 
-  const queryLoc = getQueryVal('pickUpLocation') || getQueryVal('location') || getQueryVal('origin')
   if (queryLoc) {
     searchQuery.value.pickUpLocation = queryLoc
   } else {
     searchQuery.value.pickUpLocation = 'Dubai International Airport (DXB)'
   }
 
-  const queryDate = getQueryVal('pickUpDate') || getQueryVal('date')
   if (queryDate) {
     searchQuery.value.pickUpDate = queryDate
   } else {
     searchQuery.value.pickUpDate = defaultPickup.toISOString().split('T')[0]
   }
 
-  const queryDropOffDate = getQueryVal('dropOffDate')
   if (queryDropOffDate) {
     searchQuery.value.dropOffDate = queryDropOffDate
   } else if (searchQuery.value.pickUpDate) {

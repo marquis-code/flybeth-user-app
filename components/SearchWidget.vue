@@ -834,61 +834,75 @@ const handleSearch = async () => {
   }
 
   if (currentTab.value === 'Flights') {
-    Object.assign(query, flightSearchState)
-    Object.assign(query, flightTravelers)
-    query.type = flightMode.value
+    // Build search criteria for backend session
+    const searchCriteria: any = {
+      ...flightSearchState,
+      ...flightTravelers,
+      type: flightMode.value
+    }
+    
+    if (flightMode.value === 'multicity') {
+      const validLegs = multiFlightLegs.value.filter(leg => leg.origin && leg.destination && leg.departureDate)
+      searchCriteria.slices = JSON.stringify(validLegs)
+    }
 
     try {
-      // Secure Search Session
-      const searchCriteria: any = {
-        ...flightSearchState,
-        ...flightTravelers,
-        type: flightMode.value
-      }
-      
-      if (flightMode.value === 'multicity') {
-        // Only keep valid legs (must have origin, destination, and departureDate)
-        const validLegs = multiFlightLegs.value.filter(leg => leg.origin && leg.destination && leg.departureDate)
-        searchCriteria.slices = JSON.stringify(validLegs)
-        query.slices = JSON.stringify(validLegs)
-      }
-      
+      // Create secure search session — params are stored server-side
       const { data } = await flightsApi.createSearchSession(searchCriteria)
       
-      // Save to local history for quick access (Always save for guests, backend handles logged in)
+      // Save to local history for quick access
       if (import.meta.client) {
-         try {
-           const local = localStorage.getItem('flybeth_recent_searches')
-           let history = local ? JSON.parse(local) : []
-           if (searchCriteria.origin && searchCriteria.destination) {
-             history = [searchCriteria, ...history.filter((h: any) => h.origin !== searchCriteria.origin || h.destination !== searchCriteria.destination)].slice(0, 10)
-             localStorage.setItem('flybeth_recent_searches', JSON.stringify(history))
-           }
-         } catch (e) {}
+        try {
+          const local = localStorage.getItem('flybeth_recent_searches')
+          let history = local ? JSON.parse(local) : []
+          if (searchCriteria.origin && searchCriteria.destination) {
+            history = [searchCriteria, ...history.filter((h: any) => h.origin !== searchCriteria.origin || h.destination !== searchCriteria.destination)].slice(0, 10)
+            localStorage.setItem('flybeth_recent_searches', JSON.stringify(history))
+          }
+        } catch (e) {}
       }
 
-      // Handle both sid and sessionId for robustness
       const sid = data?.sid || data?.sessionId
       if (sid) {
+        // Clean URL: only sid + tab, no raw search data exposed
         query.sid = sid
+      } else {
+        // Fallback: no session created, pass minimal params
+        Object.assign(query, flightSearchState)
+        Object.assign(query, flightTravelers)
+        query.type = flightMode.value
       }
     } catch (err: any) {
       console.error('Failed to create secure search session:', err)
-      // Check for 404 specifically
-      if (err.response?.status === 404) {
-        console.warn('Search session endpoint not found (404). Check backend routing.')
-      }
+      // Fallback: pass params directly if session creation fails
+      Object.assign(query, flightSearchState)
+      Object.assign(query, flightTravelers)
+      query.type = flightMode.value
     }
   }
-  else if (currentTab.value === 'Cruises')       Object.assign(query, cruiseSearchState)
-  else if (currentTab.value === 'Transfers')     { Object.assign(query, transferSearchState); Object.assign(query, transferOccupancy); query.tripType = transferTripType.value }
-  else if (currentTab.value === 'Activities')    Object.assign(query, activitiesSearchState)
-  else if (currentTab.value === 'Hotels')        { Object.assign(query, searchState); Object.assign(query, occupancy) }
-  else if (currentTab.value === 'Packages')      { Object.assign(query, packageSearchState); Object.assign(query, packageOccupancy); query.packageType = packageType.value }
-  else if (currentTab.value === 'Cars')          { Object.assign(query, carSearchState); query.carMode = carMode.value }
-  trackAction('booking_step_search', { tab: currentTab.value, ...query })
+  else if (currentTab.value === 'Cruises') {
+    if (import.meta.client) localStorage.setItem('flybeth_last_cruises_search', JSON.stringify(cruiseSearchState))
+  }
+  else if (currentTab.value === 'Transfers') {
+    if (import.meta.client) localStorage.setItem('flybeth_last_transfers_search', JSON.stringify({ ...transferSearchState, ...transferOccupancy, tripType: transferTripType.value }))
+  }
+  else if (currentTab.value === 'Activities') {
+    if (import.meta.client) localStorage.setItem('flybeth_last_things-to-do_search', JSON.stringify(activitiesSearchState))
+  }
+  else if (currentTab.value === 'Hotels') {
+    if (import.meta.client) localStorage.setItem('flybeth_last_stays_search', JSON.stringify({ ...searchState, ...occupancy }))
+  }
+  else if (currentTab.value === 'Packages') {
+    if (import.meta.client) localStorage.setItem('flybeth_last_packages_search', JSON.stringify({ ...packageSearchState, ...packageOccupancy, packageType: packageType.value }))
+  }
+  else if (currentTab.value === 'Cars') {
+    if (import.meta.client) localStorage.setItem('flybeth_last_cars_search', JSON.stringify({ ...carSearchState, carMode: carMode.value }))
+  }
+  
+  trackAction('booking_step_search', { tab: currentTab.value })
   try {
-    await navigateTo({ path: routes[currentTab.value] || '/search', query })
+    // Navigate with clean URL (only sid and tab, no raw params)
+    await navigateTo({ path: routes[currentTab.value] || '/search', query: currentTab.value === 'Flights' ? query : undefined })
   } finally {
     isSearching.value = false
   }
