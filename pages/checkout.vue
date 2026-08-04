@@ -303,7 +303,6 @@ import BookingExpiredModal from '~/components/checkout/BookingExpiredModal.vue'
 import { flightsApi } from '~/api_factory/modules/flights'
 import { transfersApi } from '~/api_factory/modules/transfers'
 import { bookingsApi } from '~/api_factory/modules/bookings'
-import { useDuffelIdentity } from '~/composables/modules/integrations/useDuffelIdentity'
 import { useTracking } from '~/composables/core/useTracking'
 import { useAuth } from '~/composables/modules/auth/useAuth'
 import { useUser } from '~/composables/modules/auth/user'
@@ -312,7 +311,6 @@ import { useSettings } from '~/composables/useSettings'
 
 const { token, isLoggedIn, openAuthModal } = useAuth()
 const { showToast } = useCustomToast()
-const { ensureDuffelIdentity } = useDuffelIdentity()
 const { currentCurrency } = useSettings()
 
 definePageMeta({
@@ -1068,7 +1066,8 @@ const handlePayment = async (paymentInfo: any) => {
           "paypal_four",
           "afterpay",
           "paypal",
-          "paystack"
+          "paystack",
+          "stripe"
         ].includes(paymentInfo.provider)
       ) {
         loaderStatus.value = "Redirecting to payment gateway...";

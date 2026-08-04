@@ -1270,6 +1270,18 @@ const jumpTo = (airline: string) => {
 
 // ── Actions ───────────────────────────────────────────────────────────
 const handleSearch = () => {
+  if (searchQuery.value.type !== 'multicity') {
+    if (!searchQuery.value.origin || !searchQuery.value.destination) {
+      alert("Please select both origin and destination.")
+      return
+    }
+  } else {
+    if (!searchQuery.value.slices || searchQuery.value.slices.length === 0) {
+      alert("Please add at least one flight leg.")
+      return
+    }
+  }
+  
   activeField.value = null
   searchFlights(searchQuery.value)
   predictTripPurpose({ origin: searchQuery.value.origin, destination: searchQuery.value.destination, departureDate: searchQuery.value.departureDate })
