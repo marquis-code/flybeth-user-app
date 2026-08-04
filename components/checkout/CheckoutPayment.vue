@@ -3,7 +3,7 @@
     <h3 class="text-lg font-bold text-gray-900 mb-6">Payment selection</h3>
 
     <!-- ═══ International (USD) Section ═══ -->
-    <div class="flex items-center gap-2 mb-1">
+    <div v-if="props.currency !== 'NGN'" class="flex items-center gap-2 mb-1">
       <div class="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-lg">
         <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         <span class="text-[11px] font-bold text-blue-700 uppercase tracking-wider">International (USD)</span>
@@ -11,12 +11,12 @@
     </div>
 
     <!-- Card Payment (Always Visible) -->
-    <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'card'}">
+    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'card'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('card')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'card'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
           <div class="flex flex-col">
-            <span class="text-sm font-bold text-gray-900">Debit / Credit card</span>
+            <span class="text-sm font-bold text-gray-900">Debit / Credit card (Duffel Payment)</span>
             <span class="text-[11px] text-amber-600 font-medium">USD transactions only · Dollar card required</span>
           </div>
         </div>
@@ -26,27 +26,14 @@
         </div>
       </div>
       <div v-show="activeMethod === 'card'" class="py-4 px-0 sm:px-4 border-t border-gray-200 bg-gray-50/50 w-full overflow-hidden box-border">
-        <!-- Duffel Flight Provider -->
-        <template v-if="provider === 'duffel'">
-          <div v-if="duffelPaymentIntentToken" id="duffel-payments-container" class="bg-white py-4 rounded-xl w-full flex justify-center overflow-hidden box-border">
-             <duffel-payments class="w-full max-w-full min-w-0" style="display: block; width: 100%; box-sizing: border-box;"></duffel-payments>
-          </div>
-          <div v-else class="flex flex-col items-center justify-center p-6 gap-3">
-            <span class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></span>
-            <span class="text-sm text-gray-500">Initializing secure payment...</span>
-          </div>
-        </template>
-        <!-- Non-Duffel Provider (e.g. Hotel Bookings) -->
-        <template v-else>
-          <div class="text-sm text-gray-600 p-2 text-center font-medium">
-            You will be redirected to complete your secure card payment upon confirming the booking.
-          </div>
-        </template>
+        <div class="text-sm text-gray-600 p-2 text-center font-medium">
+          You will be redirected to complete your secure card payment upon confirming the booking.
+        </div>
       </div>
     </div>
 
     <!-- ═══ Local Currency Section ═══ -->
-    <div class="flex items-center gap-2 mt-6 mb-1">
+    <div v-if="props.currency === 'NGN'" class="flex items-center gap-2 mt-6 mb-1">
       <div class="flex items-center gap-1.5 px-2.5 py-1 bg-green-50 rounded-lg">
         <svg class="w-3.5 h-3.5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         <span class="text-[11px] font-bold text-green-700 uppercase tracking-wider">Local Currency (NGN)</span>
@@ -54,7 +41,7 @@
     </div>
 
     <!-- Paystack Payment -->
-    <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'paystack'}">
+    <div v-if="props.currency === 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'paystack'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('paystack')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'paystack'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
@@ -69,28 +56,51 @@
       </div>
     </div>
 
-    <!-- PayPal Payment -->
-    <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'paypal'}">
-      <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('paypal')">
+    <!-- Stripe Payment -->
+    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'stripe'}">
+      <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('stripe')">
         <div class="flex items-center gap-4">
-          <input type="radio" :checked="activeMethod === 'paypal'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
-          <span class="text-sm font-bold text-gray-900">PayPal</span>
+          <input type="radio" :checked="activeMethod === 'stripe'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-gray-900">Stripe</span>
+            <span class="text-[11px] text-gray-500 font-medium">Pay securely with Stripe</span>
+          </div>
         </div>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="h-4" />
+        <div class="flex gap-2 text-blue-600 font-bold italic text-lg tracking-tighter">
+          stripe
+        </div>
       </div>
-      <div v-show="activeMethod === 'paypal'" class="p-4 border-t border-gray-200 bg-gray-50/50">
+      <div v-show="activeMethod === 'stripe'" class="p-4 border-t border-gray-200 bg-gray-50/50">
         <div class="text-sm text-gray-600 p-2">
-          You will be redirected to PayPal to complete your purchase securely.
+          You will be redirected to Stripe to complete your payment securely.
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Transfer (Zelle / Cash App) -->
+    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'manual'}">
+      <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('manual')">
+        <div class="flex items-center gap-4">
+          <input type="radio" :checked="activeMethod === 'manual'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-gray-900">Manual Transfer (Zelle / Cash App)</span>
+            <span class="text-[11px] text-gray-500 font-medium">Send payment directly</span>
+          </div>
+        </div>
+      </div>
+      <div v-show="activeMethod === 'manual'" class="p-4 border-t border-gray-200 bg-gray-50/50">
+        <div class="text-sm text-gray-600 p-2">
+          Payment instructions for Zelle / Cash App will be provided on the next step.
         </div>
       </div>
     </div>
 
     <!-- Digital Wallets -->
-    <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'wallet'}">
+    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'wallet'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('wallet')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'wallet'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
-          <span class="text-sm font-bold text-gray-900">Digital Wallets (Apple Pay / Google Pay)</span>
+          <span class="text-sm font-bold text-gray-900">Digital Wallets (Apple Pay / Google Pay / PayPal)</span>
         </div>
       </div>
       <div v-show="activeMethod === 'wallet'" class="p-4 border-t border-gray-200 bg-gray-50/50">
@@ -99,11 +109,11 @@
     </div>
 
     <!-- BNPL Payment -->
-    <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'bnpl'}">
+    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'bnpl'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('bnpl')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'bnpl'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
-          <span class="text-sm font-bold text-gray-900">Buy Now, Pay Later</span>
+          <span class="text-sm font-bold text-gray-900">Buy Now, Pay Later (Affirm / Klarna / Afterpay / CreditPal)</span>
         </div>
         <div class="flex gap-2 items-center">
           <img src="@/assets/img/klarna.png" class="h-3 opacity-60" />
@@ -157,7 +167,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { AlertCircle, Wallet } from 'lucide-vue-next'
 import DigitalWallets from './DigitalWallets.vue'
 import WalletAdModal from './WalletAdModal.vue'
@@ -168,11 +178,6 @@ import { useAuth } from '~/composables/modules/auth/useAuth'
 import { useSettings } from '~/composables/useSettings'
 import { useNuxtApp } from '#app'
 import { flightsApi } from '@/api_factory/modules/flights'
-import {
-  renderDuffelPaymentsCustomElement,
-  onDuffelPaymentsSuccessfulPayment,
-  onDuffelPaymentsFailedPayment
-} from '@duffel/components/custom-elements'
 
 import affirm from '@/assets/img/affirm.svg'
 import klarna from '@/assets/img/klarna.png'
@@ -205,19 +210,15 @@ const bnplProviders = ref([
   { id: 'affirm', name: 'Affirm', logo: affirm },
   { id: 'klarna', name: 'Klarna', logo: klarna },
   { id: 'afterpay', name: 'Afterpay', logo: afterpay },
+  { id: 'creditpal', name: 'CreditPal', logo: 'https://via.placeholder.com/80x30?text=CreditPal' },
 ])
 
-const duffelPaymentIntentToken = ref('')
-const duffelPaymentIntentId = ref('')
-let duffelPaymentInitialized = false
+
 
 const provider = computed(() => {
-  const queryProvider = route.query.provider as string
-  if (queryProvider === 'duffel') return 'duffel'
-  
   const c = props.currency.toUpperCase()
-  if (['NGN', 'GHS', 'KES', 'ZAR'].includes(c)) return 'paystack'
-  return 'paypal'
+  if (['NGN'].includes(c)) return 'paystack'
+  return 'stripe'
 })
 
 const hasSufficientWalletBalance = computed(() => {
@@ -247,11 +248,15 @@ onMounted(() => {
   if (!isDismissed && isLoggedIn.value) {
     setTimeout(() => { showAdModal.value = true }, 1000)
   }
-
-  if (activeMethod.value === 'card' && !duffelPaymentInitialized && provider.value === 'duffel') {
-    initializeDuffelPayment()
-  }
 })
+
+watch(() => props.currency, (newCurrency) => {
+  if (newCurrency === 'NGN') {
+    activeMethod.value = 'paystack'
+  } else {
+    activeMethod.value = 'card'
+  }
+}, { immediate: true })
 
 const handleAdClose = () => {
   showAdModal.value = false
@@ -260,59 +265,9 @@ const handleAdClose = () => {
 
 const toggleMethod = (method: string) => {
   activeMethod.value = method
-  
-  if (method === 'card' && !duffelPaymentInitialized && provider.value === 'duffel') {
-    initializeDuffelPayment()
-  }
 }
 
-const initializeDuffelPayment = async () => {
-  const { $toast } = useNuxtApp()
-  try {
-    const { data } = await flightsApi.createDuffelPaymentIntent({
-      amount: Number(props.totalAmount).toFixed(2),
-      currency: props.currency
-    })
-    
-    const responseData = data?.data || data
-    if (responseData && responseData.client_token) {
-      duffelPaymentIntentToken.value = responseData.client_token
-      duffelPaymentIntentId.value = responseData.id
-      duffelPaymentInitialized = true
-      
-      // Give Vue time to render the <duffel-payments> tag
-      setTimeout(() => {
-        renderDuffelPaymentsCustomElement({
-          paymentIntentClientToken: responseData.client_token
-        })
-        
-        onDuffelPaymentsSuccessfulPayment(async () => {
-          try {
-            emit('wallet-authorize', true) // Show loader in parent if needed
-            // Confirm with our backend
-            await flightsApi.confirmDuffelPaymentIntent(duffelPaymentIntentId.value)
-            
-            // Proceed to booking creation
-            emit('complete-payment', { 
-              provider: 'duffel', 
-              channel: 'card',
-              paymentIntentId: duffelPaymentIntentId.value 
-            })
-          } catch (err: any) {
-            $toast.error('Payment confirmation failed. Please contact support.', { position: 'top-right' })
-            emit('wallet-authorize', false)
-          }
-        })
-        
-        onDuffelPaymentsFailedPayment((error) => {
-          $toast.error('Payment failed. Please try a different card.', { position: 'top-right' })
-        })
-      }, 50)
-    }
-  } catch (error: any) {
-    $toast.error('Failed to initialize secure payment form', { position: 'top-right' })
-  }
-}
+
 
 const formatAmount = (val: number) => {
   try {
@@ -325,18 +280,11 @@ const formatAmount = (val: number) => {
 const handlePay = () => {
   const { $toast } = useNuxtApp()
   if (activeMethod.value === 'card') {
-    if (provider.value === 'duffel') {
-      // Card payments are always handled via the Duffel Web Component.
-      $toast.info('Please complete your payment using the card form above.', { position: 'top-center' })
-      return
-    } else {
-      // For non-duffel card payments, fallback to default provider (Paystack/PayPal/Stripe etc.)
-      emit('complete-payment', { 
-        provider: provider.value, 
-        channel: provider.value === 'paystack' ? paystackChannel.value : 'card'
-      })
-      return
-    }
+    emit('complete-payment', { 
+      provider: provider.value, 
+      channel: provider.value === 'paystack' ? paystackChannel.value : 'card'
+    })
+    return
   }
   
   if (activeMethod.value === 'wallet') {
@@ -348,10 +296,12 @@ const handlePay = () => {
       return
     }
     emit('complete-payment', { provider: selectedBnpl.value, channel: 'bnpl' })
-  } else if (activeMethod.value === 'paypal') {
-    emit('complete-payment', { provider: 'paypal', channel: 'paypal' })
+  } else if (activeMethod.value === 'stripe') {
+    emit('complete-payment', { provider: 'stripe', channel: 'card' })
   } else if (activeMethod.value === 'paystack') {
     emit('complete-payment', { provider: 'paystack', channel: 'card' })
+  } else if (activeMethod.value === 'manual') {
+    emit('complete-payment', { provider: 'manual', channel: 'transfer' })
   } else {
     emit('complete-payment', { 
       provider: provider.value, 

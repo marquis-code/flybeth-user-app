@@ -3,7 +3,8 @@
     <div v-if="loading" class="text-sm text-gray-500">Loading digital wallets...</div>
     <div v-if="applePaySupported" id="applepay-container" class="w-full"></div>
     <div v-if="googlePaySupported" id="googlepay-container" class="w-full"></div>
-    <div v-if="!loading && !applePaySupported && !googlePaySupported" class="text-sm text-red-500">
+    <div v-if="paypalSupported" id="paypal-container" class="w-full"></div>
+    <div v-if="!loading && !applePaySupported && !googlePaySupported && !paypalSupported" class="text-sm text-red-500">
       Digital wallets are not supported on this browser/device.
     </div>
   </div>
@@ -23,6 +24,7 @@ const emit = defineEmits(['authorize'])
 const loading = ref(true)
 const applePaySupported = ref(false)
 const googlePaySupported = ref(false)
+const paypalSupported = ref(false)
 const config = useRuntimeConfig()
 
 onMounted(() => {
@@ -108,6 +110,32 @@ const initWallets = async () => {
     }
   } catch (err) {
     console.warn('Google Pay not supported', err)
+  }
+
+  try {
+    if (paypal.Buttons) {
+      paypalSupported.value = true;
+      setTimeout(() => {
+        paypal.Buttons({
+          fundingSource: paypal.FUNDING.PAYPAL,
+          style: {
+            height: 48,
+            shape: 'rect',
+            color: 'blue'
+          },
+          createOrder: async () => {
+            return await new Promise(resolve => {
+              emit('authorize', { provider: 'paypal', channel: 'paypal', resolveOrder: resolve })
+            })
+          },
+          onApprove: async (data: any) => {
+            emit('authorize', { provider: 'paypal', channel: 'paypal_approve', data })
+          }
+        }).render('#paypal-container');
+      }, 50)
+    }
+  } catch (err) {
+    console.warn('PayPal not supported', err)
   }
 }
 </script>

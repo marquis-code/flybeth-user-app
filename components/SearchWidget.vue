@@ -825,6 +825,14 @@ onUnmounted(() => {
 
 const handleSearch = async () => {
   if (isSearching.value) return
+  
+  if (currentTab.value === 'Flights' && flightMode.value !== 'multicity') {
+    if (!flightSearchState.origin || !flightSearchState.destination) {
+      alert("Please select both origin and destination to search for flights.")
+      return
+    }
+  }
+
   isSearching.value = true
   isFocused.value = false
   const query: any = { tab: currentTab.value }
