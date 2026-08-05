@@ -877,6 +877,9 @@ const handleWalletAuthorize = async (paymentInfo: any) => {
         }
       }
     } catch (err: any) {
+      if (paymentInfo.rejectOrder) {
+        paymentInfo.rejectOrder(err)
+      }
       const errMsg = err.response?.data?.message || err.message || "Failed to complete booking";
       if (errMsg.toLowerCase().includes('no longer available') || errMsg.toLowerCase().includes('booking failed')) {
         bookingErrorTitle.value = "Offer Unavailable";

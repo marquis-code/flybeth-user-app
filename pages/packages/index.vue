@@ -1,5 +1,6 @@
 <template>
   <div class="pk-root" @mousedown="handleGlobalMousedown">
+    <FullScreenLoader :show="loading" moduleName="Packages" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
     <section class="pk-hero">
@@ -554,7 +555,7 @@ onMounted(() => {
 .pk-root {
   min-height: 100vh;
   background: #fff;
-  font-family: 'Sora', system-ui, sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #111;
 }
 
@@ -580,7 +581,7 @@ onMounted(() => {
 
 .pk-headline { margin-bottom: 28px; }
 .pk-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
-.pk-h1 { font-family: 'Sora', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
+.pk-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .pk-h1 em { font-style: normal; color: #1d7a4f; }
 
 /* ── Search bar ────────────────────────────────────────────────────── */
@@ -638,7 +639,7 @@ onMounted(() => {
   border: none;
   border-radius: 12px;
   color: #fff;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -678,7 +679,7 @@ onMounted(() => {
   background: #fafaf8;
   color: #aaa;
 }
-.pk-drop-input { flex: 1; border: none; background: transparent; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 400; color: #111; outline: none; min-width: 0; }
+.pk-drop-input { flex: 1; border: none; background: transparent; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 400; color: #111; outline: none; min-width: 0; }
 .pk-drop-input::placeholder { color: #ccc; }
 .pk-drop-clear { background: none; border: none; color: #bbb; cursor: pointer; padding: 2px; display: flex; align-items: center; transition: color 0.15s; }
 .pk-drop-clear:hover { color: #111; }
@@ -705,7 +706,7 @@ onMounted(() => {
   display: flex; align-items: center; gap: 10px;
   width: 100%; padding: 9px 10px;
   background: none; border: none; border-radius: 8px;
-  cursor: pointer; font-family: 'Sora', sans-serif;
+  cursor: pointer; font-family: 'Satoshi', sans-serif;
   transition: background 0.12s; color: #555; text-align: left;
 }
 .pk-loc-result:hover { background: #f5f5f0; }
@@ -733,7 +734,7 @@ onMounted(() => {
   display: flex; align-items: center; gap: 10px;
   width: 100%; padding: 9px 11px;
   background: none; border: none; border-radius: 8px;
-  font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500;
+  font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500;
   color: #333; cursor: pointer; text-align: left;
   transition: background 0.12s;
 }
@@ -758,7 +759,7 @@ onMounted(() => {
   padding: 7px 14px;
   background: #fff; border: 1.5px solid #e8e8e0;
   border-radius: 99px;
-  font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500;
+  font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500;
   color: #555; cursor: pointer;
   transition: all 0.15s;
 }
@@ -828,7 +829,7 @@ onMounted(() => {
 .pk-chip {
   padding: 8px 12px; background: #fafaf7;
   border: 1.5px solid transparent; border-radius: 8px;
-  font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500; color: #555;
+  font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500; color: #555;
   cursor: pointer; text-align: left; transition: all 0.14s;
 }
 .pk-chip:hover { border-color: #cce8d8; color: #1d7a4f; }
@@ -845,19 +846,19 @@ onMounted(() => {
 .pk-toolbar-r { display: flex; align-items: center; gap: 8px; }
 
 .pk-sort-wrap { position: relative; }
-.pk-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
+.pk-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
 .pk-sort-btn:hover { border-color: #aaa; }
 .pk-chev { transition: transform 0.18s; color: #aaa; }
 .pk-chev--up { transform: rotate(180deg); }
 
 .pk-sort-panel { position: absolute; right: 0; top: calc(100% + 5px); background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 5px; min-width: 210px; z-index: 100; box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
-.pk-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Sora', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
+.pk-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Satoshi', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
 .pk-sort-opt:hover { background: #f5f5f0; }
 .pk-sort-opt--on { font-weight: 600; color: #1d7a4f; }
 .pk-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
 .pk-sort-dot--on { background: #1d7a4f; }
 
-.pk-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
+.pk-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
 .pk-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #1d7a4f; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
 /* Loading */
@@ -879,7 +880,7 @@ onMounted(() => {
 .pk-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #1d7a4f; margin-bottom: 4px; }
 .pk-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .pk-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.pk-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.pk-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .pk-empty-btn:hover { background: #1d7a4f; }
 
 /* Package grid */
@@ -921,7 +922,7 @@ onMounted(() => {
 .pk-card-from { font-size: 10px; color: #aaa; }
 .pk-card-amt { font-size: 18px; font-weight: 700; color: #111; letter-spacing: -0.03em; }
 .pk-card-per { font-size: 10px; color: #aaa; }
-.pk-card-btn { padding: 7px 14px; background: #111; border: none; border-radius: 8px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; }
+.pk-card-btn { padding: 7px 14px; background: #111; border: none; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; }
 .pk-card-btn:hover { background: #1d7a4f; }
 
 /* Overlay */
@@ -929,10 +930,10 @@ onMounted(() => {
 
 /* Pagination */
 .pk-pagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 40px; padding: 20px 0; }
-.pk-page-btn { padding: 8px 16px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.pk-page-btn { padding: 8px 16px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .pk-page-btn:hover:not(:disabled) { background: #1d7a4f; }
 .pk-page-btn:disabled { background: #e0e0d8; color: #aaa; cursor: not-allowed; }
-.pk-page-info { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; color: #111; letter-spacing: 0.02em; }
+.pk-page-info { font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #111; letter-spacing: 0.02em; }
 
 /* ── Transitions ───────────────────────────────────────────────────── */
 .fd-enter-active, .fd-leave-active { transition: opacity 0.16s ease, transform 0.16s ease; }

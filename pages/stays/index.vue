@@ -1,6 +1,6 @@
 <template>
   <div class="sp-root" @mousedown="handleGlobalMousedown">
- 
+    <FullScreenLoader :show="loading" moduleName="Hotels" /> 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
     <section class="sp-hero">
       <div class="sp-hero-bg">
@@ -853,7 +853,7 @@ onMounted(() => {
 .sp-root {
   min-height: 100vh;
   background: #fff;
-  font-family: 'Sora', system-ui, sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #111;
 }
  
@@ -881,7 +881,7 @@ onMounted(() => {
 /* Headline */
 .sp-headline { margin-bottom: 28px; }
 .sp-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
-.sp-h1 { font-family: 'Sora', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
+.sp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .sp-h1 em { font-style: normal; color: #1d7a4f; }
  
 /* ── Search bar ────────────────────────────────────────────────────── */
@@ -945,7 +945,7 @@ onMounted(() => {
   border: none;
   border-radius: 12px;
   color: #fff;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -976,7 +976,7 @@ onMounted(() => {
   background: #fff;
   border: 1.5px solid #e0e0d8;
   border-radius: 40px;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 12px;
   font-weight: 500;
   color: #555;
@@ -1019,7 +1019,7 @@ onMounted(() => {
   flex: 1;
   border: none;
   background: transparent;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   color: #111;
   outline: none;
@@ -1066,7 +1066,7 @@ onMounted(() => {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   transition: background 0.12s;
   color: #555;
   text-align: left;
@@ -1105,7 +1105,7 @@ onMounted(() => {
 .sp-guests-btn:hover:not(:disabled) { border-color: #111; color: #111; }
 .sp-guests-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .sp-guests-num { font-size: 16px; font-weight: 700; color: #111; min-width: 20px; text-align: center; }
-.sp-guests-done { width: 100%; padding: 10px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
+.sp-guests-done { width: 100%; padding: 10px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
 .sp-guests-done:hover { background: #1d7a4f; }
  
 /* ── Main ─────────────────────────────────────────────────────────── */
@@ -1149,13 +1149,13 @@ onMounted(() => {
 .sp-per-night { font-size: 9px; color: #bbb; font-weight: 400; }
  
 .sp-chips { display: flex; flex-direction: column; gap: 5px; }
-.sp-chip { padding: 8px 12px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 8px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; text-align: left; transition: all 0.14s; }
+.sp-chip { padding: 8px 12px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; text-align: left; transition: all 0.14s; }
 .sp-chip:hover { border-color: #cce8d8; color: #1d7a4f; }
 .sp-chip--on { background: #edf5f1; border-color: #1d7a4f; color: #1d7a4f; font-weight: 600; }
 .sp-chip--icon { display: flex; align-items: center; gap: 7px; }
  
 .sp-stars-row { display: flex; gap: 5px; flex-wrap: wrap; }
-.sp-star-btn { padding: 6px 10px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 7px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.14s; }
+.sp-star-btn { padding: 6px 10px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 7px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.14s; }
 .sp-star-btn:hover { border-color: #f5c518; color: #c09000; background: #fffaed; }
 .sp-star-btn--on { background: #fffaed; border-color: #f5c518; color: #c09000; }
  
@@ -1175,12 +1175,12 @@ onMounted(() => {
 .sp-toolbar-r { display: flex; align-items: center; gap: 8px; }
  
 .sp-sort-wrap { position: relative; }
-.sp-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
+.sp-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
 .sp-sort-btn:hover { border-color: #aaa; }
 .sp-chev { transition: transform 0.18s; color: #aaa; }
 .sp-chev--up { transform: rotate(180deg); }
 .sp-sort-panel { position: absolute; right: 0; top: calc(100% + 5px); background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 5px; min-width: 200px; z-index: 100; box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
-.sp-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Sora', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
+.sp-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Satoshi', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
 .sp-sort-opt:hover { background: #f5f5f0; }
 .sp-sort-opt--on { font-weight: 600; color: #1d7a4f; }
 .sp-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
@@ -1191,7 +1191,7 @@ onMounted(() => {
 .sp-view-btn { width: 30px; height: 30px; border-radius: 6px; border: none; background: none; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.14s; }
 .sp-view-btn--on { background: #fff; color: #111; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
  
-.sp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
+.sp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
 .sp-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #1d7a4f; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
  
 /* Loading skeletons */
@@ -1216,7 +1216,7 @@ onMounted(() => {
 .sp-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #1d7a4f; margin-bottom: 4px; }
 .sp-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .sp-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.sp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.sp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .sp-empty-btn:hover { background: #1d7a4f; }
  
 /* ── Stay cards ────────────────────────────────────────────────────── */
@@ -1315,7 +1315,7 @@ onMounted(() => {
 .sp-cart-label { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #888; }
 .sp-cart-name { font-size: 12px; font-weight: 600; color: #fff; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
 .sp-cart-price { font-size: 16px; font-weight: 700; color: #fff; }
-.sp-cart-checkout { background: #1d7a4f; border: none; border-radius: 20px; padding: 8px 16px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
+.sp-cart-checkout { background: #1d7a4f; border: none; border-radius: 20px; padding: 8px 16px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
 .sp-cart-checkout:hover { background: #186440; }
 .sp-cart-close { background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; transition: background 0.14s; flex-shrink: 0; }
 .sp-cart-close:hover { background: rgba(255,255,255,0.2); }

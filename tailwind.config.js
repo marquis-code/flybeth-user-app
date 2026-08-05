@@ -20,8 +20,10 @@ module.exports = {
         secondary: '#0D1DAD',
       },
       fontFamily: {
-        Onest: ['Onest', 'sans-serif'],
-        sans: ['Onest', 'sans-serif'],
+        Onest: ['Satoshi', 'sans-serif'],
+        Sora: ['Satoshi', 'sans-serif'],
+        sans: ['Satoshi', 'sans-serif'],
+        display: ['Clash Display Variable', 'sans-serif'],
       },
       boxShadow: {
         sm: 'none',

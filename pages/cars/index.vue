@@ -1,5 +1,6 @@
 <template>
   <div class="cp-root" @mousedown="handleGlobalMousedown">
+    <FullScreenLoader :show="loading" moduleName="Car rentals" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
     <section class="cp-hero">
@@ -394,7 +395,7 @@ onMounted(() => {
 .cp-root {
   min-height: 100vh;
   background: #fff;
-  font-family: 'Sora', system-ui, sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #111;
 }
 
@@ -420,7 +421,7 @@ onMounted(() => {
 
 .cp-headline { margin-bottom: 28px; }
 .cp-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
-.cp-h1 { font-family: 'Sora', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
+.cp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .cp-h1 em { font-style: normal; color: #1d7a4f; }
 
 /* ── Search bar ────────────────────────────────────────────────────── */
@@ -480,7 +481,7 @@ onMounted(() => {
   border: none;
   border-radius: 12px;
   color: #fff;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -524,7 +525,7 @@ onMounted(() => {
   background: #fafaf8;
   color: #aaa;
 }
-.cp-drop-input { flex: 1; border: none; background: transparent; font-family: 'Sora', sans-serif; font-size: 13px; color: #111; outline: none; min-width: 0; }
+.cp-drop-input { flex: 1; border: none; background: transparent; font-family: 'Satoshi', sans-serif; font-size: 13px; color: #111; outline: none; min-width: 0; }
 .cp-drop-input::placeholder { color: #ccc; }
 .cp-drop-clear { background: none; border: none; color: #bbb; cursor: pointer; padding: 2px; display: flex; align-items: center; transition: color 0.15s; }
 .cp-drop-clear:hover { color: #111; }
@@ -544,7 +545,7 @@ onMounted(() => {
 .cp-pop-code { font-size: 10px; font-weight: 600; color: #999; background: #f0f0ea; padding: 1px 5px; border-radius: 4px; }
 
 .cp-drop-results { padding: 8px; }
-.cp-loc-result { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; background: none; border: none; border-radius: 8px; cursor: pointer; font-family: 'Sora', sans-serif; transition: background 0.12s; color: #555; text-align: left; }
+.cp-loc-result { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; background: none; border: none; border-radius: 8px; cursor: pointer; font-family: 'Satoshi', sans-serif; transition: background 0.12s; color: #555; text-align: left; }
 .cp-loc-result:hover { background: #f5f5f0; }
 .cp-loc-city { font-size: 13px; font-weight: 500; color: #111; flex: 1; text-align: left; }
 .cp-loc-code { font-size: 10px; font-weight: 700; color: #1d7a4f; background: #edf5f1; padding: 2px 6px; border-radius: 5px; }
@@ -584,7 +585,7 @@ onMounted(() => {
 .cp-sb-label strong { color: #111; text-transform: none; letter-spacing: 0; font-size: 12px; }
 
 .cp-chips { display: flex; flex-direction: column; gap: 5px; }
-.cp-chip { padding: 8px 12px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 8px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; text-align: left; transition: all 0.14s; }
+.cp-chip { padding: 8px 12px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; text-align: left; transition: all 0.14s; }
 .cp-chip:hover { border-color: #cce8d8; color: #1d7a4f; }
 .cp-chip--on { background: #edf5f1; border-color: #1d7a4f; color: #1d7a4f; font-weight: 600; }
 
@@ -604,19 +605,19 @@ onMounted(() => {
 .cp-toolbar-r { display: flex; align-items: center; gap: 8px; }
 
 .cp-sort-wrap { position: relative; }
-.cp-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
+.cp-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
 .cp-sort-btn:hover { border-color: #aaa; }
 .cp-chev { transition: transform 0.18s; color: #aaa; }
 .cp-chev--up { transform: rotate(180deg); }
 
 .cp-sort-panel { position: absolute; right: 0; top: calc(100% + 5px); background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 5px; min-width: 200px; z-index: 100; box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
-.cp-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Sora', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
+.cp-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Satoshi', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
 .cp-sort-opt:hover { background: #f5f5f0; }
 .cp-sort-opt--on { font-weight: 600; color: #1d7a4f; }
 .cp-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
 .cp-sort-dot--on { background: #1d7a4f; }
 
-.cp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
+.cp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
 .cp-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #1d7a4f; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
 /* Loading skeletons */
@@ -636,7 +637,7 @@ onMounted(() => {
 .cp-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #edf5f1; display: flex; align-items: center; justify-content: center; color: #1d7a4f; margin-bottom: 4px; }
 .cp-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .cp-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.cp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.cp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .cp-empty-btn:hover { background: #1d7a4f; }
 
 .cp-cards { display: flex; flex-direction: column; gap: 10px; }

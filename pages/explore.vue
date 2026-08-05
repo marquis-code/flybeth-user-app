@@ -529,7 +529,7 @@ onMounted(() => {
 .ep-root {
   min-height: 100vh;
   background: #fff;
-  font-family: 'Sora', system-ui, sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #111;
 }
 
@@ -555,7 +555,7 @@ onMounted(() => {
 
 .ep-headline { margin-bottom: 28px; }
 .ep-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
-.ep-h1 { font-family: 'Sora', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
+.ep-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .ep-h1 em { font-style: normal; color: #0D1DAD; }
 
 /* ── Search bar ────────────────────────────────────────────────────── */
@@ -618,7 +618,7 @@ onMounted(() => {
 /* Search button */
 .ep-search-btn {
   flex-shrink: 0; background: #111; border: none; border-radius: 12px;
-  color: #fff; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+  color: #fff; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 600;
   cursor: pointer; padding: 0 24px; margin: 6px; min-width: 110px;
   transition: background 0.2s; align-self: stretch;
 }
@@ -642,7 +642,7 @@ onMounted(() => {
   display: flex; align-items: center; gap: 8px; padding: 12px 14px;
   border-bottom: 1px solid #f0f0ea; background: #fafaf8; color: #aaa;
 }
-.ep-drop-input { flex: 1; border: none; background: transparent; font-family: 'Sora', sans-serif; font-size: 13px; color: #111; outline: none; min-width: 0; }
+.ep-drop-input { flex: 1; border: none; background: transparent; font-family: 'Satoshi', sans-serif; font-size: 13px; color: #111; outline: none; min-width: 0; }
 .ep-drop-input::placeholder { color: #ccc; }
 .ep-drop-clear { background: none; border: none; color: #bbb; cursor: pointer; padding: 2px; display: flex; align-items: center; }
 .ep-drop-clear:hover { color: #111; }
@@ -663,7 +663,7 @@ onMounted(() => {
 .ep-pop-code { font-size: 10px; font-weight: 600; color: #999; background: #f0f0ea; padding: 1px 5px; border-radius: 4px; }
 
 .ep-drop-results { padding: 8px; }
-.ep-loc-result { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; background: none; border: none; border-radius: 8px; cursor: pointer; font-family: 'Sora', sans-serif; transition: background 0.12s; color: #555; text-align: left; }
+.ep-loc-result { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; background: none; border: none; border-radius: 8px; cursor: pointer; font-family: 'Satoshi', sans-serif; transition: background 0.12s; color: #555; text-align: left; }
 .ep-loc-result:hover { background: #f5f5f0; }
 .ep-loc-city { font-size: 13px; font-weight: 500; color: #111; flex: 1; }
 .ep-loc-code { font-size: 10px; font-weight: 700; color: #0D1DAD; background: #edf5f1; padding: 2px 6px; border-radius: 5px; }
@@ -695,7 +695,7 @@ onMounted(() => {
 .ep-cat {
   display: flex; align-items: center; gap: 6px; padding: 7px 14px;
   background: #fff; border: 1.5px solid #e8e8e0; border-radius: 99px;
-  font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500; color: #555;
+  font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500; color: #555;
   cursor: pointer; transition: all 0.15s;
 }
 .ep-cat:hover { border-color: #0D1DAD; color: #0D1DAD; }
@@ -723,7 +723,7 @@ onMounted(() => {
 .ep-sb-label strong { color: #111; text-transform: none; letter-spacing: 0; font-size: 12px; }
 
 .ep-chips { display: flex; flex-direction: column; gap: 5px; }
-.ep-chip { padding: 8px 12px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 8px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; text-align: left; transition: all 0.14s; }
+.ep-chip { padding: 8px 12px; background: #fafaf7; border: 1.5px solid transparent; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; text-align: left; transition: all 0.14s; }
 .ep-chip:hover { border-color: #cce8d8; color: #0D1DAD; }
 .ep-chip--on { background: #edf5f1; border-color: #0D1DAD; color: #0D1DAD; font-weight: 600; }
 
@@ -738,19 +738,19 @@ onMounted(() => {
 .ep-toolbar-r { display: flex; align-items: center; gap: 8px; }
 
 .ep-sort-wrap { position: relative; }
-.ep-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; }
+.ep-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; }
 .ep-sort-btn:hover { border-color: #aaa; }
 .ep-chev { transition: transform 0.18s; color: #aaa; }
 .ep-chev--up { transform: rotate(180deg); }
 
 .ep-sort-panel { position: absolute; right: 0; top: calc(100% + 5px); background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 5px; min-width: 200px; z-index: 100; box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
-.ep-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Sora', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
+.ep-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Satoshi', sans-serif; font-size: 12px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
 .ep-sort-opt:hover { background: #f5f5f0; }
 .ep-sort-opt--on { font-weight: 600; color: #0D1DAD; }
 .ep-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
 .ep-sort-dot--on { background: #0D1DAD; }
 
-.ep-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; }
+.ep-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; }
 
 /* Loading */
 .ep-loading { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -771,7 +771,7 @@ onMounted(() => {
 .ep-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #0D1DAD; margin-bottom: 4px; }
 .ep-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .ep-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.ep-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.ep-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .ep-empty-btn:hover { background: #0D1DAD; }
 
 /* Deal grid */
@@ -810,7 +810,7 @@ onMounted(() => {
 .ep-card-footer { display: flex; align-items: center; justify-content: space-between; }
 .ep-card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
 .ep-tag { font-size: 9px; font-weight: 600; color: #555; background: #f5f5f0; padding: 2px 7px; border-radius: 4px; }
-.ep-card-btn { padding: 7px 14px; background: #111; border: none; border-radius: 8px; font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
+.ep-card-btn { padding: 7px 14px; background: #111; border: none; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
 .ep-card-btn:hover { background: #0D1DAD; }
 
 /* Overlay */

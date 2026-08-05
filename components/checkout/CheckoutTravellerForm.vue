@@ -522,7 +522,7 @@ const handleContinue = async () => {
 </script>
 
 <style scoped>
-.ck-tf { padding: 40px 0px; font-family: 'Onest', sans-serif; width: 100%; margin: 0 auto; }
+.ck-tf { padding: 40px 0px; font-family: 'Satoshi', sans-serif; width: 100%; margin: 0 auto; }
 
 .ck-tf-hd { margin-bottom: 28px; }
 .ck-tf-badge { 

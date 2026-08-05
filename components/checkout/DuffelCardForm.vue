@@ -291,7 +291,7 @@ const formatExpiry = (e: any) => {
 
 <style scoped>
 .duffel-card-form {
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out;

@@ -1,5 +1,6 @@
 <template>
   <div class="cr-root" @mousedown="handleGlobalMousedown">
+    <FullScreenLoader :show="loading" moduleName="Cruises" />
 
     <!-- ═══════════════ PREMIUM HERO ═══════════════ -->
     <section class="cr-hero relative overflow-hidden bg-neutral-900 py-20 lg:py-28">
@@ -432,7 +433,7 @@ watch(() => searchQuery.departingMonth, (val) => {
 .cr-root {
   min-height: 100vh;
   background: #fff;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #111;
 }
 

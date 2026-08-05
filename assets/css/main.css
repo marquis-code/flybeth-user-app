@@ -7,12 +7,14 @@
 html,
 body,
 * {
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 
-h1 {
-  font-family: 'Onest', sans-serif;
-  font-weight: bold;
+h1, h2, h3, h4, h5, h6, 
+.fp-h1, .ep-h1, .cp-h1, .sp-h1, .tt-h1, 
+.text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl,
+[class*="-h1"], [class*="-h2"], [class*="headline"] {
+  font-family: 'Clash Display Variable', sans-serif !important;
 }
 
 
