@@ -761,7 +761,7 @@ useHead({
 .sd-root {
   min-height: 100vh;
   background: #f8f9f7;
-  font-family: 'Sora', system-ui, sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #111;
   padding-top: 8px; /* Offset the 64px global navbar height (64 - 56 = 8px) */
 }
@@ -828,7 +828,7 @@ useHead({
   align-items: center;
   gap: 5px;
   padding: 7px 12px;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 11px;
   font-weight: 600;
   color: #555;
@@ -943,7 +943,7 @@ useHead({
 }
 .sd-tab {
   padding: 12px 20px;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1084,7 +1084,7 @@ useHead({
   border: none;
   border-radius: 10px;
   color: #fff;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1137,7 +1137,7 @@ useHead({
 .sd-guests-btn:hover:not(:disabled) { border-color: #111; color: #111; }
 .sd-guests-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .sd-guests-num { font-size: 16px; font-weight: 700; color: #111; min-width: 20px; text-align: center; }
-.sd-guests-done { width: 100%; padding: 10px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
+.sd-guests-done { width: 100%; padding: 10px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
 .sd-guests-done:hover { background: #1d7a4f; }
 
 /* ── Rooms header ─────────────────────────────────────────────────── */
@@ -1214,7 +1214,7 @@ useHead({
 .sd-empty-ico { width: 52px; height: 52px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #1d7a4f; margin-bottom: 4px; }
 .sd-empty-h { font-size: 18px; font-weight: 700; color: #111; }
 .sd-empty-p { font-size: 12px; color: #aaa; max-width: 280px; line-height: 1.6; }
-.sd-empty-btn { margin-top: 8px; padding: 9px 20px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.sd-empty-btn { margin-top: 8px; padding: 9px 20px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .sd-empty-btn:hover { background: #1d7a4f; }
 
 /* ── Aside ────────────────────────────────────────────────────────── */
@@ -1263,7 +1263,7 @@ useHead({
   border: none;
   border-radius: 10px;
   color: #fff;
-  font-family: 'Sora', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 700;
   padding: 14px;

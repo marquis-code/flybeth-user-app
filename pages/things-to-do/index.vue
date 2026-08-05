@@ -1,5 +1,6 @@
 <template>
   <div class="tt-root" @mousedown="handleGlobalMousedown">
+    <FullScreenLoader :show="loading" moduleName="Activities" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
     <section class="tt-hero">
@@ -298,7 +299,7 @@ onMounted(() => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
 
-.tt-root { min-height: 100vh; background: #fff; font-family: 'Sora', sans-serif; color: #111; }
+.tt-root { min-height: 100vh; background: #fff; font-family: 'Satoshi', sans-serif; color: #111; }
 .tt-wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
 /* ── Hero ──────────────────────────────────────────────────────────── */

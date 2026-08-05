@@ -1,5 +1,6 @@
 <template>
   <div class="tr-root">
+    <FullScreenLoader :show="loading" moduleName="Transfers" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
     <section class="tr-hero">
@@ -271,7 +272,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.tr-root { min-height: 100vh; background: #fff; font-family: 'Sora', sans-serif; color: #111; }
+.tr-root { min-height: 100vh; background: #fff; font-family: 'Satoshi', sans-serif; color: #111; }
 .tr-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .tr-hero { background: #fdfdfb; border-bottom: 1px solid #f0f0ea; padding: 60px 0 80px; position: relative; }
 .tr-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }

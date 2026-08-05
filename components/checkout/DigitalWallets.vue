@@ -68,8 +68,8 @@ const initWallets = async () => {
               shape: 'rect',
             },
             createOrder: async () => {
-              return await new Promise(resolve => {
-                emit('authorize', { provider: 'paypal', channel: 'applepay', resolveOrder: resolve })
+              return await new Promise((resolve, reject) => {
+                emit('authorize', { provider: 'paypal', channel: 'applepay', resolveOrder: resolve, rejectOrder: reject })
               })
             },
             onApprove: async (data: any) => {
@@ -97,8 +97,8 @@ const initWallets = async () => {
               shape: 'rect',
             },
             createOrder: async () => {
-              return await new Promise(resolve => {
-                emit('authorize', { provider: 'paypal', channel: 'googlepay', resolveOrder: resolve })
+              return await new Promise((resolve, reject) => {
+                emit('authorize', { provider: 'paypal', channel: 'googlepay', resolveOrder: resolve, rejectOrder: reject })
               })
             },
             onApprove: async (data: any) => {
@@ -124,8 +124,8 @@ const initWallets = async () => {
             color: 'blue'
           },
           createOrder: async () => {
-            return await new Promise(resolve => {
-              emit('authorize', { provider: 'paypal', channel: 'paypal', resolveOrder: resolve })
+            return await new Promise((resolve, reject) => {
+              emit('authorize', { provider: 'paypal', channel: 'paypal', resolveOrder: resolve, rejectOrder: reject })
             })
           },
           onApprove: async (data: any) => {

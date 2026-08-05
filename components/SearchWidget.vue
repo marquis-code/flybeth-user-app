@@ -855,11 +855,10 @@ const handleSearch = async () => {
     }
 
     try {
-      // Create secure search session — params are stored server-side
-      const { data } = await flightsApi.createSearchSession(searchCriteria)
-      
-      // Save to local history for quick access
       if (import.meta.client) {
+        // Save search criteria directly to localStorage to avoid passing IDs in the URL
+        localStorage.setItem('flybeth_last_flight_search', JSON.stringify(searchCriteria))
+
         try {
           const local = localStorage.getItem('flybeth_recent_searches')
           let history = local ? JSON.parse(local) : []
@@ -869,19 +868,8 @@ const handleSearch = async () => {
           }
         } catch (e) {}
       }
-
-      const sid = data?.sid || data?.sessionId
-      if (sid) {
-        // Clean URL: only sid + tab, no raw search data exposed
-        query.sid = sid
-      } else {
-        // Fallback: no session created, pass minimal params
-        Object.assign(query, flightSearchState)
-        Object.assign(query, flightTravelers)
-        query.type = flightMode.value
-      }
     } catch (err: any) {
-      console.error('Failed to create secure search session:', err)
+      console.error('Failed to save search session:', err)
       // Fallback: pass params directly if session creation fails
       Object.assign(query, flightSearchState)
       Object.assign(query, flightTravelers)
@@ -1365,7 +1353,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   white-space: nowrap;
   transition: all 0.2s;
   flex-shrink: 0;
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   /* On mobile: full width */
   width: 100%;
 }

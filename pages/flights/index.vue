@@ -1,5 +1,6 @@
 <template>
   <div class="fp-root" @mousedown="handleGlobalMousedown">
+    <FullScreenLoader :show="loading" moduleName="Flights" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
     <section class="fp-hero" :class="{'fp-hero--dest': searchQuery.destination}">
@@ -1417,7 +1418,7 @@ onMounted(async () => {
   loadFromQuery(route)
 
   let hasRestoredFromLocal = false
-  if (!route.query.origin && !route.query.destination && !route.query.sid && import.meta.client) {
+  if (!route.query.origin && !route.query.destination && import.meta.client) {
     try {
       const saved = localStorage.getItem('flybeth_last_flight_search')
       if (saved) {
@@ -1442,24 +1443,7 @@ onMounted(async () => {
     }
   }, { deep: true })
 
-  if (route.query.sid) {
-    try {
-      loading.value = true
-      const { data } = await flightsApi.getSearchSession(route.query.sid as string)
-      if (data?.searchQuery) {
-        searchQuery.value = { ...searchQuery.value, ...data.searchQuery }
-        if (data.searchQuery.infants && !data.searchQuery.infantsOnLap) {
-          searchQuery.value.infantsOnLap = data.searchQuery.infants
-        }
-      }
-    } catch (err) {
-      console.error('Failed to load search session:', err)
-      // Fallback: URL params are already loaded!
-    } finally {
-      loading.value = false
-      handleSearch()
-    }
-  } else if (!route.query.origin && !hasRestoredFromLocal) {
+  if (!route.query.origin && !hasRestoredFromLocal) {
     try {
       loading.value = true
       const ipRes = await fetch('https://ipapi.co/json/')
@@ -1512,7 +1496,7 @@ onMounted(async () => {
 .fp-root {
   min-height: 100vh;
   background: #fff;
-  font-family: 'Onest', system-ui, sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #111;
   overflow-x: clip;
   max-width: 100vw;
@@ -1564,7 +1548,7 @@ onMounted(async () => {
 .fp-headline { margin-bottom: 20px; position: relative; z-index: 10; }
 .fp-headline--dest { margin-bottom: 16px; }
 .fp-eyebrow { font-size: 14px; font-weight: 600; letter-spacing: 0.18em; color: #999; display: block; margin-bottom: 10px; }
-.fp-h1 { font-family: 'Onest', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
+.fp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
 .fp-h1 em { font-style: normal; color: #0D1DAD; }
 .fp-h1--dest { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.25); font-size: clamp(22px, 3.5vw, 34px); }
 
@@ -1655,7 +1639,7 @@ onMounted(async () => {
   border-radius: 100px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .fp-trip-tab:hover {
   background: rgba(255, 255, 255, 0.25);
@@ -1800,7 +1784,7 @@ onMounted(async () => {
   border: none;
   border-radius: 100px;
   color: #fff;
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
@@ -1851,7 +1835,7 @@ onMounted(async () => {
   flex: 1;
   border: none;
   background: transparent;
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 400;
   color: #111;
@@ -1922,7 +1906,7 @@ onMounted(async () => {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   transition: background 0.12s;
   color: #555;
   text-align: left;
@@ -2004,7 +1988,7 @@ onMounted(async () => {
   border-radius: 10px;
   border: 1.5px solid #e8e8e0;
   background: #f8f8f5;
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -2052,7 +2036,7 @@ onMounted(async () => {
   background: #111;
   border: none;
   border-radius: 12px;
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #fff;
@@ -2183,7 +2167,7 @@ onMounted(async () => {
   background: #fafaf7;
   border: 1.5px solid transparent;
   border-radius: 8px;
-  font-family: 'Onest', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 12px;
   font-weight: 500;
   color: #555;
@@ -2210,19 +2194,19 @@ onMounted(async () => {
 .fp-toolbar-r { display: flex; align-items: center; gap: 8px; }
 
 .fp-sort-wrap { position: relative; }
-.fp-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Onest', sans-serif; font-size: 14px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
+.fp-sort-btn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: #fff; border: 1px solid #e0e0d8; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 14px; font-weight: 500; color: #333; cursor: pointer; white-space: nowrap; transition: border-color 0.14s; }
 .fp-sort-btn:hover { border-color: #aaa; }
 .fp-chev { transition: transform 0.18s; color: #aaa; }
 .fp-chev--up { transform: rotate(180deg); }
 
 .fp-sort-panel { position: absolute; right: 0; top: calc(100% + 5px); background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 5px; min-width: 210px; z-index: 100; box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
-.fp-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Onest', sans-serif; font-size: 14px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
+.fp-sort-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: none; border-radius: 7px; background: none; font-family: 'Satoshi', sans-serif; font-size: 14px; color: #333; cursor: pointer; text-align: left; transition: background 0.12s; }
 .fp-sort-opt:hover { background: #f5f5f0; }
 .fp-sort-opt--on { font-weight: 600; color: #0D1DAD; }
 .fp-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
 .fp-sort-dot--on { background: #0D1DAD; }
 
-.fp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Onest', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
+.fp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
 .fp-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #0D1DAD; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
 /* Loading */
@@ -2241,7 +2225,7 @@ onMounted(async () => {
 .fp-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #0D1DAD; margin-bottom: 4px; }
 .fp-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .fp-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.fp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.fp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
 .fp-empty-btn:hover { background: #0D1DAD; }
 
 .fp-groups { display: flex; flex-direction: column; gap: 16px; }

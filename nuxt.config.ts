@@ -105,6 +105,7 @@ export default defineNuxtConfig({
       ],
 
       link: [
+        { rel: "stylesheet", href: "https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&f[]=satoshi@900,700,500,300,400&display=swap" },
         { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
         { rel: "shortcut icon", href: "/favicon.ico", type: "image/x-icon" },
         { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
