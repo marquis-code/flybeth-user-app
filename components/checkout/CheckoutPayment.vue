@@ -13,13 +13,13 @@
     <!-- Card Payment (Always Visible) -->
     <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'card'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('card')">
-        <div class="flex items-center gap-4">
+        <!-- <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'card'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
           <div class="flex flex-col">
             <span class="text-sm font-bold text-gray-900">Debit / Credit card (Duffel Payment)</span>
             <span class="text-[11px] text-amber-600 font-medium">USD transactions only · Dollar card required</span>
           </div>
-        </div>
+        </div> -->
         <div class="flex gap-2">
           <img src="@/assets/icons/visa.svg" alt="Visa" class="h-5" />
           <img src="@/assets/icons/master-card.svg" alt="Mastercard" class="h-5" />
@@ -77,20 +77,41 @@
       </div>
     </div>
 
-    <!-- Manual Transfer (Zelle / Cash App) -->
+    <!-- Cash App Pay -->
+    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'cashapp'}">
+      <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('cashapp')">
+        <div class="flex items-center gap-4">
+          <input type="radio" :checked="activeMethod === 'cashapp'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-gray-900">Cash App Pay</span>
+            <span class="text-[11px] text-gray-500 font-medium">Pay seamlessly with Cash App</span>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-green-500 font-bold italic text-lg tracking-tighter">Cash App</span>
+        </div>
+      </div>
+      <div v-show="activeMethod === 'cashapp'" class="p-4 border-t border-gray-200 bg-gray-50/50">
+        <div class="text-sm text-gray-600 p-2">
+          You will be prompted to authorize the payment via Cash App.
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Transfer (Zelle) -->
     <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'manual'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('manual')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'manual'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
           <div class="flex flex-col">
-            <span class="text-sm font-bold text-gray-900">Manual Transfer (Zelle / Cash App)</span>
+            <span class="text-sm font-bold text-gray-900">Manual Transfer (Zelle)</span>
             <span class="text-[11px] text-gray-500 font-medium">Send payment directly</span>
           </div>
         </div>
       </div>
       <div v-show="activeMethod === 'manual'" class="p-4 border-t border-gray-200 bg-gray-50/50">
         <div class="text-sm text-gray-600 p-2">
-          Payment instructions for Zelle / Cash App will be provided on the next step.
+          Payment instructions for Zelle will be provided on the next step.
         </div>
       </div>
     </div>
@@ -296,6 +317,8 @@ const handlePay = () => {
       return
     }
     emit('complete-payment', { provider: selectedBnpl.value, channel: 'bnpl' })
+  } else if (activeMethod.value === 'cashapp') {
+    emit('complete-payment', { provider: 'cashapp', channel: 'cashapp' })
   } else if (activeMethod.value === 'stripe') {
     emit('complete-payment', { provider: 'stripe', channel: 'card' })
   } else if (activeMethod.value === 'paystack') {
@@ -320,5 +343,5 @@ const requiresExternalSubmit = computed(() => {
   return true;
 })
 
-defineExpose({ handlePay, handleHold, requiresExternalSubmit })
+defineExpose({ handlePay, handleHold, requiresExternalSubmit, activeMethod })
 </script>

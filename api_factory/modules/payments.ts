@@ -40,5 +40,12 @@ export const paymentsApi = {
      */
     initializeTopUp(data: { amount: number; currency: string; callbackUrl: string }) {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/payments/wallet/topup", data);
+    },
+
+    /**
+     * Process a Cash App Payment using Grant ID
+     */
+    processCashAppPayment(data: { bookingId: string; grantId: string }) {
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/payments/cashapp/process", data);
     }
 };
