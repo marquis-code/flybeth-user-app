@@ -77,41 +77,28 @@
       </div>
     </div>
 
-    <!-- Cash App Pay -->
-    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'cashapp'}">
-      <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('cashapp')">
-        <div class="flex items-center gap-4">
-          <input type="radio" :checked="activeMethod === 'cashapp'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
-          <div class="flex flex-col">
-            <span class="text-sm font-bold text-gray-900">Cash App Pay</span>
-            <span class="text-[11px] text-gray-500 font-medium">Pay seamlessly with Cash App</span>
-          </div>
-        </div>
-        <div class="flex gap-2">
-          <span class="text-green-500 font-bold italic text-lg tracking-tighter">Cash App</span>
-        </div>
-      </div>
-      <div v-show="activeMethod === 'cashapp'" class="p-4 border-t border-gray-200 bg-gray-50/50">
-        <div class="text-sm text-gray-600 p-2">
-          You will be prompted to authorize the payment via Cash App.
-        </div>
-      </div>
-    </div>
-
-    <!-- Manual Transfer (Zelle) -->
-    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'manual'}">
+    <!-- Invoice / Bank Transfer -->
+    <div class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'manual'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('manual')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'manual'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
           <div class="flex flex-col">
-            <span class="text-sm font-bold text-gray-900">Manual Transfer (Zelle)</span>
-            <span class="text-[11px] text-gray-500 font-medium">Send payment directly</span>
+            <span class="text-sm font-bold text-gray-900">Invoice / Bank Transfer</span>
+            <span class="text-[11px] text-gray-500 font-medium">Receive payment instructions via email</span>
           </div>
         </div>
+        <div class="flex gap-2 text-gray-400">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        </div>
       </div>
-      <div v-show="activeMethod === 'manual'" class="p-4 border-t border-gray-200 bg-gray-50/50">
-        <div class="text-sm text-gray-600 p-2">
-          Payment instructions for Zelle will be provided on the next step.
+      <div v-show="activeMethod === 'manual'" class="p-4 border-t border-gray-200 bg-blue-50/50">
+        <div class="flex items-start gap-3 p-2">
+          <div class="mt-0.5 text-blue-600">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          </div>
+          <div class="text-sm text-blue-800">
+            Your booking will be held temporarily. Secure payment instructions (Zelle / Bank Transfer) will be sent to your email.
+          </div>
         </div>
       </div>
     </div>
@@ -317,14 +304,12 @@ const handlePay = () => {
       return
     }
     emit('complete-payment', { provider: selectedBnpl.value, channel: 'bnpl' })
-  } else if (activeMethod.value === 'cashapp') {
-    emit('complete-payment', { provider: 'cashapp', channel: 'cashapp' })
   } else if (activeMethod.value === 'stripe') {
     emit('complete-payment', { provider: 'stripe', channel: 'card' })
   } else if (activeMethod.value === 'paystack') {
     emit('complete-payment', { provider: 'paystack', channel: 'card' })
   } else if (activeMethod.value === 'manual') {
-    emit('complete-payment', { provider: 'manual', channel: 'transfer' })
+    emit('complete-payment', { provider: 'manual', channel: 'transfer', paymentModel: 'on_hold' })
   } else {
     emit('complete-payment', { 
       provider: provider.value, 
