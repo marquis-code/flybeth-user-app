@@ -47,7 +47,6 @@ export const useChat = () => {
         isInitializing.value = true;
         loading.value = true;
         try {
-            // Support room creation — works for both guests and logged-in users
             const initData: any = {};
             if (userData) {
                 initData.userId = userData.userId;
