@@ -627,12 +627,14 @@ import Occupancypicker from '@/components/Occupancypicker.vue'
 import { useAmadeusLocations } from '@/composables/modules/flights/useAmadeusLocations'
 import DatePricingCarousel from '@/components/flights/DatePricingCarousel.vue'
 import AirlinePricingCarousel from '@/components/flights/AirlinePricingCarousel.vue'
+import { useCustomToast } from '@/composables/core/useCustomToast'
 
 const { loading, flights, searchFlights } = useSearchFlights()
 const { popularFlights, fetchPopularFlights } = useFetchPopularFlights()
 const { loading: purposeLoading, prediction, predictTripPurpose } = useTripPurpose()
 const { setCurrency, formatPrice } = useSettings()
 const { detectNearestAirports } = useAmadeusLocations()
+const { showToast } = useCustomToast()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
@@ -1273,12 +1275,29 @@ const jumpTo = (airline: string) => {
 const handleSearch = () => {
   if (searchQuery.value.type !== 'multicity') {
     if (!searchQuery.value.origin || !searchQuery.value.destination) {
-      alert("Please select both origin and destination.")
+      showToast({ title: 'Missing Route', message: 'Please select both origin and destination.', toastType: 'warning' })
+      return
+    }
+
+    // Clear stale returnDate for one-way trips
+    if (searchQuery.value.type === 'oneway') {
+      searchQuery.value.returnDate = ''
+    }
+
+    // Validate dates are not in the past
+    const today = new Date().toISOString().split('T')[0]
+    if (searchQuery.value.departureDate && searchQuery.value.departureDate < today) {
+      showToast({ title: 'Invalid Date', message: 'Departure date cannot be in the past. Please select a future date.', toastType: 'error' })
+      return
+    }
+    if (searchQuery.value.type === 'roundtrip' && searchQuery.value.returnDate && searchQuery.value.returnDate < today) {
+      showToast({ title: 'Invalid Date', message: 'Return date cannot be in the past. Please select a future date.', toastType: 'error' })
+      searchQuery.value.returnDate = ''
       return
     }
   } else {
     if (!searchQuery.value.slices || searchQuery.value.slices.length === 0) {
-      alert("Please add at least one flight leg.")
+      showToast({ title: 'Missing Flights', message: 'Please add at least one flight leg.', toastType: 'warning' })
       return
     }
   }
@@ -1485,6 +1504,36 @@ onMounted(async () => {
       handleSearch()
     }
   }, { deep: true })
+
+  // Listen for direct search events from the SearchWidget (covers same-page re-searches)
+  const handleFlightSearchEvent = (e: Event) => {
+    const detail = (e as CustomEvent).detail
+    if (!detail) return
+    
+    // Update searchQuery from the SearchWidget's state
+    if (detail.origin) searchQuery.value.origin = detail.origin
+    if (detail.destination) searchQuery.value.destination = detail.destination
+    if (detail.departureDate) searchQuery.value.departureDate = detail.departureDate
+    searchQuery.value.returnDate = detail.returnDate || ''
+    if (detail.type) searchQuery.value.type = detail.type
+    if (detail.adults) searchQuery.value.adults = detail.adults
+    if (detail.children !== undefined) searchQuery.value.children = detail.children
+    if (detail.infantsOnLap !== undefined) searchQuery.value.infantsOnLap = detail.infantsOnLap
+    if (detail.infantsInSeat !== undefined) searchQuery.value.infantsInSeat = detail.infantsInSeat
+    if (detail.cabinClass) searchQuery.value.cabinClass = detail.cabinClass
+    if (detail.slices) {
+      searchQuery.value.slices = typeof detail.slices === 'string' ? JSON.parse(detail.slices) : detail.slices
+    }
+
+    // Trigger the search immediately
+    handleSearch()
+  }
+  window.addEventListener('flybeth:flight-search', handleFlightSearchEvent)
+
+  // Cleanup
+  onBeforeUnmount(() => {
+    window.removeEventListener('flybeth:flight-search', handleFlightSearchEvent)
+  })
 })
 </script>
 

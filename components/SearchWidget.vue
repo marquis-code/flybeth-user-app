@@ -899,6 +899,20 @@ const handleSearch = async () => {
   try {
     // Navigate with clean URL (only sid and tab, no raw params)
     await navigateTo({ path: routes[currentTab.value] || '/search', query: currentTab.value === 'Flights' ? query : undefined })
+    
+    // Emit a custom event so the flights page (if already mounted) immediately picks up the new search
+    if (import.meta.client && currentTab.value === 'Flights') {
+      const searchCriteria: any = {
+        ...flightSearchState,
+        ...flightTravelers,
+        type: flightMode.value,
+      }
+      if (flightMode.value === 'multicity') {
+        const validLegs = multiFlightLegs.value.filter(leg => leg.origin && leg.destination && leg.departureDate)
+        searchCriteria.slices = validLegs
+      }
+      window.dispatchEvent(new CustomEvent('flybeth:flight-search', { detail: searchCriteria }))
+    }
   } finally {
     isSearching.value = false
   }
