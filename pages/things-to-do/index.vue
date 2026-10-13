@@ -33,6 +33,7 @@
               v-model="searchQuery.destinationIata" 
               label="Where to?" 
               placeholder="Select city" 
+              @select="onDestinationSelect"
             />
           </div>
 
@@ -177,7 +178,7 @@
                 <div class="tt-card-foot">
                   <div class="tt-card-price-grp">
                     <span class="tt-price-lbl">From</span>
-                    <span class="tt-price-val">{{ formatPrice(activity.price) }}</span>
+                    <span class="tt-price-val">{{ formatPrice(activity.priceWithCommission ?? activity.price) }}</span>
                   </div>
                   <button class="tt-card-btn">Details →</button>
                 </div>
@@ -205,15 +206,28 @@ import { useRoute, navigateTo } from '#app'
 import { useSearchActivities } from '@/composables/modules/experiences/useSearchActivities'
 import { flightsApi } from '@/api_factory/modules/flights'
 import { useSettings } from '@/composables/useSettings'
+import { useCustomToast } from '@/composables/core/useCustomToast'
 import LocationPicker from '@/components/LocationPicker.vue'
 import FlightDateRangePicker from '@/components/FlightDateRangePicker.vue'
 
 const route = useRoute()
 const { loading, filteredActivitiesList, filters, searchActivities, activitiesList } = useSearchActivities()
 const { formatPrice } = useSettings()
+const { showToast } = useCustomToast()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const mobileFilters = ref(false)
+// This page has no popover panels of its own (LocationPicker owns its dropdown),
+// so `activeField` only exists to keep the root mousedown handler meaningful.
+const activeField = ref<string | null>(null)
+// Human readable city behind `searchQuery.destinationIata`, sent to text-based providers.
+const currentCityName = ref('')
+// Coordinates captured from the LocationPicker selection, if it provided any.
+const destinationCoords = ref<{ latitude: number; longitude: number } | null>(null)
+
+const handleGlobalMousedown = () => {
+  if (activeField.value) activeField.value = null
+}
 
 const searchQuery = reactive({
   destinationIata: '',
@@ -232,6 +246,24 @@ const stripHtml = (html: string) => {
   return html.replace(/<[^>]*>/g, '').slice(0, 80) + '...'
 }
 
+/**
+ * Remembers the full location object the picker hands back. Duffel-sourced
+ * picks expose top-level `latitude`/`longitude`, Amadeus-sourced ones expose
+ * `geoCode`, so both shapes are accepted.
+ */
+const onDestinationSelect = (loc: any) => {
+  const city = loc?.address?.cityName || loc?.city_name || loc?.cityName || loc?.name
+  // Free-text picks carry no city, so drop a previously picked one.
+  if (loc?.isCustom) currentCityName.value = ''
+  else if (city) currentCityName.value = city
+
+  const lat = loc?.geoCode?.latitude ?? loc?.latitude
+  const lon = loc?.geoCode?.longitude ?? loc?.longitude
+  destinationCoords.value = (typeof lat === 'number' && typeof lon === 'number')
+    ? { latitude: lat, longitude: lon }
+    : null
+}
+
 const toggleCategory = (c: string) => {
   const idx = filters.value.categories.indexOf(c)
   if (idx >= 0) filters.value.categories.splice(idx, 1)
@@ -244,24 +276,87 @@ const resetFilters = () => {
   filters.value.rating = 0
 }
 
+/**
+ * Looks a keyword up in `GET /flights/locations` and returns the first item that
+ * actually carries coordinates. A single-airport keyword (LHR, JFK, …) can come
+ * back as one city suggestion with an empty `geoCode` but a city IATA code, so
+ * that case is retried once with the city code.
+ */
+const lookupLocation = async (keyword: string) => {
+  const pick = (payload: any) => {
+    const list = Array.isArray(payload)
+      ? payload
+      : (Array.isArray(payload?.results) ? payload.results : [])
+    return {
+      list,
+      match: list.find((item: any) => item?.geoCode?.latitude && item?.geoCode?.longitude)
+        || list.find((item: any) => typeof item?.latitude === 'number' && typeof item?.longitude === 'number')
+        || null,
+    }
+  }
+
+  const first = await flightsApi.searchAirports(keyword)
+  const { list, match } = pick(first.data?.data ?? first.data)
+  if (match) return match
+
+  const cityCode = list[0]?.iataCode
+  if (cityCode && String(cityCode).toUpperCase() !== keyword.toUpperCase()) {
+    const retry = await flightsApi.searchAirports(cityCode)
+    return pick(retry.data?.data ?? retry.data).match
+  }
+  return null
+}
+
 const handleSearch = async () => {
   activeField.value = null
-  if (!searchQuery.destinationIata) return
+  if (!searchQuery.destinationIata) {
+    showToast({
+      title: 'Destination required',
+      message: 'Pick a destination to search for activities.',
+      toastType: 'warning',
+      duration: 4000
+    })
+    return
+  }
   
   loading.value = true
   try {
-    const response = await flightsApi.searchAirports(searchQuery.destinationIata)
-    const data = response.data?.data || response.data || []
-    if (data?.length > 0) {
-      const top = data[0]
-      currentCityName.value = top.name || top.address?.cityName
-      const lat = top.geoCode?.latitude
-      const lon = top.geoCode?.longitude
+    let coords = destinationCoords.value
+
+    // No coordinates from the picker: ask the unified locations endpoint.
+    if (!coords) {
+      const keyword = currentCityName.value || searchQuery.destinationIata
+      const match = await lookupLocation(keyword)
+      const lat = match?.geoCode?.latitude ?? match?.latitude
+      const lon = match?.geoCode?.longitude ?? match?.longitude
       if (lat && lon) {
-        await searchActivities({ latitude: lat, longitude: lon, date: searchQuery.date })
-        return
+        coords = { latitude: Number(lat), longitude: Number(lon) }
+        if (!currentCityName.value) {
+          currentCityName.value = match?.address?.cityName || match?.name || ''
+        }
       }
     }
+
+    if (!coords) {
+      activitiesList.value = []
+      showToast({
+        title: 'Destination not found',
+        message: 'We could not find that destination. Please pick a city from the list and try again.',
+        toastType: 'warning',
+        duration: 4000
+      })
+      return
+    }
+
+    await searchActivities({
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      radius: 30,
+      ...(searchQuery.date && { date: searchQuery.date }),
+      ...(currentCityName.value || searchQuery.destinationIata
+        ? { query: currentCityName.value || searchQuery.destinationIata }
+        : {}),
+    })
   } catch (err) {
     activitiesList.value = []
   } finally {
@@ -270,8 +365,16 @@ const handleSearch = async () => {
 }
 
 const goToDetail = (activity: any) => {
-  sessionStorage.setItem('selectedActivity', JSON.stringify(activity))
-  navigateTo({ path: `/things-to-do/${activity.experienceId}` })
+  if (import.meta.client) {
+    sessionStorage.setItem('selectedActivity', JSON.stringify({
+      ...activity,
+      ...(searchQuery.date && !activity?.date ? { date: searchQuery.date } : {}),
+    }))
+  }
+  navigateTo({
+    path: `/things-to-do/${activity.experienceId}`,
+    ...(activity?.provider ? { query: { provider: activity.provider } } : {}),
+  })
 }
 
 // ── Calendar (Removed - using FlightDateRangePicker) ─────────────────
@@ -282,7 +385,9 @@ onMounted(() => {
       const saved = localStorage.getItem('flybeth_last_things-to-do_search')
       if (saved) {
         const parsed = JSON.parse(saved)
-        if (parsed.destinationIata) searchQuery.destinationIata = parsed.destinationIata
+        // The widget writes `destination`; older payloads used `destinationIata`.
+        const destination = parsed.destinationIata || parsed.destination
+        if (destination) searchQuery.destinationIata = destination
         if (parsed.date) searchQuery.date = parsed.date
       }
     } catch(e) {}
@@ -291,7 +396,7 @@ onMounted(() => {
   if (searchQuery.destinationIata) handleSearch()
   else {
     currentCityName.value = 'Paris'
-    searchActivities({ latitude: 48.8566, longitude: 2.3522, radius: 30 })
+    searchActivities({ latitude: 48.8566, longitude: 2.3522, radius: 30, query: 'Paris' })
   }
 })
 </script>

@@ -25,6 +25,10 @@ export const staysApi = {
     getStay(id: string, params: any) {
         return GATEWAY_ENDPOINT.get(`/stays/${id}`, { params });
     },
+    /** Internal Room documents for a platform ('flybeth') stay. */
+    getStayRooms(id: string) {
+        return GATEWAY_ENDPOINT.get(`/stays/${id}/rooms`);
+    },
     getRoomById(id: string) {
         return GATEWAY_ENDPOINT.get(`/stays/rooms/${id}`);
     },

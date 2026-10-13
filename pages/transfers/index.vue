@@ -31,6 +31,7 @@
               v-model="searchQuery.origin" 
               label="Pick-up" 
               placeholder="Airport or city" 
+              @select="onOriginSelect"
             />
           </div>
 
@@ -42,6 +43,7 @@
               v-model="searchQuery.destination" 
               label="Drop-off" 
               placeholder="Destination" 
+              @select="onDestinationSelect"
             />
           </div>
 
@@ -117,7 +119,7 @@
           <div v-else class="tr-list">
              <TransferCard 
                v-for="transfer in (step === 1 ? outboundTransfers : returnTransfers)" 
-               :key="transfer.id" 
+               :key="transfer.offerId || transfer.id" 
                :transfer="transfer"
                @select="selectTransfer" 
              />
@@ -139,7 +141,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'no-footer' })
 
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useSearchTransfers } from '@/composables/modules/transfers/useSearchTransfers'
 import { Car } from 'lucide-vue-next'
 import TransferCard from '@/components/TransferCard.vue'
@@ -156,11 +158,93 @@ const step = ref(1) // 1: Outbound, 2: Return
 const selectedOutbound = ref<any>(null)
 const showEditSearch = ref(false)
 
+/** Last locations picked from the LocationPicker dropdown (carry geoCode + city name). */
+const selectedOrigin = ref<any>(null)
+const selectedDestination = ref<any>(null)
+
 const searchQuery = ref({ origin: '', destination: '', date: '', time: '12:00', returnDate: '', returnTime: '12:00', adults: 2 })
+
+const onOriginSelect = (loc: any) => { selectedOrigin.value = loc }
+const onDestinationSelect = (loc: any) => { selectedDestination.value = loc }
 
 const toggleType = (t: string) => {
   const i = selectedTypes.value.indexOf(t)
   if (i >= 0) selectedTypes.value.splice(i, 1); else selectedTypes.value.push(t)
+}
+
+/**
+ * Maps the sidebar chips onto the backend `transferType` enum.
+ * Only Private/Shared exist server-side; "Luxury" is a vehicle class, so it
+ * never narrows the search. Nothing (or both) selected => ALL.
+ */
+const selectedTransferType = computed<'PRIVATE' | 'SHARED' | 'ALL'>(() => {
+  const hasPrivate = selectedTypes.value.includes('Private')
+  const hasShared = selectedTypes.value.includes('Shared')
+  if (hasPrivate && !hasShared) return 'PRIVATE'
+  if (hasShared && !hasPrivate) return 'SHARED'
+  return 'ALL'
+})
+
+/**
+ * Best-effort `{ cityName, geo }` resolution for a transfer endpoint.
+ * Prefers the LocationPicker selection (it already carries coordinates) and only
+ * falls back to `GET /flights/locations` when needed. It never throws and never
+ * blocks the search for more than a couple of seconds.
+ */
+const resolvePlace = async (code: string, selected: any) => {
+  const result: { cityName?: string; geo?: string } = {}
+
+  const pickedLat = selected?.geoCode?.latitude ?? selected?.latitude
+  const pickedLon = selected?.geoCode?.longitude ?? selected?.longitude
+  if (typeof pickedLat === 'number' && typeof pickedLon === 'number') {
+    result.geo = `${pickedLat},${pickedLon}`
+  }
+  const pickedCity = selected?.address?.cityName || selected?.city_name || selected?.cityName
+  if (pickedCity && !selected?.isCustom) result.cityName = pickedCity
+
+  if (!code || code.length !== 3 || result.geo) return result
+
+  try {
+    const pick = (payload: any) => {
+      const list = Array.isArray(payload)
+        ? payload
+        : (Array.isArray(payload?.results) ? payload.results : [])
+      return {
+        list,
+        match: list.find((item: any) => item?.geoCode?.latitude && item?.geoCode?.longitude)
+          || list.find((item: any) => typeof item?.latitude === 'number' && typeof item?.longitude === 'number')
+          || null,
+      }
+    }
+
+    const keyword = pickedCity || code
+    const lookup = flightsApi.searchAirports(keyword)
+    const timeout = new Promise((resolve) => setTimeout(() => resolve(null), 2500))
+    const response: any = await Promise.race([lookup, timeout])
+    let { list, match } = pick(response?.data?.data ?? response?.data)
+
+    // A single-airport keyword (LHR, JFK, …) can come back as one city
+    // suggestion with an empty geoCode but a city IATA — retry once.
+    const cityCode = list[0]?.iataCode
+    if (!match && cityCode && String(cityCode).toUpperCase() !== keyword.toUpperCase()) {
+      const retry: any = await Promise.race([
+        flightsApi.searchAirports(cityCode),
+        new Promise((resolve) => setTimeout(() => resolve(null), 2500)),
+      ])
+      match = pick(retry?.data?.data ?? retry?.data).match
+    }
+
+    if (match) {
+      const lat = match.geoCode?.latitude ?? match.latitude
+      const lon = match.geoCode?.longitude ?? match.longitude
+      if (lat && lon) result.geo = `${lat},${lon}`
+      if (!result.cityName) result.cityName = match.address?.cityName || match.name
+    }
+  } catch (e) {
+    console.warn('Failed to resolve transfer location', e)
+  }
+
+  return result
 }
 
 const handleSearch = async () => {
@@ -175,34 +259,23 @@ const handleSearch = async () => {
   step.value = 1
   selectedOutbound.value = null
 
-  // Dynamically resolve coordinates for destination (and origin for return trips)
-  let destGeo: string | undefined;
-  let originGeo: string | undefined;
-  
-  try {
-    if (toCode && toCode.length === 3) {
-      const res = await flightsApi.getDuffelAirport(`arp_${toCode.toLowerCase()}_`);
-      const data = res.data?.data || res.data;
-      if (data?.latitude && data?.longitude) destGeo = `${data.latitude},${data.longitude}`;
-    }
-    if (tripType.value === 'return' && fromCode && fromCode.length === 3) {
-      const res = await flightsApi.getDuffelAirport(`arp_${fromCode.toLowerCase()}_`);
-      const data = res.data?.data || res.data;
-      if (data?.latitude && data?.longitude) originGeo = `${data.latitude},${data.longitude}`;
-    }
-  } catch (e) {
-    console.warn("Failed to resolve coordinates", e);
-  }
+  // Dynamically resolve the drop-off (and pick-up for return trips) so the
+  // suppliers that filter by geography get usable coordinates + a city name.
+  const destPlace = await resolvePlace(toCode, selectedDestination.value)
+  const originPlace = tripType.value === 'return' ? await resolvePlace(fromCode, selectedOrigin.value) : null
 
+  const passengers = Number(searchQuery.value.adults) || 1
+  const transferType = selectedTransferType.value
   const promises = []
   
   // 1. Outbound Search
   promises.push(searchTransfers({
     startLocationCode: fromCode || 'DXB',
-    endCityName: toCode || 'Dubai',
-    ...(destGeo && { endGeoCode: destGeo }),
+    endCityName: destPlace.cityName || toCode || 'Dubai',
+    ...(destPlace.geo && { endGeoCode: destPlace.geo }),
     startDateTime: `${searchQuery.value.date}T${searchQuery.value.time}:00`,
-    passengers: Number(searchQuery.value.adults) || 1,
+    passengers,
+    transferType,
   }, false))
 
   // 2. Return Search
@@ -210,10 +283,11 @@ const handleSearch = async () => {
     promises.push(searchTransfers({
       // Swap for return
       startLocationCode: toCode || 'DXB', 
-      endCityName: fromCode || 'Dubai',
-      ...(originGeo && { endGeoCode: originGeo }),
+      endCityName: originPlace?.cityName || fromCode || 'Dubai',
+      ...(originPlace?.geo && { endGeoCode: originPlace.geo }),
       startDateTime: `${searchQuery.value.returnDate}T${searchQuery.value.returnTime}:00`,
-      passengers: Number(searchQuery.value.adults) || 1,
+      passengers,
+      transferType,
     }, true))
   }
 
@@ -227,15 +301,31 @@ const selectTransfer = (t: any) => {
     return
   }
 
-  const query: any = { type: 'transfer', id: t.offerId || t.id, name: t.vehicleDescription, price: t.price, currency: t.currency }
+  const query: any = {
+    type: 'transfer',
+    id: t.offerId || t.id,
+    provider: t.provider,
+    name: t.vehicleDescription,
+    // `price` stays the NET supplier rate (the backend adds commission to it);
+    // `priceWithCommission` is the customer-facing amount.
+    price: Number(t.price) || 0,
+    priceWithCommission: Number(t.priceWithCommission ?? t.price) || 0,
+    currency: t.currency || 'USD',
+  }
   
   if (tripType.value === 'return') {
     query.returnId = t.offerId || t.id
+    query.returnProvider = t.provider
     query.returnName = t.vehicleDescription
-    query.returnPrice = t.price
-    query.id = selectedOutbound.value.offerId || selectedOutbound.value.id
-    query.name = selectedOutbound.value.vehicleDescription
-    query.price = selectedOutbound.value.price
+    query.returnPrice = Number(t.price) || 0
+    query.returnPriceWithCommission = Number(t.priceWithCommission ?? t.price) || 0
+    query.id = selectedOutbound.value?.offerId || selectedOutbound.value?.id
+    query.provider = selectedOutbound.value?.provider
+    query.name = selectedOutbound.value?.vehicleDescription
+    query.price = Number(selectedOutbound.value?.price) || 0
+    query.priceWithCommission = Number(
+      selectedOutbound.value?.priceWithCommission ?? selectedOutbound.value?.price
+    ) || 0
   }
 
   if (import.meta.client) {

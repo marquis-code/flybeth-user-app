@@ -18,7 +18,12 @@ export const useCitySearch = () => {
         try {
             // LAYER 1: Standard Search (Unified Locations)
             const response = await flightsApi.searchAirports(query)
-            const results = response.data?.data || response.data || []
+            // The backend wraps results as { success, data: [...] }; older shapes
+            // returned a bare array or { results }. Always map over an array.
+            const payload = response.data?.data ?? response.data
+            const results = Array.isArray(payload)
+                ? payload
+                : (Array.isArray(payload?.results) ? payload.results : [])
             
             // Map results to Amadeus-like shape if needed
             locations.value = results.map((item: any) => ({

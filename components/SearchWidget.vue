@@ -883,7 +883,9 @@ const handleSearch = async () => {
     if (import.meta.client) localStorage.setItem('flybeth_last_transfers_search', JSON.stringify({ ...transferSearchState, ...transferOccupancy, tripType: transferTripType.value }))
   }
   else if (currentTab.value === 'Activities') {
-    if (import.meta.client) localStorage.setItem('flybeth_last_things-to-do_search', JSON.stringify(activitiesSearchState))
+    // The activities page consumes `destinationIata` (an IATA code) + `date`,
+    // so persist both the stable key and the page's expected alias.
+    if (import.meta.client) localStorage.setItem('flybeth_last_things-to-do_search', JSON.stringify({ ...activitiesSearchState, destinationIata: activitiesSearchState.destination }))
   }
   else if (currentTab.value === 'Hotels') {
     if (import.meta.client) localStorage.setItem('flybeth_last_stays_search', JSON.stringify({ ...searchState, ...occupancy }))

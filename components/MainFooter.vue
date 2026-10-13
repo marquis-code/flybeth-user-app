@@ -346,13 +346,13 @@ const linkColumns = [
       { label: 'Online Check-in',     to: '/online-check-in' },
       { label: 'Airline Baggage Fees',to: '/baggage-fees' },
       { label: 'Check Flight Status', to: '/flight-status' },
-      { label: 'Travel Blog',         to: '/travel-blog' },
+      { label: 'Travel Inspiration',  to: '/explore' },
     ],
   },
   {
     title: 'About Flybeth',
     links: [
-      { label: 'About Us',            to: '/about' },
+      { label: 'About Us',            to: '/contact' },
       { label: 'Press Room',          to: null },
       { label: 'Careers',             to: null },
       { label: 'Affiliate Program',   to: null },

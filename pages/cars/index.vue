@@ -100,7 +100,7 @@
             </div>
 
             <div class="cp-sb-block">
-              <p class="cp-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}/day</strong></p>
+              <p class="cp-sb-label">Max price <strong>{{ formatPrice(maxPriceFilter) }}/trip</strong></p>
               <div class="cp-range-wrap">
                 <input type="range" :min="minPrice" :max="maxPrice" step="1" v-model.number="maxPriceFilter" class="cp-range" />
                 <div class="cp-range-ends">
@@ -129,7 +129,7 @@
           <div v-if="filteredCars.length" class="cp-toolbar">
             <span class="cp-rcount">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-              {{ filteredCars.length }} cars found
+              {{ sortedCars.length }} cars found
             </span>
             <div class="cp-toolbar-r">
               <div class="cp-sort-wrap" ref="sortRef">
@@ -169,7 +169,7 @@
           </div>
 
           <!-- Empty state -->
-          <div v-else-if="!filteredCars.length && !loading" class="cp-empty">
+          <div v-else-if="!sortedCars.length && !loading" class="cp-empty">
             <div class="cp-empty-ico">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
             </div>
@@ -179,7 +179,7 @@
           </div>
 
           <!-- Car cards -->
-          <div v-if="filteredCars.length && !loading" class="cp-cards">
+          <div v-if="sortedCars.length && !loading" class="cp-cards">
             <CarCard
               v-for="car in sortedCars"
               :key="car._id || car.id"
@@ -205,13 +205,26 @@ definePageMeta({ layout: 'no-footer' })
 
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useSearchCars } from '@/composables/modules/cars/useSearchCars'
+import {
+  carTotalPrice,
+  carCustomerDailyPrice,
+  carName,
+  carCategory,
+  carTransmission,
+  carFuelType,
+  carFreeCancellation,
+  carMatchesAny,
+  rentalDays,
+} from '@/composables/modules/cars/carFields'
 import CarCard from '@/components/CarCard.vue'
 import { useSettings } from '@/composables/useSettings'
+import { useCustomToast } from '@/composables/core/useCustomToast'
 import LocationPicker from '@/components/LocationPicker.vue'
 import FlightDateRangePicker from '@/components/FlightDateRangePicker.vue'
 
 const { loading, filteredCars, searchCars } = useSearchCars()
 const { formatPrice } = useSettings()
+const { showToast } = useCustomToast()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const sortRef = ref<HTMLElement | null>(null)
@@ -226,6 +239,7 @@ const sortBy = ref('price')
 
 const searchQuery = ref({
   pickUpLocation: '',
+  dropOffLocation: '',
   pickUpDate: '',
   dropOffDate: '',
   type: 'rental',
@@ -250,40 +264,50 @@ const categoryOptions = [
 const transmissionOptions = ['Automatic', 'Manual']
 
 const availableFuelTypes = computed(() =>
-  [...new Set((filteredCars.value || []).map((c: any) => c.fuelType).filter(Boolean))]
+  [...new Set((filteredCars.value || []).map((c: any) => carFuelType(c)).filter(Boolean))]
 )
 
+// Prices are normalised through `carFields` so platform cars (`price` /
+// `pricing.total`) and live provider cars (`price.totalAmount`) both work.
+// The sidebar filter works on the TOTAL for the rental period, which is the
+// same number the cards render.
 const minPrice = computed(() => {
   const cars = filteredCars.value || []
   if (!cars.length) return 0
-  return Math.floor(Math.min(...cars.map((c: any) => c.pricing?.basePrice || c.price || 0)))
+  const prices = cars.map((c: any) => carTotalPrice(c)).filter((p: number) => p > 0)
+  if (!prices.length) return 0
+  return Math.floor(Math.min(...prices))
 })
 const maxPrice = computed(() => {
   const cars = filteredCars.value || []
   if (!cars.length) return 1000
-  return Math.ceil(Math.max(...cars.map((c: any) => c.pricing?.basePrice || c.price || 0)))
+  const prices = cars.map((c: any) => carTotalPrice(c)).filter((p: number) => p > 0)
+  if (!prices.length) return 1000
+  return Math.max(1000, Math.ceil(Math.max(...prices)))
 })
 watch(maxPrice, v => { maxPriceFilter.value = v }, { immediate: true })
 
 const carsFiltered = computed(() =>
   (filteredCars.value || []).filter((c: any) => {
-    const price = c.pricing?.basePrice || c.price || 0
-    if (price > maxPriceFilter.value) return false
-    if (activeCategories.value.length && !activeCategories.value.includes(c.category)) return false
-    if (activeTransmissions.value.length && !activeTransmissions.value.includes(c.transmission)) return false
-    if (activeFuelTypes.value.length && !activeFuelTypes.value.includes(c.fuelType)) return false
-    if (freeCancelOnly.value && !c.freeCancellation) return false
+    if (carTotalPrice(c) > maxPriceFilter.value) return false
+    if (!carMatchesAny(carCategory(c), activeCategories.value)) return false
+    if (!carMatchesAny(carTransmission(c), activeTransmissions.value)) return false
+    if (!carMatchesAny(carFuelType(c), activeFuelTypes.value)) return false
+    // Platform cars publish `freeCancellation: true`; live providers usually
+    // publish nothing. Only exclude results that are explicitly marked
+    // non-refundable so ticking the box can never hide every live car.
+    if (freeCancelOnly.value && carFreeCancellation(c) === false) return false
     return true
   })
 )
 
 const sortedCars = computed(() =>
   [...carsFiltered.value].sort((a: any, b: any) => {
-    const pa = a.pricing?.basePrice || a.price || 0
-    const pb = b.pricing?.basePrice || b.price || 0
+    const pa = carTotalPrice(a)
+    const pb = carTotalPrice(b)
     if (sortBy.value === 'price') return pa - pb
     if (sortBy.value === 'price_desc') return pb - pa
-    if (sortBy.value === 'name') return (a.name || '').localeCompare(b.name || '')
+    if (sortBy.value === 'name') return carName(a).localeCompare(carName(b))
     return 0
   })
 )
@@ -302,7 +326,14 @@ const currentSort = computed(() => sortOptions.find(o => o.value === sortBy.valu
 
 // ── Actions ───────────────────────────────────────────────────────────
 const handleSearch = () => {
-  if (!searchQuery.value.pickUpLocation) return
+  if (!searchQuery.value.pickUpLocation) {
+    showToast({
+      title: 'Pick-up location required',
+      message: 'Choose a city or airport before searching for cars.',
+      toastType: 'warning',
+    })
+    return
+  }
   searchCars(searchQuery.value)
 }
 
@@ -329,12 +360,42 @@ const clearFilters = () => {
 const selectCar = (car: any) => {
   if (!car) return
   try { sessionStorage.setItem('selectedCar', JSON.stringify(car)) } catch {}
+
+  // The checkout page forwards these fields straight to POST /bookings, where
+  // the rental is re-priced from `carId` + the dates, so the dates and the
+  // locations MUST travel with the payload or the booking is mispriced and the
+  // car summary renders empty.
+  const pickUpLocation = searchQuery.value.pickUpLocation || ''
+  const dropOffLocation = searchQuery.value.dropOffLocation || pickUpLocation
+  const pickUpDate = searchQuery.value.pickUpDate || ''
+  const dropOffDate = searchQuery.value.dropOffDate || ''
+
+  const carId = String(car._id || car.id || car.bookingInfo?.rateKey || 'unknown')
+
+  // `carTotalPrice` normalises to the CUSTOMER-facing total
+  // (`priceWithCommission ?? price.totalAmount ?? pricing.total ?? price`).
+  // `dailyRate` / `pricing.baseRate` / `netTotal` are NET supplier figures and
+  // are never sent as the customer price.
+  const totalPrice = carTotalPrice(car)
+  const hasRentalPeriod = Boolean(pickUpDate && dropOffDate)
+  const price = totalPrice > 0
+    ? totalPrice
+    : (hasRentalPeriod
+      ? Math.round(carCustomerDailyPrice(car) * rentalDays(pickUpDate, dropOffDate) * 100) / 100
+      : carCustomerDailyPrice(car))
+
   if (import.meta.client) {
     sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'car',
-      id: String(car._id || car.id || 'unknown'),
-      name: String(car.name || `${car.category} car`),
-      price: String(car.pricing?.basePrice || car.price || 0),
+      id: carId,
+      carId,
+      name: carName(car),
+      price: Math.round(price * 100) / 100,
+      currency: 'USD',
+      pickUpDate,
+      dropOffDate,
+      pickUpLocation,
+      dropOffLocation,
     }))
   }
   navigateTo({ path: '/checkout' })
@@ -348,6 +409,7 @@ onMounted(() => {
   defaultReturn.setDate(defaultPickup.getDate() + 3)
 
   let queryLoc = ''
+  let queryDropLoc = ''
   let queryDate = ''
   let queryDropOffDate = ''
 
@@ -356,9 +418,22 @@ onMounted(() => {
       const saved = localStorage.getItem('flybeth_last_cars_search')
       if (saved) {
         const parsed = JSON.parse(saved)
-        queryLoc = parsed.pickUpLocation || parsed.location || parsed.destination || ''
+        // SearchWidget stores the pick-up city under `origin` and the optional
+        // drop-off city under `destination` — reading `destination` as the
+        // pick-up city swapped the two.
+        queryLoc = parsed.origin || parsed.pickUpLocation || parsed.location || parsed.destination || ''
         queryDate = parsed.pickUpDate || parsed.date || ''
         queryDropOffDate = parsed.dropOffDate || ''
+        if (parsed.carMode === 'different' && parsed.destination) {
+          queryDropLoc = parsed.destination
+        }
+        // `carMode` is a UI mode ('pickup' | 'different'), not an API type, so
+        // only accept a value the backend enum actually supports and otherwise
+        // keep the 'rental' default.
+        const savedType = parsed.type || parsed.carMode
+        if (savedType === 'rental' || savedType === 'ride') {
+          searchQuery.value.type = savedType
+        }
       }
     } catch (e) {}
   }
@@ -368,6 +443,8 @@ onMounted(() => {
   } else {
     searchQuery.value.pickUpLocation = 'Dubai International Airport (DXB)'
   }
+
+  searchQuery.value.dropOffLocation = queryDropLoc
 
   if (queryDate) {
     searchQuery.value.pickUpDate = queryDate

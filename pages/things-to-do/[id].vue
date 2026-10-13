@@ -59,7 +59,7 @@
             <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
               <div class="flex items-center gap-2 mb-3">
                 <span class="px-2.5 py-1 bg-[#0084ff]/10 rounded-md text-[9px] font-bold text-[#0084ff] uppercase ">
-                  {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : (activity.provider || 'Duffel') }}
+                  {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : (activity.provider || 'Flybeth') }}
                 </span>
                 <span v-if="activity.minimumDuration" class="px-2.5 py-1 bg-gray-100 rounded-md text-[9px] font-bold text-black uppercase  flex items-center gap-1">
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -117,7 +117,7 @@
               <div class="bg-gradient-to-br from-[#0a1628] to-[#1a2b3d] p-6 text-white">
                 <p class="text-sm font-bold uppercase  text-white/50 mb-1">Starting from</p>
                 <div class="flex items-baseline gap-1">
-                  <span class="text-3xl font-bold ">{{ formatPrice(activity.price || 0) }}</span>
+                  <span class="text-3xl font-bold ">{{ formatPrice(activity.priceWithCommission ?? activity.price ?? 0) }}</span>
                 </div>
                 <p class="text-sm text-white/40 mt-1">per person</p>
               </div>
@@ -237,47 +237,136 @@ const handleBook = () => {
   }
 };
 
+/** Providers registered on the experiences endpoint (anything else is a 500). */
+const KNOWN_PROVIDERS = ['amadeus', 'hotelbeds-activities', 'viator', 'flybeth-activities'];
+const DEFAULT_PROVIDER = 'flybeth-activities';
+
+const normalizeProvider = (value: any): string => {
+  const provider = typeof value === 'string' ? value.trim() : '';
+  return KNOWN_PROVIDERS.includes(provider) ? provider : '';
+};
+
 const handleBookInternal = () => {
+  const current = activity.value;
+  if (!current) return;
   if (import.meta.client) {
+    // Contract consumed by pages/checkout.vue for `type: 'activity'`.
+    // `price` is NET (the backend adds commission); `priceWithCommission` is
+    // the customer-facing amount and is display-only.
     sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'activity',
-      id: activity.value?.experienceId,
-      name: activity.value?.name,
-      price: String(activity.value?.price || 0),
-      currency: activity.value?.currency || 'EUR',
-      provider: activity.value?.provider
+      id: current.experienceId || current.id,
+      experienceId: current.experienceId || current.id,
+      provider: current.provider || DEFAULT_PROVIDER,
+      name: current.name,
+      price: Number(current.price) || 0,
+      priceWithCommission: Number(current.priceWithCommission ?? current.price) || 0,
+      currency: 'USD',
+      ...(current.date ? { date: current.date } : {}),
+      ...(current.minimumDuration || current.duration
+        ? { duration: current.minimumDuration || current.duration }
+        : {})
     }))
+    // The checkout page renders extra detail from this key.
+    sessionStorage.setItem('selectedActivity', JSON.stringify(current))
   }
   router.push({ path: '/checkout' });
 };
 
+/** Reads the search result stashed by pages/things-to-do/index.vue, if any. */
+const readSelectedActivity = (): any => {
+  if (!import.meta.client) return null;
+  try {
+    const saved = sessionStorage.getItem('selectedActivity');
+    if (!saved) return null;
+    const parsed = JSON.parse(saved);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch (e) {
+    console.error('Failed to parse selectedActivity', e);
+    return null;
+  }
+};
+
+const fetchDetails = async (id: string, provider: string) => {
+  const { data: response } = await activitiesApi.getDetails(id, provider);
+  const details = (response as any)?.data ?? response;
+  return details && typeof details === 'object' ? details : null;
+};
+
+/**
+ * `GET /experiences/:id` only returns the NET price. When the page is opened
+ * directly (no search result in sessionStorage) we recover the customer-facing
+ * price from a co-located live search so the displayed amount matches the charge.
+ */
+const recoverPriceWithCommission = async (record: any) => {
+  if (!record || record.priceWithCommission != null) return;
+  const lat = record.latitude ?? record.geoCode?.latitude;
+  const lon = record.longitude ?? record.geoCode?.longitude;
+  if (typeof lat !== 'number' || typeof lon !== 'number') return;
+  try {
+    const { data } = await activitiesApi.searchLive({ latitude: lat, longitude: lon, radius: 50 });
+    const payload = (data as any)?.data ?? data;
+    const list = Array.isArray(payload)
+      ? payload
+      : (Array.isArray(payload?.results) ? payload.results : []);
+    const match = list.find((item: any) => item?.experienceId === record.experienceId && item?.priceWithCommission != null)
+      || list.find((item: any) => item?.name === record.name && item?.priceWithCommission != null);
+    if (match?.priceWithCommission != null) {
+      record.priceWithCommission = match.priceWithCommission;
+    }
+  } catch (e) {
+    console.warn('Could not resolve the customer-facing price', e);
+  }
+};
+
 onMounted(async () => {
   const id = route.params.id as string;
-  let provider = 'duffel';
-  if (import.meta.client) {
-    try {
-      const saved = sessionStorage.getItem('selectedActivity')
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        provider = parsed.provider || 'duffel'
-      }
-    } catch(e) {}
+
+  // Render immediately with whatever the list page handed us, so the page is
+  // never blank while the details request is in flight.
+  const stored = readSelectedActivity();
+  if (stored) {
+    activity.value = stored;
+    currentPhotoIndex.value = 0;
   }
 
+  // Provider resolution order: route query -> stored search result -> safe default.
+  const routeProvider = normalizeProvider(
+    Array.isArray(route.query.provider) ? route.query.provider[0] : route.query.provider
+  );
+  const provider = routeProvider || normalizeProvider(stored?.provider) || DEFAULT_PROVIDER;
+
   loading.value = true;
+  let details: any = null;
   try {
-    const { data: response } = await activitiesApi.getDetails(id, provider);
-    const responseData = response?.data || response;
-    activity.value = responseData;
+    details = await fetchDetails(id, provider);
   } catch (error) {
     console.error('Error fetching activity details:', error);
-    // Fallback: try to get from session storage if passed from search
-    const saved = sessionStorage.getItem('selectedActivity');
-    if (saved) {
-      activity.value = JSON.parse(saved);
+    // Retry once against our own inventory before falling back to cached data.
+    if (provider !== DEFAULT_PROVIDER) {
+      try {
+        details = await fetchDetails(id, DEFAULT_PROVIDER);
+      } catch (retryError) {
+        console.error('Retry against flybeth-activities failed:', retryError);
+      }
     }
   } finally {
     loading.value = false;
   }
+
+  if (details && (details.experienceId || details.name)) {
+    // The details endpoint returns the NET price only, so keep the
+    // customer-facing price carried by the search result we already have.
+    const merged: any = { ...(stored || {}), ...details };
+    if (merged.priceWithCommission == null && stored?.priceWithCommission != null) {
+      merged.priceWithCommission = stored.priceWithCommission;
+    }
+    activity.value = merged;
+    currentPhotoIndex.value = 0;
+    // Fire and forget: fills in `priceWithCommission` reactively when missing.
+    recoverPriceWithCommission(merged);
+  }
+  // Otherwise keep the cached search result (if any). With neither, the template
+  // renders the "Experience not found" state instead of a blank page.
 });
 </script>

@@ -48,7 +48,7 @@
               Help center
             </NuxtLink>
 
-            <NuxtLink to="/login" class="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-black hover:text-black hover:bg-white rounded-md transition-colors">
+            <NuxtLink v-if="!user" to="/auth/login" class="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-black hover:text-black hover:bg-white rounded-md transition-colors">
               <User class="h-3.5 w-3.5 text-black" />
               Sign in
             </NuxtLink>

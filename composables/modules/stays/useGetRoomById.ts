@@ -9,10 +9,12 @@ export const useGetRoomById = () => {
         loading.value = true;
         try {
             const { data } = await staysApi.getRoomById(id);
-            selectedRoom.value = data;
-            return data;
+            // Unwrap the { success, data } gateway envelope.
+            selectedRoom.value = data?.data || data;
+            return selectedRoom.value;
         } catch (error) {
             console.error('Error fetching room details:', error);
+            selectedRoom.value = null;
         } finally {
             loading.value = false;
         }

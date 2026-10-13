@@ -341,12 +341,12 @@
 
                 <div class="sd-room-foot">
                   <div class="sd-room-policies">
-                    <span class="sd-policy" :class="room.rates?.[0]?.cancellationPolicy === 'NON_REFUNDABLE' ? 'sd-policy--no' : 'sd-policy--yes'">
+                    <span class="sd-policy" :class="isRateRefundable(room) ? 'sd-policy--yes' : 'sd-policy--no'">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path v-if="room.rates?.[0]?.cancellationPolicy !== 'NON_REFUNDABLE'" d="M20 6 9 17 4 12"/>
+                        <path v-if="isRateRefundable(room)" d="M20 6 9 17 4 12"/>
                         <path v-else d="M18 6L6 18M6 6l12 12"/>
                       </svg>
-                      {{ room.rates?.[0]?.cancellationPolicy === 'NON_REFUNDABLE' ? 'Non-refundable' : 'Free cancellation' }}
+                      {{ isRateRefundable(room) ? 'Free cancellation' : 'Non-refundable' }}
                     </span>
                     <span v-if="room.rates?.[0]?.boardBasis" class="sd-policy sd-policy--board">
                       🍽 {{ room.rates[0].boardBasis }}
@@ -473,6 +473,11 @@
       :stay="stayDetails"
       :selectedRoom="selectedRoom"
       :quoteData="quoteData"
+      :checkIn="searchQuery.checkIn"
+      :checkOut="searchQuery.checkOut"
+      :adults="searchQuery.adults"
+      :children="searchQuery.children"
+      :rooms="searchQuery.rooms"
       @close="showBundleModal = false"
     />
 
@@ -490,10 +495,17 @@ const { formatPrice } = useSettings()
 
 const route = useRoute()
 const router = useRouter()
-const { loading, rooms, fetchStayRates, selectedRoom, stayDetails, fetchStayDetails, createQuote } = useStayDetails()
+const { loading, rooms, fetchStayRates, fetchStayDetails, fetchStayRatesByAccommodationId, fetchStayRooms, selectedRoom, stayDetails, createQuote } = useStayDetails()
 
 const stayId = route.params.id as string
-const provider = (route.query.provider as string) || 'duffel'
+let provider = (route.query.provider as string) || 'duffel'
+
+/**
+ * `/stays/rates` must be called with the provider's opaque `searchResultId`
+ * (`srr_...` for Duffel, `fbs~...` for platform inventory) - NOT the
+ * accommodation id - otherwise it always returns an empty room list.
+ */
+const searchResultId = ref<string>((route.query.searchResultId as string) || '')
 
 // ── UI state ──────────────────────────────────────────────────────────
 const activeTab = ref('Overview')
@@ -549,9 +561,28 @@ const guestSummary = computed(() => {
   return parts.join(', ')
 })
 
+/**
+ * A rate is refundable when its cancellation timeline refunds a positive
+ * amount. Live providers omit the timeline entirely for non-refundable rates
+ * and describe it through `conditions`.
+ */
+const isRateRefundable = (room: any) => {
+  const rate = room?.rates?.[0]
+  if (!rate) return false
+  const timeline = Array.isArray(rate.cancellationTimeline) ? rate.cancellationTimeline : []
+  if (timeline.some((t: any) => Number(t?.refundAmount || 0) > 0)) return true
+  const conditions = Array.isArray(rate.conditions) ? rate.conditions : []
+  const nonRefundable = conditions.some((c: any) =>
+    /non[\s-]?refundable/i.test(`${c?.title || ''} ${c?.description || ''}`)
+  )
+  if (nonRefundable) return false
+  // No cancellation data at all: treat as refundable (matches previous default).
+  return timeline.length === 0
+}
+
 const filteredRooms = computed(() =>
   showRefundable.value
-    ? rooms.value.filter((r: any) => r.rates?.[0]?.cancellationPolicy !== 'NON_REFUNDABLE')
+    ? rooms.value.filter((r: any) => isRateRefundable(r))
     : rooms.value
 )
 
@@ -662,11 +693,41 @@ const scrollToSection = (tab: string) => {
 }
 
 // ── Actions ───────────────────────────────────────────────────────────
+/** Shared single-flight details load so the page and the rates lookup agree. */
+let stayDetailsPromise: Promise<any> | null = null
+const loadStayDetails = () => {
+  if (!stayDetailsPromise) stayDetailsPromise = fetchStayDetails(stayId, provider)
+  return stayDetailsPromise
+}
+
+const resolveSearchResultId = async () => {
+  if (searchResultId.value) return searchResultId.value
+  // Direct link without the search context: look the property up so we can
+  // recover the provider's opaque id, then fall back to the raw room list.
+  const details: any = stayDetails.value || await loadStayDetails()
+  const fromDetails = details?.searchResultId || details?.data?.searchResultId
+  if (fromDetails) {
+    searchResultId.value = String(fromDetails)
+    return searchResultId.value
+  }
+  return ''
+}
+
 const handleUpdateSearch = async () => {
   updatingSearch.value = true
   selectedRoom.value = null
   try {
-    await fetchStayRates(stayId, provider, searchQuery)
+    const key = await resolveSearchResultId()
+    if (key) {
+      await fetchStayRates(key, provider, searchQuery)
+    } else {
+      // No opaque id recovered: re-resolve the property through the live
+      // search (keeps backend-computed `priceWithCommission`), and only then
+      // fall back to the raw room list.
+      const hit = await fetchStayRatesByAccommodationId(stayId, searchQuery)
+      if (hit?.provider) provider = hit.provider
+      if (!hit) await fetchStayRooms(stayId, searchQuery)
+    }
     if (rooms.value.length) selectedRoom.value = rooms.value[0]
   } catch (err) {
     console.error('Failed to fetch rates:', err)
@@ -737,7 +798,7 @@ watch(showFullMap, async (val) => {
 watch(() => stayDetails.value, () => setTimeout(initMiniMap, 500), { deep: true })
 
 onMounted(async () => {
-  await Promise.all([fetchStayDetails(stayId, provider), handleUpdateSearch()])
+  await Promise.all([loadStayDetails(), handleUpdateSearch()])
   if ((window as any).google?.maps) initMiniMap()
 })
 

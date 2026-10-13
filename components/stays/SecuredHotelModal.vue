@@ -58,7 +58,14 @@ const { formatPrice } = useSettings();
 const props = defineProps({
   stay: { type: Object, required: true },
   selectedRoom: { type: Object, required: true },
-  quoteData: { type: Object, default: null }
+  quoteData: { type: Object, default: null },
+  // Occupancy is owned by the details page (the user can change it there), so
+  // it is passed in explicitly instead of being read from the stale URL query.
+  checkIn: { type: String, default: '' },
+  checkOut: { type: String, default: '' },
+  adults: { type: [Number, String], default: null },
+  children: { type: [Number, String], default: null },
+  rooms: { type: [Number, String], default: null }
 });
 
 const emit = defineEmits(['close']);
@@ -67,51 +74,88 @@ const route = useRoute();
 
 const stayPhotos = computed(() => props.stay?.photos || []);
 
+/** First value that is actually present (not null / undefined / ''). */
+const firstPresent = (...values: any[]) =>
+  values.find(v => v !== null && v !== undefined && v !== '');
+
+const toCount = (value: any, fallback: number, min = 1) => {
+  const n = Number(value);
+  return Number.isFinite(n) && n >= min ? n : fallback;
+};
+
+/**
+ * The internal Mongo Room id is the ONLY value the backend accepts as `roomId`
+ * for platform ('flybeth') inventory. `selectedRoom.rateId` is an opaque
+ * `fbr~...` string and must never be sent as a room id.
+ */
+const resolvedRoomId = computed(() =>
+  firstPresent(
+    props.selectedRoom?.roomId,
+    props.selectedRoom?.id,
+    props.selectedRoom?.rates?.[0]?.rateId
+  ) || null
+);
+
+const resolvedStayId = computed(() =>
+  firstPresent(props.stay?.id, props.stay?._id, props.stay?.accommodationId, route.params.id) || null
+);
+
+const resolvedProvider = computed(() =>
+  firstPresent(props.stay?.provider, props.selectedRoom?.provider, props.quoteData?.provider, route.query.provider) || 'flybeth'
+);
+
+const resolvedCheckIn = computed(() => firstPresent(props.checkIn, route.query.checkIn) || '');
+const resolvedCheckOut = computed(() => firstPresent(props.checkOut, route.query.checkOut) || '');
+const resolvedAdults = computed(() => toCount(firstPresent(props.adults, route.query.adults), 2));
+const resolvedChildren = computed(() => toCount(firstPresent(props.children, route.query.children), 0, 0));
+const resolvedRooms = computed(() => toCount(firstPresent(props.rooms, route.query.rooms), 1));
+
+/** Single source of truth for the checkout payload contract. */
+const buildCheckoutPayload = () => {
+  // Customer-facing total for the nights/rooms searched. The rate's `price` is
+  // the NET figure - `priceWithCommission` is what the traveller pays.
+  const customerTotal = Math.round(props.selectedRoom.rates?.[0]?.priceWithCommission || 0);
+  return {
+    type: 'stay',
+    id: resolvedStayId.value,
+    roomId: resolvedRoomId.value,
+    provider: resolvedProvider.value,
+    quoteId: props.quoteData?.quoteId || props.quoteData?.id || null,
+    checkIn: resolvedCheckIn.value,
+    checkOut: resolvedCheckOut.value,
+    adults: resolvedAdults.value,
+    children: resolvedChildren.value,
+    rooms: resolvedRooms.value,
+    price: customerTotal,
+    priceWithCommission: customerTotal,
+    currency: props.selectedRoom.rates?.[0]?.currency || 'USD',
+    hotelName: props.stay.name
+  };
+};
+
 const handleContinueWithoutFlight = () => {
     emit('close');
-    
-    // Build the checkout query with all necessary data
-    const checkoutQuery: any = {
-      type: 'stay',
-      roomId: props.selectedRoom.id || props.selectedRoom.rateId || props.selectedRoom.rates?.[0]?.rateId,
-      provider: props.stay.provider || route.query.provider,
-      id: props.stay.id || props.stay.accommodationId || route.params.id,
-      checkIn: route.query.checkIn,
-      checkOut: route.query.checkOut,
-      adults: route.query.adults,
-      children: route.query.children,
-      rooms: route.query.rooms,
-      price: Math.round(props.selectedRoom.rates?.[0]?.priceWithCommission || 0),
-      currency: props.selectedRoom.rates?.[0]?.currency || 'USD',
-      hotelName: props.stay.name
-    };
 
-    // Include the quote ID if we got one
-    if (props.quoteData?.id) {
-      checkoutQuery.quoteId = props.quoteData.id;
+    // `/checkout` reads ONLY this sessionStorage key - it never reads route.query.
+    if (import.meta.client) {
+      sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify(buildCheckoutPayload()));
     }
 
-    router.push({
-      path: '/checkout',
-      query: checkoutQuery
-    });
+    router.push({ path: '/checkout' });
 };
 
 const handleAddFlight = () => {
-    // Cache the stay data for later checkout
-    const stayData = {
-        type: 'stay',
+    // Cache the stay data for the bundle flow (checkout merges this back in
+    // when the flight payload carries the same stay id).
+    const stayData: any = {
+        ...buildCheckoutPayload(),
         stay: props.stay,
-        selectedRoom: props.selectedRoom,
-        roomId: props.selectedRoom.id || props.selectedRoom.rateId || props.selectedRoom.rates?.[0]?.rateId,
-        provider: props.stay.provider || route.query.provider,
-        id: props.stay.id || props.stay.accommodationId || route.params.id,
-        price: props.selectedRoom.rates?.[0]?.priceWithCommission || 0,
-        currency: props.selectedRoom.rates?.[0]?.currency || 'USD',
-        quoteId: props.quoteData?.id || null
+        selectedRoom: props.selectedRoom
     };
-    sessionStorage.setItem('pendingStayBooking', JSON.stringify(stayData));
-    
+    if (import.meta.client) {
+      sessionStorage.setItem('pendingStayBooking', JSON.stringify(stayData));
+    }
+
     emit('close');
     router.push('/?tab=flights');
 };

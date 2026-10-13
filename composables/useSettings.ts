@@ -116,28 +116,49 @@ export function useSettings() {
             let targetCurrency = null
             if (typeof window !== 'undefined') {
                 targetCurrency = localStorage.getItem('flybeth_currency')
-                
+
                 // Aggressively re-detect if no currency is set yet
                 if (!targetCurrency) {
+                    // The device timezone is instant, offline and dependency
+                    // free — try it before any network call.
                     try {
-                        const ipRes = await fetch('https://ipapi.co/currency/')
-                        if (ipRes.ok) {
-                            const code = await ipRes.text()
-                            if (code && code.length === 3) targetCurrency = code.trim().toUpperCase()
-                        }
-                    } catch (e) {
+                        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
+                        if (tz.includes('Lagos') || tz.includes('Africa/Lagos')) targetCurrency = 'NGN'
+                        else if (tz.includes('Africa/')) targetCurrency = 'NGN'
+                        else if (tz.includes('London')) targetCurrency = 'GBP'
+                        else if (tz.includes('Europe/')) targetCurrency = 'EUR'
+                        else if (tz.includes('Dubai')) targetCurrency = 'AED'
+                        else if (tz.includes('Nairobi')) targetCurrency = 'KES'
+                        else if (tz.includes('Accra')) targetCurrency = 'GHS'
+                        else if (tz.includes('Johannesburg')) targetCurrency = 'ZAR'
+                    } catch {}
+
+                    // Best-effort IP refinement. Strict browser/privacy settings
+                    // routinely block this (CORS), so it must stay silent and
+                    // time-boxed rather than logging an error on every page.
+                    if (!targetCurrency) {
                         try {
-                            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''
-                            if (tz.includes('Lagos') || tz.includes('Africa/')) targetCurrency = 'NGN'
-                            else if (tz.includes('London')) targetCurrency = 'GBP'
-                            else if (tz.includes('Europe/')) targetCurrency = 'EUR'
-                        } catch {}
+                            const controller = new AbortController()
+                            const timer = setTimeout(() => controller.abort(), 3000)
+                            const ipRes = await fetch('https://ipapi.co/currency/', {
+                                signal: controller.signal,
+                            })
+                            clearTimeout(timer)
+                            if (ipRes.ok) {
+                                const code = await ipRes.text()
+                                if (code && code.trim().length === 3) {
+                                    targetCurrency = code.trim().toUpperCase()
+                                }
+                            }
+                        } catch {
+                            // Blocked or offline — USD is a safe default.
+                        }
                     }
 
-                    // Save the genuinely detected location currency to localStorage
-                    if (targetCurrency) {
-                        localStorage.setItem('flybeth_currency', targetCurrency)
-                    }
+                    // Remember the outcome so we never re-probe on every page.
+                    try {
+                        localStorage.setItem('flybeth_currency', targetCurrency || 'USD')
+                    } catch {}
                 }
             }
             

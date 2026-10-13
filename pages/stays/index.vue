@@ -455,7 +455,7 @@
                 <div class="sp-card-foot">
                   <div class="sp-card-price-wrap">
                     <div class="sp-card-price">
-                      {{ formatPrice(Math.round(stay.priceWithCommission || stay.cheapestPrice || stay.price || 0)) }}
+                      {{ formatPrice(Math.round(customerPrice(stay))) }}
                     </div>
                     <div class="sp-card-per">/ night</div>
                   </div>
@@ -497,6 +497,7 @@ definePageMeta({ layout: 'no-footer' })
  
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useSearchStays } from '@/composables/modules/stays/useSearchStays'
+import { flightsApi } from '@/api_factory/modules/flights'
 import { useSettings } from '@/composables/useSettings'
 
 const { formatPrice } = useSettings()
@@ -600,6 +601,13 @@ const sortOptions = [
 ]
  
 // ── Computed ──────────────────────────────────────────────────────────
+/**
+ * The customer-facing price. The backend applies the customer commission and
+ * returns it as `priceWithCommission`; `cheapestPrice`/`price` are NET figures
+ * and must never be shown (or summed) as the payable amount.
+ */
+const customerPrice = (s: any) => Number(s?.priceWithCommission || 0)
+
 const guestSummary = computed(() => {
   const parts = [`${searchQuery.value.adults} adult${searchQuery.value.adults !== 1 ? 's' : ''}`]
   if (searchQuery.value.children > 0) parts.push(`${searchQuery.value.children} child${searchQuery.value.children !== 1 ? 'ren' : ''}`)
@@ -621,11 +629,11 @@ const displayedStays = computed(() => {
  
 const minPrice = computed(() => {
   if (!displayedStays.value.length) return 0
-  return Math.floor(Math.min(...displayedStays.value.map((s: any) => s.priceWithCommission || s.cheapestPrice || s.price || 0)))
+  return Math.floor(Math.min(...displayedStays.value.map((s: any) => customerPrice(s))))
 })
 const maxPrice = computed(() => {
   if (!displayedStays.value.length) return 2000
-  return Math.ceil(Math.max(...displayedStays.value.map((s: any) => s.priceWithCommission || s.cheapestPrice || s.price || 0)))
+  return Math.ceil(Math.max(...displayedStays.value.map((s: any) => customerPrice(s))))
 })
 watch(maxPrice, v => { maxPriceFilter.value = v }, { immediate: true })
  
@@ -640,13 +648,13 @@ const filteredStays = computed(() => {
     list = list.filter((s: any) => activeStars.value.includes(Math.round(s.starRating || s.rating || 0)))
   }
   // Price
-  list = list.filter((s: any) => (s.priceWithCommission || s.cheapestPrice || s.price || 0) <= maxPriceFilter.value)
+  list = list.filter((s: any) => customerPrice(s) <= maxPriceFilter.value)
   // Rating
   if (minRating.value > 0) {
     list = list.filter((s: any) => (s.guestRating || s.rating || 0) >= minRating.value)
   }
   // Sort
-  if (sortBy.value === 'price') list.sort((a: any, b: any) => (a.priceWithCommission||a.cheapestPrice||a.price||0) - (b.priceWithCommission||b.cheapestPrice||b.price||0))
+  if (sortBy.value === 'price') list.sort((a: any, b: any) => customerPrice(a) - customerPrice(b))
   else if (sortBy.value === 'rating') list.sort((a: any, b: any) => (b.guestRating||b.rating||0) - (a.guestRating||a.rating||0))
   return list
 })
@@ -789,18 +797,48 @@ const toggleFav = (id: string) => {
 const goToDetails = (stay: any) => {
   const id = stay._id || stay.id || stay.accommodationId
   const provider = stay.provider || 'duffel'
-  navigateTo({ path: `/stays/${id}`, query: {
+  const query: Record<string, any> = {
     provider, checkIn: searchQuery.value.checkIn, checkOut: searchQuery.value.checkOut,
     adults: searchQuery.value.adults, children: searchQuery.value.children, rooms: searchQuery.value.rooms
-  }})
+  }
+  // `/stays/rates` needs the provider's opaque searchResultId (srr_... / fbs~...),
+  // not the accommodation id - carry it through the route.
+  if (stay.searchResultId) query.searchResultId = stay.searchResultId
+  navigateTo({ path: `/stays/${id}`, query })
 }
  
+/** Opaque supplier rate ids (`fbr~...`, `rat_...`) are NOT valid room ids. */
+const isOpaqueRateId = (value: any) =>
+  typeof value === 'string' && (value.startsWith('fbr~') || value.startsWith('rat_'))
+
 const goToCheckout = (booking: any) => {
   if (import.meta.client) {
-    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
-      type: 'stay', roomId: booking.roomId, provider: booking.provider,
-      id: booking.id, price: booking.price, currency: booking.currency || 'USD', hotelName: booking.stay?.name
-    }))
+    const room = booking.selectedRoom || {}
+    // Customer-facing total: the backend applies the customer commission and
+    // returns it as `priceWithCommission`; the rate's `price` is NET.
+    const customerTotal = Number(
+      booking.priceWithCommission || booking.price || room.rates?.[0]?.priceWithCommission || 0
+    )
+    // Internal Room id for platform ('flybeth') inventory; never an fbr~/rat_ rate id.
+    const roomId = [booking.roomId, room.roomId, room.id, room._id]
+      .find((v: any) => v && !isOpaqueRateId(v)) || room.rates?.[0]?.rateId || null
+    const payload: Record<string, any> = {
+      type: 'stay',
+      id: booking.id || booking.stay?._id || booking.stay?.accommodationId || room.id,
+      roomId,
+      provider: booking.provider || booking.stay?.provider || 'flybeth',
+      checkIn: booking.checkIn || searchQuery.value.checkIn,
+      checkOut: booking.checkOut || searchQuery.value.checkOut,
+      adults: Number(booking.adults ?? searchQuery.value.adults ?? 2),
+      children: Number(booking.children ?? searchQuery.value.children ?? 0),
+      rooms: Number(booking.rooms ?? searchQuery.value.rooms ?? 1),
+      price: customerTotal,
+      priceWithCommission: customerTotal,
+      currency: booking.currency || room.rates?.[0]?.currency || 'USD',
+      hotelName: booking.stay?.name || booking.hotelName || 'Selected stay'
+    }
+    if (booking.quoteId) payload.quoteId = booking.quoteId
+    sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify(payload))
   }
   navigateTo({ path: '/checkout' })
 }
@@ -810,7 +848,39 @@ const clearPendingBooking = () => {
   pendingBooking.value = null
 }
  
-onMounted(() => {
+/**
+ * A restored search (SearchWidget only persists `location`, never lat/lng) must
+ * be geocoded before it is sent to `/stays/search/live`, otherwise the request
+ * carries a location name with no coordinates and returns nothing.
+ */
+const resolveLocationCoords = async (name: string): Promise<{ lat: number; lng: number } | null> => {
+  const key = String(name || '').trim().toLowerCase()
+  if (!key) return null
+
+  const local = allDestinations.find(d => d.name.toLowerCase() === key)
+    || allDestinations.find(d => key.includes(d.name.toLowerCase()) || d.name.toLowerCase().includes(key))
+  if (local) return { lat: local.lat, lng: local.lng }
+
+  try {
+    const { data } = await flightsApi.searchAirports(name)
+    const list = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : [])
+    const hit = list.find((l: any) => {
+      const lat = l?.geoCode?.latitude ?? l?.latitude
+      const lng = l?.geoCode?.longitude ?? l?.longitude
+      return lat != null && lng != null
+    })
+    if (hit) {
+      const lat = Number(hit.geoCode?.latitude ?? hit.latitude)
+      const lng = Number(hit.geoCode?.longitude ?? hit.longitude)
+      if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng }
+    }
+  } catch (e) {
+    console.warn('Could not resolve stay location coordinates:', e)
+  }
+  return null
+}
+
+onMounted(async () => {
   if (import.meta.client) {
     try {
       const saved = localStorage.getItem('flybeth_last_stays_search')
@@ -830,14 +900,23 @@ onMounted(() => {
       }
     } catch(e) {}
   }
- 
-  if (!searchQuery.value.location) {
-    searchQuery.value.location = 'Dubai'
-    locQuery.value = 'Dubai'
+
+  // Restored searches carry a location name but no coordinates - resolve them.
+  if (searchQuery.value.location && (!searchQuery.value.lat || !searchQuery.value.lng)) {
+    const coords = await resolveLocationCoords(searchQuery.value.location)
+    if (coords) {
+      searchQuery.value.lat = coords.lat
+      searchQuery.value.lng = coords.lng
+    }
+  }
+
+  if (!searchQuery.value.lat || !searchQuery.value.lng) {
+    searchQuery.value.location = searchQuery.value.location || 'Dubai'
+    locQuery.value = searchQuery.value.location
     Object.assign(searchQuery.value, { lat: 25.2048, lng: 55.2708 })
   }
-  handleSearch()
- 
+  await handleSearch()
+
   try {
     const saved = sessionStorage.getItem('pendingStayBooking')
     if (saved) pendingBooking.value = JSON.parse(saved)

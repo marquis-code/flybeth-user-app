@@ -1,5 +1,12 @@
 import { ref, computed } from 'vue';
 import { carsApi } from '@/api_factory/modules/cars';
+import {
+    carTotalPrice,
+    carCategory,
+    carTransmission,
+    carFuelType,
+    carMatchesAny,
+} from './carFields';
 
 export const useSearchCars = () => {
     const loading = ref(false);
@@ -10,7 +17,9 @@ export const useSearchCars = () => {
         categories: [] as string[],
         transmission: [] as string[],
         fuelTypes: [] as string[],
-        priceRange: [0, 1000] as [number, number]
+        // Unbounded by default: the page owns the price slider. A finite default
+        // silently dropped every car whose rental total exceeded it.
+        priceRange: [0, Number.POSITIVE_INFINITY] as [number, number]
     });
 
     const searchCars = async (searchParams: any) => {
@@ -44,22 +53,24 @@ export const useSearchCars = () => {
 
         return cars.value.filter(car => {
             // Category Filter
-            if (filters.value.categories.length > 0 && !filters.value.categories.includes(car.category)) {
+            if (!carMatchesAny(carCategory(car), filters.value.categories)) {
                 return false;
             }
 
             // Transmission Filter
-            if (filters.value.transmission.length > 0 && !filters.value.transmission.includes(car.transmission)) {
+            if (!carMatchesAny(carTransmission(car), filters.value.transmission)) {
                 return false;
             }
 
             // Fuel Type Filter
-            if (filters.value.fuelTypes.length > 0 && !filters.value.fuelTypes.includes(car.fuelType)) {
+            if (!carMatchesAny(carFuelType(car), filters.value.fuelTypes)) {
                 return false;
             }
 
-            // Price Filter
-            const price = parseFloat(car.pricing?.basePrice || car.price) || 0;
+            // Price Filter — normalised total for the rental period so both the
+            // platform shape (`price` / `pricing.total`) and the live provider
+            // shape (`price.totalAmount`) are understood.
+            const price = carTotalPrice(car);
             if (price < filters.value.priceRange[0] || price > filters.value.priceRange[1]) {
                 return false;
             }

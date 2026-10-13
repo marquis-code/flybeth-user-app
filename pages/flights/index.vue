@@ -1432,7 +1432,38 @@ const lookupCity = (code: string) => {
 onMounted(async () => {
   const route = useRoute()
   const router = useRouter()
-  
+
+  // IMPORTANT: register the window listener and its cleanup synchronously,
+  // BEFORE any `await`. Vue can only associate lifecycle hooks with the active
+  // component instance during synchronous setup, so registering
+  // `onBeforeUnmount` after an await silently never runs and leaks the listener.
+  const handleFlightSearchEvent = (e: Event) => {
+    const detail = (e as CustomEvent).detail
+    if (!detail) return
+
+    // Update searchQuery from the SearchWidget's state
+    if (detail.origin) searchQuery.value.origin = detail.origin
+    if (detail.destination) searchQuery.value.destination = detail.destination
+    if (detail.departureDate) searchQuery.value.departureDate = detail.departureDate
+    searchQuery.value.returnDate = detail.returnDate || ''
+    if (detail.type) searchQuery.value.type = detail.type
+    if (detail.adults) searchQuery.value.adults = detail.adults
+    if (detail.children !== undefined) searchQuery.value.children = detail.children
+    if (detail.infantsOnLap !== undefined) searchQuery.value.infantsOnLap = detail.infantsOnLap
+    if (detail.infantsInSeat !== undefined) searchQuery.value.infantsInSeat = detail.infantsInSeat
+    if (detail.cabinClass) searchQuery.value.cabinClass = detail.cabinClass
+    if (detail.slices) {
+      searchQuery.value.slices = typeof detail.slices === 'string' ? JSON.parse(detail.slices) : detail.slices
+    }
+
+    // Trigger the search immediately
+    handleSearch()
+  }
+  window.addEventListener('flybeth:flight-search', handleFlightSearchEvent)
+  onBeforeUnmount(() => {
+    window.removeEventListener('flybeth:flight-search', handleFlightSearchEvent)
+  })
+
   // Aggressively load parameters from URL first to prevent blank states
   loadFromQuery(route)
 
@@ -1504,36 +1535,6 @@ onMounted(async () => {
       handleSearch()
     }
   }, { deep: true })
-
-  // Listen for direct search events from the SearchWidget (covers same-page re-searches)
-  const handleFlightSearchEvent = (e: Event) => {
-    const detail = (e as CustomEvent).detail
-    if (!detail) return
-    
-    // Update searchQuery from the SearchWidget's state
-    if (detail.origin) searchQuery.value.origin = detail.origin
-    if (detail.destination) searchQuery.value.destination = detail.destination
-    if (detail.departureDate) searchQuery.value.departureDate = detail.departureDate
-    searchQuery.value.returnDate = detail.returnDate || ''
-    if (detail.type) searchQuery.value.type = detail.type
-    if (detail.adults) searchQuery.value.adults = detail.adults
-    if (detail.children !== undefined) searchQuery.value.children = detail.children
-    if (detail.infantsOnLap !== undefined) searchQuery.value.infantsOnLap = detail.infantsOnLap
-    if (detail.infantsInSeat !== undefined) searchQuery.value.infantsInSeat = detail.infantsInSeat
-    if (detail.cabinClass) searchQuery.value.cabinClass = detail.cabinClass
-    if (detail.slices) {
-      searchQuery.value.slices = typeof detail.slices === 'string' ? JSON.parse(detail.slices) : detail.slices
-    }
-
-    // Trigger the search immediately
-    handleSearch()
-  }
-  window.addEventListener('flybeth:flight-search', handleFlightSearchEvent)
-
-  // Cleanup
-  onBeforeUnmount(() => {
-    window.removeEventListener('flybeth:flight-search', handleFlightSearchEvent)
-  })
 })
 </script>
 

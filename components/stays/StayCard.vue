@@ -74,7 +74,7 @@
           <div class="flex flex-col items-end">
             <div class="text-xs text-black   mb-2">Price from</div>
             <div class="text-4xl  text-black leading-none er">
-              ${{ Math.round(stay.priceWithCommission || stay.cheapestPrice || 0) }}
+              ${{ Math.round(stay.priceWithCommission || 0) }}
             </div>
           </div>
         </div>

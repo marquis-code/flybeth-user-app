@@ -14,14 +14,20 @@ export const useSearchStays = () => {
         types: [] as string[]
     });
 
+    /**
+     * Customer-facing price. `priceWithCommission` is what the traveller pays
+     * (the backend applies the customer commission); `cheapestPrice` is NET.
+     */
+    const customerPrice = (s: any) => Number(s?.priceWithCommission || 0);
+
     const minPriceLimit = computed(() => {
         if (!stays.value.length) return 0;
-        return Math.floor(Math.min(...stays.value.map(s => s.priceWithCommission)));
+        return Math.floor(Math.min(...stays.value.map(s => customerPrice(s))));
     });
 
     const maxPriceLimit = computed(() => {
         if (!stays.value.length) return 2000;
-        return Math.ceil(Math.max(...stays.value.map(s => s.priceWithCommission)));
+        return Math.ceil(Math.max(...stays.value.map(s => customerPrice(s))));
     });
 
     const filteredStays = computed(() => {
@@ -33,8 +39,8 @@ export const useSearchStays = () => {
             result = result.filter(s => s.name.toLowerCase().includes(search));
         }
 
-        // Filter by price
-        result = result.filter(s => s.priceWithCommission <= filters.maxPrice);
+        // Filter by price (customer-facing total)
+        result = result.filter(s => customerPrice(s) <= filters.maxPrice);
 
         // Filter by rating
         if (filters.ratings.length) {
@@ -61,17 +67,22 @@ export const useSearchStays = () => {
 
         // Filter by Type
         if (filters.types.length) {
+            // The backend exposes the property type directly on each result
+            // ('hotel' | 'apartment' | 'villa' | 'resort' | 'cabin'). Amenity
+            // `type` values are upper-cased amenity names (WIFI, POOL, ...), so
+            // they must never be used to infer the property type.
+            const wanted = filters.types.map((t: any) => String(t).toLowerCase().trim())
             result = result.filter(s => {
-                const type = (s.type || (s.amenities?.some((a: any) => a.type === 'HOTEL') ? 'Hotel' : 'Apartment'));
-                return filters.types.includes(type);
-            });
+                const stayType = String(s.type || s.propertyType || '').toLowerCase().trim()
+                return !!stayType && wanted.includes(stayType)
+            })
         }
 
         // Sort
         if (sortBy.value === 'price-low') {
-            result.sort((a, b) => a.priceWithCommission - b.priceWithCommission);
+            result.sort((a, b) => customerPrice(a) - customerPrice(b));
         } else if (sortBy.value === 'price-high') {
-            result.sort((a, b) => b.priceWithCommission - a.priceWithCommission);
+            result.sort((a, b) => customerPrice(b) - customerPrice(a));
         } else if (sortBy.value === 'rating') {
             result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         }

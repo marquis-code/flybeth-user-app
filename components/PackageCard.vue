@@ -24,7 +24,7 @@
       <div class="pc-foot">
         <div class="pc-price-grp">
           <span class="pc-price-label">Starts from</span>
-          <span class="pc-price-val">{{ formatPrice(package.price?.total || package.price?.amount || 0) }}</span>
+          <span class="pc-price-val">{{ formatPrice(packagePrice) }}</span>
         </div>
         <button class="pc-btn">View Details →</button>
       </div>
@@ -48,7 +48,17 @@ defineEmits(['select'])
 const imageUrl = computed(() => {
   if (props.package.photos?.[0]) return props.package.photos[0]
   if (props.package.image) return props.package.image
+  if (props.package.images?.[0]) return props.package.images[0]
   return null
+})
+
+// Packages have no `price` field: `totalPrice` is the final customer price and
+// `basePrice` the pre-discount price. Never render `NaN` / `$0` for a priced
+// package.
+const packagePrice = computed(() => {
+  const value = props.package.totalPrice ?? props.package.basePrice ?? props.package.price?.total ?? props.package.price?.amount ?? 0
+  const num = typeof value === 'number' ? value : parseFloat(String(value ?? ''))
+  return Number.isFinite(num) && num > 0 ? num : 0
 })
 
 

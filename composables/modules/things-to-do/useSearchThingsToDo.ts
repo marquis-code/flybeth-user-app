@@ -9,10 +9,15 @@ export const useSearchThingsToDo = () => {
         loading.value = true;
         try {
             const { data } = await thingsToDoApi.searchLive(searchData);
-            thingsToDo.value = data.results;
+            // Backend wraps live searches as { success, data: { results } };
+            // alternate shapes may be { results } or a bare array.
+            const payload = data?.data ?? data;
+            const list = payload?.results ?? payload;
+            thingsToDo.value = Array.isArray(list) ? list : [];
             return data;
         } catch (error) {
             console.error('Error searching things to do:', error);
+            thingsToDo.value = [];
         } finally {
             loading.value = false;
         }

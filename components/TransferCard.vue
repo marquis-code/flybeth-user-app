@@ -6,7 +6,7 @@
         <img v-if="vehicleImage" :src="vehicleImage" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
         <Car v-else class="h-12 w-12 text-gray-400 stroke-[1.5]" />
         <div class="absolute top-2 left-2 bg-brand-green text-white text-[8px]  px-2 py-0.5 rounded-full uppercase ">
-          {{ transfer.category?.name || transfer.category || 'Standard' }}
+          {{ transfer.category?.name || transfer.category || transfer.transferType || 'Standard' }}
         </div>
       </div>
 
@@ -80,6 +80,7 @@ const vehicleName = computed(() => {
 const vehicleImage = computed(() => {
   return props.transfer.vehicle_image || 
          props.transfer.content?.images?.[0]?.url || 
+         (Array.isArray(props.transfer.images) ? props.transfer.images[0] : null) ||
          null
 })
 
@@ -90,7 +91,8 @@ const providerLabel = computed(() => {
 })
 
 const displayPrice = computed(() => {
-  const p = props.transfer.price
+  // `price` is the NET supplier rate; `priceWithCommission` is the customer price.
+  const p = props.transfer.priceWithCommission ?? props.transfer.price
   let amount = 0
   if (typeof p === 'number') amount = p
   else if (p?.totalAmount) amount = Number(p.totalAmount)
@@ -102,12 +104,13 @@ const displayPrice = computed(() => {
 const capacity = computed(() => {
   return props.transfer.capacity || 
          props.transfer.maxPaxCapacity || 
+         props.transfer.maxPassengers || 
          4
 })
 
 const luggage = computed(() => {
   const hbLuggage = props.transfer.transferDetailInfo?.find((i: any) => i.id === 'LUGGAGE')?.value
-  return props.transfer.luggage_limit || hbLuggage || 2
+  return props.transfer.luggage_limit || hbLuggage || props.transfer.maxLuggage || 2
 })
 
 const duration = computed(() => {

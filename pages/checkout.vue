@@ -155,6 +155,44 @@
                   hideContinue
                 />
               </template>
+
+              <!-- Car rental summary -->
+              <div v-if="bookingDetails.type === 'car'" class="space-y-3">
+                <div>
+                  <span class="inline-block text-[11px] font-bold uppercase tracking-wide text-blue-600 bg-blue-50 rounded-full px-3 py-1">Car rental</span>
+                  <h3 class="mt-2 text-[18px] font-bold text-gray-900">{{ priceDetailed?.name || bookingDetails.name }}</h3>
+                  <p v-if="priceDetailed?.vendor" class="text-[13px] text-gray-500">{{ priceDetailed.vendor }}</p>
+                </div>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px]">
+                  <div v-if="bookingDetails.pickUpDate" class="bg-gray-50 rounded-xl p-3">
+                    <dt class="text-gray-500">Pick-up</dt>
+                    <dd class="font-semibold text-gray-900">{{ bookingDetails.pickUpDate }}<span v-if="bookingDetails.pickUpLocation"> · {{ bookingDetails.pickUpLocation }}</span></dd>
+                  </div>
+                  <div v-if="bookingDetails.dropOffDate" class="bg-gray-50 rounded-xl p-3">
+                    <dt class="text-gray-500">Drop-off</dt>
+                    <dd class="font-semibold text-gray-900">{{ bookingDetails.dropOffDate }}<span v-if="bookingDetails.dropOffLocation"> · {{ bookingDetails.dropOffLocation }}</span></dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Activity / experience summary -->
+              <div v-if="bookingDetails.type === 'activity'" class="space-y-3">
+                <div>
+                  <span class="inline-block text-[11px] font-bold uppercase tracking-wide text-emerald-600 bg-emerald-50 rounded-full px-3 py-1">Activity</span>
+                  <h3 class="mt-2 text-[18px] font-bold text-gray-900">{{ priceDetailed?.name || bookingDetails.name }}</h3>
+                  <p v-if="priceDetailed?.city" class="text-[13px] text-gray-500">{{ priceDetailed.city }}</p>
+                </div>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px]">
+                  <div v-if="bookingDetails.date" class="bg-gray-50 rounded-xl p-3">
+                    <dt class="text-gray-500">Date</dt>
+                    <dd class="font-semibold text-gray-900">{{ bookingDetails.date }}</dd>
+                  </div>
+                  <div v-if="priceDetailed?.minimumDuration" class="bg-gray-50 rounded-xl p-3">
+                    <dt class="text-gray-500">Duration</dt>
+                    <dd class="font-semibold text-gray-900">{{ priceDetailed.minimumDuration }}</dd>
+                  </div>
+                </dl>
+              </div>
             </div>
           </div>
 
@@ -313,6 +351,7 @@ import CheckoutProtection from '~/components/checkout/CheckoutProtection.vue'
 import CheckoutSummary from '~/components/checkout/CheckoutSummary.vue'
 import CheckoutPayment from '~/components/checkout/CheckoutPayment.vue'
 import CurrencySelectorModal from '~/components/checkout/CurrencySelectorModal.vue'
+import CurrencyConversionLoader from '~/components/checkout/CurrencyConversionLoader.vue'
 import ManualPaymentDetailsModal from '~/components/checkout/ManualPaymentDetailsModal.vue'
 import CheckoutSidebar from '~/components/checkout/CheckoutSidebar.vue'
 import SeatSelection from '~/components/checkout/SeatSelection.vue'
@@ -606,6 +645,41 @@ const loadCheckoutState = () => {
 
 const clearCheckoutState = () => {
     localStorage.removeItem(PERSISTENCE_KEY.value)
+    // Clear the parked hotel from the "add a flight to my hotel" bundle so a
+    // later, unrelated flight booking cannot silently re-attach it.
+    try {
+        sessionStorage.removeItem('pendingStayBooking')
+        sessionStorage.removeItem('flybeth_checkout_payload')
+    } catch {}
+}
+
+/**
+ * "Add a flight to my hotel" bundle.
+ *
+ * `SecuredHotelModal` parks the chosen room in `pendingStayBooking`, then sends
+ * the traveller to the flight search. When they reach checkout with a flight we
+ * merge that stay back in so both products are booked and charged together.
+ */
+const loadBundledStay = () => {
+    if (!import.meta.client) return
+    if (bookingDetails.value.type !== 'flight') return
+
+    try {
+        const raw = sessionStorage.getItem('pendingStayBooking')
+        if (!raw) return
+        const stay = JSON.parse(raw)
+        if (!stay || (!stay.roomId && !stay.id)) return
+
+        bundledStay.value = {
+            ...stay,
+            // `price` must be the customer-facing total so the summary matches
+            // the amount the backend will charge for the stay.
+            price: Number(stay.priceWithCommission ?? stay.price ?? 0),
+            provider: stay.provider || 'flybeth',
+        }
+    } catch (e) {
+        console.warn('Could not restore the bundled hotel', e)
+    }
 }
 
 // Prefill from user profile if logged in and empty
@@ -643,6 +717,9 @@ const bookingDetails = computed(() => {
     name: p.hotelName || p.name || 'Selected trip',
     provider: p.provider as string,
     price: p.price ? Number(p.price) : 0,
+    priceWithCommission: p.priceWithCommission
+      ? Number(p.priceWithCommission)
+      : (p.price ? Number(p.price) : 0),
     currency: p.currency || 'USD',
     quoteId: p.quoteId as string,
     checkIn: p.checkIn as string,
@@ -653,8 +730,55 @@ const bookingDetails = computed(() => {
     returnId: p.returnId as string,
     returnName: p.returnName as string,
     returnPrice: p.returnPrice ? Number(p.returnPrice) : 0,
+    returnProvider: (p.returnProvider || p.provider) as string,
+    returnPriceWithCommission: p.returnPriceWithCommission
+      ? Number(p.returnPriceWithCommission)
+      : (p.returnPrice ? Number(p.returnPrice) : 0),
+    // Car rentals
+    carId: (p.carId || p.id) as string,
+    rateKey: p.rateKey as string,
+    vendor: p.vendor as string,
+    pickUpDate: p.pickUpDate as string,
+    dropOffDate: p.dropOffDate as string,
+    pickUpLocation: p.pickUpLocation as string,
+    dropOffLocation: p.dropOffLocation as string,
+    // Activities / experiences
+    experienceId: (p.experienceId || p.id) as string,
+    date: p.date as string,
+    dateTo: p.dateTo as string,
+    duration: p.duration as string,
   }
 })
+
+/**
+ * Minimum number of travellers for the vertical being booked. Stays, transfers,
+ * cars and activities do not ask for a full passenger manifest, so the
+ * traveller form is pre-seeded with the party size the user already chose.
+ */
+const requiredTravelers = computed(() => {
+  const t = bookingDetails.value
+  if (t.type === 'stay') return Math.max(1, (t.adults || 1) + (t.children || 0))
+  if (t.type === 'transfer') return Math.max(1, t.adults || 1)
+  return 1
+})
+
+/** Makes sure the traveller form has a row for every guest in the party. */
+const ensureTravelers = () => {
+  const needed = requiredTravelers.value
+  const seed = travellerData.value.travelers[0]
+  while (travellerData.value.travelers.length < needed) {
+    travellerData.value.travelers.push({
+      title: 'Mr',
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      gender: 'Male',
+      nationality: seed?.nationality || 'Nigeria',
+      passportNumber: '',
+      passportExpiry: '',
+    } as any)
+  }
+}
 
 const currencySymbol = computed(() => {
   return currentCurrency.value.symbol || '$'
@@ -671,16 +795,19 @@ const displayPrices = computed(() => {
   const rate = currentCurrency.value.rate || 1
 
   if (priceDetailed.value) {
-    total = priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
-    base = priceDetailed.value.price || 0
-    
-    // Split the flight/stay total into components that always sum to 'total'
-    tax = priceDetailed.value.tax || (total * 0.08) 
-    serviceCharge = total - base - tax
-    if (serviceCharge < 0) {
-        serviceCharge = 0
-        tax = total - base
-    }
+    // `price` is the NET supplier rate; `priceWithCommission` is what the
+    // traveller actually pays. The backend charges the net rate plus the
+    // platform commission, so these two numbers are the display contract.
+    const net = Number(priceDetailed.value.price || 0)
+    const gross = Number(
+      priceDetailed.value.priceWithCommission ??
+        priceDetailed.value.price ??
+        0,
+    )
+    base = net
+    total = gross
+    tax = Math.max(0, gross - net)
+    serviceCharge = 0
   }
 
   if (bundledStay.value) {
@@ -696,6 +823,7 @@ const displayPrices = computed(() => {
     base: base * rate,
     tax: tax * rate,
     serviceCharge: serviceCharge * rate,
+    fees: (seatPrice.value + selectedAddOns.value.reduce((sum, a) => sum + a.price, 0)) * rate,
     total: finalTotal * rate
   }
 })
@@ -705,6 +833,24 @@ const isCurrencyModalVisible = ref(false)
 const isConversionLoading = ref(false)
 const isManualDetailsVisible = ref(false)
 const bankAccounts = ref([])
+
+/**
+ * Confirms the manual bank-transfer instructions.
+ *
+ * The booking and its payment record already exist by this point; the transfer
+ * stays in `awaiting_transfer` until finance reconciles it, so we simply close
+ * the modal and move the traveller to the confirmation page.
+ */
+const handleManualConfirm = () => {
+  isManualDetailsVisible.value = false
+  const pnr = sessionStorage.getItem('walletBookingPnr')
+  const bookingId = sessionStorage.getItem('walletBookingId')
+  if (pnr) {
+    router.push(
+      `/confirmation?pnr=${pnr}${bookingId ? `&orderId=${bookingId}` : ''}&status=pending_payment`,
+    )
+  }
+}
 // Normalization Helpers
 const parseDuration = (durationStr: string) => {
   if (!durationStr) return 0
@@ -921,6 +1067,238 @@ const handlePayNow = () => {
   }
 }
 
+/**
+ * Builds the POST /bookings payload for every product type.
+ *
+ * Both the wallet (Apple/Google Pay) handler and the standard payment handler
+ * must produce an identical payload, so the logic lives here exactly once.
+ */
+const buildBookingPayload = (paymentInfo: any) => {
+  const details = bookingDetails.value
+  const travelers = travellerData.value.travelers || []
+  const lead = travelers[0] || {}
+  const contact = travellerData.value.contact || {}
+
+  const payload: any = {
+    contactDetails: {
+      email: contact.email,
+      phone: contact.phone,
+      name: `${lead.firstName || ''} ${lead.lastName || ''}`.trim() || 'Guest',
+      state: lead.nationality,
+    },
+    currency: currentCurrency.value.code,
+    paymentModel: paymentInfo?.paymentModel || 'pay_now',
+    paymentProvider: paymentInfo?.provider,
+    paymentMetadata: paymentInfo,
+    passengerDetails: travelers.map((t: any) => ({
+      ...t,
+      email: contact.email || '',
+      phone: contact.phone || '',
+      gender: (t.gender || 'male').toLowerCase(),
+      title: (t.title || 'mr').toLowerCase(),
+      type: t.type || 'adult',
+    })),
+    pricing: {
+      // The backend applies the platform commission to this NET base fare, so
+      // the final charge equals the `priceWithCommission` shown to the user.
+      // When a hotel is bundled in, the stay is priced separately by the
+      // backend from `stays[]`, so only the flight's own net fare may go here —
+      // otherwise the stay would be charged twice.
+      baseFare: bundledStay.value
+        ? Number(priceDetailed.value?.price || 0)
+        : displayPrices.value.base,
+      taxes: 0,
+      // Extras the traveller explicitly selected (seats, bags, insurance…).
+      fees: displayPrices.value.fees,
+    },
+    hasInsurance: selectedAddOns.value.some((a) => a.id === 'insurance'),
+    hasVipSupport: selectedAddOns.value.some((a) => a.id === 'vip-support'),
+    extraBaggageCount: selectedAddOns.value.filter((a) => a.id.startsWith('bag-')).length,
+    premiumSeatCount: selectedSeats.value.length,
+  }
+
+  if (details.type === 'flight') {
+    payload.isRoundTrip = priceDetailed.value?.isRoundTrip || false
+    payload.flights = [
+      {
+        flightId: details.id,
+        class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
+        offerId:
+          priceDetailed.value?.offerId ||
+          details.quoteId ||
+          priceDetailed.value?.id ||
+          details.id,
+        provider: details.provider,
+        passengerIds: [],
+        metadata: {
+          origin: priceDetailed.value?.origin || priceDetailed.value?.originName,
+          destination: priceDetailed.value?.destination || priceDetailed.value?.destinationName,
+          airline: priceDetailed.value?.airline,
+          departureTime: priceDetailed.value?.departureTime,
+          slices: priceDetailed.value?.slices || priceDetailed.value?.segments || [],
+        },
+      },
+    ]
+
+    // Bundle: book the parked hotel alongside the flight.
+    const stay = bundledStay.value
+    if (stay && (stay.roomId || stay.id)) {
+      payload.stays = [
+        {
+          hotelId: stay.id || stay.hotelId,
+          roomId: stay.roomId || stay.id,
+          provider: stay.provider || 'flybeth',
+          quoteId: stay.quoteId,
+          checkIn: stay.checkIn,
+          checkOut: stay.checkOut,
+          occupancy: {
+            rooms: Number(stay.rooms) || 1,
+            adults: Number(stay.adults) || 1,
+            children: Number(stay.children) || 0,
+          },
+        },
+      ]
+    }
+  } else if (details.type === 'stay') {
+    payload.stays = [
+      {
+        hotelId: details.id,
+        roomId: details.roomId,
+        provider: details.provider,
+        quoteId: details.quoteId,
+        checkIn: details.checkIn,
+        checkOut: details.checkOut,
+        occupancy: {
+          rooms: details.rooms || 1,
+          adults: details.adults || 2,
+          children: details.children || 0,
+        },
+      },
+    ]
+  } else if (details.type === 'transfer') {
+    payload.transfers = [
+      {
+        offerId: details.id,
+        provider: details.provider,
+        name: details.name,
+        // NET price — the backend adds the platform commission.
+        price: details.price,
+        priceWithCommission: details.priceWithCommission,
+        currency: details.currency,
+      },
+    ]
+    if (details.returnId) {
+      payload.transfers.push({
+        offerId: details.returnId,
+        provider: details.returnProvider || details.provider,
+        name: details.returnName,
+        price: details.returnPrice,
+        priceWithCommission: details.returnPriceWithCommission,
+        currency: details.currency,
+      })
+    }
+  } else if (details.type === 'car') {
+    payload.cars = [
+      {
+        carId: details.carId,
+        pickUpDate: details.pickUpDate,
+        dropOffDate: details.dropOffDate,
+        pickUpLocation: details.pickUpLocation,
+        dropOffLocation: details.dropOffLocation,
+      },
+    ]
+  } else if (details.type === 'activity') {
+    payload.experiences = [
+      {
+        experienceId: details.experienceId,
+        provider: details.provider,
+        name: details.name,
+        // NET price — the backend adds the platform commission.
+        price: details.price,
+        priceWithCommission: details.priceWithCommission,
+        currency: details.currency,
+        date: details.date,
+      },
+    ]
+  } else if (details.type === 'package') {
+    payload.packageId = details.id
+    const pkgDetails = priceDetailed.value
+    if (pkgDetails?.flightDetails) {
+      payload.flights = [
+        {
+          flightId: pkgDetails.flightDetails.id,
+          class: (pkgDetails.flightDetails.cabinClass || 'economy').toLowerCase(),
+          offerId: pkgDetails.flightDetails.id,
+          provider: 'duffel',
+          passengerIds: [],
+        },
+      ]
+    }
+    if (pkgDetails?.stayDetails) {
+      payload.stays = [
+        {
+          hotelId: pkgDetails.stayDetails.id || pkgDetails.stayDetails.hotelId,
+          roomId: pkgDetails.stayDetails.roomId || pkgDetails.stayDetails.rateId,
+          provider: pkgDetails.stayDetails.provider,
+          quoteId: pkgDetails.stayDetails.quoteId,
+          checkIn: pkgDetails.stayDetails.checkIn || details.checkIn,
+          checkOut: pkgDetails.stayDetails.checkOut || details.checkOut,
+          occupancy: {
+            rooms: 1,
+            adults: details.adults,
+            children: details.children,
+          },
+        },
+      ]
+    }
+  }
+
+  return payload
+}
+
+/**
+ * Confirms the reservation with third-party suppliers when the booking was not
+ * fulfilled against our own inventory.
+ */
+const syncSupplierBooking = async () => {
+  const details = bookingDetails.value
+  if (details.type !== 'transfer') return
+
+  const contact = travellerData.value.contact || {}
+  const lead = (travellerData.value.travelers || [])[0] || {}
+  const passengerDetails = {
+    firstName: lead.firstName || 'Guest',
+    lastName: lead.lastName || 'Traveller',
+    email: contact.email || 'guest@flybeth.com',
+    phone: contact.phone || '+10000000000',
+    remarks: 'Booked via Flybeth',
+  }
+
+  const offers = [
+    { id: details.id, provider: details.provider },
+    ...(details.returnId
+      ? [{ id: details.returnId, provider: details.returnProvider || details.provider }]
+      : []),
+  ].filter((o) => o.id && o.provider && o.provider !== 'flybeth-transfers')
+
+  for (const offer of offers) {
+    try {
+      await transfersApi.book({
+        offerId: offer.id,
+        provider: offer.provider,
+        passengerDetails,
+      })
+    } catch (e) {
+      console.error('Failed to book transfer with provider', e)
+      showToast({
+        title: 'Warning',
+        message: 'Transfer booking recorded but provider sync failed.',
+        toastType: 'warning',
+      })
+    }
+  }
+}
+
 const handleWalletAuthorize = async (paymentInfo: any) => {
   if (paymentInfo.channel === 'applepay' || paymentInfo.channel === 'googlepay') {
     // 1. We create the booking silently
@@ -929,82 +1307,11 @@ const handleWalletAuthorize = async (paymentInfo: any) => {
     loaderStatus.value = 'Preparing secure wallet...'
 
     try {
-      const payload: any = {
-        contactDetails: {
-          email: travellerData.value.contact.email,
-          phone: travellerData.value.contact.phone,
-          name: `${travellerData.value.travelers[0].firstName} ${travellerData.value.travelers[0].lastName}`,
-          state: travellerData.value.travelers[0].nationality
-        },
-        currency: currentCurrency.value.code,
+      const payload = buildBookingPayload({
+        provider: 'paypal',
         paymentModel: 'pay_now',
-        paymentProvider: 'paypal',
-        paymentMetadata: { provider: 'paypal', channel: paymentInfo.channel },
-        passengerDetails: travellerData.value.travelers.map(t => ({
-          ...t,
-          email: travellerData.value.contact.email || '',
-          phone: travellerData.value.contact.phone || '',
-          gender: (t.gender || 'male').toLowerCase(),
-          title: (t.title || 'mr').toLowerCase(),
-          type: 'adult'
-        })),
-        pricing: {
-          baseFare: displayPrices.value.base,
-          taxes: displayPrices.value.tax,
-          fees: displayPrices.value.total - displayPrices.value.base - displayPrices.value.tax
-        },
-        hasInsurance: selectedAddOns.value.some(a => a.id === 'insurance'),
-        hasVipSupport: selectedAddOns.value.some(a => a.id === 'vip-support'),
-        extraBaggageCount: selectedAddOns.value.filter(a => a.id.startsWith('bag-')).length,
-        premiumSeatCount: selectedSeats.value.length
-      }
-
-      if (bookingDetails.value.type === 'flight') {
-        payload.flights = [{
-          flightId: bookingDetails.value.id,
-          class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
-          offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId || priceDetailed.value?.id || bookingDetails.value.id,
-          provider: bookingDetails.value.provider,
-          passengerIds: []
-        }]
-      } else if (bookingDetails.value.type === 'stay') {
-        payload.stays = [{
-          hotelId: bookingDetails.value.id,
-          roomId: bookingDetails.value.roomId,
-          checkIn: bookingDetails.value.checkIn,
-          checkOut: bookingDetails.value.checkOut,
-          occupancy: {
-            rooms: bookingDetails.value.rooms,
-            adults: bookingDetails.value.adults,
-            children: bookingDetails.value.children
-          }
-        }]
-      } else if (bookingDetails.value.type === 'package') {
-        payload.packageId = bookingDetails.value.id;
-        const pkgDetails = priceDetailed.value;
-        if (pkgDetails?.flightDetails) {
-          payload.flights = [{
-            flightId: pkgDetails.flightDetails.id,
-            class: (pkgDetails.flightDetails.cabinClass || 'economy').toLowerCase(),
-            offerId: pkgDetails.flightDetails.id,
-            provider: 'duffel',
-            passengerIds: [],
-          }]
-        }
-        if (pkgDetails?.stayDetails) {
-          payload.stays = [{
-            hotelId: pkgDetails.stayDetails.id || pkgDetails.stayDetails.hotelId,
-            roomId: pkgDetails.stayDetails.roomId || 'unknown',
-            checkIn: pkgDetails.stayDetails.checkIn || bookingDetails.value.checkIn,
-            checkOut: pkgDetails.stayDetails.checkOut || bookingDetails.value.checkOut,
-            occupancy: {
-              rooms: 1,
-              adults: bookingDetails.value.adults,
-              children: bookingDetails.value.children
-            }
-          }]
-        }
-      }
+        channel: paymentInfo.channel,
+      })
 
       const { data: rawData } = await bookingsApi.create(payload)
       const booking = rawData?.data || rawData;
@@ -1083,135 +1390,15 @@ const handlePayment = async (paymentInfo: any) => {
   loaderStatus.value = paymentInfo.paymentModel === 'on_hold' ? 'Securing reservation...' : 'Finalizing booking...'
   
   try {
-    const payload: any = {
-      contactDetails: {
-        email: travellerData.value.contact.email,
-        phone: travellerData.value.contact.phone,
-        name: `${travellerData.value.travelers[0].firstName} ${travellerData.value.travelers[0].lastName}`,
-        state: travellerData.value.travelers[0].nationality
-      },
-      currency: currentCurrency.value.code,
-      paymentModel: paymentInfo.paymentModel || 'pay_now',
-      paymentProvider: paymentInfo.provider,
-      paymentMetadata: paymentInfo,
-      passengerDetails: travellerData.value.travelers.map(t => ({
-        ...t,
-        email: travellerData.value.contact.email || '',
-        phone: travellerData.value.contact.phone || '',
-        gender: (t.gender || 'male').toLowerCase(),
-        title: (t.title || 'mr').toLowerCase(),
-        type: 'adult'
-      })),
-      pricing: {
-        baseFare: displayPrices.value.base,
-        taxes: displayPrices.value.tax,
-        fees: displayPrices.value.total - displayPrices.value.base - displayPrices.value.tax
-      },
-      hasInsurance: selectedAddOns.value.some(a => a.id === 'insurance'),
-      hasVipSupport: selectedAddOns.value.some(a => a.id === 'vip-support'),
-      extraBaggageCount: selectedAddOns.value.filter(a => a.id.startsWith('bag-')).length,
-      premiumSeatCount: selectedSeats.value.length,
-      tenantId: bookingDetails.value.provider === 'duffel' ? undefined : undefined // Add if needed
-    }
-
-    if (bookingDetails.value.type === 'flight') {
-      payload.isRoundTrip = priceDetailed.value?.isRoundTrip || false;
-      payload.flights = [{
-        flightId: bookingDetails.value.id,
-        class: (priceDetailed.value?.cabinClass || 'economy').toLowerCase(),
-        offerId: priceDetailed.value?.offerId || bookingDetails.value.quoteId || priceDetailed.value?.id || bookingDetails.value.id,
-        provider: bookingDetails.value.provider,
-        passengerIds: [],
-        metadata: {
-          origin: priceDetailed.value?.origin || priceDetailed.value?.originName || bookingDetails.value.origin,
-          destination: priceDetailed.value?.destination || priceDetailed.value?.destinationName || bookingDetails.value.destination,
-          airline: priceDetailed.value?.airline || bookingDetails.value.airline,
-          departureTime: priceDetailed.value?.departureTime || bookingDetails.value.departureTime,
-          slices: priceDetailed.value?.slices || priceDetailed.value?.segments || []
-        }
-      }]
-    } else if (bookingDetails.value.type === 'stay') {
-      payload.stays = [{
-        hotelId: bookingDetails.value.id,
-        roomId: bookingDetails.value.roomId,
-        checkIn: bookingDetails.value.checkIn,
-        checkOut: bookingDetails.value.checkOut,
-        occupancy: {
-          rooms: bookingDetails.value.rooms,
-          adults: bookingDetails.value.adults,
-          children: bookingDetails.value.children
-        }
-      }]
-    } else if (bookingDetails.value.type === 'transfer') {
-      payload.transfers = [{
-        offerId: bookingDetails.value.id,
-        provider: bookingDetails.value.provider
-      }]
-      if (bookingDetails.value.returnId) {
-        payload.transfers.push({
-          offerId: bookingDetails.value.returnId,
-          provider: bookingDetails.value.provider
-        })
-      }
-    } else if (bookingDetails.value.type === 'package') {
-      payload.packageId = bookingDetails.value.id;
-      const pkgDetails = priceDetailed.value;
-      if (pkgDetails?.flightDetails) {
-        payload.flights = [{
-          flightId: pkgDetails.flightDetails.id,
-          class: (pkgDetails.flightDetails.cabinClass || 'economy').toLowerCase(),
-          offerId: pkgDetails.flightDetails.id,
-          provider: 'duffel',
-          passengerIds: [],
-        }]
-      }
-      if (pkgDetails?.stayDetails) {
-        payload.stays = [{
-          hotelId: pkgDetails.stayDetails.id || pkgDetails.stayDetails.hotelId,
-          roomId: pkgDetails.stayDetails.roomId || 'unknown',
-          checkIn: pkgDetails.stayDetails.checkIn || bookingDetails.value.checkIn,
-          checkOut: pkgDetails.stayDetails.checkOut || bookingDetails.value.checkOut,
-          occupancy: {
-            rooms: 1,
-            adults: bookingDetails.value.adults,
-            children: bookingDetails.value.children
-          }
-        }]
-      }
-    }
+    const payload = buildBookingPayload(paymentInfo)
 
     const { data: rawData } = await bookingsApi.create(payload)
     const booking = rawData?.data || rawData;
 
-    // The backend booking schema currently doesn't process transfers.
-    // We aggressively make sure the transfer is actually booked with the provider end-to-end.
-    if (bookingDetails.value.type === 'transfer') {
-      try {
-        const passengerDetails = {
-          firstName: contactData.value.firstName,
-          lastName: contactData.value.lastName,
-          email: contactData.value.email,
-          phone: contactData.value.phone,
-          remarks: `Booked via Flybeth`
-        };
-        await transfersApi.book({
-          offerId: bookingDetails.value.id,
-          provider: bookingDetails.value.provider,
-          passengerDetails
-        });
-        if (bookingDetails.value.returnId) {
-          await transfersApi.book({
-            offerId: bookingDetails.value.returnId,
-            provider: bookingDetails.value.provider,
-            passengerDetails
-          });
-        }
-      } catch (e) {
-        console.error('Failed to book transfer with provider', e);
-        showToast({ title: 'Warning', message: 'Transfer booking recorded but provider sync failed.', toastType: 'warning' })
-      }
-    }
-    
+    // Third-party suppliers that are not fulfilled by our own inventory are
+    // confirmed separately (platform inventory is fulfilled by POST /bookings).
+    await syncSupplierBooking()
+
     if (booking && booking.pnr) {
       // Handle BNPL or any payment that requires redirection
       if (
@@ -1419,13 +1606,16 @@ onMounted(async () => {
       }
     }
   } else if (bookingDetails.value.type === 'transfer') {
-    const totalTransferPrice = bookingDetails.value.price + (bookingDetails.value.returnPrice || 0)
+    const totalTransferNet = bookingDetails.value.price + (bookingDetails.value.returnPrice || 0)
+    const totalTransferGross =
+      bookingDetails.value.priceWithCommission +
+      (bookingDetails.value.returnPriceWithCommission || 0)
     priceDetailed.value = {
       ...bookingDetails.value,
       name: bookingDetails.value.name + (bookingDetails.value.returnName ? ` + ${bookingDetails.value.returnName}` : ''),
       provider: bookingDetails.value.provider,
-      priceWithCommission: totalTransferPrice,
-      price: totalTransferPrice,
+      price: totalTransferNet,
+      priceWithCommission: totalTransferGross,
       currency: bookingDetails.value.currency
     }
   } else if (bookingDetails.value.type === 'package') {
@@ -1442,9 +1632,69 @@ onMounted(async () => {
       } catch (e) {
         console.error('Failed to parse selectedPackage', e)
       }
+    } else if (bookingDetails.value.price) {
+      // Fall back to the stored payload so the summary still renders.
+      priceDetailed.value = {
+        ...bookingDetails.value,
+        priceWithCommission: bookingDetails.value.price,
+        price: bookingDetails.value.price,
+      }
+    }
+  } else if (bookingDetails.value.type === 'activity') {
+    const saved = sessionStorage.getItem('selectedActivity')
+    let parsed: any = null
+    if (saved) {
+      try {
+        parsed = JSON.parse(saved)
+      } catch (e) {
+        console.error('Failed to parse selectedActivity', e)
+      }
+    }
+    priceDetailed.value = {
+      ...(parsed || {}),
+      ...bookingDetails.value,
+      name: parsed?.name || bookingDetails.value.name,
+      provider: parsed?.provider || bookingDetails.value.provider,
+      price: bookingDetails.value.price || parsed?.price || 0,
+      priceWithCommission:
+        bookingDetails.value.priceWithCommission ||
+        parsed?.priceWithCommission ||
+        bookingDetails.value.price ||
+        parsed?.price ||
+        0,
+      currency: bookingDetails.value.currency || parsed?.currency || 'USD',
+    }
+  } else if (bookingDetails.value.type === 'car') {
+    const saved = sessionStorage.getItem('selectedCar')
+    let parsed: any = null
+    if (saved) {
+      try {
+        parsed = JSON.parse(saved)
+      } catch (e) {
+        console.error('Failed to parse selectedCar', e)
+      }
+    }
+    // Customer-facing total for the whole rental period.
+    const carPrice =
+      bookingDetails.value.priceWithCommission ||
+      bookingDetails.value.price ||
+      (typeof parsed?.priceWithCommission === 'number' ? parsed.priceWithCommission : 0) ||
+      (typeof parsed?.price === 'number' ? parsed.price : 0) ||
+      parsed?.pricing?.total ||
+      0
+    priceDetailed.value = {
+      ...(parsed || {}),
+      ...bookingDetails.value,
+      name: parsed?.name || bookingDetails.value.name,
+      provider: parsed?.provider || bookingDetails.value.provider || 'flybeth',
+      priceWithCommission: carPrice,
+      price: carPrice,
+      currency: parsed?.pricing?.currency || bookingDetails.value.currency || 'USD',
     }
   }
   loadCheckoutState()
+  loadBundledStay()
+  ensureTravelers()
   showBrandedLoader.value = false
 })
 

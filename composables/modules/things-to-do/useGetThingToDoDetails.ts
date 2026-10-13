@@ -9,8 +9,10 @@ export const useGetThingToDoDetails = () => {
         loading.value = true;
         try {
             const { data } = await thingsToDoApi.getDetails(id, provider);
-            thingToDo.value = data;
-            return data;
+            // Details come back as { success, data: {...} } — unwrap to the record.
+            const payload = (data as any)?.data ?? data;
+            thingToDo.value = payload;
+            return payload;
         } catch (error) {
             console.error('Error fetching thing to do details:', error);
         } finally {

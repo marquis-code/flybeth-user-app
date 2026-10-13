@@ -149,7 +149,7 @@
                 <div class="pk-fc-footer">
                   <div class="pk-fc-price">
                     <span class="pk-fc-from">from</span>
-                    <span class="pk-fc-amt">{{ formatPrice(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
+                    <span class="pk-fc-amt">{{ formatPrice(packagePrice(pkg)) }}</span>
                     <span class="pk-fc-per">/ person</span>
                   </div>
                   <button class="pk-fc-btn">View deal →</button>
@@ -327,7 +327,7 @@
                 <div class="pk-card-footer">
                   <div class="pk-card-price">
                     <span class="pk-card-from">from</span>
-                    <span class="pk-card-amt">{{ formatPrice(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0) }}</span>
+                    <span class="pk-card-amt">{{ formatPrice(packagePrice(pkg)) }}</span>
                     <span class="pk-card-per">/ person</span>
                   </div>
                   <button class="pk-card-btn" @click="selectPackage(pkg)">View →</button>
@@ -402,15 +402,19 @@ const searchQuery = ref({ destination: '', duration: null as number | null, budg
 // ── Data ─────────────────────────────────────────────────────────────
 import { Umbrella, Building2, Binoculars, Gem, MountainSnow, Heart, Users, Landmark } from 'lucide-vue-next'
 
+// Packages have no `category` field. The chips match real package content:
+// `terms` are compared (case-insensitively) against the name, destination,
+// description and inclusions of each package, so every chip can actually
+// return results instead of emptying the grid.
 const categories = [
-  { value: 'beach', label: 'Beach', icon: Umbrella },
-  { value: 'city', label: 'City Break', icon: Building2 },
-  { value: 'safari', label: 'Safari', icon: Binoculars },
-  { value: 'luxury', label: 'Luxury', icon: Gem },
-  { value: 'adventure', label: 'Adventure', icon: MountainSnow },
-  { value: 'honeymoon', label: 'Honeymoon', icon: Heart },
-  { value: 'family', label: 'Family', icon: Users },
-  { value: 'cultural', label: 'Cultural', icon: Landmark },
+  { value: 'beach', label: 'Beach', icon: Umbrella, terms: ['beach', 'island', 'maldives', 'seychelles', 'bali', 'overwater'] },
+  { value: 'city', label: 'City Break', icon: Building2, terms: ['city', 'urban', 'dubai', 'paris'] },
+  { value: 'safari', label: 'Safari', icon: Binoculars, terms: ['safari', 'desert'] },
+  { value: 'luxury', label: 'Luxury', icon: Gem, terms: ['luxury', '5-star', 'villa', 'chalet', 'resort'] },
+  { value: 'adventure', label: 'Adventure', icon: MountainSnow, terms: ['adventure', 'ski', 'alps', 'snorkel', 'hike'] },
+  { value: 'honeymoon', label: 'Honeymoon', icon: Heart, terms: ['romantic', 'honeymoon', 'private villa'] },
+  { value: 'family', label: 'Family', icon: Users, terms: ['family', 'all-inclusive', 'kids', 'breakfast'] },
+  { value: 'cultural', label: 'Cultural', icon: Landmark, terms: ['cultural', 'temple', 'museum', 'eiffel', 'heritage', 'cruise'] },
 ]
 
 const durationOptions = [
@@ -452,34 +456,78 @@ const handleGlobalMousedown = (e: MouseEvent) => {
 }
 
 // ── Filters & computed ────────────────────────────────────────────────
+/**
+ * Packages have NO `price` field. `totalPrice` is the FINAL customer price
+ * (charged as-is) and `basePrice` is the pre-discount price, so both the
+ * filters and the payload read `totalPrice ?? basePrice`.
+ */
+const packagePrice = (p: any): number => {
+  const value = p?.totalPrice ?? p?.basePrice ?? 0
+  const num = typeof value === 'number' ? value : parseFloat(String(value ?? ''))
+  return Number.isFinite(num) ? num : 0
+}
+
+const packageDuration = (p: any): number => {
+  const num = Number(p?.duration)
+  return Number.isFinite(num) ? num : 0
+}
+
+/** Case-insensitive text match used by the category chips. */
+const packageMatchesCategory = (p: any, category: string): boolean => {
+  if (!category) return true
+  const chip = categories.find((c) => c.value === category)
+  if (!chip) return true
+  // Exact packageType match first (e.g. a future `hotel+flight` chip)…
+  if (String(p?.packageType || '').toLowerCase() === category.toLowerCase()) return true
+  // …then the theme keywords against everything the customer can read.
+  const haystack = [
+    p?.name,
+    p?.destination,
+    p?.description,
+    ...(Array.isArray(p?.inclusions) ? p.inclusions : []),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+  return chip.terms.some((term) => haystack.includes(term.toLowerCase()))
+}
+
 const minPrice = computed(() => {
-  if (!packages.value?.length) return 0
-  return Math.floor(Math.min(...packages.value.map((p: any) => p.price?.total || p.price?.amount || p.price || 0)))
+  const prices = (packages.value || []).map(packagePrice).filter((p: number) => p > 0)
+  if (!prices.length) return 0
+  return Math.floor(Math.min(...prices))
 })
 const maxPrice = computed(() => {
-  if (!packages.value?.length) return 10000
-  return Math.ceil(Math.max(...packages.value.map((p: any) => p.price?.total || p.price?.amount || p.price || 0)))
+  const prices = (packages.value || []).map(packagePrice).filter((p: number) => p > 0)
+  if (!prices.length) return 10000
+  return Math.max(1000, Math.ceil(Math.max(...prices)))
 })
 watch(maxPrice, v => { maxPriceFilter.value = v }, { immediate: true })
 
 const filteredPackages = computed(() => {
   if (!packages.value) return []
+  const q = String(searchQuery.value.destination || '').trim().toLowerCase()
+  const duration = searchQuery.value.duration
   return packages.value.filter((p: any) => {
-    const price = p.price?.total || p.price?.amount || p.price || 0
+    const price = packagePrice(p)
     if (price > maxPriceFilter.value) return false
-    if (activeCategory.value && p.category !== activeCategory.value) return false
+    if (!packageMatchesCategory(p, activeCategory.value)) return false
     if (activeStars.value.length && !activeStars.value.includes(p.stars)) return false
+    // Destination + duration are filtered client-side as well so they keep
+    // working even when the request is served from cache.
+    if (duration && packageDuration(p) > Number(duration)) return false
+    if (q && !`${p.destination || ''} ${p.name || ''}`.toLowerCase().includes(q)) return false
     return true
   })
 })
 
 const sortedPackages = computed(() =>
   [...filteredPackages.value].sort((a: any, b: any) => {
-    const pa = a.price?.total || a.price?.amount || a.price || 0
-    const pb = b.price?.total || b.price?.amount || b.price || 0
+    const pa = packagePrice(a)
+    const pb = packagePrice(b)
     if (sortBy.value === 'price_asc') return pa - pb
     if (sortBy.value === 'price_desc') return pb - pa
-    if (sortBy.value === 'duration') return (a.duration || 99) - (b.duration || 99)
+    if (sortBy.value === 'duration') return (packageDuration(a) || 99) - (packageDuration(b) || 99)
     return 0
   })
 )
@@ -507,13 +555,16 @@ const handleSearch = () => {
 
 const selectPackage = (pkg: any) => {
   if (!pkg) return
+  // The FULL package object is stored: the checkout page reads
+  // `flightDetails` / `stayDetails` off it to price `dyn_` package ids.
   try { sessionStorage.setItem('selectedPackage', JSON.stringify(pkg)) } catch {}
   if (import.meta.client) {
     sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'package',
       id: String(pkg._id || pkg.id || 'unknown'),
-      name: String(pkg.name),
-      price: String(pkg.totalPrice || pkg.price?.total || pkg.price?.amount || pkg.price || 0),
+      name: String(pkg.name || 'Travel package'),
+      // `totalPrice` is the final customer price and is charged as-is.
+      price: packagePrice(pkg),
     }))
   }
   navigateTo({ path: '/checkout' })
