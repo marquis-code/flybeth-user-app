@@ -50,7 +50,9 @@ export default defineNuxtConfig({
   },
 
   devServer: {
-    port: 3001,
+    // Must match the --port in package.json's dev script (3005). Port 3001 is
+    // taken by the VIP backend, so a bare `nuxt dev` used to collide with it.
+    port: 3005,
     host: 'localhost'
   },
 
