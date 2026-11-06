@@ -78,7 +78,7 @@
     </div>
 
     <!-- Invoice / Bank Transfer -->
-    <div class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'manual'}">
+    <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'manual'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('manual')">
         <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'manual'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
