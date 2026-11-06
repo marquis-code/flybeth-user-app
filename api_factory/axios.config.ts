@@ -49,6 +49,45 @@ export const IMAGE_UPLOAD_ENDPOINT = axios.create({
   withCredentials: true,
 });
 
+// ─── Runtime API origin ───────────────────────────────────────────────────
+// `import.meta.env.VITE_*` is inlined at BUILD time, so changing a Railway
+// variable would otherwise require a rebuild. This app is client-rendered, so
+// Nuxt's runtime config is available on `window.__NUXT__` — prefer it, and fall
+// back to the build-time value and finally to production.
+const DEFAULT_API_ORIGIN = "https://api.flybeth.com";
+
+export function resolveApiOrigin(): string {
+  if (import.meta.client) {
+    try {
+      const runtimeBase = (globalThis as any).__NUXT__?.config?.public?.apiBase;
+      if (typeof runtimeBase === "string" && runtimeBase.trim()) return runtimeBase.trim();
+    } catch { /* fall through to build-time values */ }
+  }
+  return (import.meta.env.VITE_BASE_URL as string)
+    || (import.meta.env.NUXT_PUBLIC_API_BASE as string)
+    || DEFAULT_API_ORIGIN;
+}
+
+function originOnly(value: string): string {
+  return value.replace(/\/api\/v1\/?$/, "").replace(/\/v2\/?$/, "").replace(/\/+$/, "");
+}
+
+function withRuntimeBase(instance: any, suffix: string) {
+  instance.interceptors.request.use((config: any) => {
+    const origin = originOnly(resolveApiOrigin());
+    if (origin) config.baseURL = `${origin}${suffix}`;
+    return config;
+  });
+  return instance;
+}
+
+withRuntimeBase(GATEWAY_ENDPOINT, "/api/v1");
+withRuntimeBase(GATEWAY_ENDPOINT_V2, "/v2");
+withRuntimeBase(GATEWAY_ENDPOINT_WITH_AUTH, "/api/v1");
+withRuntimeBase(GATEWAY_ENDPOINT_WITH_AUTH_FORM_DATA, "/api/v1");
+withRuntimeBase(GATEWAY_ENDPOINT_WITHOUT_VERSION, "");
+withRuntimeBase(GATEWAY_ENDPOINT_WITHOUT_VERSION_WITH_AUTH, "");
+
 export interface CustomAxiosResponse extends AxiosResponse {
   value?: any;
   type?: string;

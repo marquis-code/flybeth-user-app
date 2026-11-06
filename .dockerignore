@@ -1,0 +1,16 @@
+# Dependencies are installed inside the image (`npm ci`), never copied from the
+# host — copying macOS node_modules over Alpine ones breaks native binaries.
+node_modules
+
+# Build output is produced inside the image
+.nuxt
+.output
+dist
+.vercel
+
+# Never bake local secrets or VCS data into an image
+.env
+.env.*
+.git
+.github
+*.log
