@@ -636,6 +636,11 @@ const { setCurrency, formatPrice } = useSettings()
 const { detectNearestAirports } = useAmadeusLocations()
 const { showToast } = useCustomToast()
 
+// Top-level router: `navigateTo()` loses the Nuxt instance when called after an
+// `await` inside a plain event handler, which made the "Select" button silently
+// do nothing instead of moving to checkout. `router.push()` has no such rule.
+const router = useRouter()
+
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
 const openField = (field: string) => {
@@ -1383,10 +1388,17 @@ const selectFlight = async (flight: any) => {
       sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
         type: 'flight',
         id: String(flight.offerId||flight._id||flight.id||'unknown'),
-        provider
+        provider,
+        // Carried so the summary renders immediately even if re-pricing is slow.
+        name: flight.airline ? `${flight.airline} ${flight.flightNumbers?.[0] || ''}`.trim() : 'Selected flight',
+        price: Number(flight.price || 0),
+        priceWithCommission: Number(flight.priceWithCommission || flight.price || 0),
+        currency: flight.currency || 'USD',
       }))
     }
-    navigateTo({ path: '/checkout' })
+    // `router.push` rather than `navigateTo`: we are past an `await`, and
+    // `navigateTo` silently fails once the Nuxt instance is no longer active.
+    await router.push('/checkout')
   } catch (error) {
     console.error('Fare validation failed', error)
   } finally {

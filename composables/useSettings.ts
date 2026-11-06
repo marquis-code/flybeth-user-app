@@ -27,6 +27,12 @@ const currentCurrency = ref<Currency>({
 const ancillaryPrices = ref<AncillaryPrices>({ bags: 25, seats: 15, insurance: 12, vipSupport: 15 })
 const isLoading = ref(false)
 
+// Module-scoped single-flight cache for the settings/currency bootstrap.
+// Shared by every `useSettings()` instance (see `fetchSettings`).
+const SETTINGS_TTL = 5 * 60 * 1000
+let settingsPromise: Promise<void> | null = null
+let settingsLoadedAt = 0
+
 // Country code to flag mapping for currencies with non-obvious codes
 const flagMap: Record<string, string> = {
     'USD': 'us', 'EUR': 'eu', 'GBP': 'gb', 'NGN': 'ng', 'CAD': 'ca',
@@ -65,7 +71,23 @@ export const localeToCurrency: Record<string, string> = {
 }
 
 export function useSettings() {
+    // ── Single-flight settings loader ────────────────────────────────────
+    // `useSettings()` is called by many components (nav, footer, cards,
+    // checkout …). Without this guard each caller re-fetched
+    // /system-config/public and /currency/supported, producing 4–10 duplicate
+    // requests per page. Concurrent callers now share one in-flight promise and
+    // the result is cached briefly, so navigations reuse it.
     const fetchSettings = async () => {
+        if (settingsLoadedAt && Date.now() - settingsLoadedAt < SETTINGS_TTL) return
+        if (settingsPromise) return settingsPromise
+        settingsPromise = loadSettings().finally(() => {
+            settingsPromise = null
+            settingsLoadedAt = Date.now()
+        })
+        return settingsPromise
+    }
+
+    const loadSettings = async () => {
         isLoading.value = true
         try {
             // Fetch directly from the public system-config endpoint (admin-controlled data)
