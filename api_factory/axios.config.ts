@@ -59,6 +59,11 @@ const DEFAULT_API_ORIGIN = "https://api.flybeth.com";
 export function resolveApiOrigin(): string {
   if (import.meta.client) {
     try {
+      // Injected at runtime by server/routes/config.js.ts
+      const injected = (globalThis as any).__FLYBETH_API_BASE__;
+      if (typeof injected === "string" && injected.trim()) return injected.trim();
+    } catch { /* ignore */ }
+    try {
       const runtimeBase = (globalThis as any).__NUXT__?.config?.public?.apiBase;
       if (typeof runtimeBase === "string" && runtimeBase.trim()) return runtimeBase.trim();
     } catch { /* fall through to build-time values */ }

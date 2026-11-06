@@ -117,6 +117,9 @@ export default defineNuxtConfig({
       ],
 
       script: [
+        // Runtime API origin (server/routes/config.js.ts) so a platform
+        // variable can change the API URL without rebuilding.
+        { src: "/config.js" },
         {
           src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCa0Rx0TJ9BGkQ9NC23BZc51zCql_Xrhs0&libraries=places",
           async: true,
