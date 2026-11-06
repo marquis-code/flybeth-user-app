@@ -71,7 +71,16 @@
               <span class="text-[14px] lg:text-[15px] font-bold text-gray-900 truncate">
                 <template v-if="bookingDetails.type === 'flight' && priceDetailed">
                   <span v-if="priceDetailed.tripType === 'Multi-city'">Multi-city Itinerary</span>
-                  <span v-else>{{ priceDetailed.originName || priceDetailed.origin }} <span class="text-gray-400 font-normal">→</span> {{ priceDetailed.destinationName || priceDetailed.destination }}</span>
+                  <!-- Airport codes keep the compact header readable; city
+                       names were being truncated to "Lagos → L…". -->
+                  <span v-else class="whitespace-nowrap">
+                    {{ priceDetailed.origin }}
+                    <span class="text-gray-400 font-normal">→</span>
+                    {{ priceDetailed.destination }}
+                    <span v-if="priceDetailed.originName || priceDetailed.destinationName" class="ml-1.5 hidden text-[12px] font-medium text-gray-500 sm:inline">
+                      {{ priceDetailed.originName }} to {{ priceDetailed.destinationName }}
+                    </span>
+                  </span>
                 </template>
                 <template v-else>
                   {{ bookingDetails.name }}

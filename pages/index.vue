@@ -1,62 +1,17 @@
 <template>
   <div class="min-h-screen bg-white">
-    <!-- ══════════════════════ HERO ══════════════════════ -->
+    <!-- ══════════════════════ HERO — search only ══════════════════════ -->
     <section class="relative overflow-hidden bg-[#060A24]">
-      <div class="pointer-events-none absolute -top-40 -left-40 h-[36rem] w-[36rem] rounded-full bg-[#0D1DAD]/40 blur-3xl"></div>
-      <div class="pointer-events-none absolute top-24 right-0 h-[28rem] w-[28rem] rounded-full bg-teal-400/10 blur-3xl"></div>
+      <div class="pointer-events-none absolute -top-52 left-1/2 h-[42rem] w-[42rem] -translate-x-1/2 rounded-full bg-[#0D1DAD]/35 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-40 right-0 h-[26rem] w-[26rem] rounded-full bg-emerald-400/10 blur-3xl"></div>
+      <div
+        class="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:64px 64px;"
+      ></div>
 
-      <div class="relative mx-auto max-w-7xl px-5 pt-10 sm:pt-14">
-        <div class="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-          <!-- Copy -->
-          <div>
-            <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-              <span class="text-[11px] font-bold uppercase tracking-[0.16em] text-white/70">IATA accredited travel partner</span>
-            </div>
-
-            <h1 class="mt-6 text-[2.4rem] font-black leading-[1.06] tracking-tight text-white sm:text-5xl xl:text-[3.4rem]">
-              Your entire journey,
-              <span class="bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-transparent">booked with confidence.</span>
-            </h1>
-
-            <p class="mt-5 max-w-xl text-[15px] leading-relaxed text-white/65">
-              Flights, hotels, airport transfers, experiences, car hire and complete
-              holiday packages — compared live and paid securely in your own currency.
-            </p>
-
-            <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[12px] font-semibold text-white/55">
-              <span v-for="chip in trustChips" :key="chip" class="flex items-center gap-2">
-                <svg class="h-3.5 w-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-                {{ chip }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Visual -->
-          <div class="relative hidden lg:block">
-            <div class="relative overflow-hidden rounded-[2rem] ring-1 ring-white/10">
-              <img
-                src="/images/hero/traveler.png"
-                alt="Traveller arriving at the airport"
-                class="h-[26rem] w-full object-cover"
-                loading="eager"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-[#060A24]/70 via-transparent to-transparent"></div>
-            </div>
-
-            <div class="absolute -bottom-5 -left-5 rounded-2xl border border-white/10 bg-white/95 px-5 py-4 shadow-xl backdrop-blur">
-              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Trusted worldwide</p>
-              <p class="mt-1 text-lg font-black text-slate-900">1,200+ destinations</p>
-              <p class="text-[11px] font-semibold text-emerald-600">Real-time supplier fares</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Search -->
-        <div class="relative z-20 mx-auto mt-10 max-w-6xl pb-4">
-          <div class="rounded-[26px] bg-white p-3 shadow-2xl shadow-black/40 ring-1 ring-black/5 sm:p-4">
-            <SearchWidget />
-          </div>
+      <div class="relative mx-auto max-w-6xl px-5 pt-[104px] pb-12 sm:pt-[120px] sm:pb-16 lg:pb-20">
+        <div class="relative z-20">
+          <SearchWidget />
         </div>
       </div>
     </section>
@@ -281,7 +236,6 @@ const airlines = [
   { name: 'Arik Air', src: arik },
 ]
 
-const trustChips = ['Live availability', 'Secure payments', '24/7 support']
 
 const verticals = [
   {
