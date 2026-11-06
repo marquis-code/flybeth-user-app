@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 
 defineProps<{
@@ -69,18 +69,32 @@ defineProps<{
 
 const isDismissed = ref(false)
 
+// Permanent dismissal. This previously used sessionStorage, so the tooltip
+// came back every time the browser was reopened or a new tab was used — which
+// is what made it feel like it "shows every time".
+const DISMISS_KEY = 'expert_tooltip_dismissed'
+
 const dismiss = () => {
   isDismissed.value = true
-  sessionStorage.setItem('expert_tooltip_dismissed', 'true')
+  try {
+    localStorage.setItem(DISMISS_KEY, 'true')
+  } catch { /* private mode */ }
 }
 
 const callExpert = () => {
   window.location.href = 'tel:+18443592384'
 }
 
-if (process.client && sessionStorage.getItem('expert_tooltip_dismissed')) {
-  isDismissed.value = true
+// Read the saved preference on mount. (`process.client` is not defined in
+// Nuxt 4, so the previous guard never ran and the bar reappeared every load.)
+const restoreDismissed = () => {
+  try {
+    if (localStorage.getItem(DISMISS_KEY) === 'true') isDismissed.value = true
+  } catch { /* private mode */ }
 }
+
+restoreDismissed()
+onMounted(restoreDismissed)
 </script>
 
 <style scoped>
