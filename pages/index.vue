@@ -32,6 +32,9 @@
     <!-- ══════════════════════ LIVE DEALS (API) ══════════════════════ -->
     <DealsRail origin="LOS" :limit="8" />
 
+    <!-- ══════════════════════ PROMO CODE (API) ══════════════════════ -->
+    <PromoBanner />
+
     <!-- ══════════════════════ SIX VERTICALS ══════════════════════ -->
     <section class="mx-auto max-w-7xl px-5 py-16">
       <div class="mx-auto max-w-2xl text-center">
@@ -143,6 +146,9 @@
       </div>
     </section>
 
+    <!-- ══════════════════════ REVIEWS (API) ══════════════════════ -->
+    <ReviewsSection />
+
     <!-- ══════════════════════ NEWSLETTER (was a popup) ══════════════════════ -->
     <section class="mx-auto max-w-7xl px-5 py-16">
       <div class="overflow-hidden rounded-lg border border-[#DBE2EA] bg-[#F4F7FB] p-8 sm:p-12">
@@ -215,6 +221,8 @@ import TopHotelDeals from '~/components/stays/TopHotelDeals.vue'
 // `DealsRail` lives in components/home/, so its auto-import name would be
 // `HomeDealsRail` — import it explicitly to keep the short tag name.
 import DealsRail from '~/components/home/DealsRail.vue'
+import PromoBanner from '~/components/home/PromoBanner.vue'
+import ReviewsSection from '~/components/home/ReviewsSection.vue'
 
 import lifestyleImg from '@/assets/img/travel-lifestyle.webp'
 
