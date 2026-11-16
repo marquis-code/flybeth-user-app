@@ -32,6 +32,9 @@
     <!-- ══════════════════════ LIVE DEALS (API) ══════════════════════ -->
     <DealsRail origin="LOS" :limit="8" />
 
+    <!-- ══════════════════════ REWARDS (System config) ══════════════════════ -->
+    <RewardsBanner />
+
     <!-- ══════════════════════ PROMO CODE (API) ══════════════════════ -->
     <PromoBanner />
 
@@ -146,6 +149,9 @@
       </div>
     </section>
 
+    <!-- ══════════════════════ NEAR YOU (geolocation + API) ══════════════════════ -->
+    <NearYouRail />
+
     <!-- ══════════════════════ REVIEWS (API) ══════════════════════ -->
     <ReviewsSection />
 
@@ -223,6 +229,8 @@ import TopHotelDeals from '~/components/stays/TopHotelDeals.vue'
 import DealsRail from '~/components/home/DealsRail.vue'
 import PromoBanner from '~/components/home/PromoBanner.vue'
 import ReviewsSection from '~/components/home/ReviewsSection.vue'
+import RewardsBanner from '~/components/home/RewardsBanner.vue'
+import NearYouRail from '~/components/home/NearYouRail.vue'
 
 import lifestyleImg from '@/assets/img/travel-lifestyle.webp'
 

@@ -5,7 +5,7 @@
         <h2 class="text-2xl font-black tracking-tight text-[#0B1B33] sm:text-3xl">
           {{ heading }}
         </h2>
-        <p v-if="lastFoundLabel" class="mt-1 text-[12px] text-[#8A97A8]">{{ lastFoundLabel }}</p>
+        <p v-if="caption || lastFoundLabel" class="mt-1 text-[12px] text-[#8A97A8]">{{ caption || lastFoundLabel }}</p>
       </div>
 
       <div class="flex items-center gap-1 rounded-md border border-[#DBE2EA] bg-white p-1">
@@ -78,6 +78,10 @@ import { useSettings } from '@/composables/useSettings';
 const props = defineProps<{
   origin?: string;
   limit?: number;
+  /** Override for the rail title (e.g. "Flight deals departing near you"). */
+  title?: string;
+  /** Optional line under the title instead of the rates timestamp. */
+  caption?: string;
 }>();
 
 const { formatPrice } = useSettings();
@@ -93,12 +97,14 @@ const tabs = [
 const tab = ref<'round-trip' | 'one-way'>('round-trip');
 
 const heading = computed(() => {
+  if (props.title) return props.title;
   if (!deals.value.length) return 'Travel deals';
   const top = Math.ceil(Math.max(...deals.value.map((d) => d.price)));
   // formatPrice includes cents; a headline reads better without them.
   return `Travel deals under ${formatPrice(top).replace(/[.,]00$/, '')}`;
 });
 
+const caption = computed(() => props.caption || '');
 const lastFoundLabel = computed(() => {
   if (!lastFoundAt.value) return '';
   const d = new Date(lastFoundAt.value);
