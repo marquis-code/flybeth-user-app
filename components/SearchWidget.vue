@@ -4,6 +4,7 @@
     class="sw-root transition-all duration-300" 
     :class="[
       isSticky ? 'sw-root--sticky' : '', 
+      theme === 'cheapoair' ? 'sw-root--co' : '',
       isFocused ? 'z-[10002] relative shadow-2xl' : 'z-10 relative'
     ]"
   >
@@ -24,15 +25,16 @@
       </nav>
     </div>
 
-    <!-- Global backdrop (visual only — pointer-events: none) -->
-    <Teleport to="body">
-      <Transition name="sw-fade">
-        <div
-          v-if="isFocused || activeCruiseField"
-          class="sw-backdrop"
-        />
-      </Transition>
-    </Teleport>
+    <!-- Page scrim (visual only — pointer-events: none).
+         Kept inside the widget's own stacking context: when this was teleported
+         to <body> it painted above every page layer, so it dimmed and blurred the
+         search card and the open date picker too. -->
+    <Transition name="sw-fade">
+      <div
+        v-if="isFocused || activeCruiseField"
+        class="sw-backdrop"
+      />
+    </Transition>
 
     <!-- ─── Panel ─── -->
     <div class="sw-panel" :class="isSticky ? 'sw-panel--sm' : ''">
@@ -71,7 +73,7 @@
             <div class="sw-bar">
               <div class="sw-loc-group">
                 <div class="sw-field sw-field--grow" @click="isFocused = true">
-                  <LocationPicker v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
+                  <LocationPicker :theme="theme" v-model="leg.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
                 </div>
                 <!-- Swap button: sits between From and To -->
                 <div class="sw-swap-wrap">
@@ -88,12 +90,13 @@
                   <div v-else class="sw-bar-div" />
                 </div>
                 <div class="sw-field sw-field--grow" @click="isFocused = true">
-                  <LocationPicker v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
+                  <LocationPicker :theme="theme" v-model="leg.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" />
                 </div>
               </div>
               <div class="sw-bar-div" />
               <div class="sw-field sw-field--date" @click="isFocused = true">
                 <FlightDateRangePicker
+                  :theme="theme"
                   :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
                   v-model:departure="leg.departureDate"
                   v-model:return="leg.returnDate"
@@ -104,7 +107,7 @@
               </div>
               <div v-if="idx === 0" class="sw-bar-div" />
               <div v-if="idx === 0" class="sw-field sw-field--pax-class" @click="isFocused = true">
-                <Occupancypicker 
+                <Occupancypicker :theme="theme" 
                   label="Passengers & Class" 
                   variant="flight" 
                   v-model:adults="flightTravelers.adults" 
@@ -174,16 +177,16 @@
         <div v-if="stayMode === 'single'" class="sw-bar">
           <div class="sw-loc-group">
             <div class="sw-field sw-field--grow">
-              <LocationPicker v-model="searchState.location" label="Where to" placeholder="City, hotel or area" @focus="isFocused = true" @close="isFocused = false" />
+              <LocationPicker :theme="theme" v-model="searchState.location" label="Where to" placeholder="City, hotel or area" @focus="isFocused = true" @close="isFocused = false" />
             </div>
           </div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--date">
-            <FlightDateRangePicker :departure="searchState.checkIn" :return="searchState.checkOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @focus="isFocused = true" @close="isFocused = false" @update:departure="(v: string) => searchState.checkIn = v" @update:return="(v: string) => searchState.checkOut = v" />
+            <FlightDateRangePicker :theme="theme" :departure="searchState.checkIn" :return="searchState.checkOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @focus="isFocused = true" @close="isFocused = false" @update:departure="(v: string) => searchState.checkIn = v" @update:return="(v: string) => searchState.checkOut = v" />
           </div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--pax">
-            <Occupancypicker v-model:rooms="occupancy.rooms" v-model:adults="occupancy.adults" v-model:children="occupancy.children" @focus="isFocused = true" @close="isFocused = false" />
+            <Occupancypicker :theme="theme" v-model:rooms="occupancy.rooms" v-model:adults="occupancy.adults" v-model:children="occupancy.children" @focus="isFocused = true" @close="isFocused = false" />
           </div>
         </div>
 
@@ -192,10 +195,10 @@
             <span class="sw-leg-lbl">Hotel {{ idx + 1 }}</span>
             <div class="sw-bar">
               <div class="sw-loc-group">
-                <div class="sw-field sw-field--grow"><LocationPicker v-model="hotel.location" label="Where to" placeholder="City or area" /></div>
+                <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="hotel.location" label="Where to" placeholder="City or area" /></div>
               </div>
               <div class="sw-bar-div" />
-              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="hotel.checkIn" :return="hotel.checkOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @update:departure="(v: string) => hotel.checkIn = v" @update:return="(v: string) => hotel.checkOut = v" /></div>
+              <div class="sw-field sw-field--date"><FlightDateRangePicker :theme="theme" :departure="hotel.checkIn" :return="hotel.checkOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @update:departure="(v: string) => hotel.checkIn = v" @update:return="(v: string) => hotel.checkOut = v" /></div>
             </div>
           </div>
           <button v-if="multiHotelLegs.length < 5" @click="addHotelLeg" class="sw-add-btn"><Plus class="sw-ico-xs" /> Add hotel</button>
@@ -227,14 +230,14 @@
 
         <div class="sw-bar">
           <div class="sw-loc-group">
-            <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="packageSearchState.origin" label="From" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
             <div class="sw-bar-div sw-bar-div--vert" />
-            <div class="sw-field sw-field--grow"><LocationPicker v-model="packageSearchState.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="packageSearchState.destination" label="To" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
           </div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="packageSearchState.departureDate" :return="packageSearchState.returnDate" mode="roundtrip" @update:departure="(v) => packageSearchState.departureDate = v" @update:return="(v) => packageSearchState.returnDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :theme="theme" :departure="packageSearchState.departureDate" :return="packageSearchState.returnDate" mode="roundtrip" @update:departure="(v) => packageSearchState.departureDate = v" @update:return="(v) => packageSearchState.returnDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--pax"><Occupancypicker v-model:rooms="packageOccupancy.rooms" v-model:adults="packageOccupancy.adults" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--pax"><Occupancypicker :theme="theme" v-model:rooms="packageOccupancy.rooms" v-model:adults="packageOccupancy.adults" @focus="isFocused = true" @close="isFocused = false" /></div>
         </div>
 
         <div class="sw-checks">
@@ -254,7 +257,7 @@
           <div v-if="onlyPartialHotel" class="sw-extra-dates">
             <span class="sw-leg-lbl">Hotel dates</span>
             <div class="sw-bar sw-bar--compact">
-              <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="packageSearchState.hotelCheckIn" :return="packageSearchState.hotelCheckOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @update:departure="(v: string) => packageSearchState.hotelCheckIn = v" @update:return="(v: string) => packageSearchState.hotelCheckOut = v" /></div>
+              <div class="sw-field sw-field--date"><FlightDateRangePicker :theme="theme" :departure="packageSearchState.hotelCheckIn" :return="packageSearchState.hotelCheckOut" mode="roundtrip" departureLabel="Check-in" returnLabel="Check-out" @update:departure="(v: string) => packageSearchState.hotelCheckIn = v" @update:return="(v: string) => packageSearchState.hotelCheckOut = v" /></div>
             </div>
           </div>
         </Transition>
@@ -276,14 +279,14 @@
         </div>
         <div class="sw-bar">
           <div class="sw-loc-group">
-            <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.origin" label="Pick-up" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="carSearchState.origin" label="Pick-up" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
             <template v-if="carMode === 'different'">
               <div class="sw-bar-div sw-bar-div--vert" />
-              <div class="sw-field sw-field--grow"><LocationPicker v-model="carSearchState.destination" label="Drop-off" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
+              <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="carSearchState.destination" label="Drop-off" placeholder="City or airport" @focus="isFocused = true" @close="isFocused = false" /></div>
             </template>
           </div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker v-model:departure="carSearchState.pickUpDate" v-model:return="carSearchState.dropOffDate" label="Dates" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :theme="theme" v-model:departure="carSearchState.pickUpDate" v-model:return="carSearchState.dropOffDate" label="Dates" /></div>
         </div>
         <div class="sw-footer">
           <label class="sw-chk">
@@ -314,11 +317,11 @@
           </label>
         </div>
         <div class="sw-bar">
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.origin" label="From" placeholder="Airport or address" allowFreeText @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="transferSearchState.origin" label="From" placeholder="Airport or address" allowFreeText @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="transferSearchState.destination" label="To" placeholder="Hotel or address" allowFreeText @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="transferSearchState.destination" label="To" placeholder="Hotel or address" allowFreeText @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="transferSearchState.date" mode="oneway" departureLabel="Date" @update:departure="(v) => transferSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :theme="theme" :departure="transferSearchState.date" mode="oneway" departureLabel="Date" @update:departure="(v) => transferSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--time">
             <span class="sw-fld-lbl">Time</span>
@@ -335,7 +338,7 @@
 
           <!-- Return Date/Time -->
           <template v-if="transferTripType === 'return'">
-            <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="transferSearchState.returnDate" mode="oneway" departureLabel="Return Date" @update:departure="(v) => transferSearchState.returnDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+            <div class="sw-field sw-field--date"><FlightDateRangePicker :theme="theme" :departure="transferSearchState.returnDate" mode="oneway" departureLabel="Return Date" @update:departure="(v) => transferSearchState.returnDate = v" @focus="isFocused = true" @close="isFocused = false" /></div>
             <div class="sw-bar-div" />
             <div class="sw-field sw-field--time">
               <span class="sw-fld-lbl">Return Time</span>
@@ -350,7 +353,7 @@
             </div>
             <div class="sw-bar-div" />
           </template>
-          <div class="sw-field sw-field--pax"><Occupancypicker label="Passengers" variant="flight" v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--pax"><Occupancypicker :theme="theme" label="Passengers" variant="flight" v-model:adults="transferOccupancy.adults" v-model:children="transferOccupancy.children" @focus="isFocused = true" @close="isFocused = false" /></div>
         </div>
         <div class="sw-footer sw-footer--end">
           <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
@@ -364,9 +367,9 @@
       <!-- ════ ACTIVITIES ════ -->
       <div v-if="currentTab === 'Activities'" class="sw-section">
         <div class="sw-bar">
-          <div class="sw-field sw-field--grow"><LocationPicker v-model="activitiesSearchState.destination" label="Destination" placeholder="City or region" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--grow"><LocationPicker :theme="theme" v-model="activitiesSearchState.destination" label="Destination" placeholder="City or region" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
-          <div class="sw-field sw-field--date"><FlightDateRangePicker :departure="activitiesSearchState.date" mode="oneway" departureLabel="Date" @update:departure="(v) => activitiesSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
+          <div class="sw-field sw-field--date"><FlightDateRangePicker :theme="theme" :departure="activitiesSearchState.date" mode="oneway" departureLabel="Date" @update:departure="(v) => activitiesSearchState.date = v" @focus="isFocused = true" @close="isFocused = false" /></div>
           <div class="sw-bar-div" />
           <div class="sw-field sw-field--cat">
             <span class="sw-fld-lbl">Category</span>
@@ -509,7 +512,9 @@ const { isLoggedIn } = useAuth()
 const { trackAction } = useTracking()
 const props = defineProps({ 
   isSticky: { type: Boolean, default: false },
-  defaultTab: { type: String, default: 'Flights' }
+  defaultTab: { type: String, default: 'Flights' },
+  // 'default' keeps the current look; 'cheapoair' applies the homepage theme.
+  theme: { type: String, default: 'default' }
 })
 const emit  = defineEmits(['focus-change', 'update:tab'])
 
@@ -1001,7 +1006,15 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-root--sticky { border-radius: 0 0 18px 18px; box-shadow: 0 18px 40px -26px rgba(10,27,61,.35); }
 
 /* ── Tab bar ───────────────────────────────────────────────────────────── */
-.sw-tabs { position: relative; border-bottom: 1px solid var(--line); }
+/* Opaque background + top radius: the tab strip must cover the page scrim that
+   now paints behind the widget, otherwise the strip reads as dimmed/grey. */
+.sw-tabs {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  border-bottom: 1px solid var(--line);
+}
 
 .sw-tabs-nav {
   display: flex;
@@ -1042,6 +1055,8 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
 /* ── Panel ─────────────────────────────────────────────────────────────── */
 .sw-panel {
+  position: relative;
+  z-index: 1;
   padding: 18px;
   background: #fff;
   border-radius: 0 0 20px 20px;
@@ -1403,10 +1418,13 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 }
 
 /* ── Backdrop ──────────────────────────────────────────────────────────── */
+/* Sits at the bottom of the widget's stacking context (not above the page):
+   the tab bar and panel are lifted to z-index 1 so the widget — and any open
+   picker inside it — always stays sharp and full-contrast. */
 .sw-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: 0;
   background: rgba(6, 10, 36, .28);
   backdrop-filter: blur(2px);
   pointer-events: none;
@@ -1475,4 +1493,50 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   .sw-radio { padding: 8px 10px; }
   .sw-radio-txt { font-size: 12px; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Cheapoair-inspired theme — opt-in via <SearchWidget theme="cheapoair" />.
+   Scoped to the homepage instance so the other pages keep their own look.
+   Palette: brand blue #0450A0, action orange #EB4405.
+   ══════════════════════════════════════════════════════════════════════════ */
+.sw-root--co {
+  --navy: #0450a0;
+  --navy-soft: #03396f;
+  --green: #eb4405;
+  --gold: #eb4405;
+  --ink: #0b1b33;
+  --slate: #44546a;
+  --muted: #5f7185;
+  --line: #dbe2ea;
+  --surface: #f4f7fb;
+  --tint: #eaf2fb;
+
+  border-radius: 8px;
+  border-color: #dbe2ea;
+  box-shadow: 0 20px 48px -26px rgba(4, 80, 160, .6);
+}
+
+.sw-root--co .sw-tabs { border-radius: 8px 8px 0 0; }
+.sw-root--co .sw-tab-btn { font-weight: 700; }
+.sw-root--co .sw-tab-btn--on { border-bottom-color: #eb4405; }
+.sw-root--co .sw-panel { border-radius: 0 0 8px 8px; }
+
+.sw-root--co .sw-radios { border-radius: 6px; }
+.sw-root--co .sw-radio { border-radius: 4px; }
+.sw-root--co .sw-bar { border-radius: 6px; }
+.sw-root--co .sw-bar:focus-within {
+  border-color: #9dc0e4;
+  box-shadow: 0 0 0 3px rgba(4, 80, 160, .12);
+}
+
+.sw-root--co .sw-search-btn {
+  background: #eb4405;
+  border-radius: 6px;
+  font-weight: 800;
+  box-shadow: 0 10px 22px -12px rgba(235, 68, 5, .75);
+}
+.sw-root--co .sw-search-btn:hover { background: #c93a04; }
+
+.sw-root--co .sw-chk { border-radius: 6px; }
+.sw-root--co .sw-chk-box { border-radius: 4px; }
 </style>

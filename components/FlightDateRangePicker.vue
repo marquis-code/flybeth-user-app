@@ -5,7 +5,9 @@
     <div
       @click="toggleCalendar"
       class="w-full cursor-pointer min-h-[68px] flex flex-row items-stretch group select-none transition-all rounded-xl"
-      :class="showCalendar ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
+      :class="showCalendar
+        ? (isCo ? 'bg-[#EAF2FB]/60 ring-2 ring-[#0450A0]/20' : 'bg-blue-50/30 ring-2 ring-gray-200')
+        : 'hover:bg-white/60'"
     >
       <template v-if="mode === 'oneway'">
         <div class="flex-1 px-4 pt-3 pb-2 flex flex-col justify-center text-left">
@@ -62,8 +64,13 @@
         <div
           ref="dropdownRef"
           v-show="showCalendar"
-          class="z-[100000] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
-          :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4' : 'absolute left-0 top-[calc(100%+6px)] w-[520px] rounded-2xl']"
+          class="z-[100000] bg-white border shadow-2xl overflow-hidden flex flex-col"
+          :class="[
+            isCo ? 'border-[#DBE2EA]' : 'border-gray-200',
+            isMobile
+              ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4'
+              : (isCo ? 'absolute left-0 top-[calc(100%+6px)] w-[520px] rounded-lg' : 'absolute left-0 top-[calc(100%+6px)] w-[520px] rounded-2xl'),
+          ]"
           style="background-color: #ffffff !important;"
       >
         <!-- Mobile Header with Close Button -->
@@ -76,26 +83,30 @@
 
         <div class="flex-1 overflow-y-auto flex flex-col">
         <!-- Month nav header -->
-        <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200 shrink-0">
+        <div class="flex items-center justify-between px-4 py-4 border-b shrink-0" :class="isCo ? 'border-[#E6EBF2]' : 'border-gray-200'">
           <button
             @click="prevMonth"
             :disabled="isAtMinMonth"
-            class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center transition-all"
-            :class="isAtMinMonth ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white active:scale-95'"
+            class="h-8 w-8 border flex items-center justify-center transition-all"
+            :class="[
+              isCo ? 'rounded-md border-[#DBE2EA]' : 'rounded-lg border-gray-200',
+              isAtMinMonth ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white active:scale-95',
+            ]"
           >
-            <ChevronLeftIcon class="h-4 w-4 text-black" />
+            <ChevronLeftIcon class="h-4 w-4" :class="isCo ? 'text-[#0450A0]' : 'text-black'" />
           </button>
 
           <div class="flex-1 flex items-center justify-center gap-4 text-center">
-            <p class="text-[13px] font-bold text-black">{{ monthName(currentYear, currentMonth) }}</p>
-            <p v-if="!isMobile" class="text-[13px] font-bold text-black">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
+            <p class="text-[13px] font-bold" :class="isCo ? 'text-[#0B1B33]' : 'text-black'">{{ monthName(currentYear, currentMonth) }}</p>
+            <p v-if="!isMobile" class="text-[13px] font-bold" :class="isCo ? 'text-[#0B1B33]' : 'text-black'">{{ monthName(nextMonthYear, nextMonthIndex) }}</p>
           </div>
 
           <button
             @click="nextMonth"
-            class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-white active:scale-95 transition-all"
+            class="h-8 w-8 border flex items-center justify-center hover:bg-white active:scale-95 transition-all"
+            :class="isCo ? 'rounded-md border-[#DBE2EA]' : 'rounded-lg border-gray-200'"
           >
-            <ChevronRightIcon class="h-4 w-4 text-black" />
+            <ChevronRightIcon class="h-4 w-4" :class="isCo ? 'text-[#0450A0]' : 'text-black'" />
           </button>
         </div>
 
@@ -104,7 +115,12 @@
           <!-- Month grid (Reuseable template) -->
           <div v-for="(cells, mIdx) in [leftCells, rightCells].slice(0, isMobile ? 1 : 2)" :key="mIdx">
             <div class="grid grid-cols-7 mb-2">
-              <div v-for="d in dayHeaders" :key="d" class="text-center text-[10px] font-bold text-gray-500 py-1">{{ d }}</div>
+              <div
+                v-for="d in dayHeaders"
+                :key="d"
+                class="text-center text-[10px] font-bold py-1"
+                :class="isCo ? 'uppercase tracking-[0.08em] text-[#8A97A8]' : 'text-gray-500'"
+              >{{ d }}</div>
             </div>
             <div class="grid grid-cols-7">
               <template v-for="(cell, i) in cells" :key="i">
@@ -118,8 +134,8 @@
                   @click="selectDate(cell)"
                 >
                   <span
-                    class="h-8 w-8 flex items-center justify-center rounded-lg text-[12px] font-bold transition-all duration-75"
-                    :class="dayClass(cell)"
+                    class="h-8 w-8 flex items-center justify-center text-[12px] font-bold transition-all duration-75"
+                    :class="[isCo ? 'rounded-full' : 'rounded-lg', dayClass(cell)]"
                   >{{ cellDay(cell) }}</span>
                 </div>
               </template>
@@ -130,22 +146,31 @@
         </div>
 
         <!-- Footer -->
-        <div class="flex items-center justify-between gap-4 px-5 py-4 border-t border-gray-200 bg-white/30 shrink-0">
-          <div class="text-[11px] font-bold text-black">
+        <div class="flex items-center justify-between gap-4 px-5 py-4 border-t shrink-0" :class="isCo ? 'border-[#E6EBF2] bg-white' : 'border-gray-200 bg-white/30'">
+          <div class="text-[11px] font-bold" :class="isCo ? 'text-[#5F7185]' : 'text-black'">
             <span v-if="!startDate">Select Date</span>
             <span v-else-if="mode !== 'oneway' && !endDate">Select Return</span>
-            <span v-else class="text-black">{{ mode === 'oneway' ? 'Confirmed' : nightCount + ' Nights' }}</span>
+            <span v-else :class="isCo ? 'text-[#0B1B33]' : 'text-black'">{{ mode === 'oneway' ? 'Confirmed' : nightCount + ' Nights' }}</span>
           </div>
 
           <div class="flex items-center gap-2">
-            <button v-if="startDate" @click="clearDates" class="text-[11px] font-bold text-black hover:text-black px-3 py-2 transition-colors">Clear</button>
-            <button @click="closeCalendar" class="px-5 py-2 bg-black text-white rounded-xl text-[12px] font-bold hover:bg-gray-900 transition-all active:scale-95">Done</button>
+            <button
+              v-if="startDate"
+              @click="clearDates"
+              class="text-[11px] font-bold px-3 py-2 transition-colors"
+              :class="isCo ? 'text-[#0450A0] hover:text-[#03396F]' : 'text-black hover:text-black'"
+            >Clear</button>
+            <button
+              @click="closeCalendar"
+              class="px-5 py-2 text-white text-[12px] font-bold transition-all active:scale-95"
+              :class="isCo ? 'bg-[#EB4405] hover:bg-[#C93A04] rounded-md' : 'bg-black hover:bg-gray-900 rounded-xl'"
+            >Done</button>
           </div>
         </div>
         <!-- Flexible Dates Toggle -->
-        <div class="px-5 py-3 border-t border-gray-200 bg-gray-50 flex items-center gap-2 shrink-0">
-          <input type="checkbox" id="flexibleDates" v-model="isFlexible" @change="$emit('update:flexible', isFlexible)" class="w-4 h-4 text-blue-600 rounded border-gray-300" />
-          <label for="flexibleDates" class="text-xs font-bold text-gray-700 cursor-pointer select-none">My dates are flexible (+/- 3 days) - Find cheaper prices</label>
+        <div class="px-5 py-3 border-t flex items-center gap-2 shrink-0" :class="isCo ? 'border-[#E6EBF2] bg-[#F4F7FB]' : 'border-gray-200 bg-gray-50'">
+          <input type="checkbox" id="flexibleDates" v-model="isFlexible" @change="$emit('update:flexible', isFlexible)" class="w-4 h-4 rounded border-gray-300" :class="isCo ? 'accent-[#0450A0]' : 'text-blue-600'" />
+          <label for="flexibleDates" class="text-xs font-bold cursor-pointer select-none" :class="isCo ? 'text-[#44546A]' : 'text-gray-700'">My dates are flexible (+/- 3 days) - Find cheaper prices</label>
         </div>
       </div>
       </Transition>
@@ -169,9 +194,14 @@ const props = defineProps({
   mode:      { type: String as () => 'oneway' | 'roundtrip', default: 'roundtrip' },
   departureLabel: { type: String, default: 'Departure' },
   returnLabel:    { type: String, default: 'Return' },
+  // 'default' keeps the existing look; 'cheapoair' applies the homepage theme.
+  theme:     { type: String, default: 'default' },
 })
 
 const emit = defineEmits(['update:departure', 'update:return', 'update:flexible', 'focus', 'close'])
+
+/** Cheapoair palette: brand blue for selection, action orange for the primary CTA. */
+const isCo = computed(() => props.theme === 'cheapoair')
 
 const pickerRef    = ref<HTMLElement | null>(null)
 const dropdownRef  = ref<HTMLElement | null>(null)
@@ -258,21 +288,30 @@ function inRange(iso: string): boolean {
 function rangeWrapClass(iso: string): string {
   if (isPast(iso)) return 'cursor-not-allowed opacity-30'
   const s = isStartDay(iso), e = isEndDay(iso), end = effectiveEnd(), inR = inRange(iso)
-  
+
+  const band = isCo.value ? 'bg-[#EAF2FB]' : 'bg-gray-100'
   let classes = 'cursor-pointer'
-  if (s && end && iso < end) classes += ' bg-gray-100 rounded-l-lg'
-  else if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) classes += ' bg-gray-100 rounded-r-lg'
-  else if (inR) classes += ' bg-gray-100'
-  
+  if (s && end && iso < end) classes += ` ${band} rounded-l-full`
+  else if ((e || (end && iso === end && !s)) && startDate.value && iso > startDate.value) classes += ` ${band} rounded-r-full`
+  else if (inR) classes += ` ${band}`
+
   return classes
 }
 
 function dayClass(iso: string): string {
-  if (isPast(iso)) return 'text-black'
-  if (isStartDay(iso) || isEndDay(iso)) return 'bg-black text-white shadow-sm'
-  if (inRange(iso)) return 'text-black'
-  if (iso === todayStr) return 'text-blue-600 border border-blue-100'
-  return 'text-black hover:bg-white'
+  if (isPast(iso)) return isCo.value ? 'text-[#B8C2CF]' : 'text-black'
+  if (isStartDay(iso) || isEndDay(iso)) {
+    return isCo.value
+      ? 'bg-[#0450A0] text-white shadow-sm'
+      : 'bg-black text-white shadow-sm'
+  }
+  if (inRange(iso)) return isCo.value ? 'text-[#0450A0]' : 'text-black'
+  if (iso === todayStr) {
+    return isCo.value
+      ? 'text-[#0450A0] ring-1 ring-[#0450A0]/30'
+      : 'text-blue-600 border border-blue-100'
+  }
+  return isCo.value ? 'text-[#0B1B33] hover:bg-[#EAF2FB]' : 'text-black hover:bg-white'
 }
 
 function selectDate(iso: string) {

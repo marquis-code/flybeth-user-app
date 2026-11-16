@@ -1,41 +1,30 @@
 <template>
   <div class="min-h-screen bg-white">
     <!-- ══════════════════════ HERO — search only ══════════════════════ -->
-    <section class="relative overflow-hidden bg-[#060A24]">
-      <div class="pointer-events-none absolute -top-52 left-1/2 h-[42rem] w-[42rem] -translate-x-1/2 rounded-full bg-[#0D1DAD]/35 blur-3xl"></div>
-      <div class="pointer-events-none absolute -bottom-40 right-0 h-[26rem] w-[26rem] rounded-full bg-emerald-400/10 blur-3xl"></div>
-      <div
-        class="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:64px 64px;"
-      ></div>
-
-      <div class="relative mx-auto max-w-6xl px-5 pt-[104px] pb-12 sm:pt-[120px] sm:pb-16 lg:pb-20">
-        <div class="relative z-20">
-          <SearchWidget />
-        </div>
+    <!-- Decorations are clipped by their own wrapper rather than by the section:
+         `overflow-hidden` here also clipped the open date picker. -->
+    <section class="relative bg-[#0450A0]">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#0A63C4_0%,#0450A0_46%,#03396F_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.07]"
+          style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/25 blur-3xl"></div>
       </div>
-    </section>
 
-    <!-- ══════════════════════ TRUST BAR ══════════════════════ -->
-    <section class="border-b border-slate-100 bg-white">
-      <div class="mx-auto max-w-7xl px-5 py-8">
-        <p class="mb-6 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-          Accredited, secured and independently verified
-        </p>
-        <FooterPartners />
-      </div>
-    </section>
-
-    <!-- ══════════════════════ AIRLINES ══════════════════════ -->
-    <section class="bg-slate-50/60">
-      <div class="mx-auto max-w-7xl px-5 py-9">
-        <div class="flex flex-col items-center gap-6 md:flex-row md:justify-between">
-          <p class="shrink-0 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400 md:text-left">
-            Fares from<br class="hidden md:block" /> leading airlines
+      <div class="relative mx-auto max-w-6xl px-5 pt-[92px] pb-14 sm:pt-[112px] sm:pb-20">
+        <div class="mb-8 text-center">
+          <p class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/60">Flights · Hotels · Cars · Experiences</p>
+          <h1 class="mt-3 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-[42px]">
+            Book your next trip for less
+          </h1>
+          <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/75">
+            Compare live fares from hundreds of airlines, then book in one secure checkout.
           </p>
-          <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
-            <img v-for="a in airlines" :key="a.name" :src="a.src" :alt="a.name" class="h-6 w-auto object-contain opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 sm:h-7" />
-          </div>
+        </div>
+        <div class="relative z-20">
+          <SearchWidget theme="cheapoair" />
         </div>
       </div>
     </section>
@@ -43,9 +32,9 @@
     <!-- ══════════════════════ SIX VERTICALS ══════════════════════ -->
     <section class="mx-auto max-w-7xl px-5 py-16">
       <div class="mx-auto max-w-2xl text-center">
-        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0D1DAD]">Book every part of the trip</p>
-        <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">One platform. Six ways to travel.</h2>
-        <p class="mt-3 text-sm leading-relaxed text-slate-500">
+        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0450A0]">Book every part of the trip</p>
+        <h2 class="mt-2 text-3xl font-black tracking-tight text-[#0B1B33] sm:text-4xl">One platform. Six ways to travel.</h2>
+        <p class="mt-3 text-sm leading-relaxed text-[#5F7185]">
           Book a single flight or build the whole itinerary — every product shares the same secure checkout.
         </p>
       </div>
@@ -55,40 +44,40 @@
           v-for="v in verticals"
           :key="v.to"
           :to="v.to"
-          class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 transition-all hover:-translate-y-1 hover:border-[#0D1DAD]/30 hover:shadow-xl hover:shadow-slate-200/70"
+          class="group relative overflow-hidden rounded-lg border border-[#DBE2EA] bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[#0450A0]/40 hover:shadow-lg hover:shadow-slate-200/70"
         >
           <div class="flex items-start justify-between">
-            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0D1DAD]/[0.07] text-[#0D1DAD]">
+            <span class="flex h-11 w-11 items-center justify-center rounded-md bg-[#0450A0]/[0.08] text-[#0450A0]">
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                 <path :d="v.path" />
               </svg>
             </span>
-            <span class="text-slate-300 transition-all group-hover:translate-x-1 group-hover:text-[#0D1DAD]">→</span>
+            <span class="text-[#DBE2EA] transition-all group-hover:translate-x-1 group-hover:text-[#EB4405]">→</span>
           </div>
-          <h3 class="mt-5 text-[17px] font-bold text-slate-900">{{ v.title }}</h3>
-          <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ v.blurb }}</p>
+          <h3 class="mt-5 text-[17px] font-bold text-[#0B1B33]">{{ v.title }}</h3>
+          <p class="mt-1.5 text-[13px] leading-relaxed text-[#5F7185]">{{ v.blurb }}</p>
         </NuxtLink>
       </div>
     </section>
 
     <!-- ══════════════════════ DESTINATIONS ══════════════════════ -->
-    <section class="border-y border-slate-100 bg-slate-50/60">
+    <section class="border-y border-[#E6EBF2] bg-[#F4F7FB]">
       <div class="mx-auto max-w-7xl px-5 py-16">
-        <SectionHeading eyebrow="Where to next" title="Popular destinations" link-to="/destinations" link-label="All destinations" />
+        <SectionHeading accent="#0450A0" eyebrow="Where to next" title="Popular destinations" link-to="/destinations" link-label="All destinations" />
         <CityDealsGrid />
       </div>
     </section>
 
     <!-- ══════════════════════ HOTELS ══════════════════════ -->
     <section class="mx-auto max-w-7xl px-5 py-16">
-      <SectionHeading eyebrow="Stays" title="Hand-picked places to stay" link-to="/stays" link-label="Browse all hotels" />
+      <SectionHeading accent="#0450A0" eyebrow="Stays" title="Hand-picked places to stay" link-to="/stays" link-label="Browse all hotels" />
       <TopHotelDeals destination-name="London" :lat="51.5074" :lng="-0.1278" />
     </section>
 
     <!-- ══════════════════════ ACTIVITIES ══════════════════════ -->
-    <section class="border-y border-slate-100 bg-slate-50/60">
+    <section class="border-y border-[#E6EBF2] bg-[#F4F7FB]">
       <div class="mx-auto max-w-7xl px-5 py-16">
-        <SectionHeading eyebrow="Things to do" title="Experiences worth travelling for" link-to="/things-to-do" link-label="Explore activities" />
+        <SectionHeading accent="#0450A0" eyebrow="Things to do" title="Experiences worth travelling for" link-to="/things-to-do" link-label="Explore activities" />
         <TrendingActivities />
       </div>
     </section>
@@ -100,33 +89,33 @@
           <img
             :src="lifestyleImg"
             alt="Travellers planning a trip"
-            class="h-[22rem] w-full rounded-3xl object-cover ring-1 ring-slate-200"
+            class="h-[22rem] w-full rounded-xl object-cover ring-1 ring-[#DBE2EA]"
             loading="lazy"
           />
-          <div class="absolute -right-3 -bottom-4 rounded-2xl bg-[#0D1DAD] px-5 py-4 text-white shadow-xl">
+          <div class="absolute -right-3 -bottom-4 rounded-lg bg-[#0450A0] px-5 py-4 text-white shadow-xl">
             <p class="text-[10px] font-bold uppercase tracking-wider text-white/60">Support</p>
             <p class="mt-0.5 text-base font-black">24/7 human help</p>
           </div>
         </div>
 
         <div>
-          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0D1DAD]">Why book with us</p>
-          <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0450A0]">Why book with us</p>
+          <h2 class="mt-2 text-3xl font-black tracking-tight text-[#0B1B33] sm:text-4xl">
             The price you see is the price you pay.
           </h2>
-          <p class="mt-4 text-sm leading-relaxed text-slate-600">
+          <p class="mt-4 text-sm leading-relaxed text-[#44546A]">
             We confirm fare and availability with the supplier before your card is charged,
             so there are no last-minute surprises when you reach the payment step.
           </p>
 
           <div class="mt-8 space-y-5">
             <div v-for="f in features" :key="f.title" class="flex gap-4">
-              <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+              <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#0450A0]/[0.08] text-[#0450A0]">
                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               </span>
               <div>
-                <h3 class="text-sm font-bold text-slate-900">{{ f.title }}</h3>
-                <p class="mt-0.5 text-[13px] leading-relaxed text-slate-500">{{ f.body }}</p>
+                <h3 class="text-sm font-bold text-[#0B1B33]">{{ f.title }}</h3>
+                <p class="mt-0.5 text-[13px] leading-relaxed text-[#5F7185]">{{ f.body }}</p>
               </div>
             </div>
           </div>
@@ -135,17 +124,17 @@
     </section>
 
     <!-- ══════════════════════ HOW IT WORKS ══════════════════════ -->
-    <section class="border-y border-slate-100 bg-[#060A24]">
+    <section class="border-y border-[#E6EBF2] bg-[#0450A0]">
       <div class="mx-auto max-w-7xl px-5 py-16">
         <div class="mx-auto max-w-2xl text-center">
-          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-300">Simple by design</p>
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#FFB38A]">Simple by design</p>
           <h2 class="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">Book in three steps</h2>
         </div>
         <div class="mt-12 grid gap-6 md:grid-cols-3">
-          <div v-for="(s, i) in steps" :key="s.title" class="relative rounded-2xl border border-white/10 bg-white/[0.04] p-7">
-            <span class="text-3xl font-black text-white/15">0{{ i + 1 }}</span>
+          <div v-for="(s, i) in steps" :key="s.title" class="relative rounded-lg border border-white/15 bg-white/[0.07] p-7">
+            <span class="text-3xl font-black text-white/20">0{{ i + 1 }}</span>
             <h3 class="mt-2 text-base font-bold text-white">{{ s.title }}</h3>
-            <p class="mt-1.5 text-[13px] leading-relaxed text-white/55">{{ s.body }}</p>
+            <p class="mt-1.5 text-[13px] leading-relaxed text-white/65">{{ s.body }}</p>
           </div>
         </div>
       </div>
@@ -153,12 +142,12 @@
 
     <!-- ══════════════════════ NEWSLETTER (was a popup) ══════════════════════ -->
     <section class="mx-auto max-w-7xl px-5 py-16">
-      <div class="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 sm:p-12">
+      <div class="overflow-hidden rounded-lg border border-[#DBE2EA] bg-[#F4F7FB] p-8 sm:p-12">
         <div class="grid items-center gap-8 lg:grid-cols-2">
           <div>
-            <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0D1DAD]">Fare alerts</p>
-            <h2 class="mt-2 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">Get the best fares in your inbox.</h2>
-            <p class="mt-2 text-sm leading-relaxed text-slate-500">
+            <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0450A0]">Fare alerts</p>
+            <h2 class="mt-2 text-2xl font-black tracking-tight text-[#0B1B33] sm:text-3xl">Get the best fares in your inbox.</h2>
+            <p class="mt-2 text-sm leading-relaxed text-[#5F7185]">
               Occasional deal alerts and price drops. No spam, unsubscribe any time.
             </p>
           </div>
@@ -170,18 +159,18 @@
                 type="email"
                 required
                 placeholder="you@example.com"
-                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#0D1DAD] focus:ring-2 focus:ring-[#0D1DAD]/15"
+                class="w-full rounded-md border border-[#DBE2EA] bg-white px-4 py-3 text-sm text-[#0B1B33] outline-none transition focus:border-[#0450A0] focus:ring-2 focus:ring-[#0450A0]/15"
               />
               <button
                 type="submit"
                 :disabled="loading"
-                class="shrink-0 rounded-xl bg-[#0D1DAD] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#0A1485] disabled:opacity-60"
+                class="shrink-0 rounded-md bg-[#EB4405] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#C93A04] disabled:opacity-60"
               >
                 {{ loading ? 'Signing up…' : 'Notify me' }}
               </button>
             </form>
 
-            <div v-else class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <div v-else class="flex items-center gap-3 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3">
               <svg class="h-5 w-5 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               <p class="text-sm font-semibold text-emerald-800">You're on the list — watch your inbox.</p>
             </div>
@@ -193,23 +182,23 @@
     </section>
 
     <!-- ══════════════════════ PARTNERS + CTA ══════════════════════ -->
-    <section class="border-t border-slate-100 bg-white py-12">
+    <section class="border-t border-[#E6EBF2] bg-white py-12">
       <div class="mx-auto max-w-7xl px-5">
-        <p class="mb-6 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Powered by trusted travel partners</p>
+        <p class="mb-6 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-[#8A97A8]">Powered by trusted travel partners</p>
         <PartnerCarousel />
       </div>
     </section>
 
-    <section class="relative overflow-hidden bg-[#060A24]">
-      <div class="pointer-events-none absolute -bottom-32 left-1/3 h-[26rem] w-[26rem] rounded-full bg-[#0D1DAD]/40 blur-3xl"></div>
+    <section class="relative overflow-hidden bg-[#0450A0]">
+      <div class="pointer-events-none absolute -bottom-32 left-1/3 h-[26rem] w-[26rem] rounded-full bg-[#EB4405]/25 blur-3xl"></div>
       <div class="relative mx-auto max-w-4xl px-5 py-16 text-center">
         <h2 class="text-3xl font-black tracking-tight text-white sm:text-4xl">Ready when you are.</h2>
-        <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/60">
+        <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/70">
           Start with a flight, a room, or the whole itinerary — and pay in your own currency.
         </p>
         <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
-          <NuxtLink to="/flights" class="rounded-full bg-white px-7 py-3 text-sm font-bold text-[#060A24] transition-transform hover:scale-[1.02]">Search flights</NuxtLink>
-          <NuxtLink to="/packages" class="rounded-full border border-white/25 px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10">Browse packages</NuxtLink>
+          <NuxtLink to="/flights" class="rounded-md bg-[#EB4405] px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-[#C93A04]">Search flights</NuxtLink>
+          <NuxtLink to="/packages" class="rounded-md border border-white/30 px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10">Browse packages</NuxtLink>
         </div>
       </div>
     </section>
@@ -221,21 +210,7 @@
 // `StaysTopHotelDeals` — import it explicitly to keep the short tag name.
 import TopHotelDeals from '~/components/stays/TopHotelDeals.vue'
 
-import emirates from '@/assets/img/fly-emirates.png'
-import qatar from '@/assets/img/qatar-airways.webp'
-import turkish from '@/assets/img/turkish-airlines.png'
-import airPeace from '@/assets/img/air-peace.png'
-import arik from '@/assets/img/arik-air.png'
 import lifestyleImg from '@/assets/img/travel-lifestyle.webp'
-
-const airlines = [
-  { name: 'Emirates', src: emirates },
-  { name: 'Qatar Airways', src: qatar },
-  { name: 'Turkish Airlines', src: turkish },
-  { name: 'Air Peace', src: airPeace },
-  { name: 'Arik Air', src: arik },
-]
-
 
 const verticals = [
   {

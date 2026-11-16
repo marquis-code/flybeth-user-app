@@ -3,7 +3,9 @@
     <div
       @click="togglePicker"
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
-      :class="showPicker ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
+      :class="showPicker
+        ? (isCo ? 'bg-[#EAF2FB]/60 ring-2 ring-[#0450A0]/20' : 'bg-blue-50/30 ring-2 ring-gray-200')
+        : 'hover:bg-white/60'"
     >
       <p 
         class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
@@ -25,8 +27,13 @@
         <div
           ref="dropdownRef"
           v-show="showPicker"
-          class="z-[100000] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
-          :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4' : 'absolute right-0 top-[calc(100%+6px)] w-[320px] rounded-2xl']"
+          class="z-[100000] bg-white border shadow-2xl overflow-hidden flex flex-col"
+          :class="[
+            isCo ? 'border-[#DBE2EA]' : 'border-gray-200',
+            isMobile
+              ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4'
+              : (isCo ? 'absolute right-0 top-[calc(100%+6px)] w-[320px] rounded-lg' : 'absolute right-0 top-[calc(100%+6px)] w-[320px] rounded-2xl'),
+          ]"
           style="background-color: #ffffff !important;"
         >
         <!-- Mobile Header with Close Button -->
@@ -52,10 +59,11 @@
               <button
                 @mousedown.prevent="decrement(row.key)"
                 :disabled="local[row.key] <= row.min"
-                class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold transition-all"
-                :class="local[row.key] <= row.min
-                  ? 'opacity-20 cursor-not-allowed'
-                  : 'text-black hover:bg-white active:scale-90'"
+                class="h-8 w-8 border flex items-center justify-center text-sm font-bold transition-all"
+                :class="[
+                  isCo ? 'rounded-md border-[#DBE2EA]' : 'rounded-lg border-gray-200',
+                  local[row.key] <= row.min ? 'opacity-20 cursor-not-allowed' : 'text-black hover:bg-white active:scale-90',
+                ]"
               >
                 −
               </button>
@@ -63,10 +71,11 @@
               <button
                 @mousedown.prevent="increment(row.key)"
                 :disabled="local[row.key] >= row.max"
-                class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center text-sm font-bold transition-all"
-                :class="local[row.key] >= row.max
-                  ? 'opacity-20 cursor-not-allowed'
-                  : 'text-black hover:bg-white active:scale-90'"
+                class="h-8 w-8 border flex items-center justify-center text-sm font-bold transition-all"
+                :class="[
+                  isCo ? 'rounded-md border-[#DBE2EA]' : 'rounded-lg border-gray-200',
+                  local[row.key] >= row.max ? 'opacity-20 cursor-not-allowed' : 'text-black hover:bg-white active:scale-90',
+                ]"
               >
                 +
               </button>
@@ -84,7 +93,9 @@
             <div class="flex flex-col gap-2">
               <label v-for="c in cabinClasses" :key="c.value" class="flex items-center gap-3 cursor-pointer group">
                 <div class="w-5 h-5 rounded-full border flex items-center justify-center transition-colors"
-                  :class="localCabinClass === c.value ? 'border-black bg-black' : 'border-gray-300 group-hover:border-black'">
+                  :class="localCabinClass === c.value
+                    ? (isCo ? 'border-[#0450A0] bg-[#0450A0]' : 'border-black bg-black')
+                    : (isCo ? 'border-[#DBE2EA] group-hover:border-[#0450A0]' : 'border-gray-300 group-hover:border-black')">
                   <div class="w-2 h-2 rounded-full bg-white transition-opacity" :class="localCabinClass === c.value ? 'opacity-100' : 'opacity-0'"></div>
                 </div>
                 <span class="text-[14px] font-medium" :class="localCabinClass === c.value ? 'text-black font-bold' : 'text-gray-700'">{{ c.label }}</span>
@@ -95,7 +106,7 @@
 
           <!-- Action Buttons -->
           <div class="flex items-center gap-2 pt-2 border-t border-gray-200">
-             <button @click="closePicker" class="flex-1 py-3 bg-black text-white rounded-xl text-[12px] font-bold hover:bg-gray-900 transition-all active:scale-95">Done</button>
+             <button @click="closePicker" class="flex-1 py-3 text-white text-[12px] font-bold transition-all active:scale-95" :class="isCo ? 'bg-[#EB4405] hover:bg-[#C93A04] rounded-md' : 'bg-black hover:bg-gray-900 rounded-xl'">Done</button>
           </div>
         </div>
       </div>
@@ -117,7 +128,12 @@ const props = defineProps({
   infantsOnLap:  { type: Number, default: 0 },
   infantsInSeat: { type: Number, default: 0 },
   cabinClass: { type: String, default: 'economy' },
+  // 'default' keeps the existing look; 'cheapoair' applies the homepage theme.
+  theme:     { type: String, default: 'default' },
 })
+
+/** Cheapoair palette: brand blue for selection, action orange for the primary CTA. */
+const isCo = computed(() => props.theme === 'cheapoair')
 
 const emit = defineEmits([
   'update:rooms', 'update:adults', 'update:children',

@@ -4,7 +4,9 @@
     <!-- ── Trigger row ── -->
     <div
       class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl relative overflow-hidden"
-      :class="showDropdown ? 'bg-blue-50/30 ring-2 ring-gray-200' : 'hover:bg-white/60'"
+      :class="showDropdown
+        ? (isCo ? 'bg-[#EAF2FB]/60 ring-2 ring-[#0450A0]/20' : 'bg-blue-50/30 ring-2 ring-gray-200')
+        : 'hover:bg-white/60'"
       @click="toggleDropdown"
     >
       <p
@@ -21,7 +23,8 @@
           <span class="text-[14px] sm:text-[15px] text-black leading-tight truncate font-bold flex-1">
             {{ selectedLocationName }}
           </span>
-          <span v-if="modelValue && modelValue !== selectedLocationName" class="text-[10px] font-bold text-[#0D1DAD] bg-blue-50 px-2 py-1 rounded-md shrink-0">
+          <span v-if="modelValue && modelValue !== selectedLocationName" class="text-[10px] font-bold px-2 py-1 rounded-md shrink-0"
+            :class="isCo ? 'text-[#0450A0] bg-[#EAF2FB]' : 'text-[#0D1DAD] bg-blue-50'">
             {{ modelValue }}
           </span>
         </template>
@@ -56,8 +59,13 @@
         <div
           ref="dropdownRef"
           v-show="showDropdown"
-          class="z-[100000] bg-white border border-gray-200 shadow-2xl overflow-hidden flex flex-col"
-          :class="[isMobile ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4' : 'absolute left-0 top-[calc(100%+6px)] w-[360px] rounded-2xl']"
+          class="z-[100000] bg-white border shadow-2xl overflow-hidden flex flex-col"
+          :class="[
+            isCo ? 'border-[#DBE2EA]' : 'border-gray-200',
+            isMobile
+              ? 'fixed inset-0 rounded-none w-full h-[100dvh] pt-4'
+              : (isCo ? 'absolute left-0 top-[calc(100%+6px)] w-[360px] rounded-lg' : 'absolute left-0 top-[calc(100%+6px)] w-[360px] rounded-2xl'),
+          ]"
           style="background-color: #ffffff !important;"
         >
         <!-- Mobile Header with Close Button -->
@@ -87,10 +95,13 @@
         <!-- Detect location (Compact) -->
         <div
           @click="detectLocation"
-          class="flex items-center gap-3 m-3 px-3 py-2 rounded-xl hover:bg-blue-50 cursor-pointer transition-all group/detect border border-gray-200 hover:border-blue-200"
+          class="flex items-center gap-3 m-3 px-3 py-2 cursor-pointer transition-all group/detect border"
+          :class="isCo
+            ? 'rounded-md hover:bg-[#EAF2FB] border-[#DBE2EA] hover:border-[#0450A0]/40'
+            : 'rounded-xl hover:bg-blue-50 border-gray-200 hover:border-blue-200'"
         >
-          <div class="h-7 w-7 rounded-lg bg-green-50 group-hover/detect:bg-green-100 flex items-center justify-center shrink-0 border border-green-200 transition-colors">
-            <svg class="h-3.5 w-3.5 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <div class="h-7 w-7 flex items-center justify-center shrink-0 border transition-colors" :class="isCo ? 'rounded-md bg-[#EAF2FB] group-hover/detect:bg-[#0450A0]/10 border-[#0450A0]/25' : 'rounded-lg bg-green-50 group-hover/detect:bg-green-100 border-green-200'">
+            <svg class="h-3.5 w-3.5" :class="isCo ? 'text-[#0450A0]' : 'text-green-600'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
             </svg>
           </div>
@@ -194,8 +205,13 @@ const props = defineProps({
   modelValue:    { type: String, default: '' },
   label:         { type: String, default: '' },
   placeholder:   { type: String, default: '' },
-  allowFreeText: { type: Boolean, default: false }
+  allowFreeText: { type: Boolean, default: false },
+  // 'default' keeps the existing look; 'cheapoair' applies the homepage theme.
+  theme:         { type: String, default: 'default' }
 })
+
+/** Cheapoair palette: brand blue accents, orange reserved for primary actions. */
+const isCo = computed(() => props.theme === 'cheapoair')
 
 const emit = defineEmits(['update:modelValue', 'select', 'focus', 'close'])
 
