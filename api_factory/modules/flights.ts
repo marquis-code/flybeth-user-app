@@ -23,6 +23,10 @@ export const flightsApi = {
     getLiveDeals(origin: string, tripType: string = 'round-trip') {
         return GATEWAY_ENDPOINT.get("/flights/deals/live", { params: { origin, tripType } });
     },
+    /** Cheapest real offer per route for the landing-page deal rails (cached server-side). */
+    getFeaturedDeals(params: { origin?: string; tripType?: string; limit?: number } = {}) {
+        return GATEWAY_ENDPOINT.get("/flights/deals/featured", { params });
+    },
     // Duffel Specific Flows
     setupDuffelIdentity(data: any) {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/integrations/duffel/identity/setup", data);

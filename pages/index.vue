@@ -17,10 +17,10 @@
         <div class="mb-8 text-center">
           <p class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/60">Flights · Hotels · Cars · Experiences</p>
           <h1 class="mt-3 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-[42px]">
-            Book your next trip for less
+            Book cheap flights from hundreds of airlines
           </h1>
           <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/75">
-            Compare live fares from hundreds of airlines, then book in one secure checkout.
+            Compare live fares, then book in one secure checkout.
           </p>
         </div>
         <div class="relative z-20">
@@ -28,6 +28,9 @@
         </div>
       </div>
     </section>
+
+    <!-- ══════════════════════ LIVE DEALS (API) ══════════════════════ -->
+    <DealsRail origin="LOS" :limit="8" />
 
     <!-- ══════════════════════ SIX VERTICALS ══════════════════════ -->
     <section class="mx-auto max-w-7xl px-5 py-16">
@@ -209,6 +212,9 @@
 // `TopHotelDeals` lives in components/stays/, so its auto-import name would be
 // `StaysTopHotelDeals` — import it explicitly to keep the short tag name.
 import TopHotelDeals from '~/components/stays/TopHotelDeals.vue'
+// `DealsRail` lives in components/home/, so its auto-import name would be
+// `HomeDealsRail` — import it explicitly to keep the short tag name.
+import DealsRail from '~/components/home/DealsRail.vue'
 
 import lifestyleImg from '@/assets/img/travel-lifestyle.webp'
 
