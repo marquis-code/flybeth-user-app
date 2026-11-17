@@ -11,7 +11,7 @@
     <template v-else-if="activity">
       
       <!-- ── 1. Top Sub-Navigation & Breadcrumbs ── -->
-      <nav class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-2xs">
+      <nav class="bg-white border-b border-gray-200 sticky top-[57px] lg:top-[65px] z-30 shadow-2xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <!-- Left: Back Button & Breadcrumbs -->
           <div class="flex items-center gap-3 min-w-0">
@@ -275,7 +275,7 @@
 
           <!-- RIGHT COLUMN: Sticky Reserve Card (1 col) -->
           <div class="lg:col-span-1">
-            <div class="sticky top-20 bg-white rounded-2xl sm:rounded-3xl border border-gray-200/90 shadow-lg overflow-hidden">
+            <div class="sticky top-28 lg:top-32 bg-white rounded-2xl sm:rounded-3xl border border-gray-200/90 shadow-lg overflow-hidden">
               
               <!-- Clean Price Header -->
               <div class="p-6 pb-5 border-b border-gray-100 bg-gray-50/70">

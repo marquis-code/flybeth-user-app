@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col font-sans bg-white">
     <NavBar />
-    <main class="flex-grow pt-20">
+    <main class="flex-grow pt-20 lg:pt-[84px]">
       <slot />
     </main>
     <SettingsSwitcher 
