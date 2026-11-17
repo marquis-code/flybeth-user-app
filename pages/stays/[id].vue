@@ -37,17 +37,26 @@
         </div>
       </div>
 
-      <div v-else-if="stayPhotos.length" class="sd-gallery">
+      <div 
+        v-else-if="stayPhotos.length" 
+        class="sd-gallery"
+        :class="{
+          'sd-gallery--1': stayPhotos.length === 1,
+          'sd-gallery--2': stayPhotos.length === 2,
+          'sd-gallery--3': stayPhotos.length === 3,
+          'sd-gallery--multi': stayPhotos.length >= 4
+        }"
+      >
         <div class="sd-gallery-main" @click="openGallery(0)">
           <img :src="stayPhotos[0]" :alt="stayDetails?.name" class="sd-gallery-img" />
           <div class="sd-gallery-overlay">
             <span class="sd-gallery-count">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              View all {{ stayPhotos.length }} photos
+              View all {{ stayPhotos.length }} photo{{ stayPhotos.length !== 1 ? 's' : '' }}
             </span>
           </div>
         </div>
-        <div class="sd-gallery-grid">
+        <div v-if="stayPhotos.length > 1" class="sd-gallery-grid">
           <div v-for="(ph, i) in stayPhotos.slice(1, 5)" :key="i" class="sd-gallery-thumb" @click="openGallery(i+1)">
             <img :src="ph" :alt="`Photo ${i+2}`" class="sd-gallery-img" />
             <div v-if="i === 3 && stayPhotos.length > 5" class="sd-gallery-more">
@@ -432,11 +441,13 @@
         </div>
 
         <!-- Map card -->
-        <div class="sd-map-card" @click="showFullMap = true">
+        <div class="sd-map-card" @click="showFullMap = true" title="Click to view interactive map">
           <div id="mini-map" class="sd-mini-map"></div>
-          <div class="sd-map-hover">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
-            View on map
+          <div class="sd-map-overlay">
+            <div class="sd-map-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Explore on map</span>
+            </div>
           </div>
         </div>
 
@@ -459,9 +470,16 @@
     <Transition name="sd-map-modal">
       <div v-if="showFullMap" class="sd-fullmap-overlay" @click.self="showFullMap = false">
         <div class="sd-fullmap-box">
-          <button class="sd-fullmap-close" @click="showFullMap = false">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
+          <div class="sd-fullmap-header">
+            <div class="sd-fullmap-title-wrap">
+              <span class="sd-fullmap-badge">Property Location</span>
+              <h3 class="sd-fullmap-title">{{ stayDetails?.name }}</h3>
+              <p class="sd-fullmap-addr">{{ stayDetails?.location?.address || stayDetails?.location?.city }}</p>
+            </div>
+            <button class="sd-fullmap-close" @click="showFullMap = false" title="Close map">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
           <div id="full-map" class="sd-fullmap"></div>
         </div>
       </div>
@@ -771,7 +789,7 @@ const initMiniMap = () => {
   })
   new google.maps.Marker({
     position: { lat, lng }, map: miniMapInstance,
-    icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: '#1d7a4f', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 9 }
+    icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: '#0D1DAD', fillOpacity: 1, strokeWeight: 3, strokeColor: '#ffffff', scale: 10 }
   })
 }
 
@@ -791,7 +809,7 @@ watch(showFullMap, async (val) => {
   })
   new google.maps.Marker({
     position: { lat, lng }, map: fullMapInstance,
-    icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: '#1d7a4f', fillOpacity: 1, strokeWeight: 3, strokeColor: '#ffffff', scale: 12 }
+    icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: '#0D1DAD', fillOpacity: 1, strokeWeight: 3, strokeColor: '#ffffff', scale: 12 }
   })
 })
 
@@ -824,16 +842,11 @@ useHead({
   background: #f8f9f7;
   font-family: 'Satoshi', sans-serif;
   color: #111;
-  padding-top: 8px; /* Offset the 64px global navbar height (64 - 56 = 8px) */
-}
-@media (min-width: 1024px) {
-  .sd-root {
-    padding-top: 24px; /* Offset the 80px global navbar height on desktop (80 - 56 = 24px) */
-  }
+  padding-top: 0;
 }
 
 .sd-wrap {
-  max-width: 1160px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -843,11 +856,16 @@ useHead({
   background: #fff;
   border-bottom: 1px solid #e8e8e2;
   position: sticky;
-  top: 64px; /* Stick below the global navbar which shrinks to 64px on scroll */
+  top: 57px;
   z-index: 80;
 }
+@media (min-width: 1024px) {
+  .sd-nav {
+    top: 65px;
+  }
+}
 .sd-nav-inner {
-  height: 54px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -902,9 +920,43 @@ useHead({
 .sd-nav-action:hover { background: #111; color: #fff; }
 
 /* ── Gallery ──────────────────────────────────────────────────────── */
-.sd-gallery { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 260px 260px; gap: 6px; border-radius: 16px; overflow: hidden; margin: 24px 0; }
+.sd-gallery {
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 20px 0 28px;
+}
+.sd-gallery--1 {
+  display: block;
+  height: 440px;
+}
+.sd-gallery--1 .sd-gallery-main {
+  height: 100%;
+}
+.sd-gallery--2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 380px;
+  gap: 8px;
+}
+.sd-gallery--3 {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 420px;
+  gap: 8px;
+}
+.sd-gallery--3 .sd-gallery-main {
+  grid-row: span 2;
+}
+.sd-gallery--multi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 240px 240px;
+  gap: 8px;
+  height: 488px;
+}
 .sd-gallery-main { grid-row: span 2; position: relative; overflow: hidden; cursor: pointer; }
-.sd-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6px; }
+.sd-gallery-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
 .sd-gallery-thumb { position: relative; overflow: hidden; cursor: pointer; }
 .sd-gallery-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
 .sd-gallery-main:hover .sd-gallery-img,
@@ -977,19 +1029,20 @@ useHead({
 .sd-property-type { font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #999; margin-bottom: 8px; }
 .sd-h1 { font-size: clamp(22px, 3vw, 34px); font-weight: 700; color: #111; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 10px; }
 .sd-location { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #888; flex-wrap: wrap; }
-.sd-map-link { color: #1d7a4f; font-weight: 600; cursor: pointer; background: none; border: none; font-family: inherit; font-size: inherit; padding: 0; transition: opacity 0.14s; }
-.sd-map-link:hover { opacity: 0.7; }
+.sd-map-link { color: #0D1DAD; font-weight: 700; cursor: pointer; background: none; border: none; font-family: inherit; font-size: inherit; padding: 0; transition: opacity 0.14s; }
+.sd-map-link:hover { opacity: 0.8; text-decoration: underline; }
 
 .sd-rating-badge {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #1d7a4f;
+  background: #0D1DAD;
   color: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px 18px;
   text-align: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(13, 29, 173, 0.2);
 }
 .sd-rating-score { font-size: 26px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
 .sd-rating-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; margin-top: 3px; }
@@ -1005,10 +1058,10 @@ useHead({
 .sd-tab {
   padding: 12px 20px;
   font-family: 'Satoshi', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: #aaa;
+  letter-spacing: 0.04em;
+  color: #888;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -1016,8 +1069,8 @@ useHead({
   transition: all 0.16s;
   margin-bottom: -1px;
 }
-.sd-tab:hover { color: #555; }
-.sd-tab--on { color: #111; border-bottom-color: #111; }
+.sd-tab:hover { color: #0D1DAD; }
+.sd-tab--on { color: #0D1DAD; border-bottom-color: #0D1DAD; font-weight: 700; }
 
 /* ── Body grid ────────────────────────────────────────────────────── */
 .sd-body {
@@ -1266,37 +1319,38 @@ useHead({
   transition: all 0.14s;
   font-family: inherit;
 }
-.sd-room-cta:hover { border-color: #1d7a4f; color: #1d7a4f; }
-.sd-room-cta--sel { background: #1d7a4f; border-color: #1d7a4f; color: #fff; }
-.sd-room-cta--sel:hover { background: #186440; }
+.sd-room-cta:hover { border-color: #0D1DAD; color: #0D1DAD; }
+.sd-room-cta--sel { background: #0D1DAD; border-color: #0D1DAD; color: #fff; }
+.sd-room-cta--sel:hover { background: #0A1485; }
 
 /* ── Empty ────────────────────────────────────────────────────────── */
 .sd-empty { display: flex; flex-direction: column; align-items: center; padding: 52px 24px; gap: 10px; text-align: center; }
-.sd-empty-ico { width: 52px; height: 52px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #1d7a4f; margin-bottom: 4px; }
+.sd-empty-ico { width: 52px; height: 52px; border-radius: 14px; background: #f0f4ff; display: flex; align-items: center; justify-content: center; color: #0D1DAD; margin-bottom: 4px; }
 .sd-empty-h { font-size: 18px; font-weight: 700; color: #111; }
 .sd-empty-p { font-size: 12px; color: #aaa; max-width: 280px; line-height: 1.6; }
-.sd-empty-btn { margin-top: 8px; padding: 9px 20px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
-.sd-empty-btn:hover { background: #1d7a4f; }
+.sd-empty-btn { margin-top: 8px; padding: 9px 20px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.sd-empty-btn:hover { background: #0A1485; }
 
 /* ── Aside ────────────────────────────────────────────────────────── */
-.sd-aside { position: sticky; top: 70px; display: flex; flex-direction: column; gap: 14px; }
+.sd-aside { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 16px; }
 
 /* Summary card */
 .sd-summary-card {
   background: #fff;
   border: 1.5px solid #eaeae3;
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 .sd-summary-hd {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 14px 18px;
-  background: #111;
+  background: #0D1DAD;
   color: #fff;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -1306,65 +1360,92 @@ useHead({
 .sd-summary-empty-p { font-size: 12px; color: #aaa; line-height: 1.6; max-width: 200px; }
 
 .sd-summary-body { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
-.sd-sum-room-name { font-size: 12px; font-weight: 700; color: #555; }
+.sd-sum-room-name { font-size: 13px; font-weight: 700; color: #374151; }
 .sd-sum-price-block { display: flex; align-items: baseline; gap: 6px; padding: 14px 0; border-top: 1px solid #f0f0ea; border-bottom: 1px solid #f0f0ea; }
-.sd-sum-price { font-size: 32px; font-weight: 700; color: #111; letter-spacing: -0.04em; }
-.sd-sum-per { font-size: 11px; color: #aaa; }
+.sd-sum-price { font-size: 30px; font-weight: 800; color: #0D1DAD; letter-spacing: -0.04em; }
+.sd-sum-per { font-size: 11px; color: #6b7280; font-weight: 600; }
 
 .sd-sum-details { display: flex; flex-direction: column; gap: 10px; }
 .sd-sum-row { display: flex; align-items: center; justify-content: space-between; }
-.sd-sum-lbl { font-size: 11px; color: #aaa; font-weight: 500; }
+.sd-sum-lbl { font-size: 11px; color: #6b7280; font-weight: 500; }
 .sd-sum-val { font-size: 12px; font-weight: 700; color: #111; }
 
-.sd-sum-incl { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #1d7a4f; font-weight: 600; }
+.sd-sum-incl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #059669; font-weight: 600; }
 
 .sd-book-btn {
   width: 100%;
-  background: #111;
+  background: #0D1DAD;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   color: #fff;
   font-family: 'Satoshi', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   padding: 14px;
   cursor: pointer;
-  transition: background 0.18s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 4px 14px rgba(13, 29, 173, 0.25);
 }
-.sd-book-btn:hover:not(:disabled) { background: #1d7a4f; }
+.sd-book-btn:hover:not(:disabled) {
+  background: #0A1485;
+  box-shadow: 0 6px 18px rgba(13, 29, 173, 0.35);
+  transform: translateY(-1px);
+}
 .sd-book-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .sd-book-btn--busy { opacity: 0.75; }
 
 /* Map card */
 .sd-map-card {
-  height: 140px;
-  border-radius: 14px;
+  height: 160px;
+  border-radius: 18px;
   overflow: hidden;
-  border: 1px solid #eaeae3;
+  border: 1px solid #e2e8f0;
   position: relative;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+}
+.sd-map-card:hover {
+  border-color: #0D1DAD;
+  box-shadow: 0 4px 14px rgba(13, 29, 173, 0.12);
+  transform: translateY(-1px);
 }
 .sd-mini-map { width: 100%; height: 100%; }
-.sd-map-hover {
+.sd-map-overlay {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  gap: 6px;
-  background: rgba(0,0,0,0.04);
-  font-size: 11px;
-  font-weight: 700;
-  color: #111;
-  opacity: 0;
-  transition: opacity 0.18s;
-  background: linear-gradient(to top, rgba(0,0,0,0.18), transparent);
+  padding-bottom: 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 60%);
+  pointer-events: none;
 }
-.sd-map-card:hover .sd-map-hover { opacity: 1; }
+.sd-map-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+  transition: all 0.2s ease;
+}
+.sd-map-card:hover .sd-map-badge {
+  background: #0D1DAD;
+  color: #ffffff;
+}
+.sd-map-card:hover .sd-map-badge svg {
+  color: #ffffff;
+}
 
 /* Help card */
 .sd-help-card {
@@ -1374,9 +1455,9 @@ useHead({
   padding: 16px;
   background: #f8f9f7;
   border: 1.5px dashed #e0e0d8;
-  border-radius: 12px;
+  border-radius: 14px;
 }
-.sd-help-ico { width: 36px; height: 36px; border-radius: 9px; background: #fff; border: 1px solid #e8e8e0; display: flex; align-items: center; justify-content: center; color: #1d7a4f; flex-shrink: 0; }
+.sd-help-ico { width: 36px; height: 36px; border-radius: 9px; background: #fff; border: 1px solid #e8e8e0; display: flex; align-items: center; justify-content: center; color: #0D1DAD; flex-shrink: 0; }
 .sd-help-title { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 4px; }
 .sd-help-p { font-size: 11px; color: #888; line-height: 1.6; }
 
@@ -1386,11 +1467,89 @@ useHead({
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Full map modal */
-.sd-fullmap-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
-.sd-fullmap-box { width: 90vw; height: 80vh; border-radius: 16px; overflow: hidden; position: relative; }
-.sd-fullmap { width: 100%; height: 100%; }
-.sd-fullmap-close { position: absolute; top: 14px; right: 14px; z-index: 10; width: 38px; height: 38px; background: #fff; border: none; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #111; box-shadow: 0 2px 10px rgba(0,0,0,0.12); transition: all 0.14s; }
-.sd-fullmap-close:hover { background: #111; color: #fff; }
+.sd-fullmap-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  padding: 16px;
+}
+.sd-fullmap-box {
+  width: 92vw;
+  max-width: 1080px;
+  height: 82vh;
+  background: #fff;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+.sd-fullmap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.sd-fullmap-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.sd-fullmap-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  color: #0D1DAD;
+  background: rgba(13, 29, 173, 0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: fit-content;
+}
+.sd-fullmap-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+.sd-fullmap-addr {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+.sd-fullmap-close {
+  width: 36px;
+  height: 36px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.sd-fullmap-close:hover {
+  background: #0D1DAD;
+  color: #fff;
+}
+.sd-fullmap {
+  flex: 1;
+  width: 100%;
+}
 
 /* ── Transitions ───────────────────────────────────────────────────── */
 .fd-enter-active, .fd-leave-active { transition: opacity 0.16s ease, transform 0.16s ease; }
