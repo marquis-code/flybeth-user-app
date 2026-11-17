@@ -2,8 +2,8 @@
   <div class="cr-root" @mousedown="handleGlobalMousedown">
     <FullScreenLoader :show="loading" moduleName="Cruises" />
 
-    <!-- ═══════════════ PREMIUM HERO ═══════════════ -->
-    <section class="cr-hero relative z-30 bg-[#0D1DAD] py-20 lg:py-28">
+    <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
+    <section class="cr-hero relative z-30 bg-[#0D1DAD]">
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
         <div
@@ -15,52 +15,46 @@
       </div>
 
       <div class="cr-wrap relative z-10">
-        <div class="max-w-3xl space-y-6">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 backdrop-blur-md">
-            <Anchor class="h-3.5 w-3.5 text-primary" />
-            <span class="text-sm  uppercase  text-white/70">Ultra-Luxury Sailings</span>
-          </div>
-          
-          <h1 class="text-5xl md:text-7xl  text-white  leading-[1.05]">
+        <!-- Dynamic headline matching stays/cars/transfers -->
+        <div class="cr-headline">
+          <span class="cr-eyebrow text-white/70">✦ Cruise Search</span>
+          <h1 class="cr-h1 text-white">
             <template v-if="searchQuery.destinationLabel">
-              Sailing <span class="text-primary italic">{{ searchQuery.destinationLabel }}</span>
+              Sailing <span class="text-[#FF8A00]">{{ searchQuery.destinationLabel }}</span>
             </template>
             <template v-else>
-              Explore the<br><span class="text-primary">Open Seas.</span>
+              Explore the <span class="text-[#FF8A00]">open seas.</span>
             </template>
           </h1>
-          
-          <p class="text-xl text-white/50 font-medium leading-relaxed max-w-xl">
-            From the Caribbean to the Mediterranean, discover handpicked expeditions on the world's most elite cruise lines.
-          </p>
         </div>
 
         <!-- ── SEARCH BAR ── -->
-        <div class="cr-bar mt-12 bg-white/5 border border-white/10 backdrop-blur-2xl rounded-[2.5rem] p-3 flex flex-col md:flex-row gap-2 shadow-2xl">
+        <div class="cr-bar">
           <!-- DESTINATION field -->
-          <div class="cr-fld flex-[1.5] group relative" :class="{ 'cr-fld--active': activeField === 'dest' }" ref="destRef">
-            <div class="flex items-center gap-4 px-6 py-4 rounded-[1.5rem] hover:bg-white/5 transition-all cursor-pointer" @click="openField('dest')">
-              <MapPin class="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
-              <div class="flex flex-col">
-                <span class="text-sm  uppercase  text-white/30">Region</span>
-                <span class="text-white font-bold text-lg truncate" :class="{ 'opacity-40': !searchQuery.destination }">
+          <div class="cr-fld" :class="{ 'cr-fld--active': activeField === 'dest' }" ref="destRef">
+            <div class="cr-fld-inner" @click="openField('dest')">
+              <MapPin class="cr-fld-ico h-4 w-4" />
+              <div class="cr-fld-text">
+                <span class="cr-fld-lbl">Region</span>
+                <span class="cr-fld-val" :class="{ 'cr-fld-val--empty': !searchQuery.destination }">
                   {{ searchQuery.destinationLabel || 'Select Destination' }}
                 </span>
               </div>
             </div>
+
             <!-- Destination dropdown -->
             <Transition name="cd">
-              <div v-if="activeField === 'dest'" class="cr-drop absolute top-[calc(100%+0.5rem)] left-0 w-full min-w-[320px] bg-white rounded-3xl shadow-2xl border border-gray-200 p-2 z-[100]" @mousedown.stop>
-                <div class="p-3">
-                  <span class="text-[9px]  uppercase  text-black p-2 block">Popular Routes</span>
-                  <div class="grid grid-cols-1 gap-1">
+              <div v-if="activeField === 'dest'" class="cr-drop" @mousedown.stop>
+                <div class="p-2">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-1.5 block">Popular Routes</span>
+                  <div class="space-y-0.5">
                     <button v-for="p in cruiseDestinations" :key="p.value" 
-                      class="flex items-center justify-between p-3 rounded-xl hover:bg-white transition-all text-left group/item"
-                      :class="{ 'bg-primary/5 text-primary': searchQuery.destination === p.value }"
+                      class="flex items-center justify-between w-full px-3 py-2 rounded-xl hover:bg-gray-50 transition-all text-left"
+                      :class="{ 'bg-blue-50 text-[#0D1DAD]': searchQuery.destination === p.value }"
                       @click="selectDestination(p)"
                     >
-                      <span class="text-sm font-bold" :class="searchQuery.destination === p.value ? 'text-primary' : 'text-black'">{{ p.label }}</span>
-                      <Check v-if="searchQuery.destination === p.value" class="h-4 w-4" />
+                      <span class="text-xs font-bold" :class="searchQuery.destination === p.value ? 'text-[#0D1DAD]' : 'text-gray-800'">{{ p.label }}</span>
+                      <Check v-if="searchQuery.destination === p.value" class="h-3.5 w-3.5 text-[#0D1DAD]" />
                     </button>
                   </div>
                 </div>
@@ -68,31 +62,33 @@
             </Transition>
           </div>
 
-          <div class="w-px bg-white/10 my-4 hidden md:block"></div>
+          <div class="cr-bar-sep"></div>
 
           <!-- MONTH field -->
-          <div class="cr-fld flex-grow group relative" :class="{ 'cr-fld--active': activeField === 'month' }" ref="monthRef">
-            <div class="flex items-center gap-4 px-6 py-4 rounded-[1.5rem] hover:bg-white/5 transition-all cursor-pointer" @click="openField('month')">
-              <Calendar class="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" />
-              <div class="flex flex-col">
-                <span class="text-sm  uppercase  text-white/30">Departure</span>
-                <span class="text-white font-bold text-lg truncate" :class="{ 'opacity-40': !searchQuery.departingMonth }">
+          <div class="cr-fld" :class="{ 'cr-fld--active': activeField === 'month' }" ref="monthRef">
+            <div class="cr-fld-inner" @click="openField('month')">
+              <Calendar class="cr-fld-ico h-4 w-4" />
+              <div class="cr-fld-text">
+                <span class="cr-fld-lbl">Departure</span>
+                <span class="cr-fld-val" :class="{ 'cr-fld-val--empty': !searchQuery.departingMonth }">
                   {{ searchQuery.departingLabel || 'Any Month' }}
                 </span>
               </div>
             </div>
+
+            <!-- Month dropdown -->
             <Transition name="cd">
-              <div v-if="activeField === 'month'" class="cr-drop absolute top-[calc(100%+0.5rem)] left-0 w-full min-w-[240px] bg-white rounded-3xl shadow-2xl border border-gray-200 p-2 z-[100]" @mousedown.stop>
-                <div class="p-3">
-                  <span class="text-[9px]  uppercase  text-black p-2 block">Sailing Schedule</span>
-                  <div class="grid grid-cols-1 gap-1 max-h-[300px] overflow-y-auto no-scrollbar">
+              <div v-if="activeField === 'month'" class="cr-drop" @mousedown.stop>
+                <div class="p-2">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-3 py-1.5 block">Sailing Schedule</span>
+                  <div class="max-h-[260px] overflow-y-auto space-y-0.5">
                     <button v-for="m in cruiseMonths" :key="m.value" 
-                      class="flex items-center justify-between p-3 rounded-xl hover:bg-white transition-all text-left"
-                      :class="{ 'bg-primary/5 text-primary': searchQuery.departingMonth === m.value }"
+                      class="flex items-center justify-between w-full px-3 py-2 rounded-xl hover:bg-gray-50 transition-all text-left"
+                      :class="{ 'bg-blue-50 text-[#0D1DAD]': searchQuery.departingMonth === m.value }"
                       @click="selectMonth(m)"
                     >
-                      <span class="text-sm font-bold">{{ m.label }}</span>
-                      <div v-if="searchQuery.departingMonth === m.value" class="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                      <span class="text-xs font-bold" :class="searchQuery.departingMonth === m.value ? 'text-[#0D1DAD]' : 'text-gray-800'">{{ m.label }}</span>
+                      <div v-if="searchQuery.departingMonth === m.value" class="w-1.5 h-1.5 rounded-full bg-[#0D1DAD]"></div>
                     </button>
                   </div>
                 </div>
@@ -100,14 +96,15 @@
             </Transition>
           </div>
 
-          <button class="bg-primary text-white  px-10 py-5 rounded-[1.5rem] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-primary/20" :disabled="loading" @click="handleSearch">
-            <template v-if="!loading">
-              <Compass class="h-5 w-5" />
-              <span>Search Cruises</span>
-            </template>
-            <span v-else class="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          <!-- SEARCH BUTTON -->
+          <button class="cr-search-btn" :class="{ 'cr-search-btn--busy': loading }" @click="handleSearch">
+            <span class="cr-search-inner">
+              <svg v-if="!loading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <span v-if="loading" class="cr-spin"></span>
+              <span>{{ loading ? 'Searching' : 'Search' }}</span>
+            </span>
           </button>
-        </div>
+        </div><!-- /cr-bar -->
       </div>
     </section>
 
@@ -202,13 +199,13 @@
           </div>
 
           <!-- Loading -->
-          <div v-if="loading" class="space-y-6">
-            <div v-for="n in 3" :key="n" class="bg-white border border-gray-200 rounded-[2rem] p-8 flex flex-col md:flex-row gap-8 animate-pulse">
-              <div class="w-full md:w-64 h-48 bg-black rounded-2xl"></div>
-              <div class="flex-grow space-y-4">
-                <div class="h-8 bg-black w-2/3 rounded-lg"></div>
-                <div class="h-4 bg-black w-1/2 rounded-lg"></div>
-                <div class="h-12 bg-black w-full rounded-xl"></div>
+          <div v-if="loading" class="space-y-4">
+            <div v-for="n in 3" :key="n" class="bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row gap-4 sm:gap-6 animate-pulse">
+              <div class="w-full md:w-56 lg:w-64 h-40 sm:h-44 bg-gray-100 rounded-xl"></div>
+              <div class="flex-grow space-y-3">
+                <div class="h-5 bg-gray-100 w-2/3 rounded-lg"></div>
+                <div class="h-3 bg-gray-100 w-1/3 rounded-lg"></div>
+                <div class="h-10 bg-gray-100 w-full rounded-xl mt-4"></div>
               </div>
             </div>
           </div>
@@ -448,12 +445,129 @@ watch(() => searchQuery.departingMonth, (val) => {
   padding: 0 40px;
 }
 
+/* ── Hero ──────────────────────────────────────────────────────────── */
+.cr-hero {
+  background: #0D1DAD;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 44px 0 56px;
+  position: relative;
+  overflow: visible;
+}
+
+.cr-headline { margin-bottom: 28px; position: relative; z-index: 10; }
+.cr-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); display: block; margin-bottom: 10px; }
+.cr-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 800; line-height: 1.12; color: #ffffff; letter-spacing: -0.03em; }
+.cr-h1 em, .cr-h1 span { font-style: normal; color: #FF8A00; }
+
+/* ── Search bar ────────────────────────────────────────────────────── */
+.cr-bar {
+  background: #fff;
+  border: 1.5px solid #e0e0d8;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  z-index: 50;
+  overflow: visible;
+}
+
+.cr-fld {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.cr-fld-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  height: 100%;
+  cursor: pointer;
+  border-radius: 14px;
+  transition: background 0.15s;
+  min-width: 0;
+}
+.cr-fld-inner:hover { background: #f5f5f0; }
+
+.cr-fld-ico { color: #94a3b8; flex-shrink: 0; }
+.cr-fld-text { display: flex; flex-direction: column; min-width: 0; }
+.cr-fld-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #94a3b8; }
+.cr-fld-val { font-family: 'Satoshi', sans-serif; font-size: 14px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cr-fld-val--empty { color: #94a3b8; font-weight: 500; }
+
+.cr-bar-sep {
+  width: 1px;
+  background: #e2e8f0;
+  margin: 10px 0;
+  flex-shrink: 0;
+}
+
+.cr-search-btn {
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0 24px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px;
+  transition: all 0.16s ease;
+  flex-shrink: 0;
+}
+.cr-search-btn:hover { background: #0D1DAD; }
+
+.cr-search-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cr-spin {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.cr-drop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+  z-index: 100;
+  min-width: 280px;
+  overflow: hidden;
+}
+
 .cd-enter-active, .cd-leave-active { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 .cd-enter-from { opacity: 0; transform: translateY(-12px) scale(0.98); }
 .cd-leave-to { opacity: 0; transform: translateY(-8px) scale(0.99); }
 
 .cr-ov-enter-active, .cr-ov-leave-active { transition: opacity 0.3s ease; }
 .cr-ov-enter-from, .cr-ov-leave-to { opacity: 0; }
+
+@media (max-width: 768px) {
+  .cr-hero { padding: 28px 0 40px; }
+  .cr-bar { flex-direction: column; border-radius: 16px; }
+  .cr-bar-sep { height: 1px; width: 100%; margin: 0; }
+  .cr-search-btn { margin: 8px; padding: 14px 20px; }
+  .cr-drop { width: 100%; min-width: auto; }
+}
 
 @media (max-width: 640px) {
   .cr-wrap { padding: 0 20px; }

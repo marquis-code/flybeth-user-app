@@ -16,36 +16,39 @@
       <div class="flex-grow p-6 flex flex-col justify-between">
         <div class="space-y-2">
           <div class="flex justify-between items-start">
-            <span class="text-sm  text-brand-green uppercase  bg-brand-green/5 px-2 py-1 rounded-md">
+            <span class="text-xs font-semibold text-emerald-700 uppercase bg-emerald-50 px-2 py-0.5 rounded-md">
               {{ activity.content?.category || activity.categories?.[0] || 'Activity' }}
             </span>
             <div class="text-right">
-              <p class="text-sm text-brand-gray/40 font-bold uppercase ">From</p>
-              <p class="text-xl  text-black er">{{ displayPrice }}</p>
+              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">From</p>
+              <p class="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">{{ displayPrice }}</p>
             </div>
           </div>
-          <h3 class="text-xl  text-black leading-tight group-hover:text-brand-green transition-colors">
+          <h3 class="text-base sm:text-lg font-bold text-gray-900 leading-snug group-hover:text-[#0D1DAD] transition-colors">
             {{ activity.content?.name || activity.name }}
           </h3>
-          <p class="text-xs text-brand-gray/60 font-medium line-clamp-2 leading-relaxed">
+          <p class="text-xs text-gray-500 font-normal line-clamp-2 leading-relaxed">
             {{ activity.content?.segmentationGroups?.[0]?.description || activity.shortDescription || activity.description || 'Experience the best of the city with our expert-led tour.' }}
           </p>
         </div>
 
-        <div class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
-          <div class="flex items-center gap-4">
-             <div class="flex items-center gap-1.5 grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
-                <ClockIcon class="h-4 w-4 text-black" />
-                <span class="text-sm font-bold text-black uppercase">{{ activity.content?.duration?.value || activity.minimumDuration || '' }} {{ activity.content?.duration?.unit || '' }}</span>
+        <div class="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
+          <div class="flex items-center gap-3">
+             <div class="flex items-center gap-1 text-gray-500">
+                <ClockIcon class="h-3.5 w-3.5 text-gray-400" />
+                <span class="text-xs font-semibold uppercase">{{ activity.content?.duration?.value || activity.minimumDuration || '' }} {{ activity.content?.duration?.unit || '' }}</span>
              </div>
-             <div class="flex items-center gap-1.5 grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
-                <TicketIcon class="h-4 w-4 text-black" />
-                <span class="text-sm font-bold text-black uppercase">Mobile Ticket</span>
+             <div class="flex items-center gap-1 text-gray-500">
+                <TicketIcon class="h-3.5 w-3.5 text-gray-400" />
+                <span class="text-xs font-semibold uppercase">Mobile Ticket</span>
              </div>
           </div>
-          <UiBaseButton variant="primary" @click="$emit('select', activity)" class="!bg-brand-blue !rounded-xl px-8 font-bold uppercase ">
-            Book Now
-          </UiBaseButton>
+          <button 
+            @click="$emit('select', activity)" 
+            class="h-9 sm:h-10 px-5 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <span>Book Now</span>
+          </button>
         </div>
       </div>
     </div>

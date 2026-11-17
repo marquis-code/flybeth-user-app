@@ -14,42 +14,45 @@
       <div class="flex-grow space-y-4">
         <div class="flex justify-between items-start">
           <div>
-            <h3 class="text-xl  text-black er">{{ vehicleName }}</h3>
-            <p class="text-xs font-bold text-brand-gray/60 uppercase ">{{ providerLabel }}</p>
+            <h3 class="text-base sm:text-lg font-bold text-gray-900">{{ vehicleName }}</h3>
+            <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wide mt-0.5">{{ providerLabel }}</p>
           </div>
           <div class="text-right">
-            <p class="text-2xl  text-black er">{{ displayPrice }}</p>
-            <p class="text-sm font-bold text-brand-gray/40 uppercase ">Total for 2 pax</p>
+            <p class="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">{{ displayPrice }}</p>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total for 2 pax</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-4 border-b border-gray-200">
-          <div class="flex items-center gap-2">
-            <UserIcon class="h-4 w-4 text-brand-gray/40" />
-            <span class="text-xs font-bold text-black">{{ capacity }} Pax</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pb-3 border-b border-gray-100">
+          <div class="flex items-center gap-1.5">
+            <UserIcon class="h-3.5 w-3.5 text-gray-400" />
+            <span class="text-xs font-semibold text-gray-700">{{ capacity }} Pax</span>
           </div>
-          <div class="flex items-center gap-2">
-            <BriefcaseIcon class="h-4 w-4 text-brand-gray/40" />
-            <span class="text-xs font-bold text-black">{{ luggage }} Bags</span>
+          <div class="flex items-center gap-1.5">
+            <BriefcaseIcon class="h-3.5 w-3.5 text-gray-400" />
+            <span class="text-xs font-semibold text-gray-700">{{ luggage }} Bags</span>
           </div>
-          <div class="flex items-center gap-2">
-            <ClockIcon class="h-4 w-4 text-brand-gray/40" />
-            <span class="text-xs font-bold text-black">{{ duration }}</span>
+          <div class="flex items-center gap-1.5">
+            <ClockIcon class="h-3.5 w-3.5 text-gray-400" />
+            <span class="text-xs font-semibold text-gray-700">{{ duration }}</span>
           </div>
-          <div class="flex items-center gap-2">
-             <ShieldCheckIcon class="h-4 w-4 text-brand-green" />
-             <span class="text-xs font-bold text-brand-green">Free Cancellation</span>
+          <div class="flex items-center gap-1.5">
+             <ShieldCheckIcon class="h-3.5 w-3.5 text-emerald-600" />
+             <span class="text-xs font-bold text-emerald-700">Free Cancellation</span>
           </div>
         </div>
 
         <div class="flex justify-between items-center pt-2">
-          <div class="flex items-center gap-2 text-brand-green">
-            <CheckCircleIcon class="h-4 w-4" />
-            <span class="text-sm  uppercase ">Meet & Greet Included</span>
+          <div class="flex items-center gap-1.5 text-emerald-700">
+            <CheckCircleIcon class="h-3.5 w-3.5 text-emerald-600" />
+            <span class="text-xs font-bold uppercase tracking-wider">Meet & Greet Included</span>
           </div>
-          <UiBaseButton variant="primary" @click="$emit('select', transfer)" class="!bg-brand-blue !rounded-xl px-10 font-bold uppercase ">
-            Book Now
-          </UiBaseButton>
+          <button 
+            @click="$emit('select', transfer)" 
+            class="h-9 sm:h-10 px-5 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+          >
+            <span>Book Now</span>
+          </button>
         </div>
       </div>
     </div>
