@@ -43,14 +43,14 @@
               </div>
             </div>
 
-            <NuxtLink to="/help" class="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-black hover:text-black hover:bg-white rounded-md transition-colors">
-              <HelpCircle class="h-3.5 w-3.5 text-black" />
+            <NuxtLink to="/help" class="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-black hover:text-black hover:bg-gray-50 rounded-md transition-colors">
+              <HelpCircle class="h-4 w-4 text-black" />
               Help center
             </NuxtLink>
 
-            <NuxtLink v-if="!user" to="/auth/login" class="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-black hover:text-black hover:bg-white rounded-md transition-colors">
-              <User class="h-3.5 w-3.5 text-black" />
-              Sign in
+            <NuxtLink v-if="!user" to="/auth/login" class="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-black hover:text-black hover:bg-gray-50 rounded-md transition-colors">
+              <User class="h-4 w-4 text-black" />
+              Sign in / Join
             </NuxtLink>
           </div>
 
@@ -190,7 +190,7 @@
               </div>
             </template>
             <template v-else>
-              <NuxtLink to="/bookings" class="bg-black text-white px-5 py-2 rounded-md text-[13px] font-semibold hover:bg-gray-800 active:bg-bg-gray-900 transition-colors">
+              <NuxtLink to="/bookings" class="bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-800 active:bg-gray-900 transition-colors shadow-sm">
                 Manage Booking
               </NuxtLink>
             </template>
@@ -294,7 +294,7 @@
           <!-- Drawer Footer -->
           <div class="px-6 py-6 flex flex-col items-center">
             <button v-if="!user" @click="[openAuthModal(), isMobileMenuOpen = false]" class="w-full bg-[#f3f0ff] text-[#1A2ED4] py-3.5 rounded-2xl font-semibold text-[15px] hover:bg-[#ebe6ff] transition-colors mb-6">
-              Get Started / Sign In
+              Sign in / Join
             </button>
             <button v-else @click="[showLogoutModal = true, isMobileMenuOpen = false]" class="w-full bg-[#fff0f0] text-[#ef4444] py-3.5 rounded-2xl font-semibold text-[15px] hover:bg-[#ffe6e6] transition-colors mb-6">
               Sign Out ({{ user?.firstName }})

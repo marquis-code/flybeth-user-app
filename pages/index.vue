@@ -3,9 +3,9 @@
     <!-- ══════════════════════ HERO — search only ══════════════════════ -->
     <!-- Decorations are clipped by their own wrapper rather than by the section:
          `overflow-hidden` here also clipped the open date picker. -->
-    <section class="relative bg-[#0450A0]">
+    <section class="relative bg-[#0D1DAD]">
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
-        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#0A63C4_0%,#0450A0_46%,#03396F_100%)]"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
         <div
           class="absolute inset-0 opacity-[0.07]"
           style="background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:56px 56px;"
@@ -30,7 +30,7 @@
     </section>
 
     <!-- ══════════════════════ LIVE DEALS (API) ══════════════════════ -->
-    <DealsRail origin="LOS" :limit="8" />
+    <DealsRail origin="LOS" :limit="6" />
 
     <!-- ══════════════════════ REWARDS (System config) ══════════════════════ -->
     <RewardsBanner />

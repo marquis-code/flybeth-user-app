@@ -5,7 +5,7 @@
   <DealsRail
     v-if="origin"
     :origin="origin"
-    :limit="8"
+    :limit="6"
     title="Flight deals departing near you"
     :caption="caption"
   />

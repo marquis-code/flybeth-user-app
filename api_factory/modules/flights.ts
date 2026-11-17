@@ -25,7 +25,9 @@ export const flightsApi = {
     },
     /** Cheapest real offer per route for the landing-page deal rails (cached server-side). */
     getFeaturedDeals(params: { origin?: string; tripType?: string; limit?: number } = {}) {
-        return GATEWAY_ENDPOINT.get("/flights/deals/featured", { params });
+        // Cold cache means real supplier searches (~10-20s), which is longer than
+        // the gateway's default 15s timeout, so give this call its own budget.
+        return GATEWAY_ENDPOINT.get("/flights/deals/featured", { params, timeout: 45000 });
     },
     // Duffel Specific Flows
     setupDuffelIdentity(data: any) {
