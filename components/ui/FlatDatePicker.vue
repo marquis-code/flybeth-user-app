@@ -29,7 +29,7 @@
             ref="inputElement"
             type="text"
             :value="displayDate"
-            :placeholder="open ? 'YYYY-MM-DD or select' : 'Select date'"
+            :placeholder="placeholder || ''"
             @input="handleDirectInput"
             @focus="open = true"
             @keydown.enter.prevent="open = false"
@@ -282,6 +282,7 @@ defineOptions({ inheritAttrs: false })
 interface Props {
   modelValue?: string
   label: string
+  placeholder?: string
   maxDate?: Date
   minDate?: Date
   hasError?: boolean
@@ -289,6 +290,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
+  placeholder: '',
   hasError: false,
 })
 
