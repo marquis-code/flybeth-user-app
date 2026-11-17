@@ -187,14 +187,13 @@ onMounted(() => {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  filter: grayscale(100%);
-  opacity: 0.65;
-  transition: filter 0.3s ease, opacity 0.3s ease;
+  filter: none;
+  opacity: 1;
+  transition: transform 0.25s ease;
 }
 
 .logo-item:hover img {
-  filter: grayscale(0%);
-  opacity: 1;
+  transform: scale(1.05);
 }
 
 /* Reduce motion preference */
