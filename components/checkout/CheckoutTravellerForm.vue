@@ -24,11 +24,12 @@
       <span>Import CSV</span>
    </button> -->
    <button 
+     type="button"
      @click="addTraveler"
-     class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-black text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-lg"
+     class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0D1DAD] text-white font-bold text-sm hover:bg-[#0A1485] transition-all shadow-md active:scale-95"
    >
       <Plus class="w-4 h-4" />
-      <span>Add Traveler</span>
+      <span>Add Traveler ({{ travelers.length + 1 }})</span>
    </button>
 </div>
 
@@ -57,6 +58,35 @@
          </div> -->
     </div>
 
+    <!-- Multi-traveler Quick Navigation Bar when multiple travelers exist -->
+    <div v-if="travelers.length > 1" class="mx-2 sm:mx-4 mt-4 p-2.5 bg-white/95 backdrop-blur-md border border-gray-200/90 rounded-2xl shadow-sm sticky top-2 z-20 flex items-center justify-between gap-2 overflow-x-auto">
+      <div class="flex items-center gap-1.5 overflow-x-auto py-0.5">
+        <button
+          v-for="(t, idx) in travelers"
+          :key="idx"
+          type="button"
+          @click="scrollToTraveler(idx)"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap"
+          :class="isPassengerComplete(t) ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+        >
+          <span>Traveler {{ idx + 1 }}</span>
+          <span v-if="t.firstName" class="text-[11px] font-normal opacity-75">({{ t.firstName }})</span>
+          <svg v-if="isPassengerComplete(t)" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        @click="addTraveler"
+        class="shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0D1DAD] text-white text-xs font-bold hover:bg-[#0A1485] transition-all shadow-sm whitespace-nowrap active:scale-95"
+      >
+        <Plus class="w-3.5 h-3.5" />
+        <span>+ Add</span>
+      </button>
+    </div>
+
     <!-- Autofill Toggle Banner -->
     <div v-if="hasSavedData" class="mx-2 sm:mx-4 mt-6 mb-2 p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-center justify-between transition-all">
       <div class="flex items-center gap-3">
@@ -75,7 +105,12 @@
     </div>
 
     <div class="space-y-6 mt-6">
-      <div v-for="(traveler, index) in travelers" :key="index" class="relative animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div 
+        v-for="(traveler, index) in travelers" 
+        :key="index" 
+        :id="'traveler-card-' + index"
+        class="relative animate-in fade-in slide-in-from-bottom-4 duration-500 scroll-mt-24"
+      >
         <div class="flex items-center justify-between mb-4">
            <div class="flex flex-wrap items-center gap-3">
               <div class="relative w-9 h-9 rounded-full bg-[#FFF0E6] flex items-center justify-center flex-shrink-0">
@@ -181,6 +216,33 @@
            </div>
         </div>
       </div>
+
+      <!-- Add Another Traveler Button directly below the travelers list -->
+      <div class="pt-2">
+        <button
+          type="button"
+          @click="addTraveler"
+          class="w-full group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-3xl sm:rounded-[2rem] bg-gradient-to-r from-blue-50/80 via-white to-blue-50/40 border-2 border-dashed border-[#0D1DAD]/30 hover:border-[#0D1DAD] hover:shadow-md transition-all active:scale-[0.99] text-left"
+        >
+          <div class="flex items-center gap-3.5">
+            <div class="w-10 h-10 rounded-2xl bg-[#0D1DAD] text-white flex items-center justify-center shadow-md shadow-blue-900/20 group-hover:scale-105 transition-transform shrink-0">
+              <Plus class="w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm sm:text-base font-bold text-gray-900 group-hover:text-[#0D1DAD] transition-colors">
+                + Add Another Traveler (Traveler {{ travelers.length + 1 }})
+              </p>
+              <p class="text-xs text-gray-500">
+                Click here to add passenger details without scrolling back up
+              </p>
+            </div>
+          </div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0D1DAD] bg-white px-4 py-2 rounded-xl shadow-sm border border-[#0D1DAD]/20 group-hover:bg-[#0D1DAD] group-hover:text-white transition-colors shrink-0">
+            <Plus class="w-3.5 h-3.5" />
+            <span>Add Traveler</span>
+          </span>
+        </button>
+      </div>
     </div>
 
     <!-- Contact Group -->
@@ -254,7 +316,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import AnimatedInput from '@/components/ui/AnimatedInput.vue';
 import SelectInput from '@/components/ui/SelectInput.vue';
 import PhoneInput from '@/components/ui/PhoneInput.vue';
@@ -316,7 +378,17 @@ const isContactComplete = () => {
   return isPhoneValid.value && contact.value.email;
 }
 
+const scrollToTraveler = (index: number) => {
+  nextTick(() => {
+    const el = document.getElementById(`traveler-card-${index}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  })
+}
+
 const addTraveler = () => {
+  const newIndex = travelers.value.length
   travelers.value.push({
     title: 'Mr',
     firstName: '',
@@ -327,6 +399,7 @@ const addTraveler = () => {
     passportNumber: '',
     passportExpiry: ''
   })
+  scrollToTraveler(newIndex)
 }
 
 const removeTraveler = (index: number) => {
