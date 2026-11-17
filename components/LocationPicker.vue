@@ -3,14 +3,14 @@
 
     <!-- ── Trigger row ── -->
     <div
-      class="w-full px-3.5 py-1.5 cursor-pointer min-h-[48px] flex flex-col justify-center group select-none transition-all rounded-lg relative overflow-hidden"
+      class="w-full px-3.5 py-2.5 sm:py-1.5 cursor-pointer min-h-[52px] sm:min-h-[48px] flex flex-col justify-center group select-none transition-all rounded-lg relative overflow-hidden"
       :class="showDropdown
         ? (isCo ? 'bg-[#EAF2FB]/60 ring-2 ring-[#0450A0]/20' : 'bg-blue-50/30 ring-2 ring-gray-200')
         : 'hover:bg-white/60'"
       @click="toggleDropdown"
     >
       <p
-        class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider"
+        class="text-[11px] font-bold text-gray-500 mb-1 sm:mb-0.5 transition-colors uppercase tracking-wider"
         :class="showDropdown ? 'text-black' : 'text-gray-500 group-hover:text-black'"
       >
         {{ label }}
@@ -48,7 +48,7 @@
         />
       </div>
 
-      <p v-show="selectedLocationSub && !showDropdown" class="text-sm text-black font-medium mt-0.5 truncate">
+      <p v-show="selectedLocationSub && !showDropdown" class="text-sm text-black font-medium mt-1 sm:mt-0.5 truncate">
         {{ selectedLocationSub }}
       </p>
     </div>

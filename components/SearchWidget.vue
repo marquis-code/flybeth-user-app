@@ -1529,15 +1529,16 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
   /* Fields stack; dividers become horizontal hairlines */
   .sw-bar { flex-direction: column; align-items: stretch; }
-  .sw-loc-group { flex-direction: column; }
+  .sw-loc-group { flex-direction: column; width: 100%; }
   .sw-bar-div, .sw-bar-div--vert { width: auto; height: 1px; margin: 2px 12px; }
-  .sw-field { width: 100%; min-width: 0; padding: 13px 14px; }
+  .sw-field { width: 100%; min-width: 0; padding: 10px 12px; }
   .sw-field--date, .sw-field--pax, .sw-field--pax-class,
   .sw-field--time, .sw-field--cat, .sw-field--class { flex: 1 1 100%; min-width: 0; }
 
-  /* Stacked fields: a floating swap button just adds empty space, and the
-     fields are easy to retype — so hide it and drop its wrapper row. */
-  .sw-swap-wrap { display: none; }
+  /* Stacked fields: retain the hairline divider between From and To, while hiding the floating circular button */
+  .sw-swap-wrap { display: flex; align-items: center; width: 100%; height: auto; position: static; }
+  .sw-swap-btn { display: none; }
+  .sw-swap-wrap .sw-bar-div { width: auto; height: 1px; margin: 2px 12px; flex: 1; }
 
   .sw-cruise-grid--2, .sw-cruise-grid--3 { grid-template-columns: 1fr; }
 

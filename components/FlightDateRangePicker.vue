@@ -10,8 +10,8 @@
         : 'hover:bg-white/60'"
     >
       <template v-if="mode === 'oneway'">
-        <div class="flex-1 px-3.5 py-1.5 flex flex-col justify-center text-left">
-          <p class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
+        <div class="flex-1 px-3.5 py-2 sm:py-1.5 flex flex-col justify-center text-left">
+          <p class="text-[11px] font-bold text-gray-500 mb-1 sm:mb-0.5 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
             {{ departureLabel }}
           </p>
           <div class="flex items-baseline gap-1.5 min-w-0">
@@ -26,8 +26,8 @@
       </template>
       <template v-else>
         <!-- Two halves for Check-in and Check-out -->
-        <div class="flex-1 px-3.5 py-1.5 flex flex-col justify-center text-left">
-          <p class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
+        <div class="flex-1 px-3.5 py-2 sm:py-1.5 flex flex-col justify-center text-left">
+          <p class="text-[11px] font-bold text-gray-500 mb-1 sm:mb-0.5 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
             {{ departureLabel }}
           </p>
           <div class="flex items-baseline gap-1.5 min-w-0">
@@ -42,8 +42,8 @@
         
         <div class="w-[1px] bg-[#D1D5DB] my-2 flex-shrink-0"></div>
         
-        <div class="flex-1 px-3.5 py-1.5 flex flex-col justify-center text-left">
-          <p class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
+        <div class="flex-1 px-3.5 py-2 sm:py-1.5 flex flex-col justify-center text-left">
+          <p class="text-[11px] font-bold text-gray-500 mb-1 sm:mb-0.5 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
             {{ returnLabel }}
           </p>
           <div class="flex items-baseline gap-1.5 min-w-0">
