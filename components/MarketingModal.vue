@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="show" class="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6" style="pointer-events: auto;">
+      <div v-if="show" class="fixed inset-0 z-[1000005] flex items-center justify-center p-4 sm:p-6" style="pointer-events: auto;">
         <!-- Backdrop -->
         <div 
           class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"

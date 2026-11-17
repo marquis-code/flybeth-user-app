@@ -795,6 +795,72 @@ onMounted(() => {
   // Restore package state
   if (route.query.packageType) packageType.value = String(route.query.packageType)
 
+  if (import.meta.client) {
+    try {
+      // 1. Transfers
+      if (!transferSearchState.origin && !transferSearchState.destination) {
+        const tr = localStorage.getItem('flybeth_last_transfers_search')
+        if (tr) {
+          const p = JSON.parse(tr)
+          if (p.origin) transferSearchState.origin = p.origin
+          if (p.destination) transferSearchState.destination = p.destination
+          if (p.date) transferSearchState.date = p.date
+          if (p.time) transferSearchState.time = p.time
+          if (p.returnDate) transferSearchState.returnDate = p.returnDate
+          if (p.returnTime) transferSearchState.returnTime = p.returnTime
+          if (p.adults) transferOccupancy.adults = Number(p.adults)
+          if (p.children) transferOccupancy.children = Number(p.children)
+          if (p.tripType) transferTripType.value = p.tripType
+        }
+      }
+      // 2. Stays
+      if (!searchState.location) {
+        const st = localStorage.getItem('flybeth_last_stays_search')
+        if (st) {
+          const p = JSON.parse(st)
+          if (p.location) searchState.location = p.location
+          if (p.checkIn) searchState.checkIn = p.checkIn
+          if (p.checkOut) searchState.checkOut = p.checkOut
+          if (p.rooms) occupancy.rooms = Number(p.rooms)
+          if (p.adults) occupancy.adults = Number(p.adults)
+        }
+      }
+      // 3. Cars
+      if (!carSearchState.origin && !carSearchState.destination) {
+        const cr = localStorage.getItem('flybeth_last_cars_search')
+        if (cr) {
+          const p = JSON.parse(cr)
+          if (p.origin || p.pickUpLocation) carSearchState.origin = p.origin || p.pickUpLocation
+          if (p.destination || p.dropOffLocation) carSearchState.destination = p.destination || p.dropOffLocation
+          if (p.pickUpDate) carSearchState.pickUpDate = p.pickUpDate
+          if (p.dropOffDate) carSearchState.dropOffDate = p.dropOffDate
+          if (p.carMode) carMode.value = p.carMode
+        }
+      }
+      // 4. Activities
+      if (!activitiesSearchState.destination) {
+        const ac = localStorage.getItem('flybeth_last_things-to-do_search')
+        if (ac) {
+          const p = JSON.parse(ac)
+          if (p.destination || p.destinationIata) activitiesSearchState.destination = p.destination || p.destinationIata
+          if (p.date) activitiesSearchState.date = p.date
+        }
+      }
+      // 5. Packages
+      if (!packageSearchState.origin && !packageSearchState.destination) {
+        const pk = localStorage.getItem('flybeth_last_packages_search')
+        if (pk) {
+          const p = JSON.parse(pk)
+          if (p.origin) packageSearchState.origin = p.origin
+          if (p.destination) packageSearchState.destination = p.destination
+          if (p.departureDate) packageSearchState.departureDate = p.departureDate
+          if (p.returnDate) packageSearchState.returnDate = p.returnDate
+          if (p.packageType) packageType.value = p.packageType
+        }
+      }
+    } catch (e) {}
+  }
+
   // Default the departure date two weeks out. It used to default to *today*,
   // which meant a page opened just after midnight — or a restored search from
   // a previous visit — could show a date already in the past and be rejected
@@ -946,6 +1012,13 @@ const handleSearch = async () => {
         searchCriteria.slices = validLegs
       }
       window.dispatchEvent(new CustomEvent('flybeth:flight-search', { detail: searchCriteria }))
+    }
+
+    // Emit a custom event for transfers if already mounted
+    if (import.meta.client && currentTab.value === 'Transfers') {
+      window.dispatchEvent(new CustomEvent('flybeth:transfer-search', { 
+        detail: { ...transferSearchState, ...transferOccupancy, tripType: transferTripType.value }
+      }))
     }
   } finally {
     isSearching.value = false

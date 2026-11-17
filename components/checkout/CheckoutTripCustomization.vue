@@ -171,7 +171,7 @@
 
     <!-- Teleport Side Drawer -->
     <Teleport to="body">
-      <div v-if="isDrawerOpen" class="fixed inset-0 z-[100] flex justify-end p-4 sm:p-6">
+      <div v-if="isDrawerOpen" class="fixed inset-0 z-[1000005] flex justify-end p-4 sm:p-6">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity animate-in fade-in" @click="closeDrawer"></div>
         

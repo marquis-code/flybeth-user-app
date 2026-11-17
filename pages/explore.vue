@@ -2,7 +2,7 @@
   <div class="ep-root" @mousedown="handleGlobalMousedown">
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="ep-hero relative bg-[#0D1DAD] overflow-hidden">
+    <section class="ep-hero relative z-30 bg-[#0D1DAD]">
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
         <div

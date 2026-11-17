@@ -3,7 +3,7 @@
     <FullScreenLoader :show="loading" moduleName="Cruises" />
 
     <!-- ═══════════════ PREMIUM HERO ═══════════════ -->
-    <section class="cr-hero relative overflow-hidden bg-[#0D1DAD] py-20 lg:py-28">
+    <section class="cr-hero relative z-30 bg-[#0D1DAD] py-20 lg:py-28">
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
         <div
@@ -240,7 +240,7 @@
 
     <!-- Mobile filter overlay -->
     <Transition name="cr-ov">
-      <div v-if="mobileFilters" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-[150] lg:hidden" @click.self="mobileFilters = false">
+      <div v-if="mobileFilters" class="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-[1000005] lg:hidden" @click.self="mobileFilters = false">
         <div class="absolute bottom-0 inset-x-0 bg-white rounded-t-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
           <!-- Replication of sidebar content for mobile -->
         </div>

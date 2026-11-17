@@ -3,7 +3,7 @@
     <FullScreenLoader :show="loading" moduleName="Flights" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="fp-hero relative bg-[#0D1DAD] overflow-hidden" :class="{'fp-hero--dest': searchQuery.destination}">
+    <section class="fp-hero relative z-30 bg-[#0D1DAD]" :class="{'fp-hero--dest': searchQuery.destination}">
       <!-- Brand #0D1DAD background with radial gradient and dotted grid pattern -->
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>

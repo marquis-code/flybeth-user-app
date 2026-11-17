@@ -3,7 +3,7 @@
     <FullScreenLoader :show="loading" moduleName="Transfers" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="tr-hero relative bg-[#0D1DAD] overflow-hidden">
+    <section class="tr-hero relative z-30 bg-[#0D1DAD]">
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
         <div
@@ -134,25 +134,173 @@
     </div>
 
     <!-- Edit Search Modal -->
-    <div v-if="showEditSearch" class="tr-modal-overlay" @click.self="showEditSearch = false">
-      <div class="tr-modal-content">
-        <button class="tr-modal-close" @click="showEditSearch = false">&times;</button>
-        <SearchWidget defaultTab="Transfers" />
-      </div>
-    </div>
+    <Teleport to="body">
+      <Transition name="tr-modal-fade">
+        <div 
+          v-if="showEditSearch" 
+          class="fixed inset-0 z-[1000005] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+          @click.self="showEditSearch = false"
+        >
+          <div class="bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-gray-100 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#0D1DAD]/10 flex items-center justify-center text-[#0D1DAD]">
+                  <Car class="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 class="text-lg font-black text-gray-900 leading-tight">Edit Transfer Search</h3>
+                  <p class="text-xs text-gray-500 font-medium">Modify locations, dates, pickup times or passengers</p>
+                </div>
+              </div>
+              <button 
+                type="button"
+                @click="showEditSearch = false" 
+                class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
+                aria-label="Close"
+              >
+                <X class="w-5 h-5" />
+              </button>
+            </div>
+
+            <!-- Modal Content Form -->
+            <div class="p-6 sm:p-8 space-y-6">
+              <!-- One-way / Return Mode Selection -->
+              <div class="flex items-center gap-4">
+                <label 
+                  class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-xl border text-sm font-bold transition-all select-none"
+                  :class="tripType === 'oneway' ? 'border-[#0D1DAD] bg-blue-50/50 text-[#0D1DAD]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
+                >
+                  <input type="radio" value="oneway" v-model="tripType" class="sr-only" />
+                  <span class="w-3.5 h-3.5 rounded-full border flex items-center justify-center" :class="tripType === 'oneway' ? 'border-[#0D1DAD]' : 'border-gray-300'">
+                    <span v-if="tripType === 'oneway'" class="w-2 h-2 rounded-full bg-[#0D1DAD]"></span>
+                  </span>
+                  One-way Transfer
+                </label>
+                <label 
+                  class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-xl border text-sm font-bold transition-all select-none"
+                  :class="tripType === 'return' ? 'border-[#0D1DAD] bg-blue-50/50 text-[#0D1DAD]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
+                >
+                  <input type="radio" value="return" v-model="tripType" class="sr-only" />
+                  <span class="w-3.5 h-3.5 rounded-full border flex items-center justify-center" :class="tripType === 'return' ? 'border-[#0D1DAD]' : 'border-gray-300'">
+                    <span v-if="tripType === 'return'" class="w-2 h-2 rounded-full bg-[#0D1DAD]"></span>
+                  </span>
+                  Return Transfer
+                </label>
+              </div>
+
+              <!-- Main Fields Row: Pick-up & Drop-off -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border border-gray-200 rounded-2xl p-2 bg-gray-50/50 hover:border-gray-300 transition-colors focus-within:border-[#0D1DAD] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0D1DAD]/20">
+                  <LocationPicker 
+                    v-model="searchQuery.origin" 
+                    label="Pick-up Location" 
+                    placeholder="Airport or city address" 
+                    @select="onOriginSelect"
+                  />
+                </div>
+                <div class="border border-gray-200 rounded-2xl p-2 bg-gray-50/50 hover:border-gray-300 transition-colors focus-within:border-[#0D1DAD] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0D1DAD]/20">
+                  <LocationPicker 
+                    v-model="searchQuery.destination" 
+                    label="Drop-off Destination" 
+                    placeholder="Hotel, landmark or address" 
+                    @select="onDestinationSelect"
+                  />
+                </div>
+              </div>
+
+              <!-- Dates & Times & Passengers -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="border border-gray-200 rounded-2xl p-2 bg-gray-50/50 hover:border-gray-300 transition-colors">
+                  <FlightDateRangePicker 
+                    :departure="searchQuery.date" 
+                    mode="oneway" 
+                    departureLabel="Pick-up Date"
+                    @update:departure="(v) => searchQuery.date = v"
+                  />
+                </div>
+                <div class="border border-gray-200 rounded-2xl p-3 bg-gray-50/50 flex flex-col justify-center">
+                  <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Pick-up Time</span>
+                  <CustomTimePicker v-model="searchQuery.time">
+                    <template #default="{ value }">
+                      <div class="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-900">
+                        <Clock class="w-4 h-4 text-gray-400" />
+                        <span>{{ value || '12:00' }}</span>
+                      </div>
+                    </template>
+                  </CustomTimePicker>
+                </div>
+                <div class="border border-gray-200 rounded-2xl p-2 bg-gray-50/50 flex flex-col justify-center">
+                  <Occupancypicker 
+                    label="Passengers" 
+                    variant="flight" 
+                    v-model:adults="searchQuery.adults"
+                  />
+                </div>
+              </div>
+
+              <!-- Return Fields (if Return selected) -->
+              <div v-if="tripType === 'return'" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                <div class="border border-gray-200 rounded-2xl p-2 bg-gray-50/50">
+                  <FlightDateRangePicker 
+                    :departure="searchQuery.returnDate" 
+                    mode="oneway" 
+                    departureLabel="Return Date"
+                    @update:departure="(v) => searchQuery.returnDate = v"
+                  />
+                </div>
+                <div class="border border-gray-200 rounded-2xl p-3 bg-gray-50/50 flex flex-col justify-center">
+                  <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Return Time</span>
+                  <CustomTimePicker v-model="searchQuery.returnTime">
+                    <template #default="{ value }">
+                      <div class="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-900">
+                        <Clock class="w-4 h-4 text-gray-400" />
+                        <span>{{ value || '12:00' }}</span>
+                      </div>
+                    </template>
+                  </CustomTimePicker>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+              <button 
+                type="button" 
+                class="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-100 transition-colors"
+                @click="showEditSearch = false"
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                class="px-6 py-2.5 rounded-xl bg-[#0D1DAD] hover:bg-[#0A1485] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+                :class="{ 'opacity-70 cursor-not-allowed': loading }"
+                :disabled="loading"
+                @click="applyModalSearch"
+              >
+                <span v-if="!loading">Apply & Search Transfers</span>
+                <span v-else class="tr-spin"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ layout: 'no-footer' })
 
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { useSearchTransfers } from '@/composables/modules/transfers/useSearchTransfers'
-import { Car } from 'lucide-vue-next'
+import { Car, Clock, X } from 'lucide-vue-next'
 import TransferCard from '@/components/TransferCard.vue'
 import LocationPicker from '@/components/LocationPicker.vue'
 import FlightDateRangePicker from '@/components/FlightDateRangePicker.vue'
-import SearchWidget from '@/components/SearchWidget.vue'
+import CustomTimePicker from '@/components/ui/CustomTimePicker.vue'
+import Occupancypicker from '@/components/Occupancypicker.vue'
 import { flightsApi } from '@/api_factory/modules/flights'
 
 const { loading, transfers, outboundTransfers, returnTransfers, searchTransfers } = useSearchTransfers()
@@ -339,6 +487,41 @@ const selectTransfer = (t: any) => {
   navigateTo({ path: '/checkout' })
 }
 
+const applyModalSearch = () => {
+  if (import.meta.client) {
+    try {
+      localStorage.setItem('flybeth_last_transfers_search', JSON.stringify({
+        origin: searchQuery.value.origin,
+        destination: searchQuery.value.destination,
+        date: searchQuery.value.date,
+        time: searchQuery.value.time,
+        returnDate: searchQuery.value.returnDate,
+        returnTime: searchQuery.value.returnTime,
+        adults: Number(searchQuery.value.adults) || 1,
+        tripType: tripType.value
+      }))
+    } catch (e) {}
+  }
+  showEditSearch.value = false
+  handleSearch()
+}
+
+const handleExternalTransferSearch = (e: any) => {
+  const detail = e.detail
+  if (detail) {
+    if (detail.origin) searchQuery.value.origin = detail.origin
+    if (detail.destination) searchQuery.value.destination = detail.destination
+    if (detail.date) searchQuery.value.date = detail.date
+    if (detail.time) searchQuery.value.time = detail.time
+    if (detail.returnDate) searchQuery.value.returnDate = detail.returnDate
+    if (detail.returnTime) searchQuery.value.returnTime = detail.returnTime
+    if (detail.adults) searchQuery.value.adults = Number(detail.adults)
+    if (detail.tripType) tripType.value = detail.tripType
+  }
+  showEditSearch.value = false
+  handleSearch()
+}
+
 onMounted(() => {
   tripType.value = 'oneway'
   searchQuery.value.origin = 'DXB'
@@ -360,16 +543,23 @@ onMounted(() => {
         if (parsed.adults) searchQuery.value.adults = Number(parsed.adults)
       }
     } catch(e) {}
+    window.addEventListener('flybeth:transfer-search', handleExternalTransferSearch)
   }
   
   handleSearch()
+})
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    window.removeEventListener('flybeth:transfer-search', handleExternalTransferSearch)
+  }
 })
 </script>
 
 <style scoped>
 .tr-root { min-height: 100vh; background: #fff; font-family: 'Satoshi', sans-serif; color: #111; }
 .tr-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.tr-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 44px 0 56px; position: relative; }
+.tr-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 44px 0 56px; position: relative; z-index: 30; }
 .tr-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .tr-headline { margin-bottom: 30px; position: relative; z-index: 10; }
 .tr-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); letter-spacing: 0.2em; }
@@ -411,8 +601,6 @@ onMounted(() => {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Modal Styles */
-.tr-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: flex-start; justify-content: center; z-index: 9999; padding: 60px 20px; backdrop-filter: blur(4px); overflow-y: auto; }
-.tr-modal-content { background: #fff; border-radius: 24px; padding: 20px; max-width: 1200px; width: 100%; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: visible; }
-.tr-modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: #888; z-index: 999999; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f5f5f5; }
-.tr-modal-close:hover { background: #eee; color: #111; }
+.tr-modal-fade-enter-active, .tr-modal-fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.tr-modal-fade-enter-from, .tr-modal-fade-leave-to { opacity: 0; transform: scale(0.98); }
 </style>

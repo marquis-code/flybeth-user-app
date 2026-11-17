@@ -3,7 +3,7 @@
     <FullScreenLoader :show="loading" moduleName="Activities" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="tt-hero relative bg-[#0D1DAD] overflow-hidden">
+    <section class="tt-hero relative z-30 bg-[#0D1DAD]">
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
         <div
@@ -413,7 +413,7 @@ onMounted(() => {
 .tt-wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
 /* ── Hero ──────────────────────────────────────────────────────────── */
-.tt-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 44px 0 56px; position: relative; }
+.tt-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 44px 0 56px; position: relative; z-index: 30; }
 .tt-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
 .tt-headline { margin-bottom: 28px; position: relative; z-index: 10; }
