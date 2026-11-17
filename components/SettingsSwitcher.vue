@@ -76,7 +76,7 @@
          </p>
          <button 
            @click="$emit('close')" 
-           class="w-full py-3 bg-black text-white text-xs rounded-xl hover:bg-gray-900 transition-all font-bold"
+           class="w-full py-3 bg-[#0D1DAD] hover:bg-[#002a66] text-white text-xs rounded-xl transition-all font-bold shadow-md shadow-[#0D1DAD]/20"
          >
             {{ $t('settings.applyChanges') }}
          </button>

@@ -76,7 +76,7 @@
         <div class="text-center mt-10">
           <NuxtLink 
             to="/things-to-do"
-            class="inline-flex items-center gap-2.5 bg-black text-white font-bold px-10 py-4 rounded-xl transition-all shadow-lg shadow-blue-200/50 active:scale-[0.98]   text-sm group"
+            class="inline-flex items-center gap-2.5 bg-[#0D1DAD] hover:bg-[#002a66] text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-[#0D1DAD]/20 active:scale-[0.98] text-sm group"
           >
             View {{ totalCount > 4 ? totalCount - 4 : '' }} More Experiences
             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>

@@ -619,12 +619,12 @@ onMounted(() => {
 
 /* Search button */
 .ep-search-btn {
-  flex-shrink: 0; background: #111; border: none; border-radius: 12px;
+  flex-shrink: 0; background: #0D1DAD; border: none; border-radius: 12px;
   color: #fff; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 600;
   cursor: pointer; padding: 0 24px; margin: 6px; min-width: 110px;
   transition: background 0.2s; align-self: stretch;
 }
-.ep-search-btn:hover { background: #0D1DAD; }
+.ep-search-btn:hover { background: #002a66; }
 .ep-search-btn--busy { opacity: 0.75; cursor: wait; }
 .ep-search-inner { display: flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; }
 .ep-spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -752,7 +752,8 @@ onMounted(() => {
 .ep-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
 .ep-sort-dot--on { background: #0D1DAD; }
 
-.ep-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; }
+.ep-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; }
+.ep-filter-mob:hover { background: #002a66; }
 
 /* Loading */
 .ep-loading { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -773,8 +774,8 @@ onMounted(() => {
 .ep-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #0D1DAD; margin-bottom: 4px; }
 .ep-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .ep-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.ep-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
-.ep-empty-btn:hover { background: #0D1DAD; }
+.ep-empty-btn { margin-top: 6px; padding: 10px 22px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.ep-empty-btn:hover { background: #002a66; }
 
 /* Deal grid */
 .ep-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -812,8 +813,8 @@ onMounted(() => {
 .ep-card-footer { display: flex; align-items: center; justify-content: space-between; }
 .ep-card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
 .ep-tag { font-size: 9px; font-weight: 600; color: #555; background: #f5f5f0; padding: 2px 7px; border-radius: 4px; }
-.ep-card-btn { padding: 7px 14px; background: #111; border: none; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
-.ep-card-btn:hover { background: #0D1DAD; }
+.ep-card-btn { padding: 7px 14px; background: #0D1DAD; border: none; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
+.ep-card-btn:hover { background: #002a66; }
 
 /* Overlay */
 .ep-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 150; backdrop-filter: blur(2px); }

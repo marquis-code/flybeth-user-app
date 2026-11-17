@@ -2256,7 +2256,7 @@ onMounted(async () => {
   width: 100%;
   margin-top: 28px;
   padding: 14px;
-  background: #111;
+  background: #0D1DAD;
   border: none;
   border-radius: 12px;
   font-family: 'Satoshi', sans-serif;
@@ -2265,9 +2265,9 @@ onMounted(async () => {
   color: #fff;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(13, 29, 173, 0.2);
 }
-.fp-pax-done:hover { background: #0D1DAD; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(50, 180, 4, 0.2); }
+.fp-pax-done:hover { background: #002a66; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(13, 29, 173, 0.3); }
 
 /* ── Main content ──────────────────────────────────────────────────── */
 .fp-main { padding-top: 44px; padding-bottom: 72px; }
@@ -2429,7 +2429,8 @@ onMounted(async () => {
 .fp-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
 .fp-sort-dot--on { background: #0D1DAD; }
 
-.fp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
+.fp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; transition: background 0.15s; }
+.fp-filter-mob:hover { background: #002a66; }
 .fp-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #0D1DAD; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
 /* Loading */
@@ -2448,8 +2449,8 @@ onMounted(async () => {
 .fp-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #0D1DAD; margin-bottom: 4px; }
 .fp-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .fp-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.fp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
-.fp-empty-btn:hover { background: #0D1DAD; }
+.fp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
+.fp-empty-btn:hover { background: #002a66; }
 
 .fp-groups { display: flex; flex-direction: column; gap: 16px; }
 

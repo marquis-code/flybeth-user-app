@@ -72,7 +72,7 @@
 
           <button 
             @click="apply"
-            class="w-full bg-black hover:bg-black text-white  py-4 rounded-2xl transition-all  text-sm active:scale-[0.98] mt-4"
+            class="w-full bg-[#0D1DAD] hover:bg-[#002a66] text-white py-3.5 rounded-xl transition-all text-sm font-bold active:scale-[0.98] mt-4 shadow-md shadow-[#0D1DAD]/20"
           >
             Apply changes
           </button>

@@ -125,7 +125,7 @@
         <div class="mt-10 pt-6 border-t border-gray-200 flex items-center justify-end gap-4">
           <button 
             @click="isOpen = false"
-            class="px-8 py-3 bg-black text-white text-sm  uppercase  rounded-xl hover:bg-black transition-all transform active:scale-[0.98] shadow-lg shadow-gray-200"
+            class="px-8 py-3 bg-[#0D1DAD] hover:bg-[#002a66] text-white text-sm uppercase rounded-xl transition-all transform active:scale-[0.98] shadow-lg shadow-[#0D1DAD]/20"
           >
             Apply Selection
           </button>
@@ -271,7 +271,7 @@ const getDayClasses = (date: Date) => {
   const isSelectedSingle = props.mode === 'single' && isSameDate(date, props.modelValue as Date)
 
   if (isStart || isEnd || isSelectedSingle) {
-    classes.push('bg-black text-white shadow-lg scale-105')
+    classes.push('bg-[#0D1DAD] text-white shadow-lg scale-105')
   } else if (isInRange(date)) {
     classes.push('text-black')
   } else {

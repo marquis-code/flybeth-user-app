@@ -104,7 +104,7 @@
             <button 
               @click="downloadReceipt" 
               :disabled="downloadingReceipt" 
-              class="w-full md:w-auto group flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 shadow-sm"
+              class="w-full md:w-auto group flex items-center justify-center gap-2 bg-[#0D1DAD] hover:bg-[#002a66] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 shadow-md shadow-[#0D1DAD]/20"
             >
               <RefreshCw v-if="downloadingReceipt" class="w-4 h-4 animate-spin" />
               <Download v-else class="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />

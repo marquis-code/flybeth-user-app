@@ -94,7 +94,7 @@
             <button 
               @click="handleNext"
               :disabled="!amount || !selectedMethod || loading"
-              class="w-full h-12 bg-black text-white rounded-xl font-black text-xs hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center uppercase mt-6"
+              class="w-full h-12 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-xl font-bold text-xs transition-all disabled:opacity-50 flex items-center justify-center uppercase mt-6 shadow-md shadow-[#0D1DAD]/20"
             >
                <template v-if="loading">Processing...</template>
                <template v-else>Confirm Funding</template>
@@ -125,7 +125,7 @@
                <button 
                  @click="submitManualTransfer"
                  :disabled="loading"
-                 class="w-full h-12 bg-black text-white rounded-xl font-black text-xs uppercase transition-all"
+                 class="w-full h-12 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-xl font-bold text-xs uppercase transition-all shadow-md shadow-[#0D1DAD]/20"
                >
                  Verify Payment
                </button>

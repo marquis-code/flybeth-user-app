@@ -37,7 +37,7 @@
               </div>
               <button 
                 @click.stop="handleBookNow(hotel)"
-                class="px-4 py-2 bg-black text-white hover:bg-black transition-colors text-xs font-bold rounded-md "
+                class="px-4 py-2 bg-[#0D1DAD] hover:bg-[#002a66] text-white transition-all text-xs font-bold rounded-lg shadow-sm"
               >
                 Book now
               </button>

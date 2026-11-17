@@ -43,7 +43,7 @@
       <h3 class="text-sm  text-black  mb-8">Star rating</h3>
       <div class="grid grid-cols-1 gap-4">
         <label v-for="star in [5, 4, 3]" :key="star" class="flex items-center group cursor-pointer">
-          <div class="relative flex items-center justify-center w-6 h-6 border-2 border-gray-200 rounded-xl mr-4 group-hover:border-gray-200 transition-all" :class="{'bg-black border-gray-200 shadow-xl shadow-gray-900/10': filters.ratings.includes(star)}">
+          <div class="relative flex items-center justify-center w-6 h-6 border-2 border-gray-200 rounded-xl mr-4 group-hover:border-gray-200 transition-all" :class="{'bg-[#0D1DAD] border-[#0D1DAD] shadow-xl shadow-[#0D1DAD]/20': filters.ratings.includes(star)}">
             <input type="checkbox" :value="star" v-model="filters.ratings" class="absolute inset-0 opacity-0 cursor-pointer" />
             <svg v-if="filters.ratings.includes(star)" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
@@ -63,7 +63,7 @@
       <div class="space-y-5">
         <label v-for="amenity in commonAmenities" :key="amenity.id" class="flex items-center justify-between group cursor-pointer">
           <div class="flex items-center">
-            <div class="relative flex items-center justify-center w-6 h-6 border-2 border-gray-200 rounded-xl mr-4 group-hover:border-gray-200 transition-all" :class="{'bg-black border-gray-200 shadow-xl shadow-gray-900/10': filters.amenities.includes(amenity.id)}">
+            <div class="relative flex items-center justify-center w-6 h-6 border-2 border-gray-200 rounded-xl mr-4 group-hover:border-gray-200 transition-all" :class="{'bg-[#0D1DAD] border-[#0D1DAD] shadow-xl shadow-[#0D1DAD]/20': filters.amenities.includes(amenity.id)}">
               <input type="checkbox" :value="amenity.id" v-model="filters.amenities" class="absolute inset-0 opacity-0 cursor-pointer" />
               <svg v-if="filters.amenities.includes(amenity.id)" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
@@ -79,7 +79,7 @@
       <h3 class="text-sm  text-black  mb-8">Accommodation types</h3>
       <div class="space-y-5">
         <label v-for="type in accommodationTypes" :key="type" class="flex items-center group cursor-pointer">
-          <div class="relative flex items-center justify-center w-6 h-6 border-2 border-gray-200 rounded-xl mr-4 group-hover:border-gray-200 transition-all" :class="{'bg-black border-gray-200 shadow-xl shadow-gray-900/10': filters.types.includes(type)}">
+          <div class="relative flex items-center justify-center w-6 h-6 border-2 border-gray-200 rounded-xl mr-4 group-hover:border-gray-200 transition-all" :class="{'bg-[#0D1DAD] border-[#0D1DAD] shadow-xl shadow-[#0D1DAD]/20': filters.types.includes(type)}">
             <input type="checkbox" :value="type" v-model="filters.types" class="absolute inset-0 opacity-0 cursor-pointer" />
             <svg v-if="filters.types.includes(type)" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>

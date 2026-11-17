@@ -163,7 +163,7 @@
           <div class="flex items-center gap-2 text-red-600 text-sm font-bold">
             <AlertCircle class="w-4 h-4" /> Insufficient wallet balance
           </div>
-          <button @click="showFundModal = true" class="w-full py-2 bg-black text-white rounded-lg text-sm font-bold">Add Funds</button>
+          <button @click="showFundModal = true" class="w-full py-2 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-lg text-sm font-bold shadow-sm transition-all">Add Funds</button>
         </div>
       </div>
     </div>

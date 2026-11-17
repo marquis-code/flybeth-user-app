@@ -39,7 +39,7 @@
                 <label class="text-sm  text-black   ml-1">Password</label>
                 <input v-model="loginData.password" type="password" required placeholder="••••••••" class="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue/30 outline-none text-sm font-medium transition-all" />
               </div>
-              <button :disabled="authLoading" type="submit" class="w-full py-3 bg-black text-white rounded-2xl text-sm    hover:bg-black transition-all transform active:scale-[0.98] mt-4 shadow-xl shadow-gray-200 flex items-center justify-center gap-3">
+              <button :disabled="authLoading" type="submit" class="w-full py-3 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-2xl text-sm transition-all transform active:scale-[0.98] mt-4 shadow-xl shadow-[#0D1DAD]/20 flex items-center justify-center gap-3">
                 <span v-if="!authLoading">{{ isLogin ? 'Login' : 'Complete Registration' }}</span>
                 <svg v-else class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               </button>
@@ -65,7 +65,7 @@
                 <label class="text-sm  text-black   ml-1">Password</label>
                 <input v-model="regData.password" type="password" required placeholder="••••••••" class="w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue/30 outline-none text-sm font-medium transition-all" />
               </div>
-              <button :disabled="authLoading" type="submit" class="w-full py-3 bg-black text-white rounded-2xl text-sm    hover:bg-black transition-all transform active:scale-[0.98] mt-4 shadow-xl shadow-gray-200 flex items-center justify-center gap-3">
+              <button :disabled="authLoading" type="submit" class="w-full py-3 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-2xl text-sm transition-all transform active:scale-[0.98] mt-4 shadow-xl shadow-[#0D1DAD]/20 flex items-center justify-center gap-3">
                 <span v-if="!authLoading">Signup</span>
                 <svg v-else class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               </button>

@@ -434,8 +434,8 @@ onMounted(() => {
 .tt-fld-val { font-size: 13px; font-weight: 500; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tt-fld-val--set { color: #111; }
 .tt-bar-sep { width: 1px; background: #ebebe5; margin: 10px 0; }
-.tt-search-btn { background: #111; border: none; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0 24px; margin: 6px; min-width: 140px; transition: background 0.2s; }
-.tt-search-btn:hover { background: #0d66d0; }
+.tt-search-btn { background: #0D1DAD; border: none; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; padding: 0 24px; margin: 6px; min-width: 140px; transition: background 0.2s; }
+.tt-search-btn:hover { background: #002a66; }
 .tt-spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -503,7 +503,8 @@ onMounted(() => {
 .tt-card-price-grp { display: flex; flex-direction: column; }
 .tt-price-lbl { font-size: 9px; font-weight: 700; color: #bbb; text-transform: uppercase; }
 .tt-price-val { font-size: 18px; font-weight: 700; color: #111; }
-.tt-card-btn { padding: 8px 16px; background: #111; color: #fff; border-radius: 10px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; }
+.tt-card-btn { padding: 8px 16px; background: #0D1DAD; color: #fff; border-radius: 10px; font-size: 11px; font-weight: 700; border: none; cursor: pointer; transition: background 0.15s; }
+.tt-card-btn:hover { background: #002a66; }
 
 /* ── Skeletons ─────────────────────────────────────────────────────── */
 .tt-skel-card { background: #fff; border: 1px solid #eaeae3; border-radius: 16px; overflow: hidden; animation: pulse 1.5s infinite; }
@@ -521,13 +522,15 @@ onMounted(() => {
 .tt-empty-ico { width: 60px; height: 60px; border-radius: 50%; background: #f0f4f7; display: flex; align-items: center; justify-content: center; color: #0d66d0; margin-bottom: 16px; }
 .tt-empty-h { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
 .tt-empty-p { color: #aaa; font-size: 14px; margin-bottom: 24px; max-width: 320px; }
-.tt-empty-btn { padding: 10px 24px; background: #111; color: #fff; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; }
+.tt-empty-btn { padding: 10px 24px; background: #0D1DAD; color: #fff; border-radius: 10px; font-weight: 600; border: none; cursor: pointer; transition: background 0.15s; }
+.tt-empty-btn:hover { background: #002a66; }
 
 /* Mobile */
 @media (max-width: 1024px) {
   .tt-body { grid-template-columns: 1fr; }
   .tt-sbar { display: none; }
-  .tt-filter-mob { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #111; color: #fff; border-radius: 10px; font-size: 12px; cursor: pointer; border: none; }
+  .tt-filter-mob { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #0D1DAD; color: #fff; border-radius: 10px; font-size: 12px; cursor: pointer; border: none; transition: background 0.15s; }
+  .tt-filter-mob:hover { background: #002a66; }
 }
 @media (max-width: 640px) {
   .tt-grid { grid-template-columns: 1fr; }

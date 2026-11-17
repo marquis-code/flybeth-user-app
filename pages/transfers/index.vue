@@ -574,8 +574,8 @@ onUnmounted(() => {
 .tr-fld-val { font-size: 13px; font-weight: 500; color: #444; }
 .tr-fld-val--set { color: #111; }
 .tr-bar-sep { width: 1px; background: #f0f0ea; margin: 12px 0; }
-.tr-search-btn { background: #111; color: #fff; border: none; padding: 0 18px; border-radius: 14px; margin: 6px; font-weight: 600; cursor: pointer; }
-.tr-search-btn:hover { background: #3b82f6; }
+.tr-search-btn { background: #0D1DAD; color: #fff; border: none; padding: 0 20px; border-radius: 14px; margin: 6px; font-weight: 700; cursor: pointer; transition: background 0.16s ease; }
+.tr-search-btn:hover { background: #002a66; }
 .tr-search-btn--secondary { background: #f0f0ea; color: #111; }
 .tr-search-btn--secondary:hover { background: #e2e8f0; color: #111; }
 .tr-drop { position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 280px; z-index: 100; padding: 8px; }

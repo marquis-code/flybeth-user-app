@@ -1022,13 +1022,13 @@ onMounted(async () => {
 /* Search button */
 .sp-search-btn {
   flex-shrink: 0;
-  background: #111;
+  background: #0D1DAD;
   border: none;
   border-radius: 12px;
   color: #fff;
   font-family: 'Satoshi', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   padding: 0 24px;
   margin: 6px;
@@ -1036,7 +1036,7 @@ onMounted(async () => {
   transition: background 0.2s, transform 0.15s;
   align-self: stretch;
 }
-.sp-search-btn:hover { background: #1d7a4f; }
+.sp-search-btn:hover { background: #002a66; }
 .sp-search-btn--busy { opacity: 0.75; cursor: wait; }
 .sp-search-inner { display: flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; }
 .sp-spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -1186,8 +1186,8 @@ onMounted(async () => {
 .sp-guests-btn:hover:not(:disabled) { border-color: #111; color: #111; }
 .sp-guests-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .sp-guests-num { font-size: 16px; font-weight: 700; color: #111; min-width: 20px; text-align: center; }
-.sp-guests-done { width: 100%; padding: 10px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
-.sp-guests-done:hover { background: #1d7a4f; }
+.sp-guests-done { width: 100%; padding: 10px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
+.sp-guests-done:hover { background: #002a66; }
  
 /* ── Main ─────────────────────────────────────────────────────────── */
 .sp-main { padding-top: 32px; padding-bottom: 60px; }
@@ -1272,8 +1272,8 @@ onMounted(async () => {
 .sp-view-btn { width: 30px; height: 30px; border-radius: 6px; border: none; background: none; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.14s; }
 .sp-view-btn--on { background: #fff; color: #111; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
  
-.sp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; position: relative; }
-.sp-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #1d7a4f; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.sp-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 700; color: #fff; cursor: pointer; position: relative; }
+.sp-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #FF8A00; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
  
 /* Loading skeletons */
 .sp-loading { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -1297,8 +1297,8 @@ onMounted(async () => {
 .sp-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #1d7a4f; margin-bottom: 4px; }
 .sp-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .sp-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.sp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.18s; }
-.sp-empty-btn:hover { background: #1d7a4f; }
+.sp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.18s; }
+.sp-empty-btn:hover { background: #002a66; }
  
 /* ── Stay cards ────────────────────────────────────────────────────── */
 .sp-cards {
@@ -1373,8 +1373,8 @@ onMounted(async () => {
 .sp-card-price-wrap { display: flex; align-items: baseline; gap: 3px; }
 .sp-card-price { font-size: 20px; font-weight: 700; color: #111; letter-spacing: -0.03em; }
 .sp-card-per { font-size: 10px; color: #bbb; font-weight: 500; }
-.sp-card-cta { font-size: 11px; font-weight: 700; color: #1d7a4f; background: #edf5f1; border: none; border-radius: 7px; padding: 7px 12px; cursor: pointer; transition: all 0.14s; white-space: nowrap; }
-.sp-card-cta:hover { background: #1d7a4f; color: #fff; }
+.sp-card-cta { font-size: 11px; font-weight: 700; color: #0D1DAD; background: #EEF2F6; border: none; border-radius: 7px; padding: 7px 12px; cursor: pointer; transition: all 0.14s; white-space: nowrap; }
+.sp-card-cta:hover { background: #0D1DAD; color: #fff; }
  
 /* Pending cart pill */
 .sp-cart-pill {
@@ -1396,8 +1396,8 @@ onMounted(async () => {
 .sp-cart-label { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #888; }
 .sp-cart-name { font-size: 12px; font-weight: 600; color: #fff; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
 .sp-cart-price { font-size: 16px; font-weight: 700; color: #fff; }
-.sp-cart-checkout { background: #1d7a4f; border: none; border-radius: 20px; padding: 8px 16px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
-.sp-cart-checkout:hover { background: #186440; }
+.sp-cart-checkout { background: #0D1DAD; border: none; border-radius: 20px; padding: 8px 16px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
+.sp-cart-checkout:hover { background: #002a66; }
 .sp-cart-close { background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; transition: background 0.14s; flex-shrink: 0; }
 .sp-cart-close:hover { background: rgba(255,255,255,0.2); }
  

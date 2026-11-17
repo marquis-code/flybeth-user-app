@@ -190,7 +190,7 @@
               </div>
             </template>
             <template v-else>
-              <NuxtLink to="/bookings" class="bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-800 active:bg-gray-900 transition-colors shadow-sm">
+              <NuxtLink to="/bookings" class="bg-[#0D1DAD] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#002a66] active:bg-[#001e4d] transition-all shadow-sm">
                 Manage Booking
               </NuxtLink>
             </template>
@@ -208,7 +208,7 @@
                 <span v-if="notifications.length > 0" class="absolute top-2 right-2 h-2 w-2 bg-red-500 border border-white rounded-full"></span>
               </button>
             </div>
-            <NuxtLink v-if="!user" to="/bookings" class="bg-black text-white px-4 py-2 rounded-md text-[12px] font-semibold active:scale-95 transition-all">
+            <NuxtLink v-if="!user" to="/bookings" class="bg-[#0D1DAD] text-white px-4 py-2 rounded-md text-[12px] font-semibold hover:bg-[#002a66] active:scale-95 transition-all shadow-sm">
               Manage Booking
             </NuxtLink>
             <button v-else @click="showLogoutModal = true" class="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-md text-red-500">

@@ -505,7 +505,7 @@ watch(() => searchQuery.departingMonth, (val) => {
 }
 
 .cr-search-btn {
-  background: #111;
+  background: #0D1DAD;
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -522,7 +522,7 @@ watch(() => searchQuery.departingMonth, (val) => {
   transition: all 0.16s ease;
   flex-shrink: 0;
 }
-.cr-search-btn:hover { background: #0D1DAD; }
+.cr-search-btn:hover { background: #002a66; }
 
 .cr-search-inner {
   display: flex;

@@ -1433,13 +1433,13 @@ useHead({
 
 .sd-avail-btn {
   flex-shrink: 0;
-  background: #111;
+  background: #0D1DAD;
   border: none;
   border-radius: 10px;
   color: #fff;
   font-family: 'Satoshi', sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   padding: 0 20px;
   margin: 5px;
@@ -1447,7 +1447,7 @@ useHead({
   min-width: 90px;
   align-self: stretch;
 }
-.sd-avail-btn:hover { background: #1d7a4f; }
+.sd-avail-btn:hover { background: #002a66; }
 .sd-avail-btn--busy { opacity: 0.7; cursor: wait; }
 .sd-avail-btn-inner { display: flex; align-items: center; justify-content: center; gap: 6px; }
 
@@ -1490,8 +1490,8 @@ useHead({
 .sd-guests-btn:hover:not(:disabled) { border-color: #111; color: #111; }
 .sd-guests-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .sd-guests-num { font-size: 16px; font-weight: 700; color: #111; min-width: 20px; text-align: center; }
-.sd-guests-done { width: 100%; padding: 10px; background: #111; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
-.sd-guests-done:hover { background: #1d7a4f; }
+.sd-guests-done { width: 100%; padding: 10px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; margin-top: 12px; }
+.sd-guests-done:hover { background: #002a66; }
 
 /* ── Rooms header ─────────────────────────────────────────────────── */
 .sd-rooms-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }

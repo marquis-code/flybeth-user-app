@@ -215,7 +215,7 @@ const truncate = (str: string, len: number) => {
 
 .pc-btn {
   padding: 8px 16px;
-  background: #111;
+  background: #0D1DAD;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -226,7 +226,7 @@ const truncate = (str: string, len: number) => {
 }
 
 .pc-card:hover .pc-btn {
-  background: #1d7a4f;
+  background: #002a66;
 }
 
 @media (max-width: 640px) {

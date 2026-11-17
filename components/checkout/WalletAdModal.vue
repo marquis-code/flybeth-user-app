@@ -38,7 +38,7 @@
         <div class="w-full space-y-4 text-center mt-auto">
           <button 
             @click="$emit('close')"
-            class="w-full h-14 bg-black text-white rounded-2xl font-black text-sm uppercase hover:bg-gray-900 transition-all"
+            class="w-full h-14 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-2xl font-bold text-sm uppercase transition-all shadow-lg shadow-[#0D1DAD]/20 active:scale-95"
           >
             I'm Ready to Save
           </button>

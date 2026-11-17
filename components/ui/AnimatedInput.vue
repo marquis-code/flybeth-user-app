@@ -108,7 +108,7 @@
           @click.stop
         >
           <!-- Compact Header -->
-          <div class="bg-black p-6 text-white text-center">
+          <div class="bg-[#0D1DAD] p-6 text-white text-center">
             <h3 class="text-sm  uppercase  opacity-60 mb-1">Select Schedule</h3>
             <p class="text-lg  ">
               {{ selectedDate ? formatDateDisplay(selectedDate) : 'Availability Calendar' }}
@@ -160,7 +160,7 @@
                   'aspect-square flex items-center justify-center text-[11px] font-bold rounded-xl transition-all',
                   day.isCurrentMonth ? 'hover:bg-gray-100 text-black cursor-pointer' : 'text-black pointer-events-none',
                   day.isToday && !day.isSelected ? 'text-black border border-gray-200' : '',
-                  day.isSelected ? 'bg-black text-white shadow-lg' : ''
+                  day.isSelected ? 'bg-[#0D1DAD] text-white shadow-lg shadow-[#0D1DAD]/20' : ''
                 ]"
                 @click.stop="selectDay(day)"
               >
@@ -181,7 +181,7 @@
             <button 
               type="button" 
               @click.stop="clearDateValue" 
-              class="flex-1 py-3 text-[9px]  uppercase  bg-black text-white rounded-xl transition-all hover:bg-black shadow-lg shadow-gray-200"
+              class="flex-1 py-3 text-[9px]  uppercase  bg-[#0D1DAD] text-white rounded-xl transition-all hover:bg-[#002a66] shadow-lg shadow-[#0D1DAD]/20"
             >
               Clear
             </button>
@@ -405,7 +405,7 @@
               
               <div class="flex items-center justify-center gap-4 mb-6">
                 <div class="flex flex-col items-center">
-                  <button type="button" @click.stop="incHour" class="p-2 hover:bg-black rounded-lg mb-2">
+                  <button type="button" @click.stop="incHour" class="p-2 hover:bg-gray-100 rounded-lg mb-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M18 15l-6-6-6 6"/>
                     </svg>
@@ -419,7 +419,7 @@
                     maxlength="2"
                     class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-white"
                   />
-                  <button type="button" @click.stop="decHour" class="p-2 hover:bg-black rounded-lg mt-2">
+                  <button type="button" @click.stop="decHour" class="p-2 hover:bg-gray-100 rounded-lg mt-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M6 9l6 6 6-6"/>
                     </svg>
@@ -427,7 +427,7 @@
                 </div>
                 <span class="text-4xl font-bold text-black">:</span>
                 <div class="flex flex-col items-center">
-                  <button type="button" @click.stop="incMin" class="p-2 hover:bg-black rounded-lg mb-2">
+                  <button type="button" @click.stop="incMin" class="p-2 hover:bg-gray-100 rounded-lg mb-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M18 15l-6-6-6 6"/>
                     </svg>
@@ -441,7 +441,7 @@
                     maxlength="2"
                     class="w-16 text-center text-3xl font-bold border-2 border-gray-200 focus:border-[#033958] rounded-xl py-6 focus:outline-none bg-white"
                   />
-                  <button type="button" @click.stop="decMin" class="p-2 hover:bg-black rounded-lg mt-2">
+                  <button type="button" @click.stop="decMin" class="p-2 hover:bg-gray-100 rounded-lg mt-2">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                       <path d="M6 9l6 6 6-6"/>
                     </svg>

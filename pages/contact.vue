@@ -79,7 +79,7 @@
                   <textarea v-model="form.message" required rows="4" placeholder="How can we help you today?" class="contact-field resize-none"></textarea>
                 </div>
 
-                <button :disabled="loading" type="submit" class="w-full h-14 rounded-2xl bg-black text-white  text-xs uppercase  hover:bg-black transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 shadow-xl shadow-gray-200">
+                <button :disabled="loading" type="submit" class="w-full h-12 rounded-xl bg-[#0D1DAD] hover:bg-[#002a66] text-white text-xs uppercase font-bold tracking-wider transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2.5 shadow-lg shadow-[#0D1DAD]/20">
                   <template v-if="!loading">
                     <Send class="h-4 w-4" />
                     Send Message

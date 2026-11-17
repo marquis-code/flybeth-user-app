@@ -76,7 +76,7 @@
                 <button 
                   type="submit" 
                   :disabled="loading"
-                  class="w-full h-14 bg-[#1A2ED4] hover:bg-[#0D1DAD] text-white rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  class="w-full h-14 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-[#0D1DAD]/20"
                 >
                   <span v-if="!loading">Login</span>
                   <div v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

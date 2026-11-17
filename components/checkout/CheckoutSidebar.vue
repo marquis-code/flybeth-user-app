@@ -242,8 +242,8 @@ const formatPrice = (price: number) => {
 }
 .ck-sb-btn:active { transform: scale(0.98); }
 
-.ck-sb-btn--primary { background: #111; color: #fff; }
-.ck-sb-btn--primary:hover { background: #1d7a4f; }
+.ck-sb-btn--primary { background: #0D1DAD; color: #fff; }
+.ck-sb-btn--primary:hover { background: #002a66; }
 
 .ck-sb-btn--second { background: #fdf2e9; color: #c2410c; border: 1px solid #fed7aa; }
 .ck-sb-btn--second:hover { background: #ffedd5; }

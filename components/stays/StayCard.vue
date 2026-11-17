@@ -81,10 +81,10 @@
 
         <button 
           @click.stop="$emit('select', stay)"
-          class="w-full bg-black hover:bg-black text-white  h-16 rounded-2xl transition-all duration-300 shadow-xl shadow-gray-900/10 active:scale-[0.98] text-sm  flex items-center justify-center gap-3 group/btn"
+          class="w-full bg-[#0D1DAD] hover:bg-[#002a66] text-white h-11 rounded-xl transition-all duration-300 shadow-md shadow-[#0D1DAD]/20 active:scale-[0.98] text-sm font-bold flex items-center justify-center gap-2 group/btn"
         >
           View details
-          <svg class="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <svg class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
       </div>
     </div>
