@@ -476,7 +476,7 @@ onMounted(() => {
 
 .cp-root {
   min-height: 100vh;
-  background: #fff;
+  background: #f8fafc;
   font-family: 'Satoshi', sans-serif;
   color: #111;
 }
@@ -719,7 +719,7 @@ onMounted(() => {
 .cp-empty-btn { margin-top: 6px; padding: 10px 22px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.18s; }
 .cp-empty-btn:hover { background: #002a66; }
 
-.cp-cards { display: flex; flex-direction: column; gap: 10px; }
+.cp-cards { display: flex; flex-direction: column; gap: 16px; }
 
 /* Overlay */
 .cp-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 150; backdrop-filter: blur(2px); }
@@ -757,11 +757,13 @@ onMounted(() => {
   .cp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
 }
 
-@media (max-width: 580px) {
-  .cp-wrap { padding: 0 14px; }
+@media (max-width: 640px) {
+  .cp-wrap { padding: 0 16px; }
+  .cp-main { padding-top: 18px; padding-bottom: 48px; }
+  .cp-cards { gap: 16px; }
   .cp-hero { padding: 28px 0 44px; }
   .cp-fld--date { flex: 1 0 100%; }
-  .cp-drop--loc { max-width: calc(100vw - 28px); left: 0; }
-  .cp-drop--cal { width: calc(100vw - 28px); left: 0; }
+  .cp-drop--loc { max-width: calc(100vw - 32px); left: 0; }
+  .cp-drop--cal { width: calc(100vw - 32px); left: 0; }
 }
 </style>
