@@ -85,9 +85,7 @@ const vehicleImage = computed(() => {
 })
 
 const providerLabel = computed(() => {
-  return props.transfer.provider_name || 
-         props.transfer.provider || 
-         'Premium Partner'
+  return 'Flybeth Verified Transfer'
 })
 
 const displayPrice = computed(() => {

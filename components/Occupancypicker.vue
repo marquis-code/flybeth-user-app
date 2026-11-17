@@ -82,8 +82,35 @@
             </div>
           </div>
 
+          <!-- Individual Child Ages (Customizable as in Image 6) -->
+          <div v-if="local.children > 0" class="space-y-3 pt-3 border-t border-gray-100">
+            <div 
+              v-for="idx in local.children" 
+              :key="idx" 
+              class="space-y-1"
+            >
+              <label class="text-[12px] font-bold text-gray-700">Child {{ idx }} age</label>
+              <div class="relative">
+                <select 
+                  v-model="childAges[idx - 1]" 
+                  class="w-full bg-white border border-gray-200 rounded-xl py-2.5 px-3 text-[13px] font-bold text-gray-900 outline-none focus:border-[#0D1DAD] focus:ring-2 focus:ring-[#0D1DAD]/10 transition-all appearance-none cursor-pointer"
+                >
+                  <option v-for="age in [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]" :key="age" :value="age">
+                    {{ age }} years
+                  </option>
+                </select>
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-400 font-medium leading-relaxed">
+              Enter the age of each child as it will be on the departure date.
+            </p>
+          </div>
+
           <!-- Children note -->
-          <p v-if="showChildNote" class="text-sm text-black font-medium leading-relaxed -mt-2">
+          <p v-if="showChildNote" class="text-sm text-black font-medium leading-relaxed -mt-1">
             Each hotel has unique child policies. Ages at check-in ensure best deals.
           </p>
 
@@ -138,7 +165,7 @@ const isCo = computed(() => props.theme === 'cheapoair')
 const emit = defineEmits([
   'update:rooms', 'update:adults', 'update:children',
   'update:infantsOnLap', 'update:infantsInSeat', 'update:cabinClass',
-  'focus', 'close'
+  'update:childAges', 'focus', 'close'
 ])
 
 const local = reactive({
@@ -149,6 +176,19 @@ const local = reactive({
   infantsInSeat: props.infantsInSeat,
 })
 const localCabinClass = ref(props.cabinClass)
+const childAges = ref<number[]>([])
+
+watch(() => local.children, (newCount) => {
+  const current = [...childAges.value]
+  while (current.length < newCount) {
+    current.push(6)
+  }
+  if (current.length > newCount) {
+    childAges.value = current.slice(0, newCount)
+  } else {
+    childAges.value = current
+  }
+}, { immediate: true })
 
 const cabinClasses = [
   { value: 'economy',         label: 'Economy' },
@@ -160,16 +200,16 @@ const cabinClasses = [
 const rows = computed(() => {
   if (props.variant === 'flight') {
     return [
-      { key: 'adults',        label: 'Adults',            note: '',              min: 1, max: 9 },
-      { key: 'children',      label: 'Children',          note: 'Ages 2–17',     min: 0, max: 8 },
+      { key: 'adults',        label: 'Adults',            note: '18+',           min: 1, max: 9 },
+      { key: 'children',      label: 'Children',          note: 'Ages 2–11',     min: 0, max: 8 },
       { key: 'infantsOnLap',  label: 'Infants on Lap',    note: 'Under 2',       min: 0, max: 4 },
       { key: 'infantsInSeat', label: 'Infants in Seat',   note: 'Under 2',       min: 0, max: 4 },
     ]
   }
   return [
     { key: 'rooms',    label: 'Rooms',    note: '',          min: 1, max: 8 },
-    { key: 'adults',   label: 'Adults',   note: '',          min: 1, max: 8 },
-    { key: 'children', label: 'Children', note: 'Ages 0–17', min: 0, max: 8 },
+    { key: 'adults',   label: 'Adults',   note: '18+',       min: 1, max: 8 },
+    { key: 'children', label: 'Children', note: 'Ages 2–11', min: 0, max: 8 },
   ]
 })
 
@@ -200,6 +240,7 @@ const closePicker = () => {
   emit('update:rooms',    local.rooms)
   emit('update:adults',   local.adults)
   emit('update:children', local.children)
+  emit('update:childAges', childAges.value)
   if (props.variant === 'flight') {
     emit('update:infantsOnLap',  local.infantsOnLap)
     emit('update:infantsInSeat', local.infantsInSeat)

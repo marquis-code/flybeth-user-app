@@ -16,7 +16,7 @@
         <!-- <div class="flex items-center gap-4">
           <input type="radio" :checked="activeMethod === 'card'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
           <div class="flex flex-col">
-            <span class="text-sm font-bold text-gray-900">Debit / Credit card (Duffel Payment)</span>
+            <span class="text-sm font-bold text-gray-900">Debit / Credit card (Instant Card Checkout)</span>
             <span class="text-[11px] text-amber-600 font-medium">USD transactions only · Dollar card required</span>
           </div>
         </div> -->

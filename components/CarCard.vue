@@ -33,8 +33,8 @@
           </div>
           <div class="flex items-center gap-2">
              <div class="text-right hidden sm:block">
-                <p class="text-[9px] font-bold text-black uppercase ">Provider</p>
-                <p class="text-sm font-extrabold text-black">{{ car.provider || 'Rental Partner' }}</p>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Partner</p>
+                <p class="text-xs font-extrabold text-[#0D1DAD]">Flybeth Verified</p>
              </div>
           </div>
         </div>

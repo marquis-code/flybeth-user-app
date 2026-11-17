@@ -88,25 +88,25 @@
               </span>
             </div>
             <span class="text-[12px] lg:text-[13px] text-gray-600 font-medium mt-0.5 flex items-center gap-1.5 truncate">
-              <Calendar class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+              <Calendar class="w-3.5 h-3.5 text-[#0D1DAD] flex-shrink-0" />
               <span>{{ tripDates.fullRange || 'Travel Dates' }}</span>
             </span>
           </div>
         </div>
 
         <!-- Center: Stepper -->
-        <div class="flex items-center justify-center w-full xl:w-auto order-last xl:order-none mt-4 xl:mt-0 flex-shrink-0">
+        <div class="flex items-center justify-center w-full xl:w-auto order-last xl:order-none mt-2 xl:mt-0 flex-shrink-0">
           <CheckoutStepper :currentStep="currentStep" :steps="['Details', 'Customise', 'Protect', 'Summary']" />
         </div>
 
         <!-- Right: Price & Actions -->
         <div class="flex items-center justify-end gap-4 lg:gap-6 flex-1 flex-shrink-0 min-w-max">
           <div class="flex flex-col items-end flex-shrink-0">
-             <span class="text-[14px] lg:text-[15px] font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
-             <span class="text-[11px] lg:text-[12px] text-gray-500">Total price</span>
+             <span class="text-[15px] lg:text-[16px] font-black text-[#0D1DAD]">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+             <span class="text-[11px] lg:text-[12px] text-gray-400 font-bold uppercase tracking-wider">Total price</span>
           </div>
           
-          <button @click="currentStep = 3" class="px-4 py-2 lg:px-5 lg:py-2.5 bg-blue-50 text-blue-600 rounded-full text-xs lg:text-sm font-semibold hover:bg-blue-100 transition-colors hidden md:block whitespace-nowrap">
+          <button @click="currentStep = 3" class="px-4 py-2 lg:px-5 lg:py-2 bg-[#0D1DAD]/10 text-[#0D1DAD] rounded-full text-xs lg:text-sm font-bold hover:bg-[#0D1DAD]/15 transition-colors hidden md:block whitespace-nowrap">
             View Summary
           </button>
 
@@ -120,8 +120,8 @@
    <main class="ck-main">
   <div class="ck-wrap mx-auto">
     <!-- Replace the flex div and its two children's class attributes -->
-      <!-- Main column: center aligned without sidebar -->
-      <div class="w-full max-w-3xl mx-auto space-y-8 pb-32 pt-0">
+      <!-- Main column: balanced comfortable width aligned with navbar -->
+      <div class="w-full max-w-5xl mx-auto space-y-8 pb-32 pt-0">
         <!-- Persistent Trip Context & Dates Banner (Shown across all steps) -->
         <div v-if="tripDates.hasDates || priceDetailed" class="bg-white rounded-2xl sm:rounded-[22px] border border-gray-200/90 p-4 sm:p-5 shadow-sm transition-all duration-300">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1891,17 +1891,24 @@ watch([currentStep, travellerData, selectedSeats, selectedAddOns], () => { saveC
 <style scoped>
 .ck-wrap {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
 
+@media (min-width: 1024px) {
+  .ck-wrap {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
 @media (max-width: 640px) {
   .ck-wrap {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 

@@ -25,10 +25,10 @@
             <div v-else class="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
               <svg class="w-12 h-12 text-[#0084ff]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
-            <!-- Provider badge -->
+            <!-- Experience badge -->
             <div class="absolute top-3 left-3">
-              <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-[8px] font-bold text-black   border border-white/30 shadow-sm">
-                {{ activity.provider === 'hotelbeds-activities' ? 'Hotelbeds' : activity.provider }}
+              <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-md text-[8px] font-bold text-[#0D1DAD] border border-white/30 shadow-sm">
+                Flybeth Experience
               </span>
             </div>
             <!-- Duration badge -->

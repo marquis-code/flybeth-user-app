@@ -115,6 +115,7 @@
                   v-model:infantsOnLap="flightTravelers.infantsOnLap"
                   v-model:infantsInSeat="flightTravelers.infantsInSeat"
                   v-model:cabinClass="flightTravelers.cabinClass"
+                  v-model:childAges="flightTravelers.childAges"
                   @focus="isFocused = true" 
                   @close="isFocused = false" 
                 />
@@ -617,7 +618,7 @@ const cabinClasses = [
 const occupancy             = reactive({ rooms: 1, adults: 2, children: 0 })
 const searchState           = reactive({ location: '', checkIn: '', checkOut: '' })
 const bundles               = reactive({ bundleFlight: false, bundleHotel: false, bundleCar: false })
-const flightTravelers       = reactive({ adults: 1, children: 0, infantsOnLap: 0, infantsInSeat: 0, cabinClass: 'economy' })
+const flightTravelers       = reactive({ adults: 1, children: 0, infantsOnLap: 0, infantsInSeat: 0, cabinClass: 'economy', childAges: [] as number[] })
 const flightSearchState     = reactive({ origin: '', destination: '', departureDate: '', returnDate: '', flexibleDates: false })
 const multiFlightLegs       = ref([{ origin: '', destination: '', departureDate: '', returnDate: '' }])
 const multiHotelLegs        = ref([{ location: '', checkIn: '', checkOut: '' }])
