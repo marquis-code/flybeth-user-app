@@ -68,21 +68,68 @@
     </div>
 
     <!-- ── Lightbox ────────────────────────────────────────────────── -->
-    <Transition name="sd-lb">
-      <div v-if="lightboxOpen" class="sd-lightbox" @click.self="lightboxOpen = false">
-        <button class="sd-lb-close" @click="lightboxOpen = false">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-        <button class="sd-lb-arrow sd-lb-arrow--prev" @click="lightboxIdx = Math.max(0, lightboxIdx-1)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <img :src="stayPhotos[lightboxIdx]" class="sd-lb-img" />
-        <button class="sd-lb-arrow sd-lb-arrow--next" @click="lightboxIdx = Math.min(stayPhotos.length-1, lightboxIdx+1)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-        <div class="sd-lb-counter">{{ lightboxIdx + 1 }} / {{ stayPhotos.length }}</div>
-      </div>
-    </Transition>
+    <Teleport to="body">
+      <Transition name="sd-lb">
+        <div 
+          v-if="lightboxOpen" 
+          class="sd-lightbox" 
+          @click.self="lightboxOpen = false"
+          role="dialog"
+          aria-modal="true"
+        >
+          <!-- Top bar with title, counter and close button -->
+          <div class="sd-lb-topbar">
+            <div class="sd-lb-title-wrap">
+              <span class="sd-lb-title">{{ stayDetails?.name || 'Photo Gallery' }}</span>
+              <span class="sd-lb-counter-pill">{{ lightboxIdx + 1 }} / {{ stayPhotos.length }}</span>
+            </div>
+            <button class="sd-lb-close" @click="lightboxOpen = false" aria-label="Close photo preview">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Prev Button -->
+          <button 
+            v-if="stayPhotos.length > 1" 
+            class="sd-lb-arrow sd-lb-arrow--prev" 
+            @click="lightboxIdx = (lightboxIdx - 1 + stayPhotos.length) % stayPhotos.length"
+            aria-label="Previous photo"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+
+          <!-- Main Image -->
+          <div class="sd-lb-img-wrap" @click.self="lightboxOpen = false">
+            <img :src="stayPhotos[lightboxIdx]" :alt="`${stayDetails?.name || 'Photo'} - ${lightboxIdx + 1}`" class="sd-lb-img" />
+          </div>
+
+          <!-- Next Button -->
+          <button 
+            v-if="stayPhotos.length > 1" 
+            class="sd-lb-arrow sd-lb-arrow--next" 
+            @click="lightboxIdx = (lightboxIdx + 1) % stayPhotos.length"
+            aria-label="Next photo"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+
+          <!-- Bottom Thumbnails Strip (if multi-photo) -->
+          <div v-if="stayPhotos.length > 1" class="sd-lb-thumbs-wrap">
+            <div class="sd-lb-thumbs">
+              <button 
+                v-for="(ph, i) in stayPhotos" 
+                :key="i" 
+                class="sd-lb-thumb"
+                :class="{ 'sd-lb-thumb--active': i === lightboxIdx }"
+                @click="lightboxIdx = i"
+              >
+                <img :src="ph" :alt="`Thumb ${i+1}`" class="sd-lb-thumb-img" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
     <!-- ── Header: name, location, rating ─────────────────────────── -->
     <div class="sd-wrap sd-header">
@@ -467,23 +514,25 @@
     </div><!-- /sd-body -->
 
     <!-- ── Full map modal ──────────────────────────────────────────── -->
-    <Transition name="sd-map-modal">
-      <div v-if="showFullMap" class="sd-fullmap-overlay" @click.self="showFullMap = false">
-        <div class="sd-fullmap-box">
-          <div class="sd-fullmap-header">
-            <div class="sd-fullmap-title-wrap">
-              <span class="sd-fullmap-badge">Property Location</span>
-              <h3 class="sd-fullmap-title">{{ stayDetails?.name }}</h3>
-              <p class="sd-fullmap-addr">{{ stayDetails?.location?.address || stayDetails?.location?.city }}</p>
+    <Teleport to="body">
+      <Transition name="sd-map-modal">
+        <div v-if="showFullMap" class="sd-fullmap-overlay" @click.self="showFullMap = false">
+          <div class="sd-fullmap-box">
+            <div class="sd-fullmap-header">
+              <div class="sd-fullmap-title-wrap">
+                <span class="sd-fullmap-badge">Property Location</span>
+                <h3 class="sd-fullmap-title">{{ stayDetails?.name }}</h3>
+                <p class="sd-fullmap-addr">{{ stayDetails?.location?.address || stayDetails?.location?.city }}</p>
+              </div>
+              <button class="sd-fullmap-close" @click="showFullMap = false" title="Close map">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
             </div>
-            <button class="sd-fullmap-close" @click="showFullMap = false" title="Close map">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-            </button>
+            <div id="full-map" class="sd-fullmap"></div>
           </div>
-          <div id="full-map" class="sd-fullmap"></div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </Teleport>
 
     <!-- Bundle modal -->
     <SecuredHotelModal
@@ -503,7 +552,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, reactive, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStayDetails } from '@/composables/modules/stays/useStayDetails'
 import SecuredHotelModal from '@/components/stays/SecuredHotelModal.vue'
@@ -703,6 +752,40 @@ const openGallery = (idx: number) => {
   lightboxIdx.value = idx
   lightboxOpen.value = true
 }
+
+const handleLightboxKeydown = (e: KeyboardEvent) => {
+  if (!lightboxOpen.value) return
+  if (e.key === 'Escape') {
+    lightboxOpen.value = false
+  } else if (e.key === 'ArrowLeft') {
+    if (stayPhotos.value.length > 1) {
+      lightboxIdx.value = (lightboxIdx.value - 1 + stayPhotos.value.length) % stayPhotos.value.length
+    }
+  } else if (e.key === 'ArrowRight') {
+    if (stayPhotos.value.length > 1) {
+      lightboxIdx.value = (lightboxIdx.value + 1) % stayPhotos.value.length
+    }
+  }
+}
+
+watch(lightboxOpen, (open) => {
+  if (import.meta.client) {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+      window.addEventListener('keydown', handleLightboxKeydown)
+    } else {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleLightboxKeydown)
+    }
+  }
+})
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    document.body.style.overflow = ''
+    window.removeEventListener('keydown', handleLightboxKeydown)
+  }
+})
 
 const scrollToSection = (tab: string) => {
   const map: Record<string, string> = { 'Overview': 'sec-overview', 'Amenities': 'sec-amenities', 'Rooms': 'sec-rooms' }
@@ -1008,20 +1091,176 @@ useHead({
 .sd-lightbox {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.92);
-  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.96);
+  backdrop-filter: blur(12px);
+  z-index: 9999999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  overflow: hidden;
+}
+
+.sd-lb-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  z-index: 20;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+}
+
+.sd-lb-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sd-lb-title {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60vw;
+}
+
+.sd-lb-counter-pill {
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(6px);
+}
+
+.sd-lb-close {
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.18s ease;
+  backdrop-filter: blur(8px);
 }
-.sd-lb-img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
-.sd-lb-close { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.14s; }
-.sd-lb-close:hover { background: rgba(255,255,255,0.2); }
-.sd-lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.14s; }
-.sd-lb-arrow:hover { background: rgba(255,255,255,0.2); }
-.sd-lb-arrow--prev { left: 20px; }
-.sd-lb-arrow--next { right: 20px; }
-.sd-lb-counter { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.1); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; }
+.sd-lb-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.08);
+}
+
+.sd-lb-img-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 80px 80px;
+}
+
+.sd-lb-img {
+  max-width: 92vw;
+  max-height: 84vh;
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85);
+  animation: sd-zoom 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes sd-zoom {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.sd-lb-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+  z-index: 20;
+  backdrop-filter: blur(8px);
+}
+.sd-lb-arrow:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-50%) scale(1.1);
+}
+.sd-lb-arrow--prev { left: 24px; }
+.sd-lb-arrow--next { right: 24px; }
+
+.sd-lb-thumbs-wrap {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  z-index: 20;
+}
+
+.sd-lb-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  max-width: 90vw;
+}
+
+.sd-lb-thumb {
+  width: 50px;
+  height: 38px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+}
+.sd-lb-thumb:hover {
+  opacity: 0.9;
+}
+.sd-lb-thumb--active {
+  border-color: #0D1DAD;
+  opacity: 1;
+  transform: scale(1.05);
+}
+.sd-lb-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /* ── Header ───────────────────────────────────────────────────────── */
 .sd-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -1471,7 +1710,7 @@ useHead({
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.65);
-  z-index: 100000;
+  z-index: 9999999;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -363,51 +363,78 @@
       </div>
 
       <!-- ── 6. Fullscreen Lightbox Modal ── -->
-      <Transition name="fade">
-        <div 
-          v-if="lightboxOpen" 
-          class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 select-none"
-          @click.self="lightboxOpen = false"
-        >
-          <!-- Close button -->
-          <button 
-            @click="lightboxOpen = false"
-            class="absolute top-5 right-5 z-50 p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+      <Teleport to="body">
+        <Transition name="fade">
+          <div 
+            v-if="lightboxOpen" 
+            class="fixed inset-0 z-[9999999] w-screen h-screen bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 select-none overflow-hidden"
+            @click.self="lightboxOpen = false"
+            role="dialog"
+            aria-modal="true"
           >
-            <X class="w-6 h-6" />
-          </button>
+            <!-- Top bar -->
+            <div class="absolute top-0 left-0 right-0 p-5 sm:p-7 flex items-center justify-between z-50 bg-gradient-to-b from-black/75 to-transparent">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-white text-sm sm:text-base font-bold truncate max-w-[60vw]">{{ activity?.name || 'Experience Photos' }}</span>
+                <span class="bg-white/15 text-white/95 text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md shrink-0">
+                  {{ lightboxIndex + 1 }} / {{ activity?.photos?.length || 1 }}
+                </span>
+              </div>
+              <button 
+                @click="lightboxOpen = false"
+                class="w-11 h-11 bg-white/15 hover:bg-white/25 border border-white/20 text-white rounded-full flex items-center justify-center transition-all hover:scale-105 shrink-0"
+                aria-label="Close photo preview"
+              >
+                <X class="w-5 h-5" />
+              </button>
+            </div>
 
-          <!-- Prev button -->
-          <button 
-            v-if="activity.photos?.length > 1"
-            @click="prevPhoto"
-            class="absolute left-4 sm:left-8 z-50 p-3 bg-white/10 hover:bg-white/25 text-white rounded-full transition-colors"
-          >
-            <ChevronLeft class="w-6 h-6" />
-          </button>
+            <!-- Prev button -->
+            <button 
+              v-if="activity?.photos?.length > 1"
+              @click="prevPhoto"
+              class="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 bg-white/15 hover:bg-white/25 border border-white/20 text-white rounded-full flex items-center justify-center transition-all hover:scale-110"
+              aria-label="Previous photo"
+            >
+              <ChevronLeft class="w-6 h-6" />
+            </button>
 
-          <!-- Image Container -->
-          <div class="max-w-4xl max-h-[85vh] flex flex-col items-center">
-            <img 
-              :src="activity.photos[lightboxIndex]" 
-              :alt="activity.name" 
-              class="max-w-full max-h-[75vh] object-contain rounded-xl shadow-2xl"
-            />
-            <div class="mt-4 text-white/80 text-xs font-semibold">
-              {{ lightboxIndex + 1 }} / {{ activity.photos.length }}
+            <!-- Image Container -->
+            <div class="w-full flex-1 flex items-center justify-center p-6 sm:p-14" @click.self="lightboxOpen = false">
+              <img 
+                :src="activity.photos[lightboxIndex]" 
+                :alt="activity.name" 
+                class="max-w-[92vw] max-h-[82vh] object-contain rounded-2xl shadow-2xl transition-all"
+              />
+            </div>
+
+            <!-- Next button -->
+            <button 
+              v-if="activity?.photos?.length > 1"
+              @click="nextPhoto"
+              class="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 bg-white/15 hover:bg-white/25 border border-white/20 text-white rounded-full flex items-center justify-center transition-all hover:scale-110"
+              aria-label="Next photo"
+            >
+              <ChevronRight class="w-6 h-6" />
+            </button>
+
+            <!-- Bottom Thumbnails -->
+            <div v-if="activity?.photos?.length > 1" class="absolute bottom-5 left-0 right-0 flex justify-center px-4 z-50">
+              <div class="flex gap-2 p-1.5 bg-black/50 border border-white/10 rounded-2xl backdrop-blur-md overflow-x-auto max-w-[90vw]">
+                <button
+                  v-for="(photo, idx) in activity.photos"
+                  :key="idx"
+                  @click="lightboxIndex = idx"
+                  class="w-12 h-9 rounded-lg overflow-hidden border-2 transition-all shrink-0 p-0"
+                  :class="idx === lightboxIndex ? 'border-[#0D1DAD] scale-105 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'"
+                >
+                  <img :src="photo" class="w-full h-full object-cover" />
+                </button>
+              </div>
             </div>
           </div>
-
-          <!-- Next button -->
-          <button 
-            v-if="activity.photos?.length > 1"
-            @click="nextPhoto"
-            class="absolute right-4 sm:right-8 z-50 p-3 bg-white/10 hover:bg-white/25 text-white rounded-full transition-colors"
-          >
-            <ChevronRight class="w-6 h-6" />
-          </button>
-        </div>
-      </Transition>
+        </Transition>
+      </Teleport>
 
     </template>
 
@@ -432,7 +459,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { 
   ChevronLeft, 
@@ -486,6 +513,36 @@ const prevPhoto = () => {
   if (!activity.value?.photos?.length) return;
   lightboxIndex.value = (lightboxIndex.value - 1 + activity.value.photos.length) % activity.value.photos.length;
 };
+
+const handleLightboxKeydown = (e: KeyboardEvent) => {
+  if (!lightboxOpen.value) return;
+  if (e.key === 'Escape') {
+    lightboxOpen.value = false;
+  } else if (e.key === 'ArrowLeft') {
+    prevPhoto();
+  } else if (e.key === 'ArrowRight') {
+    nextPhoto();
+  }
+};
+
+watch(lightboxOpen, (open) => {
+  if (import.meta.client) {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleLightboxKeydown);
+    } else {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleLightboxKeydown);
+    }
+  }
+});
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    document.body.style.overflow = '';
+    window.removeEventListener('keydown', handleLightboxKeydown);
+  }
+});
 
 const handleShare = () => {
   if (typeof window !== 'undefined' && navigator.clipboard) {
