@@ -114,16 +114,81 @@
       </div>
     </div>
 
-    <!-- Passengers Summary -->
+    <!-- Activity Details Summary -->
+    <div v-else-if="bookingType === 'activity'" class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-bold text-gray-900">Experience details</h3>
+          <span class="px-2 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-wider rounded-md">
+            Activity
+          </span>
+        </div>
+        <button @click="$emit('edit', 0)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-base font-bold text-gray-900">{{ flightOffer.name }}</span>
+            <span class="text-sm text-gray-500">
+              <span v-if="flightOffer.date">{{ formatDate(flightOffer.date) }}</span>
+              <span v-if="flightOffer.minimumDuration || flightOffer.duration"> • {{ flightOffer.minimumDuration || flightOffer.duration }}</span>
+              <span v-if="flightOffer.city"> • {{ flightOffer.city }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Car Rental Details Summary -->
+    <div v-else-if="bookingType === 'car'" class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+        <div class="flex items-center gap-3">
+          <h3 class="text-lg font-bold text-gray-900">Car rental details</h3>
+          <span class="px-2 py-1 bg-purple-100 text-purple-800 text-[11px] font-bold uppercase tracking-wider rounded-md">
+            Vehicle
+          </span>
+        </div>
+        <button @click="$emit('edit', 0)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+      </div>
+      <div class="p-6">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600 flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+              <circle cx="7" cy="17" r="2"/>
+              <path d="M9 17h6"/>
+              <circle cx="17" cy="17" r="2"/>
+            </svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-base font-bold text-gray-900">{{ flightOffer.name }}</span>
+            <span class="text-sm text-gray-500">
+              <span v-if="flightOffer.vendor">{{ flightOffer.vendor }} • </span>
+              <span>{{ flightOffer.pickUpDate || 'Pick-up' }} – {{ flightOffer.dropOffDate || 'Drop-off' }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Passengers / Guests Summary -->
     <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
       <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
-        <h3 class="text-lg font-bold text-gray-900">Passengers</h3>
+        <h3 class="text-lg font-bold text-gray-900">
+          {{ bookingType === 'stay' ? 'Guests' : (bookingType === 'activity' ? 'Participants' : (bookingType === 'car' ? 'Driver details' : 'Passengers')) }}
+        </h3>
         <button @click="$emit('edit', 0)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
       </div>
       <div class="p-6">
         <div v-for="(traveler, idx) in travellerData.travelers" :key="idx" class="flex flex-col mb-4 last:mb-0">
           <span class="text-sm font-bold text-gray-900">{{ traveler.title }} {{ traveler.firstName }} {{ traveler.lastName }}</span>
-          <span class="text-xs text-gray-500">Date of birth: {{ traveler.dateOfBirth }}</span>
+          <span v-if="traveler.dateOfBirth" class="text-xs text-gray-500">Date of birth: {{ traveler.dateOfBirth }}</span>
         </div>
       </div>
     </div>
@@ -142,11 +207,11 @@
       </div>
     </div>
 
-    <!-- Customise & Protect Summary -->
-    <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+    <!-- Customise & Protect Summary (Only shown for flights or if add-ons are actually selected) -->
+    <div v-if="bookingType === 'flight' || selectedAddOns.length > 0" class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
       <div class="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
         <h3 class="text-lg font-bold text-gray-900">Add-ons</h3>
-        <button @click="$emit('edit', 1)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+        <button v-if="bookingType === 'flight'" @click="$emit('edit', 1)" class="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
       </div>
       <div class="p-6">
         <div v-if="selectedAddOns.length === 0" class="text-sm text-gray-500">No add-ons selected.</div>

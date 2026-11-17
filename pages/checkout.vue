@@ -96,7 +96,7 @@
 
         <!-- Center: Stepper -->
         <div class="flex items-center justify-center w-full xl:w-auto order-last xl:order-none mt-2 xl:mt-0 flex-shrink-0">
-          <CheckoutStepper :currentStep="currentStep" :steps="['Details', 'Customise', 'Protect', 'Summary']" />
+          <CheckoutStepper :currentStep="currentStep" :steps="stepsList" />
         </div>
 
         <!-- Right: Price & Actions -->
@@ -106,7 +106,7 @@
              <span class="text-[11px] lg:text-[12px] text-gray-400 font-bold uppercase tracking-wider">Total price</span>
           </div>
           
-          <button @click="currentStep = 3" class="px-4 py-2 lg:px-5 lg:py-2 bg-[#0D1DAD]/10 text-[#0D1DAD] rounded-full text-xs lg:text-sm font-bold hover:bg-[#0D1DAD]/15 transition-colors hidden md:block whitespace-nowrap">
+          <button @click="goToStep(summaryStepIndex)" class="px-4 py-2 lg:px-5 lg:py-2 bg-[#0D1DAD]/10 text-[#0D1DAD] rounded-full text-xs lg:text-sm font-bold hover:bg-[#0D1DAD]/15 transition-colors hidden md:block whitespace-nowrap">
             View Summary
           </button>
 
@@ -129,13 +129,13 @@
         <div v-if="tripDates.hasDates || priceDetailed" class="bg-white rounded-2xl sm:rounded-[22px] border border-gray-200/90 p-4 sm:p-5 shadow-sm transition-all duration-300">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             
-            <!-- Route & Airline Info -->
+            <!-- Route & Booking Info -->
             <div class="flex items-center gap-3.5 min-w-0">
               <div v-if="priceDetailed?.airlineLogo" class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 p-1.5 flex items-center justify-center flex-shrink-0">
                 <img :src="priceDetailed.airlineLogo" :alt="priceDetailed.airline" class="h-full w-full object-contain" />
               </div>
               <div v-else class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                <Plane class="w-5 h-5 text-blue-600" />
+                <component :is="tripTypeIcon" class="w-5 h-5 text-[#0D1DAD]" />
               </div>
 
               <div class="min-w-0">
@@ -148,15 +148,35 @@
                       {{ bookingDetails.name }}
                     </template>
                   </span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100/80">
+                  <span v-if="bookingDetails.type === 'flight'" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100/80">
                     {{ tripDates.isRoundTrip ? 'Round Trip' : 'One Way' }}
+                  </span>
+                  <span v-else-if="bookingDetails.type === 'stay'" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100/80">
+                    Hotel Stay
+                  </span>
+                  <span v-else-if="bookingDetails.type === 'activity'" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-100/80">
+                    Experience
+                  </span>
+                  <span v-else-if="bookingDetails.type === 'car'" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 border border-purple-100/80">
+                    Car Rental
+                  </span>
+                  <span v-else-if="bookingDetails.type === 'transfer'" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-100/80">
+                    Airport Transfer
+                  </span>
+                  <span v-else class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100/80">
+                    {{ bookingDetails.type }}
                   </span>
                 </div>
                 <p class="text-xs text-gray-500 font-medium truncate mt-0.5">
-                  <span v-if="priceDetailed?.originName && priceDetailed?.destinationName">
+                  <span v-if="bookingDetails.type === 'flight' && priceDetailed?.originName && priceDetailed?.destinationName">
                     {{ priceDetailed.originName }} to {{ priceDetailed.destinationName }} • 
                   </span>
-                  <span>{{ priceDetailed?.airline || bookingDetails.name }}</span>
+                  <span v-if="bookingDetails.type === 'flight'">{{ priceDetailed?.airline || bookingDetails.name }}</span>
+                  <span v-else-if="bookingDetails.type === 'stay'">{{ priceDetailed?.roomType || priceDetailed?.hotelName || bookingDetails.name }}</span>
+                  <span v-else-if="bookingDetails.type === 'activity'">{{ bookingDetails.duration ? `${bookingDetails.duration} duration` : (priceDetailed?.city || 'Instant Confirmation') }}</span>
+                  <span v-else-if="bookingDetails.type === 'car'">{{ priceDetailed?.vendor || 'Car Rental' }}</span>
+                  <span v-else-if="bookingDetails.type === 'transfer'">{{ priceDetailed?.provider || 'Transfer Service' }}</span>
+                  <span v-else>{{ bookingDetails.name }}</span>
                   <span v-if="priceDetailed?.cabinClass" class="capitalize"> • {{ priceDetailed.cabinClass }}</span>
                 </p>
               </div>
@@ -165,11 +185,11 @@
             <!-- Date Badges (Consistently Visible at Every Step) -->
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
               <!-- Outbound / Departure Date -->
-              <div class="flex items-center gap-2.5 bg-blue-50/70 border border-blue-100 rounded-xl px-3.5 py-2 flex-1 sm:flex-initial">
+              <div v-if="tripDates.departure" class="flex items-center gap-2.5 bg-blue-50/70 border border-blue-100 rounded-xl px-3.5 py-2 flex-1 sm:flex-initial">
                 <Calendar class="w-4 h-4 text-blue-600 flex-shrink-0" />
                 <div>
                   <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 block leading-tight">
-                    {{ bookingDetails.type === 'stay' ? 'Check-in' : 'Depart' }}
+                    {{ departureDateBadgeLabel }}
                   </span>
                   <span class="text-xs font-bold text-gray-900 leading-tight block whitespace-nowrap">
                     {{ tripDates.departure }}
@@ -177,12 +197,12 @@
                 </div>
               </div>
 
-              <!-- Return / Check-out Date (if round-trip or stay) -->
+              <!-- Return / Check-out Date -->
               <div v-if="tripDates.return" class="flex items-center gap-2.5 bg-indigo-50/70 border border-indigo-100 rounded-xl px-3.5 py-2 flex-1 sm:flex-initial">
                 <Calendar class="w-4 h-4 text-indigo-600 flex-shrink-0" />
                 <div>
                   <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600 block leading-tight">
-                    {{ bookingDetails.type === 'stay' ? 'Check-out' : 'Return' }}
+                    {{ returnDateBadgeLabel }}
                   </span>
                   <span class="text-xs font-bold text-gray-900 leading-tight block whitespace-nowrap">
                     {{ tripDates.return }}
@@ -278,13 +298,14 @@
 
           <CheckoutTravellerForm 
             v-model="travellerData" 
+            :bookingType="bookingDetails.type"
             @email-blur="handleEmailBlur"
-            @continue="goToStep(1)"
+            @continue="handleStep0Continue"
           />
         </div>
 
-        <!-- Step 1: Customise (Seats & Baggage) -->
-        <div v-if="currentStep === 1" class="animate-in space-y-6">
+        <!-- Step 1: Customise (Seats & Baggage) - For flights or packages with flight segments -->
+        <div v-if="(bookingDetails.type === 'flight' || (bookingDetails.type === 'package' && priceDetailed?.flightDetails)) && currentStep === 1" class="animate-in space-y-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
             <div>
               <h2 class="text-[20px] font-bold text-[#111827]">Customise your booking</h2>
@@ -292,20 +313,20 @@
             </div>
           </div>
           <CheckoutTripCustomization
-            :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
+            :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : (priceDetailed?.flightDetails || null)"
             :stay="bookingDetails.type === 'stay' ? priceDetailed : null"
             :traveller="travellerData"
             :totalPrice="displayPrices.total"
             v-model:selectedAddOns="selectedAddOns"
             v-model:selectedSeats="selectedSeats"
             @update:seatPrice="val => seatPrice = val"
-            @continue="goToStep(2)"
+            @continue="goToStep(bookingDetails.type === 'flight' ? 2 : summaryStepIndex)"
             @back="goToStep(0)"
           />
         </div>
 
-        <!-- Step 2: Protect (Cancellation & Baggage Protection) -->
-        <div v-if="currentStep === 2" class="animate-in space-y-6">
+        <!-- Step 2: Protect (Cancellation & Baggage Protection) - Only for flights -->
+        <div v-if="bookingDetails.type === 'flight' && currentStep === 2" class="animate-in space-y-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
             <div>
               <h2 class="text-[20px] font-bold text-[#111827]">Protect your booking</h2>
@@ -316,13 +337,13 @@
             :flightOffer="priceDetailed"
             :currencySymbol="currencySymbol"
             v-model:selectedAddOns="selectedAddOns"
-            @continue="goToStep(3)"
+            @continue="goToStep(summaryStepIndex)"
             @back="goToStep(1)"
           />
         </div>
 
-        <!-- Step 3: Summary & Payment -->
-        <div v-if="currentStep === 3" class="animate-in space-y-6">
+        <!-- Step: Summary & Payment (Review & Pay) -->
+        <div v-if="currentStep === summaryStepIndex" class="animate-in space-y-6">
           
           <!-- Summary Modules (Read-only views) -->
           <CheckoutSummary 
@@ -359,10 +380,10 @@
                   <h3 class="text-lg font-bold text-gray-900 mb-6">Price breakdown</h3>
                   <div class="space-y-4 text-sm text-gray-600">
                     <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                      <span class="font-medium text-gray-500">Flight Fare</span>
+                      <span class="font-medium text-gray-500">{{ baseFareLabel }}</span>
                       <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.base.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
                     </div>
-                    <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                    <div v-if="displayPrices.tax > 0" class="flex justify-between items-center pb-3 border-b border-gray-100">
                       <span class="font-medium text-gray-500">Taxes & Fees</span>
                       <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.tax.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
                     </div>
@@ -422,7 +443,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { ChevronLeft, Lock, ShieldCheck, X as XIcon, Calendar, Plane, Building } from 'lucide-vue-next'
+import { ChevronLeft, Lock, ShieldCheck, X as XIcon, Calendar, Plane, Building, Compass, Car, CarTaxiFront, Ship } from 'lucide-vue-next'
 import { useRoute, useRouter, navigateTo, useRuntimeConfig } from '#app'
 import { staysApi } from '~/api_factory/modules/stays'
 import { paymentsApi } from '~/api_factory/modules/payments'
@@ -718,7 +739,7 @@ const loadCheckoutState = () => {
     if (saved) {
         try {
             const state = JSON.parse(saved)
-            currentStep.value = state.currentStep || 0
+            currentStep.value = Math.min(state.currentStep || 0, summaryStepIndex.value)
             travellerData.value = { ...travellerData.value, ...state.travellerData }
             selectedSeats.value = state.selectedSeats || []
             seatPrice.value = state.seatPrice || 0
@@ -835,6 +856,80 @@ const bookingDetails = computed(() => {
     duration: p.duration as string,
   }
 })
+
+const stepsList = computed(() => {
+  switch (bookingDetails.value.type) {
+    case 'flight':
+      return ['Details', 'Customise', 'Protect', 'Summary']
+    case 'stay':
+      return ['Guest Details', 'Review & Pay']
+    case 'activity':
+      return ['Guest Details', 'Review & Pay']
+    case 'transfer':
+      return ['Passenger Details', 'Review & Pay']
+    case 'car':
+      return ['Driver Details', 'Review & Pay']
+    case 'package':
+      if (priceDetailed.value?.flightDetails) {
+        return ['Traveller Details', 'Customise', 'Review & Pay']
+      }
+      return ['Traveller Details', 'Review & Pay']
+    case 'cruise':
+      return ['Passenger Details', 'Review & Pay']
+    default:
+      return ['Details', 'Review & Pay']
+  }
+})
+
+const summaryStepIndex = computed(() => Math.max(1, stepsList.value.length - 1))
+
+const tripTypeIcon = computed(() => {
+  switch (bookingDetails.value.type) {
+    case 'stay': return Building
+    case 'activity': return Compass
+    case 'car': return Car
+    case 'transfer': return CarTaxiFront
+    case 'cruise': return Ship
+    default: return Plane
+  }
+})
+
+const baseFareLabel = computed(() => {
+  switch (bookingDetails.value.type) {
+    case 'stay': return 'Room Rate'
+    case 'activity': return 'Experience / Tour Rate'
+    case 'car': return 'Car Rental Fare'
+    case 'transfer': return 'Transfer Fare'
+    case 'package': return 'Package Base Fare'
+    case 'cruise': return 'Cruise Fare'
+    default: return 'Flight Fare'
+  }
+})
+
+const departureDateBadgeLabel = computed(() => {
+  if (bookingDetails.value.type === 'stay') return 'Check-in'
+  if (bookingDetails.value.type === 'car') return 'Pick-up'
+  if (bookingDetails.value.type === 'activity') return 'Activity Date'
+  if (bookingDetails.value.type === 'transfer') return 'Pickup Date'
+  return 'Depart'
+})
+
+const returnDateBadgeLabel = computed(() => {
+  if (bookingDetails.value.type === 'stay') return 'Check-out'
+  if (bookingDetails.value.type === 'car') return 'Drop-off'
+  if (bookingDetails.value.type === 'transfer') return 'Return Transfer'
+  return 'Return'
+})
+
+const handleStep0Continue = () => {
+  if (bookingDetails.value.type === 'flight') {
+    goToStep(1)
+  } else if (bookingDetails.value.type === 'package' && priceDetailed.value?.flightDetails) {
+    goToStep(1)
+  } else {
+    goToStep(summaryStepIndex.value)
+  }
+}
 
 /**
  * Minimum number of travellers for the vertical being booked. Stays, transfers,
@@ -1199,11 +1294,11 @@ const normalizeFlightData = (rawFlight: any) => {
 }
 
 const goToStep = (step: number) => {
-  currentStep.value = step
+  currentStep.value = Math.min(Math.max(0, step), summaryStepIndex.value)
   saveCheckoutState()
   window.scrollTo({ top: 0, behavior: 'smooth' })
-  const steps = ['details', 'customise', 'protect', 'summary']
-  trackAction(`booking_step_${steps[step]}`, { type: bookingDetails.value.type, item: bookingDetails.value.name, price: displayPrices.value.total })
+  const stepName = stepsList.value[step] || `step_${step}`
+  trackAction(`booking_step_${stepName.toLowerCase().replace(/\s+/g, '_')}`, { type: bookingDetails.value.type, item: bookingDetails.value.name, price: displayPrices.value.total })
 }
 
 const handleGoBack = () => {

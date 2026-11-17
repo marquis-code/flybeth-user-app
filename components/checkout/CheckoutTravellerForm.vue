@@ -3,33 +3,25 @@
     <!-- Header with horizontal padding -->
     <div class="ck-tf-hd  flex flex-col md:flex-row md:items-start justify-between gap-6 px-2 sm:px-4">
         <div class="flex-1">
-          <div class="ck-tf-badge">Batch & Group Booking</div>
-          <h2 class="ck-tf-h">Traveler Details</h2>
-          <p class="ck-tf-p">Add your group members or upload a CSV to automate the process.</p>
+          <div class="ck-tf-badge">
+            {{ isFlightBooking ? 'Batch & Group Booking' : (bookingType === 'stay' ? 'Hotel Reservation' : (bookingType === 'activity' ? 'Activity Booking' : (bookingType === 'car' ? 'Car Rental' : 'Booking Details'))) }}
+          </div>
+          <h2 class="ck-tf-h">
+            {{ isFlightBooking ? 'Traveler Details' : (bookingType === 'stay' ? 'Guest Details' : (bookingType === 'activity' ? 'Participant Details' : (bookingType === 'car' ? 'Driver Details' : 'Passenger Details'))) }}
+          </h2>
+          <p class="ck-tf-p">
+            {{ isFlightBooking ? 'Add your group members or upload a CSV to automate the process.' : (bookingType === 'stay' ? 'Enter the lead guest and contact details for your stay.' : (bookingType === 'activity' ? 'Enter primary participant details and contact info for your tickets.' : (bookingType === 'car' ? 'Enter primary driver details and contact information for vehicle pickup.' : 'Enter passenger details and contact information.'))) }}
+          </p>
         </div>
 
         <div class="flex flex-col md:flex-row flex-wrap items-center gap-3 mt-4 md:mt-0">
-   <!-- <input 
-     type="file" 
-     ref="csvInput" 
-     accept=".csv" 
-     class="hidden" 
-     @change="handleCSVUpload" 
-   />
-   <button 
-     @click="$refs.csvInput.click()"
-     class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-neutral-100 text-neutral-600 font-bold text-sm hover:bg-neutral-200 transition-colors"
-   >
-      <Upload class="w-4 h-4" />
-      <span>Import CSV</span>
-   </button> -->
    <button 
      type="button"
      @click="addTraveler"
      class="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0D1DAD] text-white font-bold text-sm hover:bg-[#0A1485] transition-all shadow-md active:scale-95"
    >
       <Plus class="w-4 h-4" />
-      <span>Add Traveler ({{ travelers.length + 1 }})</span>
+      <span>{{ addTravelerBtnLabel }} ({{ travelers.length + 1 }})</span>
    </button>
 </div>
 
@@ -69,7 +61,7 @@
           class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap"
           :class="isPassengerComplete(t) ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
         >
-          <span>Traveler {{ idx + 1 }}</span>
+          <span>{{ isFlightBooking ? 'Traveler' : (bookingType === 'stay' ? 'Guest' : (bookingType === 'activity' ? 'Participant' : (bookingType === 'car' ? 'Driver' : 'Passenger'))) }} {{ idx + 1 }}</span>
           <span v-if="t.firstName" class="text-[11px] font-normal opacity-75">({{ t.firstName }})</span>
           <svg v-if="isPassengerComplete(t)" class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -122,8 +114,8 @@
                 </div>
               </div>
               <div class="flex flex-col leading-none gap-0.5">
-                <span class="text-base font-bold text-gray-900">Passenger details</span>
-                <span class="text-xs text-gray-500 font-medium ">Adult {{ index + 1 }}</span>
+                <span class="text-base font-bold text-gray-900">{{ passengerCardTitle(index) }}</span>
+                <span class="text-xs text-gray-500 font-medium">{{ passengerCardSubtitle(index) }}</span>
               </div>
            </div>
            <button 
@@ -176,8 +168,8 @@
               </div>
            </div>
 
-           <!-- Identity Information -->
-           <div v-if="index === 0" class="ck-tf-sec mt-6 pt-5 border-t border-neutral-100">
+           <!-- Identity Information (Only for flights) -->
+           <div v-if="isFlightBooking && index === 0" class="ck-tf-sec mt-6 pt-5 border-t border-neutral-100">
               <div class="flex items-center gap-3 mb-6">
                 <div class="relative w-9 h-9 rounded-full bg-[#E0F2FE] flex items-center justify-center flex-shrink-0">
                   <Globe class="w-4 h-4 text-[#0284C7]" />
@@ -230,16 +222,16 @@
             </div>
             <div>
               <p class="text-sm sm:text-base font-bold text-gray-900 group-hover:text-[#0D1DAD] transition-colors">
-                + Add Another Traveler (Traveler {{ travelers.length + 1 }})
+                + {{ addTravelerBtnLabel }} ({{ isFlightBooking ? 'Traveler' : (bookingType === 'stay' ? 'Guest' : (bookingType === 'activity' ? 'Participant' : (bookingType === 'car' ? 'Driver' : 'Passenger'))) }} {{ travelers.length + 1 }})
               </p>
               <p class="text-xs text-gray-500">
-                Click here to add passenger details without scrolling back up
+                Click here to add {{ isFlightBooking ? 'passenger' : 'guest' }} details without scrolling back up
               </p>
             </div>
           </div>
           <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0D1DAD] bg-white px-4 py-2 rounded-xl shadow-sm border border-[#0D1DAD]/20 group-hover:bg-[#0D1DAD] group-hover:text-white transition-colors shrink-0">
             <Plus class="w-3.5 h-3.5" />
-            <span>Add Traveler</span>
+            <span>{{ addTravelerBtnLabel }}</span>
           </span>
         </button>
       </div>
@@ -299,7 +291,8 @@
           </div>
           <label class="ck-tf-terms">
              <input type="checkbox" v-model="termsAccepted" class="ck-tf-chk custom-checkbox" />
-             <span>I verify that all names stated above are identical to those in the original travel documents.</span>
+             <span v-if="isFlightBooking">I verify that all names stated above are identical to those in the original travel documents.</span>
+             <span v-else>I confirm that the contact details and names provided above are accurate.</span>
           </label>
        </div>
        <button 
@@ -308,7 +301,7 @@
           class="ck-tf-btn w-full"
           :class="{ 'ck-tf-btn--off': !canContinue }"
        >
-          <span>Continue to Extras</span>
+          <span>{{ continueBtnText }}</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
        </button>
     </div>
@@ -352,7 +345,36 @@ const titleOptions = [
 ]
 
 const props = defineProps({
-  modelValue: { type: Object, default: () => ({ travelers: [], contact: {} }) }
+  modelValue: { type: Object, default: () => ({ travelers: [], contact: {} }) },
+  bookingType: { type: String, default: 'flight' }
+})
+
+const isFlightBooking = computed(() => !props.bookingType || props.bookingType === 'flight' || props.bookingType === 'package')
+
+const addTravelerBtnLabel = computed(() => {
+  if (props.bookingType === 'stay') return 'Add Guest'
+  if (props.bookingType === 'activity') return 'Add Participant'
+  if (props.bookingType === 'car') return 'Add Driver'
+  return 'Add Traveler'
+})
+
+const passengerCardTitle = (index: number) => {
+  if (props.bookingType === 'stay') return index === 0 ? 'Lead Guest' : `Guest ${index + 1}`
+  if (props.bookingType === 'activity') return index === 0 ? 'Lead Participant' : `Participant ${index + 1}`
+  if (props.bookingType === 'car') return index === 0 ? 'Primary Driver' : `Additional Driver ${index + 1}`
+  return 'Passenger details'
+}
+
+const passengerCardSubtitle = (index: number) => {
+  if (props.bookingType === 'stay') return index === 0 ? 'Main contact for check-in' : 'Additional guest'
+  if (props.bookingType === 'activity') return index === 0 ? 'Ticket holder & contact' : 'Additional participant'
+  if (props.bookingType === 'car') return index === 0 ? 'Must present valid driver license' : 'Additional authorized driver'
+  return `Adult ${index + 1}`
+}
+
+const continueBtnText = computed(() => {
+  if (props.bookingType === 'flight') return 'Continue to Extras'
+  return 'Continue to Payment'
 })
 
 const emit = defineEmits(['update:modelValue', 'continue', 'email-blur'])
@@ -384,11 +406,15 @@ const countries = ref<{ code: string; name: string }[]>([])
 const isPhoneValid = ref(false)
 
 const isPassengerComplete = (traveler: any) => {
-  return traveler.title && traveler.firstName && traveler.lastName && traveler.dateOfBirth && traveler.gender;
+  if (!isFlightBooking.value) {
+    return Boolean(traveler.title && traveler.firstName && traveler.lastName);
+  }
+  return Boolean(traveler.title && traveler.firstName && traveler.lastName && traveler.dateOfBirth && traveler.gender);
 }
 
 const isIdentityComplete = (traveler: any) => {
-  return traveler.nationality && traveler.passportNumber && traveler.passportExpiry;
+  if (!isFlightBooking.value) return true;
+  return Boolean(traveler.nationality && traveler.passportNumber && traveler.passportExpiry);
 }
 
 const isContactComplete = () => {
@@ -550,9 +576,14 @@ onMounted(async () => {
 const countriesNames = computed(() => countries.value.map(c => c.name))
 
 const isComplete = computed(() => {
-  const travelersComplete = travelers.value.every(t => t.firstName && t.lastName && t.dateOfBirth)
-  const contactComplete = !!(contact.value.email && isPhoneValid.value)
-  return travelersComplete && contactComplete
+  const travelersComplete = travelers.value.every(t => {
+    if (!isFlightBooking.value) {
+      return Boolean(t.firstName && t.lastName);
+    }
+    return Boolean(t.firstName && t.lastName && t.dateOfBirth);
+  });
+  const contactComplete = !!(contact.value.email && isPhoneValid.value);
+  return travelersComplete && contactComplete;
 })
 
 const canContinue = computed(() => isComplete.value && termsAccepted.value)
