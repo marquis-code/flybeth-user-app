@@ -1,36 +1,13 @@
 <template>
-  <section class="py-20 bg-white relative overflow-hidden">
-    <!-- Decorative background -->
-    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#0084ff]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-    <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none"></div>
+  <div class="w-full">
+    <!-- Loading State -->
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div v-for="i in 4" :key="i" class="rounded-2xl bg-slate-100 animate-pulse h-[340px]"></div>
+    </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <!-- Section Header -->
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
-        <div>
-          <div class="flex items-center gap-2 mb-3">
-            <div class="h-8 w-8 bg-[#0084ff]/10 rounded-lg flex items-center justify-center">
-              <svg class="w-4 h-4 text-[#0084ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
-            <span class="text-sm font-bold text-[#0084ff]  ">Things to do</span>
-          </div>
-          <h2 class="text-3xl font-bold text-black  mb-2">Discover Activities & Experiences</h2>
-          <p class="text-sm text-black max-w-lg">Unforgettable tours, excursions, and things to do at your destination — powered by local experts.</p>
-        </div>
-        <NuxtLink to="/things-to-do" class="flex items-center gap-2 text-[#0084ff] text-xs font-bold   hover:underline transition-all group shrink-0">
-          View all activities
-          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-        </NuxtLink>
-      </div>
-
-      <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div v-for="i in 4" :key="i" class="rounded-2xl bg-black animate-pulse h-[380px]"></div>
-      </div>
-
-      <!-- Activities Grid -->
-      <div v-else-if="activities.length > 0">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Activities Grid -->
+    <div v-else-if="activities.length > 0">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div 
           v-for="(activity, idx) in activities.slice(0, 4)"
           :key="activity.experienceId || idx"
@@ -109,7 +86,7 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="w-full">
+      <div v-else class="w-full py-4">
         <EmptyState 
           variant="packages" 
           title="No activities found" 
@@ -119,7 +96,6 @@
         />
       </div>
     </div>
-  </section>
 </template>
 
 <script setup lang="ts">

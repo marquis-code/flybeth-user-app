@@ -18,15 +18,14 @@
       <div class="w-12 h-12 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin"></div>
     </div>
 
-    <div v-else-if="bookings.length === 0" class="text-center py-24 bg-white rounded-[24px] border border-gray-100 shadow-sm">
-      <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-blue-100">
-        <Briefcase class="h-10 w-10 text-brand-blue" />
-      </div>
-      <h3 class="text-xl font-black text-gray-900 mb-2">No bookings found</h3>
-      <p class="text-gray-500 mb-8 font-medium">You haven't made any bookings yet.</p>
-      <NuxtLink to="/flights" class="px-8 py-3.5 bg-brand-blue text-white rounded-xl font-bold hover:bg-[#0D1DAD] transition-all shadow-lg shadow-brand-blue/20">
-        Explore Flights
-      </NuxtLink>
+    <div v-else-if="bookings.length === 0" class="py-6">
+      <EmptyState 
+        variant="flights" 
+        title="No travel bookings yet" 
+        message="Your travel itinerary is currently clear. When you book flights, hotels, or vacation packages, your live tickets, e-boarding passes, and booking vouchers will appear right here."
+        action-label="Book a Flight"
+        @action="$router.push('/flights')"
+      />
     </div>
 
     <div v-else class="space-y-6">

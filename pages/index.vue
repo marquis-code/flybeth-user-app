@@ -38,55 +38,76 @@
     <!-- ══════════════════════ PROMO CODE (API) ══════════════════════ -->
     <PromoBanner />
 
-    <!-- ══════════════════════ SIX VERTICALS ══════════════════════ -->
-    <section class="mx-auto max-w-7xl px-5 py-16">
-      <div class="mx-auto max-w-2xl text-center">
-        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0450A0]">Book every part of the trip</p>
-        <h2 class="mt-2 text-3xl font-black tracking-tight text-[#0B1B33] sm:text-4xl">One platform. Six ways to travel.</h2>
-        <p class="mt-3 text-sm leading-relaxed text-[#5F7185]">
-          Book a single flight or build the whole itinerary — every product shares the same secure checkout.
+    <!-- ══════════════════════ TRAVEL VERTICALS ══════════════════════ -->
+    <section class="mx-auto max-w-7xl px-5 py-8 sm:py-10">
+      <div class="mx-auto max-w-2xl text-center mb-6">
+        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0D1DAD]">Book every part of the trip</p>
+        <h2 class="mt-1 text-2xl sm:text-3xl font-black tracking-tight text-[#0B1B33]">One platform. Every way to travel.</h2>
+        <p class="mt-1.5 text-xs sm:text-sm leading-relaxed text-[#5F7185]">
+          Book a single trip or build the whole itinerary — every product shares the same secure checkout.
         </p>
       </div>
 
-      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
         <NuxtLink
           v-for="v in verticals"
           :key="v.to"
           :to="v.to"
-          class="group relative overflow-hidden rounded-lg border border-[#DBE2EA] bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-[#0450A0]/40 hover:shadow-lg hover:shadow-slate-200/70"
+          class="group relative h-[175px] sm:h-[185px] overflow-hidden rounded-xl border border-slate-200/80 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-[#0D1DAD]/50"
         >
-          <div class="flex items-start justify-between">
-            <span class="flex h-11 w-11 items-center justify-center rounded-md bg-[#0450A0]/[0.08] text-[#0450A0]">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path :d="v.path" />
-              </svg>
-            </span>
-            <span class="text-[#DBE2EA] transition-all group-hover:translate-x-1 group-hover:text-[#EB4405]">→</span>
+          <!-- Background image of what it stands for -->
+          <img
+            :src="v.image"
+            :alt="v.title"
+            class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            loading="lazy"
+          />
+          <!-- Dark rich gradient overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-[#060D24]/95 via-[#060D24]/65 to-[#060D24]/25 transition-opacity group-hover:opacity-90"></div>
+
+          <!-- Card Content -->
+          <div class="relative z-10 flex h-full flex-col justify-between p-4">
+            <!-- Top: Badge + Arrow -->
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-white/20 backdrop-blur-md px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white border border-white/20">
+                <svg class="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path :d="v.path" />
+                </svg>
+                {{ v.badge }}
+              </span>
+              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm text-white transition-all duration-300 group-hover:bg-[#0D1DAD] group-hover:translate-x-0.5">
+                →
+              </span>
+            </div>
+
+            <!-- Bottom: Title & Blurb -->
+            <div>
+              <h3 class="text-base font-black text-white leading-tight group-hover:text-blue-200 transition-colors">{{ v.title }}</h3>
+              <p class="mt-1 text-[11px] leading-snug text-white/80 line-clamp-2">{{ v.blurb }}</p>
+            </div>
           </div>
-          <h3 class="mt-5 text-[17px] font-bold text-[#0B1B33]">{{ v.title }}</h3>
-          <p class="mt-1.5 text-[13px] leading-relaxed text-[#5F7185]">{{ v.blurb }}</p>
         </NuxtLink>
       </div>
     </section>
 
     <!-- ══════════════════════ DESTINATIONS ══════════════════════ -->
     <section class="border-y border-[#E6EBF2] bg-[#F4F7FB]">
-      <div class="mx-auto max-w-7xl px-5 py-16">
-        <SectionHeading accent="#0450A0" eyebrow="Where to next" title="Popular destinations" link-to="/destinations" link-label="All destinations" />
+      <div class="mx-auto max-w-7xl px-5 py-8 sm:py-10">
+        <SectionHeading accent="#0D1DAD" eyebrow="Where to next" title="Popular destinations" link-to="/destinations" link-label="All destinations" />
         <CityDealsGrid />
       </div>
     </section>
 
     <!-- ══════════════════════ HOTELS ══════════════════════ -->
-    <section class="mx-auto max-w-7xl px-5 py-16">
-      <SectionHeading accent="#0450A0" eyebrow="Stays" title="Hand-picked places to stay" link-to="/stays" link-label="Browse all hotels" />
+    <section class="mx-auto max-w-7xl px-5 py-8 sm:py-10">
+      <SectionHeading accent="#0D1DAD" eyebrow="Stays" title="Hand-picked places to stay" link-to="/stays" link-label="Browse all hotels" />
       <TopHotelDeals destination-name="London" :lat="51.5074" :lng="-0.1278" />
     </section>
 
     <!-- ══════════════════════ ACTIVITIES ══════════════════════ -->
     <section class="border-y border-[#E6EBF2] bg-[#F4F7FB]">
-      <div class="mx-auto max-w-7xl px-5 py-16">
-        <SectionHeading accent="#0450A0" eyebrow="Things to do" title="Experiences worth travelling for" link-to="/things-to-do" link-label="Explore activities" />
+      <div class="mx-auto max-w-7xl px-5 py-8 sm:py-10">
+        <SectionHeading accent="#0D1DAD" eyebrow="Things to do" title="Experiences worth travelling for" link-to="/things-to-do" link-label="Explore activities" />
         <TrendingActivities />
       </div>
     </section>
@@ -179,7 +200,7 @@
               <button
                 type="submit"
                 :disabled="loading"
-                class="shrink-0 rounded-md bg-[#EB4405] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#C93A04] disabled:opacity-60"
+                class="shrink-0 rounded-md bg-[#0D1DAD] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#081485] disabled:opacity-60"
               >
                 {{ loading ? 'Signing up…' : 'Notify me' }}
               </button>
@@ -204,15 +225,15 @@
       </div>
     </section>
 
-    <section class="relative overflow-hidden bg-[#0450A0]">
-      <div class="pointer-events-none absolute -bottom-32 left-1/3 h-[26rem] w-[26rem] rounded-full bg-[#EB4405]/25 blur-3xl"></div>
+    <section class="relative overflow-hidden bg-[#0D1DAD]">
+      <div class="pointer-events-none absolute -bottom-32 left-1/3 h-[26rem] w-[26rem] rounded-full bg-[#1A2ED4]/30 blur-3xl"></div>
       <div class="relative mx-auto max-w-4xl px-5 py-16 text-center">
         <h2 class="text-3xl font-black tracking-tight text-white sm:text-4xl">Ready when you are.</h2>
         <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/70">
           Start with a flight, a room, or the whole itinerary — and pay in your own currency.
         </p>
         <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
-          <NuxtLink to="/flights" class="rounded-md bg-[#EB4405] px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-[#C93A04]">Search flights</NuxtLink>
+          <NuxtLink to="/flights" class="rounded-md bg-white text-[#0D1DAD] px-7 py-3 text-sm font-black transition-colors hover:bg-white/90 shadow-lg">Search flights</NuxtLink>
           <NuxtLink to="/packages" class="rounded-md border border-white/30 px-7 py-3 text-sm font-bold text-white transition-colors hover:bg-white/10">Browse packages</NuxtLink>
         </div>
       </div>
@@ -237,33 +258,52 @@ import lifestyleImg from '@/assets/img/travel-lifestyle.webp'
 const verticals = [
   {
     to: '/flights', title: 'Flights',
+    badge: 'Airlines',
     blurb: 'Live fares from 100+ airlines — one-way, return or multi-city.',
+    image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=800',
     path: 'M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5',
   },
   {
-    to: '/stays', title: 'Hotels',
-    blurb: 'City hotels, apartments, resorts and villas with real rates.',
+    to: '/stays', title: 'Hotels & Stays',
+    badge: 'Accommodations',
+    blurb: 'City hotels, boutique apartments, luxury resorts and villas.',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
     path: 'M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21',
   },
   {
-    to: '/transfers', title: 'Transfers',
-    blurb: 'Private and shared airport pickups and drop-offs, door to door.',
+    to: '/transfers', title: 'Airport Transfers',
+    badge: 'Chauffeur',
+    blurb: 'Private & shared airport pickups and drop-offs, door to door.',
+    image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=800',
     path: 'M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12',
   },
   {
-    to: '/things-to-do', title: 'Activities',
-    blurb: 'Tours, tickets and experiences in hundreds of cities.',
+    to: '/things-to-do', title: 'Activities & Tours',
+    badge: 'Experiences',
+    blurb: 'Curated tours, museum passes, and outdoor adventures in top cities.',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
     path: 'M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z',
   },
   {
     to: '/cars', title: 'Car Rentals',
-    blurb: 'Economy to luxury, with flexible pickup and drop-off.',
+    badge: 'Vehicles',
+    blurb: 'Economy hatchbacks to luxury SUVs with flexible pickup & drop-off.',
+    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800',
     path: 'M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z',
   },
   {
-    to: '/packages', title: 'Packages',
-    blurb: 'Flights, hotel and extras bundled at a lower total price.',
+    to: '/packages', title: 'Holiday Packages',
+    badge: 'Bundle & Save',
+    blurb: 'Flight + hotel deals bundled together for maximum travel savings.',
+    image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800',
     path: 'M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18 15 15 0 010-18z',
+  },
+  {
+    to: '/cruises', title: 'Luxury Cruises',
+    badge: 'Sailings',
+    blurb: 'Elite ocean cruises, island sailings, and scenic river expeditions.',
+    image: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&q=80&w=800',
+    path: 'M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3',
   },
 ]
 

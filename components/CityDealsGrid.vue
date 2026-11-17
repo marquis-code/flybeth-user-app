@@ -1,46 +1,31 @@
 <template>
-  <section class="py-24 bg-[#F8FAFC]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-      
-      <!-- Header -->
-      <div class="text-center mb-12">
-        <h2 class="text-[32px] md:text-[40px] font-bold text-[#111827]  mb-4" style="font-family: 'Plus Jakarta Sans', sans-serif;">
-          Ready to explore?
-        </h2>
-        <p class="text-[15px] text-[#4B5563] max-w-2xl mx-auto leading-relaxed">
-          Discover destinations around the world, from beach escapes to city adventures, and book your next trip today.
-        </p>
-      </div>
-
-      <!-- Grid -->
-      <div v-if="loading" class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-        <div v-for="i in 9" :key="i" class="bg-gray-100 animate-pulse rounded-[24px] h-36"></div>
-      </div>
-      <div v-else class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-        <div 
-          v-for="city in topCities" 
-          :key="city.iata_code || city.name"
-          @click="$router.push(`/destinations?city=${encodeURIComponent(city.name)}`)"
-          class="bg-white rounded-[24px] p-6 hover:shadow-lg transition-shadow cursor-pointer flex flex-col items-start border border-gray-100"
-        >
-          <h3 class="text-xl font-bold text-[#111827] mb-1" style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ city.name }}</h3>
-          <p class="text-[13px] text-[#6B7280] mb-5">Flights to {{ city.name }} {{ city.iata_code ? `(${city.iata_code})` : '' }}</p>
-          <button class="bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#374151] px-5 py-2 rounded-full text-[13px] font-medium transition-colors">
-            Explore
-          </button>
-        </div>
-      </div>
-
-      <!-- CTA -->
-      <button 
-        @click="$router.push('/destinations')" 
-        class="bg-[#1A2ED4] hover:bg-[#0D1DAD] text-white px-8 py-3.5 rounded-full text-[15px] font-medium transition-colors shadow-sm"
-      >
-        Explore all destinations
-      </button>
-
+  <div class="w-full">
+    <!-- Compact Grid -->
+    <div v-if="loading" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+      <div v-for="i in 6" :key="i" class="bg-white/80 animate-pulse rounded-xl h-20 border border-gray-100"></div>
     </div>
-  </section>
+    <div v-else class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+      <div 
+        v-for="city in topCities.slice(0, 6)" 
+        :key="city.iata_code || city.name"
+        @click="$router.push(`/destinations?city=${encodeURIComponent(city.name)}`)"
+        class="group bg-white rounded-xl p-3.5 sm:p-4 hover:shadow-md transition-all duration-200 cursor-pointer flex items-center justify-between border border-slate-200/80 hover:border-[#0D1DAD]/40 hover:-translate-y-0.5"
+      >
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="h-9 w-9 shrink-0 rounded-lg bg-[#0D1DAD]/[0.07] text-[#0D1DAD] flex items-center justify-center font-black text-xs group-hover:bg-[#0D1DAD] group-hover:text-white transition-colors">
+            {{ city.iata_code || city.name.slice(0, 3).toUpperCase() }}
+          </div>
+          <div class="min-w-0">
+            <h3 class="text-sm font-bold text-[#0B1B33] truncate group-hover:text-[#0D1DAD] transition-colors">{{ city.name }}</h3>
+            <p class="text-[11px] text-[#5F7185] truncate">Flights to {{ city.name }} {{ city.iata_code ? `(${city.iata_code})` : '' }}</p>
+          </div>
+        </div>
+        <span class="shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-slate-50 text-slate-400 group-hover:bg-[#0D1DAD]/10 group-hover:text-[#0D1DAD] text-xs font-bold transition-all">
+          →
+        </span>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

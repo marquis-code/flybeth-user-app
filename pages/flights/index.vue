@@ -342,24 +342,26 @@
             </div>
           </div>
 
-          <!-- Empty -->
-          <div v-else-if="!displayedFlights.length" class="fp-empty mb-3">
-            <div class="fp-empty-ico">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-            </div>
-            <h3 class="fp-empty-h">No flights found</h3>
-            <p class="fp-empty-p">Try different airports or dates to unlock better options.</p>
-            <button class="fp-empty-btn" @click="searchQuery.origin='LHR'; searchQuery.destination='DXB'; handleSearch()">Try London → Dubai</button>
+          <!-- Creative Empty State -->
+          <div v-else-if="!displayedFlights.length" class="my-6">
+            <EmptyState 
+              variant="flights"
+              title="No flights found for this route"
+              message="We couldn't find live airline fares for the selected dates and route. Try searching alternative departure dates or nearby major hub airports."
+              action-label="Try London → Dubai"
+              @action="searchQuery.origin='LHR'; searchQuery.destination='DXB'; handleSearch()"
+            />
           </div>
 
-          <!-- No filter match -->
-          <div v-else-if="!loading && displayedFlights.length && sortedFlights.length === 0" class="fp-empty">
-            <div class="fp-empty-ico">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-            </div>
-            <h3 class="fp-empty-h">No matches</h3>
-            <p class="fp-empty-p">Your filters returned nothing. Try widening the criteria.</p>
-            <button class="fp-empty-btn" @click="clearFilters">Clear filters</button>
+          <!-- Creative Filter Mismatch Empty State -->
+          <div v-else-if="!loading && displayedFlights.length && sortedFlights.length === 0" class="my-6">
+            <EmptyState 
+              variant="search"
+              title="No flights match your filters"
+              message="Your active filters are excluding all available results. Reset your stops, airline, or price filters to see available flights."
+              action-label="Reset all filters"
+              @action="clearFilters"
+            />
           </div>
 
           <!-- Results & Carousels -->

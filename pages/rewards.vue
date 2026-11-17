@@ -22,7 +22,7 @@
         </p>
         
         <div class="max-w-md mx-auto flex gap-4">
-          <NuxtLink to="/auth/register" class="flex-1 bg-[#EB4405] hover:bg-[#C93A04] text-white py-3.5 rounded-xl font-bold transition-colors shadow-lg shadow-orange-950/20 text-center">
+          <NuxtLink to="/auth/register" class="flex-1 bg-[#0D1DAD] hover:bg-[#081485] text-white py-3.5 rounded-xl font-bold transition-colors shadow-lg shadow-blue-950/20 text-center">
             Join for Free
           </NuxtLink>
           <NuxtLink to="/auth/login" class="flex-1 bg-white/10 hover:bg-white/15 border border-white/30 text-white py-3.5 rounded-xl font-bold transition-colors text-center">

@@ -106,7 +106,7 @@
 
           <!-- Action Buttons -->
           <div class="flex items-center gap-2 pt-2 border-t border-gray-200">
-             <button @click="closePicker" class="flex-1 py-3 text-white text-[12px] font-bold transition-all active:scale-95" :class="isCo ? 'bg-[#EB4405] hover:bg-[#C93A04] rounded-md' : 'bg-black hover:bg-gray-900 rounded-xl'">Done</button>
+             <button @click="closePicker" class="flex-1 py-3 text-white text-[12px] font-bold transition-all active:scale-95" :class="isCo ? 'bg-[#0D1DAD] hover:bg-[#081485] rounded-md' : 'bg-[#0D1DAD] hover:bg-[#081485] rounded-xl'">Done</button>
           </div>
         </div>
       </div>

@@ -389,24 +389,26 @@
             </div>
           </div>
  
-          <!-- Empty state -->
-          <div v-else-if="!displayedStays.length" class="sp-empty">
-            <div class="sp-empty-ico">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            </div>
-            <h3 class="sp-empty-h">No stays found</h3>
-            <p class="sp-empty-p">Try a different destination or adjust your dates to discover available properties.</p>
-            <button class="sp-empty-btn" @click="searchQuery.location='Dubai'; handleSearch()">Try Dubai</button>
+          <!-- Creative Empty State -->
+          <div v-else-if="!displayedStays.length" class="my-6">
+            <EmptyState 
+              variant="stays"
+              title="No stays found for this location"
+              message="We couldn't find available hotels or stays matching your search. Try searching for another city or adjusting your check-in and check-out dates."
+              action-label="Try Dubai"
+              @action="searchQuery.location='Dubai'; handleSearch()"
+            />
           </div>
  
-          <!-- No filter match -->
-          <div v-else-if="filteredStays.length === 0" class="sp-empty">
-            <div class="sp-empty-ico">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-            </div>
-            <h3 class="sp-empty-h">No matches</h3>
-            <p class="sp-empty-p">Your filters returned nothing. Try widening the criteria.</p>
-            <button class="sp-empty-btn" @click="clearFilters">Clear filters</button>
+          <!-- Creative Filter Mismatch Empty State -->
+          <div v-else-if="filteredStays.length === 0" class="my-6">
+            <EmptyState 
+              variant="search"
+              title="No stays match your filters"
+              message="Your active filters are excluding all available accommodations. Try widening your price range, guest count, or star ratings."
+              action-label="Reset all filters"
+              @action="clearFilters"
+            />
           </div>
  
           <!-- Stay cards -->

@@ -113,7 +113,7 @@ const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 3px;
-  background: #1a6cf0;
+  background: #0D1DAD;
   border-radius: 16px 0 0 16px;
 }
 
@@ -139,8 +139,8 @@ const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
 }
 
 @keyframes breathe {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(26,108,240,0.12); }
-  50%       { box-shadow: 0 0 0 8px rgba(26,108,240,0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13,29,173,0.12); }
+  50%       { box-shadow: 0 0 0 8px rgba(13,29,173,0); }
 }
 
 .es-icon-inner {
@@ -152,11 +152,11 @@ const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(26,108,240,0.12);
+  box-shadow: 0 2px 6px rgba(13,29,173,0.12);
 }
 .es-icon {
   width: 20px; height: 20px;
-  color: #1a6cf0;
+  color: #0D1DAD;
   stroke-width: 1.75;
 }
 
@@ -164,7 +164,7 @@ const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
 .dot {
   position: absolute;
   border-radius: 50%;
-  background: #1a6cf0;
+  background: #0D1DAD;
   opacity: 0.18;
   animation: float-dot 2.4s ease-in-out infinite;
 }
@@ -202,7 +202,7 @@ const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #1a6cf0;
+  color: #0D1DAD;
   margin: 0;
 }
 .es-title {
@@ -248,7 +248,7 @@ const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
 .es-pill:hover {
   background: #f0f5ff;
   border-color: #dbe8fe;
-  color: #1a6cf0;
+  color: #0D1DAD;
 }
 
 /* Button */
@@ -260,19 +260,19 @@ const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
   padding: 0.55rem 1.25rem;
   border-radius: 8px;
   border: none;
-  background: #1a6cf0;
+  background: #0D1DAD;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
   color: #ffffff;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(26,108,240,0.25);
+  box-shadow: 0 2px 8px rgba(13,29,173,0.25);
   transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
   letter-spacing: 0.01em;
 }
 .es-btn:hover {
-  background: #1559cc;
-  box-shadow: 0 4px 14px rgba(26,108,240,0.35);
+  background: #081485;
+  box-shadow: 0 4px 14px rgba(13,29,173,0.35);
   transform: translateY(-1px);
 }
 .es-btn:active { transform: scale(0.98); }

@@ -26,7 +26,7 @@
 
         <NuxtLink
           to="/packages"
-          class="shrink-0 rounded-md bg-[#EB4405] px-6 py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#C93A04]"
+          class="shrink-0 rounded-md bg-[#0D1DAD] px-6 py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#081485]"
         >Plan my trip</NuxtLink>
       </div>
     </div>

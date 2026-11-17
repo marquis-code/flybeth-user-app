@@ -126,7 +126,7 @@
                 <button
                   v-if="booking.payment?.status !== 'success' && booking.status !== 'cancelled' && booking.status !== 'confirmed'"
                   @click="handlePayment(booking)"
-                  class="px-4 py-2 bg-orange-500 text-white rounded-xl text-xs  uppercase  hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all"
+                  class="px-4 py-2 bg-[#0D1DAD] text-white rounded-xl text-xs uppercase hover:bg-[#081485] shadow-lg shadow-blue-200/50 transition-all"
                 >
                   Pay Now
                 </button>

@@ -1518,7 +1518,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
 .sw-root--co .sw-tabs { border-radius: 8px 8px 0 0; }
 .sw-root--co .sw-tab-btn { font-weight: 700; }
-.sw-root--co .sw-tab-btn--on { border-bottom-color: #eb4405; }
+.sw-root--co .sw-tab-btn--on { border-bottom-color: #0D1DAD; }
 .sw-root--co .sw-panel { border-radius: 0 0 8px 8px; }
 
 .sw-root--co .sw-radios { border-radius: 6px; }
@@ -1526,16 +1526,16 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-root--co .sw-bar { border-radius: 6px; }
 .sw-root--co .sw-bar:focus-within {
   border-color: #9dc0e4;
-  box-shadow: 0 0 0 3px rgba(4, 80, 160, .12);
+  box-shadow: 0 0 0 3px rgba(13, 29, 173, .12);
 }
 
 .sw-root--co .sw-search-btn {
-  background: #eb4405;
+  background: #0D1DAD;
   border-radius: 6px;
   font-weight: 800;
-  box-shadow: 0 10px 22px -12px rgba(235, 68, 5, .75);
+  box-shadow: 0 10px 22px -12px rgba(13, 29, 173, .75);
 }
-.sw-root--co .sw-search-btn:hover { background: #c93a04; }
+.sw-root--co .sw-search-btn:hover { background: #081485; }
 
 .sw-root--co .sw-chk { border-radius: 6px; }
 .sw-root--co .sw-chk-box { border-radius: 4px; }

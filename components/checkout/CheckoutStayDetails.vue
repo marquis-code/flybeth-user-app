@@ -58,7 +58,7 @@
 
     <!-- Continue Button (Hidden if bundle, step 0, or explicitly hidden) -->
     <div v-if="!isBundle && !hideContinue" class="flex justify-end mt-4">
-      <button @click="$emit('continue')" class="bg-brand-orange hover:bg-orange-600 text-white  px-12 py-4 rounded-xl transition-all  text-sm active:scale-[0.98]">
+      <button @click="$emit('continue')" class="bg-[#0D1DAD] hover:bg-[#081485] text-white px-12 py-4 rounded-xl transition-all text-sm active:scale-[0.98]">
         Continue to Traveller Details
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
       </button>

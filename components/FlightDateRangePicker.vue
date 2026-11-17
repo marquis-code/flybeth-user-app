@@ -163,7 +163,7 @@
             <button
               @click="closeCalendar"
               class="px-5 py-2 text-white text-[12px] font-bold transition-all active:scale-95"
-              :class="isCo ? 'bg-[#EB4405] hover:bg-[#C93A04] rounded-md' : 'bg-black hover:bg-gray-900 rounded-xl'"
+              :class="isCo ? 'bg-[#0D1DAD] hover:bg-[#081485] rounded-md' : 'bg-[#0D1DAD] hover:bg-[#081485] rounded-xl'"
             >Done</button>
           </div>
         </div>

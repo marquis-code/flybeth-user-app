@@ -22,7 +22,7 @@
         </p>
         
         <div class="max-w-md mx-auto">
-          <NuxtLink to="/contact" class="inline-block w-full bg-[#EB4405] hover:bg-[#C93A04] text-white py-3.5 rounded-xl font-bold transition-colors shadow-lg shadow-orange-950/20">
+          <NuxtLink to="/contact" class="inline-block w-full bg-[#0D1DAD] hover:bg-[#081485] text-white py-3.5 rounded-xl font-bold transition-colors shadow-lg shadow-blue-950/20">
             Request a Group Quote
           </NuxtLink>
         </div>
