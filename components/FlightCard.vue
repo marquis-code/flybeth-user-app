@@ -35,13 +35,18 @@
         </div>
         
         <!-- Duration and Stops Text -->
-        <div class="mt-1 text-[11px] sm:text-[12px] text-gray-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+        <div class="mt-1 text-[11px] sm:text-[12px] text-gray-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis flex items-center gap-1.5 flex-wrap">
           <span class="font-bold text-gray-700">{{ formatDuration(flight.duration) }} &bull; {{ flight.stops === 0 ? 'Nonstop' : `${flight.stops} Stop${flight.stops > 1 ? 's' : ''}` }}</span>
+          <span v-if="layoverSummary" class="text-amber-800 bg-amber-50 border border-amber-200/60 font-bold px-1.5 py-0.5 rounded text-[10px]">
+            {{ layoverSummary }}
+          </span>
         </div>
         
-        <!-- Airline Name -->
-        <div class="mt-0.5 text-[10px] sm:text-[11px] text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis">
-          {{ flight.airline }}
+        <!-- Airline Name & Flight Date -->
+        <div class="mt-0.5 text-[10px] sm:text-[11px] text-gray-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis flex items-center gap-2">
+          <span>{{ flight.airline }}</span>
+          <span v-if="flightDate" class="text-gray-300">&bull;</span>
+          <span v-if="flightDate" class="text-gray-600 font-semibold">{{ flightDate }}</span>
         </div>
       </div>
     </div>
@@ -113,4 +118,40 @@ const formatDuration = (val: any) => {
   }
   return String(val)
 }
+const formatFlightDate = (isoString: string) => {
+  if (!isoString) return ''
+  try {
+    const d = new Date(isoString)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    })
+  } catch (e) {
+    return ''
+  }
+}
+
+const flightDate = computed(() => {
+  return formatFlightDate(props.flight.departureTime || props.flight.departure_date)
+})
+
+const layoverSummary = computed(() => {
+  const segs = segments.value
+  if (!segs || segs.length <= 1) return ''
+  const layovers = segs.slice(0, -1).map((s: any, i: number) => {
+    const next = segs[i + 1]
+    const dest = s.destination || s.destination_name || ''
+    if (s.arrivalTime && next?.departureTime) {
+      const diff = new Date(next.departureTime).getTime() - new Date(s.arrivalTime).getTime()
+      if (diff > 0) {
+        const mins = Math.round(diff / 60000)
+        return `${dest} (${formatDuration(mins)} layover)`
+      }
+    }
+    return dest
+  })
+  return layovers.filter(Boolean).join(', ')
+})
 </script>

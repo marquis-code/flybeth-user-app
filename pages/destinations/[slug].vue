@@ -12,7 +12,7 @@
         <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
 
-      <div class="relative z-10 max-w-5xl mx-auto px-5 text-center">
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
         <p class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/60 mb-2">✦ Popular Destination</p>
         <h1 class="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-white capitalize mb-3">
           Flights to <span class="text-[#FF8A00]">{{ formatSlug(route.params.slug) }}</span>

@@ -13,7 +13,7 @@
         <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/25 blur-3xl"></div>
       </div>
 
-      <div class="relative mx-auto max-w-6xl px-5 pt-[92px] pb-14 sm:pt-[112px] sm:pb-20">
+      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 pt-[92px] pb-14 sm:pt-[112px] sm:pb-20">
         <div class="mb-8 text-center">
           <p class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/60">Flights · Hotels · Cars · Experiences</p>
           <h1 class="mt-3 text-3xl font-black leading-tight tracking-tight text-white sm:text-4xl lg:text-[42px]">

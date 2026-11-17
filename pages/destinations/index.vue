@@ -12,7 +12,7 @@
         <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
 
-      <div class="max-w-5xl w-full mx-auto relative z-10 flex flex-col items-center">
+      <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-10 relative z-10 flex flex-col items-center">
         <!-- Re-using SearchWidget here configured with theme="cheapoair" -->
         <SearchWidget ref="searchWidgetRef" theme="cheapoair" class="w-full" />
         <p class="text-white text-sm font-medium mt-6 opacity-90">22,042 reviews on Flybeth</p>

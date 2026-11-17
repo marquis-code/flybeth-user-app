@@ -42,7 +42,7 @@
           </template>
         </div>
         <!-- ── HOME PAGE SEARCH WIDGET ── -->
-        <div class="mt-6 w-full max-w-5xl mx-auto relative z-20">
+        <div class="mt-6 w-full relative z-20">
           <SearchWidget theme="cheapoair" />
         </div>
       </div><!-- /fp-wrap -->
@@ -451,74 +451,132 @@
       </template>
       <template #default>
         <div class="fd-drawer-content" v-if="selectedFlightSchedule">
-          <!-- Outbound details header card -->
-          <div class="fd-flight-summary-card">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-              <div class="flex items-center gap-3">
-                <div class="h-10 w-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center p-1.5 flex-shrink-0">
-                  <img v-if="selectedFlightSchedule.airlineLogo" :src="selectedFlightSchedule.airlineLogo" :alt="selectedFlightSchedule.airline" class="h-full w-full object-contain" />
-                  <div v-else class="h-full w-full bg-gray-100 rounded flex items-center justify-center">
-                    <span class="text-black font-bold text-xs">{{ (selectedFlightSchedule.airline || 'FL').slice(0, 2).toUpperCase() }}</span>
+          <!-- Flight Itineraries (Outbound, Return, Multi-city) -->
+          <div class="space-y-4 mb-4">
+            <div 
+              v-for="(itin, itinIdx) in drawerItineraries" 
+              :key="itinIdx" 
+              class="fd-flight-summary-card"
+            >
+              <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                  <div class="h-10 w-10 rounded-lg bg-white border border-gray-100 flex items-center justify-center p-1.5 flex-shrink-0 shadow-xs">
+                    <img v-if="itin.airlineLogo" :src="itin.airlineLogo" :alt="itin.airline" class="h-full w-full object-contain" />
+                    <div v-else class="h-full w-full bg-gray-100 rounded flex items-center justify-center">
+                      <span class="text-black font-bold text-xs">{{ (itin.airline || 'FL').slice(0, 2).toUpperCase() }}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-[#0D1DAD]/10 text-[#0D1DAD]">
+                        {{ itin.title }}
+                      </span>
+                      <span v-if="formatFlightDate(itin.departureTime)" class="text-xs font-bold text-gray-800 bg-white border border-gray-200 px-2 py-0.5 rounded">
+                        📅 {{ formatFlightDate(itin.departureTime) }}
+                      </span>
+                      <h4 class="font-bold text-black text-sm leading-tight">{{ itin.airline }}</h4>
+                    </div>
+                    <span class="text-xs text-gray-600 font-semibold mt-1 block">
+                      {{ formatTime(itin.departureTime) }} - {{ formatTime(itin.arrivalTime) }} 
+                      ({{ formatDuration(itin.duration) }}, {{ itin.stops === 0 ? 'nonstop' : `${itin.stops} stop${itin.stops > 1 ? 's' : ''}` }})
+                    </span>
                   </div>
                 </div>
-                <div>
-                  <h4 class="font-bold text-black text-sm leading-tight">{{ selectedFlightSchedule.airline }}</h4>
-                  <span class="text-xs text-gray-500 font-semibold mt-1 block">
-                    {{ formatTime(selectedFlightSchedule.departureTime) }} - {{ formatTime(selectedFlightSchedule.arrivalTime) }} 
-                    ({{ formatDuration(selectedFlightSchedule.duration) }}, {{ selectedFlightSchedule.stops === 0 ? 'nonstop' : `${selectedFlightSchedule.stops} stop${selectedFlightSchedule.stops > 1 ? 's' : ''}` }})
-                  </span>
-                </div>
+                <button 
+                  @click="showDrawerFlightDetails = !showDrawerFlightDetails" 
+                  class="text-xs font-bold text-[#0D1DAD] hover:text-[#002a66] flex items-center gap-1 transition-colors"
+                >
+                  {{ showDrawerFlightDetails ? 'Hide details' : 'Show details' }}
+                  <ChevronDown class="w-3.5 h-3.5 transition-transform duration-300" :class="showDrawerFlightDetails ? 'rotate-180' : ''" />
+                </button>
               </div>
-              <button 
-                @click="showDrawerFlightDetails = !showDrawerFlightDetails" 
-                class="text-xs font-bold text-[#0D1DAD] hover:text-[#002a66] flex items-center gap-1 transition-colors"
-              >
-                {{ showDrawerFlightDetails ? 'Hide details' : 'Show details' }}
-                <ChevronDown class="w-3.5 h-3.5 transition-transform duration-300" :class="showDrawerFlightDetails ? 'rotate-180' : ''" />
-              </button>
-            </div>
 
-            <!-- Segment timeline (collapsible) -->
-            <div v-if="showDrawerFlightDetails" class="mt-5 pt-5 border-t border-gray-200/60">
-              <div class="space-y-6 relative border-l border-gray-200 ml-4 pl-6">
-                <div v-for="(segment, idx) in selectedFlightSchedule.segments" :key="idx" class="relative">
-                  <!-- Node indicator -->
-                  <div class="absolute -left-[29.5px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#0D1DAD] outline outline-4 outline-gray-50"></div>
+              <!-- Segment timeline (collapsible) -->
+              <div v-if="showDrawerFlightDetails" class="mt-5 pt-5 border-t border-gray-200/60">
+                <div class="space-y-6 relative border-l-2 border-gray-200 ml-4 pl-6">
+                  <div v-for="(segment, idx) in itin.segments" :key="idx" class="relative">
+                    <!-- Node indicator -->
+                    <div class="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-[#0D1DAD] ring-4 ring-white shadow-xs"></div>
 
-                  <!-- Segment Header -->
-                  <div class="flex flex-wrap gap-2 items-center mb-2">
-                    <span class="text-xs font-bold text-black">{{ segment.operatingCarrier || segment.airline || selectedFlightSchedule.airline }}</span>
-                    <span class="text-[10px] font-semibold text-gray-500 bg-gray-200/60 px-1.5 py-0.5 rounded">
-                      {{ segment.flightNumber }}
-                    </span>
-                    <span class="text-[10px] font-semibold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded" v-if="segment.aircraft">
-                      {{ segment.aircraft }}
-                    </span>
-                  </div>
-
-                  <!-- Times & Airports -->
-                  <div class="text-[13px] space-y-1">
-                    <div class="flex items-center gap-2">
-                      <span class="font-bold text-black">{{ formatTime(segment.departureTime) }}</span>
-                      <span class="text-gray-600 font-medium">{{ segment.origin }}</span>
-                      <span class="text-xs text-gray-400" v-if="segment.originTerminal">(Terminal {{ segment.originTerminal }})</span>
+                    <!-- Segment Header -->
+                    <div class="flex flex-wrap gap-2 items-center mb-2.5">
+                      <span class="text-xs font-bold text-gray-900">{{ segment.operatingCarrier || segment.airline || itin.airline }}</span>
+                      <span class="text-[11px] font-bold text-gray-700 bg-gray-200/70 px-2 py-0.5 rounded">
+                        {{ segment.flightNumber }}
+                      </span>
+                      <span class="text-[11px] font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded" v-if="segment.aircraft">
+                        ✈ {{ segment.aircraft }}
+                      </span>
+                      <span class="text-[11px] font-medium text-gray-500 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded" v-if="segment.cabinClass">
+                        {{ segment.cabinClass }}
+                      </span>
                     </div>
-                    <div class="text-[11px] text-gray-400 flex items-center gap-1 pl-1 py-0.5">
-                      <Clock class="w-3 h-3 text-gray-300" /> {{ formatDuration(segment.duration) }}
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="font-bold text-black">{{ formatTime(segment.arrivalTime) }}</span>
-                      <span class="text-gray-600 font-medium">{{ segment.destination }}</span>
-                      <span class="text-xs text-gray-400" v-if="segment.destinationTerminal">(Terminal {{ segment.destinationTerminal }})</span>
-                    </div>
-                  </div>
 
-                  <!-- Connection Info if multiple segments -->
-                  <div v-if="Number(idx) < selectedFlightSchedule.segments.length - 1" class="mt-4 mb-2 -ml-2 py-2 px-3 bg-orange-50/50 rounded-xl border border-orange-100/30 flex items-center gap-2 text-xs">
-                    <Clock class="w-3.5 h-3.5 text-orange-600" />
-                    <span class="font-bold text-orange-800">
-                      Connection layover in {{ segment.destination }}
-                    </span>
+                    <!-- Times & Airports Card -->
+                    <div class="space-y-2 text-sm bg-white p-3.5 rounded-xl border border-gray-200/70 shadow-xs">
+                      <!-- Departure -->
+                      <div class="flex items-start justify-between gap-3">
+                        <div>
+                          <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-black text-black text-base">{{ formatTime(segment.departureTime) }}</span>
+                            <span class="font-extrabold text-[#0D1DAD]">{{ segment.origin }}</span>
+                            <span class="text-xs text-gray-600 font-medium" v-if="lookupCity(segment.origin)">— {{ lookupCity(segment.origin).split(' (')[0] }}</span>
+                            <span class="text-xs text-gray-500 font-semibold" v-if="segment.originTerminal">(Terminal {{ segment.originTerminal }})</span>
+                          </div>
+                          <div v-if="formatFlightDate(segment.departureTime)" class="text-[11px] font-semibold text-gray-500 mt-0.5">
+                            📅 {{ formatFlightDate(segment.departureTime) }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Duration Badge -->
+                      <div class="py-1">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-700 bg-gray-100 px-2.5 py-1 rounded-md">
+                          <Clock class="w-3.5 h-3.5 text-gray-600" />
+                          Flight duration: {{ formatDuration(segment.duration) }}
+                        </span>
+                      </div>
+
+                      <!-- Arrival -->
+                      <div class="flex items-start justify-between gap-3">
+                        <div>
+                          <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-black text-black text-base">{{ formatTime(segment.arrivalTime) }}</span>
+                            <span class="font-extrabold text-[#0D1DAD]">{{ segment.destination }}</span>
+                            <span class="text-xs text-gray-600 font-medium" v-if="lookupCity(segment.destination)">— {{ lookupCity(segment.destination).split(' (')[0] }}</span>
+                            <span class="text-xs text-gray-500 font-semibold" v-if="segment.destinationTerminal">(Terminal {{ segment.destinationTerminal }})</span>
+                          </div>
+                          <div v-if="formatFlightDate(segment.arrivalTime)" class="text-[11px] font-semibold text-gray-500 mt-0.5 flex items-center gap-1.5">
+                            📅 {{ formatFlightDate(segment.arrivalTime) }}
+                            <span v-if="formatFlightDate(segment.arrivalTime) !== formatFlightDate(segment.departureTime)" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                              +1 day
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Connection Layover Box -->
+                    <div 
+                      v-if="Number(idx) < itin.segments.length - 1" 
+                      class="mt-4 mb-2 -ml-2 py-2.5 px-3.5 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between gap-3 text-xs shadow-xs"
+                    >
+                      <div class="flex items-center gap-2">
+                        <Clock class="w-4 h-4 text-amber-600 shrink-0" />
+                        <span class="font-bold text-amber-950">
+                          Connection layover in {{ segment.destination }}
+                          <span v-if="lookupCity(segment.destination)" class="font-medium text-amber-800">
+                            ({{ lookupCity(segment.destination).split(' (')[0] }})
+                          </span>
+                        </span>
+                      </div>
+                      <span 
+                        v-if="calcLayover(segment, itin.segments[Number(idx) + 1])" 
+                        class="font-black text-amber-900 bg-amber-200/80 px-2.5 py-1 rounded-md text-xs shrink-0 whitespace-nowrap"
+                      >
+                        ⏱ {{ calcLayover(segment, itin.segments[Number(idx) + 1]) }} layover
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -958,9 +1016,43 @@ const filterMetadata = computed(() => {
   return sortedMeta
 })
 
+const formatFlightDate = (isoString: string) => {
+  if (!isoString) return ''
+  try {
+    const d = new Date(isoString)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    })
+  } catch (e) {
+    return ''
+  }
+}
+
+const calcLayover = (seg1: any, seg2: any) => {
+  if (!seg1?.arrivalTime || !seg2?.departureTime) return ''
+  try {
+    const t1 = new Date(seg1.arrivalTime).getTime()
+    const t2 = new Date(seg2.departureTime).getTime()
+    const diff = t2 - t1
+    if (isNaN(diff) || diff <= 0) return ''
+    const minutes = Math.round(diff / 60000)
+    return formatDuration(minutes)
+  } catch (e) {
+    return ''
+  }
+}
+
 const getScheduleKey = (flight: any) => {
-  if (!flight || !Array.isArray(flight.segments)) return flight?.offerId || String(Math.random())
-  return flight.segments.map((s: any) => `${s.flightNumber || ''}-${s.departureTime || ''}`).join('|')
+  if (!flight) return ''
+  const segments = flight.itineraries?.length
+    ? flight.itineraries.flatMap((it: any) => it.segments || [])
+    : (flight.segments || [])
+  if (!segments.length) return flight.offerId || flight.id || ''
+  return segments.map((s: any) => `${s.airline || ''}-${s.flightNumber || ''}-${s.origin || ''}-${s.destination || ''}-${s.departureTime || ''}`).join('|')
 }
 
 // Groups all filtered flights by schedule
@@ -981,21 +1073,75 @@ const groupedSchedules = computed(() => {
 const sortedFlights = computed(() => {
   const primaries = Object.keys(groupedSchedules.value).map(key => {
     const group = groupedSchedules.value[key] || []
-    // Sort group variants by price (cheapest first)
+    // Sort group variants by price (cheapest first) with deterministic tie-break
     const sortedGroup = [...group].sort((a: any, b: any) => {
       const priceA = a.priceWithCommission || a.price || 0
       const priceB = b.priceWithCommission || b.price || 0
-      return priceA - priceB
+      if (Math.abs(priceA - priceB) > 0.01) return priceA - priceB
+      return (a.id || a.offerId || '').localeCompare(b.id || b.offerId || '')
     })
     // The first one is the representative cheapest offer
     return sortedGroup[0]
   })
   
   return primaries.sort((a: any, b: any) => {
-    if (sortBy.value === 'price') return (a.priceWithCommission||a.price||0) - (b.priceWithCommission||b.price||0)
-    if (sortBy.value === 'duration') return (a.duration||9999) - (b.duration||9999)
-    return 0
+    const priceA = a.priceWithCommission || a.price || 0
+    const priceB = b.priceWithCommission || b.price || 0
+    const durA = a.duration || 9999
+    const durB = b.duration || 9999
+
+    if (sortBy.value === 'price') {
+      if (Math.abs(priceA - priceB) > 0.01) return priceA - priceB
+      if (durA !== durB) return durA - durB
+    } else if (sortBy.value === 'duration') {
+      if (durA !== durB) return durA - durB
+      if (Math.abs(priceA - priceB) > 0.01) return priceA - priceB
+    } else {
+      // Recommended: composite score
+      const scoreA = priceA * 0.7 + durA * 0.3
+      const scoreB = priceB * 0.7 + durB * 0.3
+      if (Math.abs(scoreA - scoreB) > 0.01) return scoreA - scoreB
+    }
+
+    // Deterministic tie-breakers
+    const stopsA = a.stops ?? 0
+    const stopsB = b.stops ?? 0
+    if (stopsA !== stopsB) return stopsA - stopsB
+
+    const airlineA = a.airline || ''
+    const airlineB = b.airline || ''
+    if (airlineA !== airlineB) return airlineA.localeCompare(airlineB)
+
+    return (a.departureTime || '').localeCompare(b.departureTime || '')
   })
+})
+
+const drawerItineraries = computed(() => {
+  if (!selectedFlightSchedule.value) return []
+  if (selectedFlightSchedule.value.itineraries && Array.isArray(selectedFlightSchedule.value.itineraries) && selectedFlightSchedule.value.itineraries.length > 0) {
+    return selectedFlightSchedule.value.itineraries.map((itin: any, i: number) => ({
+      ...itin,
+      title: i === 0 ? 'Outbound Flight' : (i === 1 ? 'Return Flight' : `Leg ${i + 1}`),
+      airline: itin.segments?.[0]?.airline || selectedFlightSchedule.value.airline,
+      airlineLogo: itin.segments?.[0]?.airlineLogo || selectedFlightSchedule.value.airlineLogo,
+      departureTime: itin.departureTime || itin.segments?.[0]?.departureTime,
+      arrivalTime: itin.arrivalTime || itin.segments?.[itin.segments.length - 1]?.arrivalTime,
+      duration: itin.duration,
+      stops: itin.stops ?? (itin.segments ? itin.segments.length - 1 : 0),
+      segments: itin.segments || []
+    }))
+  }
+  // Single leg fallback
+  return [{
+    title: 'Flight Itinerary',
+    airline: selectedFlightSchedule.value.airline,
+    airlineLogo: selectedFlightSchedule.value.airlineLogo,
+    departureTime: selectedFlightSchedule.value.departureTime,
+    arrivalTime: selectedFlightSchedule.value.arrivalTime,
+    duration: selectedFlightSchedule.value.duration,
+    stops: selectedFlightSchedule.value.stops ?? (selectedFlightSchedule.value.segments ? selectedFlightSchedule.value.segments.length - 1 : 0),
+    segments: selectedFlightSchedule.value.segments || []
+  }]
 })
 
 const openVariantsDrawer = (flight: any) => {
@@ -1317,6 +1463,26 @@ const handleSearch = () => {
   }
   
   activeField.value = null
+
+  // Keep the browser URL updated so page refreshes and copied links are 100% consistent across tabs and browsers
+  if (router) {
+    router.replace({
+      query: {
+        origin: searchQuery.value.origin,
+        destination: searchQuery.value.destination,
+        departureDate: searchQuery.value.departureDate,
+        returnDate: searchQuery.value.returnDate || undefined,
+        type: searchQuery.value.type,
+        adults: searchQuery.value.adults,
+        children: searchQuery.value.children || undefined,
+        infantsOnLap: searchQuery.value.infantsOnLap || undefined,
+        infantsInSeat: searchQuery.value.infantsInSeat || undefined,
+        cabinClass: searchQuery.value.cabinClass,
+        slices: searchQuery.value.slices && searchQuery.value.slices.length ? JSON.stringify(searchQuery.value.slices) : undefined
+      }
+    }).catch(() => {})
+  }
+
   searchFlights(searchQuery.value)
   predictTripPurpose({ origin: searchQuery.value.origin, destination: searchQuery.value.destination, departureDate: searchQuery.value.departureDate })
 }
@@ -1574,9 +1740,15 @@ onMounted(async () => {
 }
 
 .fp-wrap {
-  max-width: 1160px;
+  max-width: 80rem; /* max-w-7xl matching navbar */
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+@media (min-width: 1024px) {
+  .fp-wrap {
+    padding: 0 2.5rem; /* lg:px-10 */
+  }
 }
 
 /* ── Hero ──────────────────────────────────────────────────────────── */
