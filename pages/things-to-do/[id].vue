@@ -1,234 +1,501 @@
 <template>
-  <div class="min-h-screen bg-[#f0f2f5]">
+  <div class="min-h-screen bg-[#F8FAFC]">
+    
     <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
-      <div class="text-center">
-        <div class="w-12 h-12 border-4 border-gray-200 border-t-[#0084ff] rounded-full animate-spin mx-auto mb-4"></div>
-        <p class="text-sm font-bold text-black uppercase ">Loading experience...</p>
-      </div>
+    <div v-if="loading" class="min-h-[70vh] flex flex-col items-center justify-center p-6">
+      <div class="w-12 h-12 border-4 border-gray-200 border-t-[#0D1DAD] rounded-full animate-spin mb-4"></div>
+      <p class="text-sm font-bold text-gray-700 uppercase tracking-wider">Loading experience...</p>
     </div>
 
+    <!-- Loaded Experience -->
     <template v-else-if="activity">
-      <!-- Hero Image Gallery -->
-      <div class="relative h-[50vh] md:h-[60vh] overflow-hidden bg-black">
-        <img 
-          v-if="currentPhoto" 
-          :src="currentPhoto" 
-          :alt="activity.name" 
-          class="w-full h-full object-cover opacity-90 transition-all duration-700"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-        
-        <!-- Nav arrows for gallery -->
-        <div v-if="activity.photos?.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-6 z-20">
-          <button @click="prevPhoto" class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-          </button>
-          <button @click="nextPhoto" class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-          </button>
-        </div>
+      
+      <!-- ── 1. Top Sub-Navigation & Breadcrumbs ── -->
+      <nav class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-2xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+          <!-- Left: Back Button & Breadcrumbs -->
+          <div class="flex items-center gap-3 min-w-0">
+            <button 
+              @click="router.back()" 
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-gray-100 text-gray-700 font-bold text-xs transition-colors shrink-0"
+              title="Go back"
+            >
+              <ChevronLeft class="w-4 h-4 text-gray-600" />
+              <span>Back</span>
+            </button>
 
-        <!-- Photo counter -->
-        <div v-if="activity.photos?.length > 1" class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
-          <div class="bg-black/40 backdrop-blur-md rounded-full px-4 py-1.5 flex items-center gap-2">
-            <svg class="w-3.5 h-3.5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <span class="text-white text-xs font-bold">{{ currentPhotoIndex + 1 }} / {{ activity.photos.length }}</span>
+            <div class="h-4 w-px bg-gray-200 shrink-0"></div>
+
+            <!-- Clear, High-Contrast Breadcrumbs -->
+            <div class="flex items-center gap-1.5 text-xs font-medium text-gray-500 truncate">
+              <NuxtLink to="/" class="hover:text-[#0D1DAD] transition-colors shrink-0">Home</NuxtLink>
+              <ChevronRight class="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <NuxtLink to="/things-to-do" class="hover:text-[#0D1DAD] transition-colors shrink-0">Things to do</NuxtLink>
+              <ChevronRight class="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              <span class="text-gray-900 font-semibold truncate">{{ activity.name }}</span>
+            </div>
+          </div>
+
+          <!-- Right: Share Action -->
+          <div class="flex items-center gap-2 shrink-0">
+            <button 
+              @click="handleShare"
+              class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all shadow-2xs"
+            >
+              <Share2 class="w-3.5 h-3.5 text-gray-500" />
+              <span class="hidden sm:inline">Share</span>
+            </button>
           </div>
         </div>
+      </nav>
 
-        <!-- Breadcrumbs overlay -->
-        <div class="absolute top-6 left-6 z-20">
-          <div class="flex items-center text-white/70 text-xs font-medium">
-            <NuxtLink to="/" class="hover:text-white transition-colors">Home</NuxtLink>
-            <svg class="w-3 h-3 mx-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <NuxtLink to="/things-to-do" class="hover:text-white transition-colors">Activities</NuxtLink>
-            <svg class="w-3 h-3 mx-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <span class="text-white/90 line-clamp-1 max-w-[200px]">{{ activity.name }}</span>
+      <!-- ── 2. Experience Header & Title (Above the Gallery) ── -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <div class="flex flex-col gap-2">
+          
+          <!-- Badges -->
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-1 px-3 py-1 bg-[#0D1DAD]/10 border border-[#0D1DAD]/20 rounded-full text-[11px] font-bold text-[#0D1DAD] uppercase tracking-wider">
+              <Sparkles class="w-3 h-3 text-[#0D1DAD]" />
+              <span>Flybeth Verified Experience</span>
+            </span>
+            <span v-if="activity.category" class="px-2.5 py-1 bg-gray-100 rounded-full text-[11px] font-semibold text-gray-600">
+              {{ activity.category }}
+            </span>
           </div>
+
+          <!-- Main Title -->
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight mt-1">
+            {{ activity.name }}
+          </h1>
+
+          <!-- Meta Row: Rating, Duration, Confirmation -->
+          <div class="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs sm:text-sm text-gray-600 font-medium pt-1">
+            <!-- Rating -->
+            <div v-if="activity.rating" class="flex items-center gap-1.5 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200/60">
+              <div class="flex items-center text-amber-500">
+                <Star class="w-4 h-4 fill-amber-400 text-amber-400" />
+              </div>
+              <span class="font-bold text-gray-900">{{ activity.rating.toFixed(1) }}</span>
+              <span class="text-gray-500 text-xs">rating</span>
+            </div>
+
+            <!-- Duration -->
+            <div v-if="activity.minimumDuration || activity.duration" class="flex items-center gap-1.5 text-gray-700">
+              <Clock class="w-4 h-4 text-[#0D1DAD]" />
+              <span>{{ activity.minimumDuration || activity.duration }}</span>
+            </div>
+
+            <!-- Instant Confirmation -->
+            <div class="flex items-center gap-1.5 text-emerald-700">
+              <CheckCircle2 class="w-4 h-4 text-emerald-600" />
+              <span>Instant Confirmation</span>
+            </div>
+
+            <!-- Mobile Ticket -->
+            <div class="flex items-center gap-1.5 text-blue-700">
+              <Smartphone class="w-4 h-4 text-blue-600" />
+              <span>Mobile Ticket</span>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- Main Content -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10 pb-20">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          <!-- Left Column - Details -->
-          <div class="lg:col-span-2 space-y-6">
-            <!-- Title Card -->
-            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="px-2.5 py-1 bg-[#0D1DAD]/10 rounded-md text-[9px] font-bold text-[#0D1DAD] uppercase ">
-                  Flybeth Verified Experience
-                </span>
-                <span v-if="activity.minimumDuration" class="px-2.5 py-1 bg-gray-100 rounded-md text-[9px] font-bold text-black uppercase  flex items-center gap-1">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  {{ activity.minimumDuration }}
-                </span>
-              </div>
-              <h1 class="text-2xl md:text-3xl font-bold text-black  mb-3">{{ activity.name }}</h1>
-              
-              <!-- Rating -->
-              <div v-if="activity.rating" class="flex items-center gap-2">
-                <div class="flex">
-                  <svg v-for="s in 5" :key="s" class="w-4 h-4" :class="s <= Math.round(activity.rating) ? 'text-amber-400' : 'text-black'" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                </div>
-                <span class="text-sm font-bold text-black">{{ activity.rating.toFixed(1) }} rating</span>
-              </div>
-            </div>
+      <!-- ── 3. Modern Multi-Photo Gallery ── -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <!-- Multi-photo layout -->
+        <div v-if="activity.photos?.length > 1" class="grid grid-cols-1 md:grid-cols-4 gap-3.5 h-[340px] sm:h-[420px] lg:h-[460px] rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/90 shadow-sm relative group">
+          <!-- Main Large Photo (Left 2.5 cols) -->
+          <div 
+            class="md:col-span-2 lg:col-span-3 h-full relative cursor-pointer overflow-hidden bg-gray-100"
+            @click="openLightbox(0)"
+          >
+            <img 
+              :src="activity.photos[0]" 
+              :alt="activity.name" 
+              class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700" 
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+          </div>
 
-            <!-- Description Card -->
-            <div class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
-              <h2 class="text-lg font-bold text-black mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-[#0084ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                About this experience
-              </h2>
-              <div 
-                v-if="activity.description" 
-                class="text-sm text-black leading-relaxed prose prose-sm max-w-none"
-                v-html="sanitizedDescription"
-              ></div>
-              <p v-else class="text-sm text-black ">No description available for this experience.</p>
-            </div>
-
-            <!-- Photo Grid -->
-            <div v-if="activity.photos?.length > 1" class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
-              <h2 class="text-lg font-bold text-black mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-[#0084ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                Gallery
-              </h2>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <div 
-                  v-for="(photo, idx) in activity.photos.slice(0, 6)" 
-                  :key="idx" 
-                  class="h-36 rounded-xl overflow-hidden cursor-pointer group"
-                  @click="currentPhotoIndex = Number(idx)"
-                >
-                  <img :src="photo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-              </div>
+          <!-- Secondary Photos Stack (Right col) -->
+          <div class="hidden md:grid md:grid-rows-2 gap-3.5 md:col-span-2 lg:col-span-1 h-full">
+            <div 
+              v-for="(photo, idx) in activity.photos.slice(1, 3)" 
+              :key="idx"
+              class="h-full relative cursor-pointer overflow-hidden bg-gray-100 rounded-xl"
+              @click="openLightbox(idx + 1)"
+            >
+              <img 
+                :src="photo" 
+                :alt="`${activity.name} photo ${idx + 2}`" 
+                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+              />
+              <div class="absolute inset-0 bg-black/10 hover:bg-transparent transition-colors"></div>
             </div>
           </div>
 
-          <!-- Right Column - Booking Sidebar -->
-          <div class="lg:col-span-1">
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm sticky top-6 overflow-hidden">
-              <!-- Price Header -->
-              <div class="bg-gradient-to-br from-[#0a1628] to-[#1a2b3d] p-6 text-white">
-                <p class="text-sm font-bold uppercase  text-white/50 mb-1">Starting from</p>
-                <div class="flex items-baseline gap-1">
-                  <span class="text-3xl font-bold ">{{ formatPrice(activity.priceWithCommission ?? activity.price ?? 0) }}</span>
+          <!-- View all photos badge button -->
+          <button 
+            @click="openLightbox(0)"
+            class="absolute bottom-4 right-4 z-20 flex items-center gap-2 px-4 py-2 bg-white/95 hover:bg-white text-gray-900 font-bold text-xs rounded-xl shadow-lg border border-gray-200 backdrop-blur-md transition-all active:scale-95"
+          >
+            <Camera class="w-4 h-4 text-[#0D1DAD]" />
+            <span>View all {{ activity.photos.length }} photos</span>
+          </button>
+        </div>
+
+        <!-- Single Photo Fallback -->
+        <div v-else-if="currentPhoto" class="h-[320px] sm:h-[400px] rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/90 shadow-sm relative">
+          <img :src="currentPhoto" :alt="activity.name" class="w-full h-full object-cover" />
+        </div>
+      </div>
+
+      <!-- ── 4. Main Content & Booking Layout Grid ── -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- LEFT COLUMN: Experience Details (2 cols) -->
+          <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Quick Highlights Strip -->
+            <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/90 shadow-2xs">
+              <h3 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-4">
+                Experience Highlights
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-gray-50/70 border border-gray-100">
+                  <div class="w-9 h-9 rounded-lg bg-blue-50 text-[#0D1DAD] flex items-center justify-center shrink-0">
+                    <Clock class="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-gray-900">Duration</p>
+                    <p class="text-xs text-gray-500 mt-0.5">{{ activity.minimumDuration || activity.duration || 'Flexible' }}</p>
+                  </div>
                 </div>
-                <p class="text-sm text-white/40 mt-1">per person</p>
+
+                <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-gray-50/70 border border-gray-100">
+                  <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <CheckCircle2 class="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-gray-900">Instant Confirmation</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Tickets delivered immediately</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-gray-50/70 border border-gray-100">
+                  <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                    <Smartphone class="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-gray-900">Mobile Ticket</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Show voucher on your smartphone</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-gray-50/70 border border-gray-100">
+                  <div class="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                    <ShieldCheck class="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-gray-900">Free Cancellation</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Available on most experiences</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- About This Experience Card -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200/90 shadow-2xs">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2.5">
+                <span class="w-2 h-5 bg-[#0D1DAD] rounded-full"></span>
+                <span>About this experience</span>
+              </h2>
+              
+              <div 
+                v-if="activity.description" 
+                class="text-sm text-gray-600 leading-relaxed space-y-4 prose prose-sm max-w-none"
+                v-html="sanitizedDescription"
+              ></div>
+              <p v-else class="text-sm text-gray-500 italic">
+                No description available for this experience.
+              </p>
+            </div>
+
+            <!-- What's Included Card -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200/90 shadow-2xs">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2.5">
+                <span class="w-2 h-5 bg-[#0D1DAD] rounded-full"></span>
+                <span>What to expect</span>
+              </h2>
+
+              <ul class="space-y-3 text-sm text-gray-600">
+                <li class="flex items-start gap-3">
+                  <CheckCircle2 class="w-4 h-4 text-[#0D1DAD] shrink-0 mt-0.5" />
+                  <span>Direct skip-the-line entrance to maximize your visit</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <CheckCircle2 class="w-4 h-4 text-[#0D1DAD] shrink-0 mt-0.5" />
+                  <span>Verified local guide providing expert historical & cultural commentary</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <CheckCircle2 class="w-4 h-4 text-[#0D1DAD] shrink-0 mt-0.5" />
+                  <span>Access to world-renowned exhibits and permanent collections</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <CheckCircle2 class="w-4 h-4 text-[#0D1DAD] shrink-0 mt-0.5" />
+                  <span>24/7 Flybeth traveller customer care support</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Additional Gallery Thumbnails (if > 3 photos) -->
+            <div v-if="activity.photos?.length > 3" class="bg-white rounded-2xl p-6 sm:p-8 border border-gray-200/90 shadow-2xs">
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2.5">
+                <span class="w-2 h-5 bg-[#0D1DAD] rounded-full"></span>
+                <span>Experience Gallery</span>
+              </h2>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div 
+                  v-for="(photo, idx) in activity.photos.slice(0, 8)" 
+                  :key="idx" 
+                  class="h-28 rounded-xl overflow-hidden cursor-pointer group bg-gray-100"
+                  @click="openLightbox(Number(idx))"
+                >
+                  <img :src="photo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN: Sticky Reserve Card (1 col) -->
+          <div class="lg:col-span-1">
+            <div class="sticky top-20 bg-white rounded-2xl sm:rounded-3xl border border-gray-200/90 shadow-lg overflow-hidden">
+              
+              <!-- Clean Price Header -->
+              <div class="p-6 pb-5 border-b border-gray-100 bg-gray-50/70">
+                <p class="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 mb-1">
+                  Starting from
+                </p>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-3xl sm:text-4xl font-black text-[#0D1DAD] tracking-tight">
+                    {{ formatPrice(activity.priceWithCommission ?? activity.price ?? 0) }}
+                  </span>
+                  <span class="text-xs text-gray-500 font-bold">/ person</span>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-1 font-medium">All taxes & fees included</p>
               </div>
 
+              <!-- Card Body & Action -->
               <div class="p-6 space-y-5">
-                <!-- Quick Info -->
-                <div class="space-y-3">
-                  <div v-if="activity.minimumDuration" class="flex items-center gap-3 text-sm text-black">
-                    <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
-                      <svg class="w-4 h-4 text-[#0084ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
-                    <div>
-                      <p class="font-bold text-black">Duration</p>
-                      <p class="text-xs text-black">{{ activity.minimumDuration }}</p>
-                    </div>
+                
+                <!-- Quick Guarantees -->
+                <div class="space-y-2.5 text-xs text-gray-600 font-medium">
+                  <div class="flex items-center gap-2">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Free cancellation up to 24 hours prior</span>
                   </div>
-                  <div class="flex items-center gap-3 text-sm text-black">
-                    <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center shrink-0">
-                      <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                    <div>
-                      <p class="font-bold text-black">Instant Confirmation</p>
-                      <p class="text-xs text-black">Your booking is confirmed immediately</p>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Instant confirmation & e-voucher</span>
                   </div>
-                  <div class="flex items-center gap-3 text-sm text-black">
-                    <div class="w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center shrink-0">
-                      <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                    </div>
-                    <div>
-                      <p class="font-bold text-black">Mobile Ticket</p>
-                      <p class="text-xs text-black">Show your ticket on your phone</p>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Best price guarantee</span>
                   </div>
                 </div>
 
-                <!-- Book Button -->
+                <div class="h-px bg-gray-100"></div>
+
+                <!-- Reserve Button in Brand Color #0D1DAD -->
                 <button 
                   v-if="activity.bookingLink"
                   @click="handleBook"
-                  class="w-full bg-[#0084ff] hover:bg-blue-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-200/50 active:scale-[0.98] uppercase  text-sm flex items-center justify-center gap-2"
+                  class="w-full bg-[#0D1DAD] hover:bg-[#1A2ED4] text-white font-extrabold py-4 px-6 rounded-xl transition-all shadow-lg shadow-[#0D1DAD]/20 active:scale-[0.98] text-sm flex items-center justify-center gap-2 group"
                 >
-                  <span>Book Now</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                  <span>Book on Partner Site</span>
+                  <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button 
                   v-else
                   @click="handleBookInternal"
-                  class="w-full bg-[#0084ff] hover:bg-blue-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-200/50 active:scale-[0.98] uppercase  text-sm flex items-center justify-center gap-2"
+                  class="w-full bg-[#0D1DAD] hover:bg-[#1A2ED4] text-white font-extrabold py-4 px-6 rounded-xl transition-all shadow-lg shadow-[#0D1DAD]/20 active:scale-[0.98] text-sm flex items-center justify-center gap-2 group"
                 >
                   <span>Reserve Experience</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                  <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 
-                <p class="text-sm text-black text-center">Free cancellation available on most experiences</p>
+                <!-- Secure Guarantee -->
+                <div class="flex items-center justify-center gap-2 pt-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <ShieldCheck class="w-3.5 h-3.5 text-emerald-600" />
+                  <span>100% Secure Checkout</span>
+                </div>
+
               </div>
+
             </div>
           </div>
+
         </div>
       </div>
+
+      <!-- ── 5. Mobile Sticky Bottom Bar ── -->
+      <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-3 shadow-xl">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Total Price</p>
+            <p class="text-xl font-black text-[#0D1DAD]">
+              {{ formatPrice(activity.priceWithCommission ?? activity.price ?? 0) }}
+            </p>
+          </div>
+          <button 
+            @click="activity.bookingLink ? handleBook() : handleBookInternal()"
+            class="bg-[#0D1DAD] hover:bg-[#1A2ED4] text-white font-bold py-3 px-6 rounded-xl text-sm transition-all shadow-md shadow-[#0D1DAD]/20 active:scale-95"
+          >
+            {{ activity.bookingLink ? 'Book Now' : 'Reserve' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 6. Fullscreen Lightbox Modal ── -->
+      <Transition name="fade">
+        <div 
+          v-if="lightboxOpen" 
+          class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 select-none"
+          @click.self="lightboxOpen = false"
+        >
+          <!-- Close button -->
+          <button 
+            @click="lightboxOpen = false"
+            class="absolute top-5 right-5 z-50 p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+          >
+            <X class="w-6 h-6" />
+          </button>
+
+          <!-- Prev button -->
+          <button 
+            v-if="activity.photos?.length > 1"
+            @click="prevPhoto"
+            class="absolute left-4 sm:left-8 z-50 p-3 bg-white/10 hover:bg-white/25 text-white rounded-full transition-colors"
+          >
+            <ChevronLeft class="w-6 h-6" />
+          </button>
+
+          <!-- Image Container -->
+          <div class="max-w-4xl max-h-[85vh] flex flex-col items-center">
+            <img 
+              :src="activity.photos[lightboxIndex]" 
+              :alt="activity.name" 
+              class="max-w-full max-h-[75vh] object-contain rounded-xl shadow-2xl"
+            />
+            <div class="mt-4 text-white/80 text-xs font-semibold">
+              {{ lightboxIndex + 1 }} / {{ activity.photos.length }}
+            </div>
+          </div>
+
+          <!-- Next button -->
+          <button 
+            v-if="activity.photos?.length > 1"
+            @click="nextPhoto"
+            class="absolute right-4 sm:right-8 z-50 p-3 bg-white/10 hover:bg-white/25 text-white rounded-full transition-colors"
+          >
+            <ChevronRight class="w-6 h-6" />
+          </button>
+        </div>
+      </Transition>
+
     </template>
 
-    <!-- Error / Not Found -->
-    <div v-else class="min-h-screen flex items-center justify-center">
-      <div class="text-center">
-        <div class="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10 text-[#0084ff]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <h2 class="text-xl font-bold text-black mb-2">Experience not found</h2>
-        <p class="text-sm text-black mb-6">This activity may no longer be available.</p>
-        <NuxtLink to="/things-to-do" class="bg-[#0084ff] text-white font-bold px-6 py-3 rounded-xl text-sm uppercase  hover:bg-blue-600 transition-all">
-          Browse Activities
-        </NuxtLink>
+    <!-- Error / Not Found State -->
+    <div v-else class="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
+      <div class="w-16 h-16 bg-blue-50 text-[#0D1DAD] rounded-2xl flex items-center justify-center mb-4">
+        <Sparkles class="w-8 h-8" />
       </div>
+      <h2 class="text-xl font-extrabold text-gray-900 mb-1">Experience not found</h2>
+      <p class="text-sm text-gray-500 mb-6 max-w-sm">
+        This activity may no longer be available or has changed.
+      </p>
+      <NuxtLink 
+        to="/things-to-do" 
+        class="bg-[#0D1DAD] hover:bg-[#1A2ED4] text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md shadow-[#0D1DAD]/20"
+      >
+        Browse All Activities
+      </NuxtLink>
     </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Star, 
+  Clock, 
+  CheckCircle2, 
+  Smartphone, 
+  ShieldCheck, 
+  Share2, 
+  Sparkles, 
+  ArrowRight, 
+  Camera, 
+  X 
+} from 'lucide-vue-next';
 import { activitiesApi } from '@/api_factory/modules/activities';
 import { useSettings } from '@/composables/useSettings';
+import { useCustomToast } from '@/composables/core/useCustomToast';
 
 const { formatPrice } = useSettings();
+const { showToast } = useCustomToast();
 
 const route = useRoute();
 const router = useRouter();
 
 const loading = ref(true);
 const activity = ref<any>(null);
-const currentPhotoIndex = ref(0);
+const lightboxOpen = ref(false);
+const lightboxIndex = ref(0);
 
 const currentPhoto = computed(() => {
-  return activity.value?.photos?.[currentPhotoIndex.value] || activity.value?.photos?.[0] || null;
+  return activity.value?.photos?.[0] || null;
 });
 
 const sanitizedDescription = computed(() => {
-  // The API returns HTML descriptions. Strip dangerous tags but keep formatting.
   const desc = activity.value?.description || '';
   return desc.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 });
 
+const openLightbox = (index: number) => {
+  lightboxIndex.value = index;
+  lightboxOpen.value = true;
+};
+
 const nextPhoto = () => {
   if (!activity.value?.photos?.length) return;
-  currentPhotoIndex.value = (currentPhotoIndex.value + 1) % activity.value.photos.length;
+  lightboxIndex.value = (lightboxIndex.value + 1) % activity.value.photos.length;
 };
 
 const prevPhoto = () => {
   if (!activity.value?.photos?.length) return;
-  currentPhotoIndex.value = (currentPhotoIndex.value - 1 + activity.value.photos.length) % activity.value.photos.length;
+  lightboxIndex.value = (lightboxIndex.value - 1 + activity.value.photos.length) % activity.value.photos.length;
+};
+
+const handleShare = () => {
+  if (typeof window !== 'undefined' && navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href);
+    showToast({
+      title: 'Link Copied',
+      message: 'Experience link copied to your clipboard!',
+      toastType: 'success'
+    });
+  }
 };
 
 const handleBook = () => {
@@ -237,7 +504,7 @@ const handleBook = () => {
   }
 };
 
-/** Providers registered on the experiences endpoint (anything else is a 500). */
+/** Providers registered on the experiences endpoint */
 const KNOWN_PROVIDERS = ['amadeus', 'hotelbeds-activities', 'viator', 'flybeth-activities'];
 const DEFAULT_PROVIDER = 'flybeth-activities';
 
@@ -250,9 +517,6 @@ const handleBookInternal = () => {
   const current = activity.value;
   if (!current) return;
   if (import.meta.client) {
-    // Contract consumed by pages/checkout.vue for `type: 'activity'`.
-    // `price` is NET (the backend adds commission); `priceWithCommission` is
-    // the customer-facing amount and is display-only.
     sessionStorage.setItem('flybeth_checkout_payload', JSON.stringify({
       type: 'activity',
       id: current.experienceId || current.id,
@@ -266,14 +530,12 @@ const handleBookInternal = () => {
       ...(current.minimumDuration || current.duration
         ? { duration: current.minimumDuration || current.duration }
         : {})
-    }))
-    // The checkout page renders extra detail from this key.
-    sessionStorage.setItem('selectedActivity', JSON.stringify(current))
+    }));
+    sessionStorage.setItem('selectedActivity', JSON.stringify(current));
   }
   router.push({ path: '/checkout' });
 };
 
-/** Reads the search result stashed by pages/things-to-do/index.vue, if any. */
 const readSelectedActivity = (): any => {
   if (!import.meta.client) return null;
   try {
@@ -293,11 +555,6 @@ const fetchDetails = async (id: string, provider: string) => {
   return details && typeof details === 'object' ? details : null;
 };
 
-/**
- * `GET /experiences/:id` only returns the NET price. When the page is opened
- * directly (no search result in sessionStorage) we recover the customer-facing
- * price from a co-located live search so the displayed amount matches the charge.
- */
 const recoverPriceWithCommission = async (record: any) => {
   if (!record || record.priceWithCommission != null) return;
   const lat = record.latitude ?? record.geoCode?.latitude;
@@ -315,22 +572,18 @@ const recoverPriceWithCommission = async (record: any) => {
       record.priceWithCommission = match.priceWithCommission;
     }
   } catch (e) {
-    console.warn('Could not resolve the customer-facing price', e);
+    console.warn('Could not resolve customer-facing price', e);
   }
 };
 
 onMounted(async () => {
   const id = route.params.id as string;
 
-  // Render immediately with whatever the list page handed us, so the page is
-  // never blank while the details request is in flight.
   const stored = readSelectedActivity();
   if (stored) {
     activity.value = stored;
-    currentPhotoIndex.value = 0;
   }
 
-  // Provider resolution order: route query -> stored search result -> safe default.
   const routeProvider = normalizeProvider(
     Array.isArray(route.query.provider) ? route.query.provider[0] : route.query.provider
   );
@@ -342,7 +595,6 @@ onMounted(async () => {
     details = await fetchDetails(id, provider);
   } catch (error) {
     console.error('Error fetching activity details:', error);
-    // Retry once against our own inventory before falling back to cached data.
     if (provider !== DEFAULT_PROVIDER) {
       try {
         details = await fetchDetails(id, DEFAULT_PROVIDER);
@@ -355,18 +607,24 @@ onMounted(async () => {
   }
 
   if (details && (details.experienceId || details.name)) {
-    // The details endpoint returns the NET price only, so keep the
-    // customer-facing price carried by the search result we already have.
     const merged: any = { ...(stored || {}), ...details };
     if (merged.priceWithCommission == null && stored?.priceWithCommission != null) {
       merged.priceWithCommission = stored.priceWithCommission;
     }
     activity.value = merged;
-    currentPhotoIndex.value = 0;
-    // Fire and forget: fills in `priceWithCommission` reactively when missing.
     recoverPriceWithCommission(merged);
   }
-  // Otherwise keep the cached search result (if any). With neither, the template
-  // renders the "Experience not found" state instead of a blank page.
 });
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
