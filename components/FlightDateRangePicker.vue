@@ -194,8 +194,8 @@ const props = defineProps({
   mode:      { type: String as () => 'oneway' | 'roundtrip', default: 'roundtrip' },
   departureLabel: { type: String, default: 'Departure' },
   returnLabel:    { type: String, default: 'Return' },
-  // 'default' keeps the existing look; 'cheapoair' applies the homepage theme.
-  theme:     { type: String, default: 'default' },
+  // Default to 'cheapoair' to match the hero search widget theme.
+  theme:     { type: String, default: 'cheapoair' },
 })
 
 const emit = defineEmits(['update:departure', 'update:return', 'update:flexible', 'focus', 'close'])

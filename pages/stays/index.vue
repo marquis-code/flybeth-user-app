@@ -2,24 +2,28 @@
   <div class="sp-root" @mousedown="handleGlobalMousedown">
     <FullScreenLoader :show="loading" moduleName="Hotels" /> 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="sp-hero">
-      <div class="sp-hero-bg">
-        <div class="sp-orb sp-orb--a"></div>
-        <div class="sp-orb sp-orb--b"></div>
-        <div class="sp-orb sp-orb--c"></div>
+    <section class="sp-hero relative bg-[#0D1DAD] overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.14]"
+          style="background-image: radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px), linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 24px 24px, 56px 56px, 56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/20 blur-3xl"></div>
+        <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
  
-      <div class="sp-wrap">
+      <div class="sp-wrap relative z-10">
  
         <!-- Dynamic headline -->
         <div class="sp-headline">
-          <span class="sp-eyebrow">✦ Stay Search</span>
-          <h1 class="sp-h1">
+          <span class="sp-eyebrow text-white/70">✦ Stay Search</span>
+          <h1 class="sp-h1 text-white">
             <template v-if="searchQuery.location">
-              Stays in <em>{{ searchQuery.location }}</em>
+              Stays in <span class="text-[#FF8A00]">{{ searchQuery.location }}</span>
             </template>
             <template v-else>
-              Find your<br><em>perfect stay.</em>
+              Find your <span class="text-[#FF8A00]">perfect stay.</span>
             </template>
           </h1>
         </div>
@@ -944,24 +948,20 @@ onMounted(async () => {
  
 /* ── Hero ──────────────────────────────────────────────────────────── */
 .sp-hero {
-  background: #f8f9f7;
-  border-bottom: 1px solid #e8e8e2;
-  padding: 40px 0 56px;
+  background: #0D1DAD;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 44px 0 56px;
   position: relative;
   overflow: visible;
 }
  
 .sp-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.sp-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.26; }
-.sp-orb--a { width: 380px; height: 380px; background: radial-gradient(circle, #b8e8d0, transparent); top: -160px; right: -40px; }
-.sp-orb--b { width: 280px; height: 280px; background: radial-gradient(circle, #d4e6ff, transparent); bottom: -100px; left: 6%; }
-.sp-orb--c { width: 200px; height: 200px; background: radial-gradient(circle, #ffe8c8, transparent); top: 20px; left: 35%; }
  
 /* Headline */
-.sp-headline { margin-bottom: 28px; }
-.sp-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
-.sp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
-.sp-h1 em { font-style: normal; color: #1d7a4f; }
+.sp-headline { margin-bottom: 28px; position: relative; z-index: 10; }
+.sp-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); display: block; margin-bottom: 10px; }
+.sp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 800; line-height: 1.12; color: #ffffff; letter-spacing: -0.03em; }
+.sp-h1 em, .sp-h1 span { font-style: normal; color: #FF8A00; }
  
 /* ── Search bar ────────────────────────────────────────────────────── */
 .sp-bar {

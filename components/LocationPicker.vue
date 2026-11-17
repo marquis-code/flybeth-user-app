@@ -206,8 +206,8 @@ const props = defineProps({
   label:         { type: String, default: '' },
   placeholder:   { type: String, default: '' },
   allowFreeText: { type: Boolean, default: false },
-  // 'default' keeps the existing look; 'cheapoair' applies the homepage theme.
-  theme:         { type: String, default: 'default' }
+  // Default to 'cheapoair' to match the hero search widget theme.
+  theme:         { type: String, default: 'cheapoair' }
 })
 
 /** Cheapoair palette: brand blue accents, orange reserved for primary actions. */

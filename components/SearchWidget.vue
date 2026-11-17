@@ -513,8 +513,8 @@ const { trackAction } = useTracking()
 const props = defineProps({ 
   isSticky: { type: Boolean, default: false },
   defaultTab: { type: String, default: 'Flights' },
-  // 'default' keeps the current look; 'cheapoair' applies the homepage theme.
-  theme: { type: String, default: 'default' }
+  // Default to 'cheapoair' so all pages share the exact same unified hero widget design
+  theme: { type: String, default: 'cheapoair' }
 })
 const emit  = defineEmits(['focus-change', 'update:tab'])
 

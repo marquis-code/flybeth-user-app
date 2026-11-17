@@ -3,23 +3,28 @@
     <FullScreenLoader :show="loading" moduleName="Activities" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="tt-hero">
-      <div class="tt-hero-bg">
-        <div class="tt-orb tt-orb--a"></div>
-        <div class="tt-orb tt-orb--b"></div>
+    <section class="tt-hero relative bg-[#0D1DAD] overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.14]"
+          style="background-image: radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px), linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 24px 24px, 56px 56px, 56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/20 blur-3xl"></div>
+        <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
 
-      <div class="tt-wrap">
+      <div class="tt-wrap relative z-10">
 
         <!-- Dynamic headline -->
         <div class="tt-headline">
-          <span class="tt-eyebrow">✦ Curated Experiences</span>
-          <h1 class="tt-h1">
+          <span class="tt-eyebrow text-white/70">✦ Curated Experiences</span>
+          <h1 class="tt-h1 text-white">
             <template v-if="searchQuery.destinationIata">
-              Exploring <em>{{ searchQuery.destinationIata }}</em>
+              Exploring <span class="text-[#FF8A00]">{{ searchQuery.destinationIata }}</span>
             </template>
             <template v-else>
-              Discover<br><em>world wonders.</em>
+              Discover <span class="text-[#FF8A00]">world wonders.</span>
             </template>
           </h1>
         </div>
@@ -408,16 +413,13 @@ onMounted(() => {
 .tt-wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
 /* ── Hero ──────────────────────────────────────────────────────────── */
-.tt-hero { background: #f8f9f7; border-bottom: 1px solid #e8e8e2; padding: 40px 0 56px; position: relative; }
+.tt-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 44px 0 56px; position: relative; }
 .tt-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.tt-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.28; }
-.tt-orb--a { width: 420px; height: 420px; background: radial-gradient(circle, #fde68a, transparent); top: -180px; right: -60px; }
-.tt-orb--b { width: 300px; height: 300px; background: radial-gradient(circle, #bfdbfe, transparent); bottom: -100px; left: 8%; }
 
-.tt-headline { margin-bottom: 28px; }
-.tt-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
-.tt-h1 { font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; letter-spacing: -0.03em; }
-.tt-h1 em { font-style: normal; color: #0d66d0; }
+.tt-headline { margin-bottom: 28px; position: relative; z-index: 10; }
+.tt-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); display: block; margin-bottom: 10px; }
+.tt-h1 { font-size: clamp(26px, 4vw, 44px); font-weight: 800; line-height: 1.12; letter-spacing: -0.03em; color: #ffffff; }
+.tt-h1 em, .tt-h1 span { font-style: normal; color: #FF8A00; }
 
 /* ── Bar ───────────────────────────────────────────────────────────── */
 .tt-bar { background: #fff; border: 1.5px solid #e0e0d8; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.06); display: flex; align-items: stretch; position: relative; z-index: 50; }

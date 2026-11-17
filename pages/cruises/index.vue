@@ -3,10 +3,15 @@
     <FullScreenLoader :show="loading" moduleName="Cruises" />
 
     <!-- ═══════════════ PREMIUM HERO ═══════════════ -->
-    <section class="cr-hero relative overflow-hidden bg-neutral-900 py-20 lg:py-28">
-      <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[500px] h-[500px] bg-sky-500/10 blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-primary/10 blur-[100px] rounded-full"></div>
+    <section class="cr-hero relative overflow-hidden bg-[#0D1DAD] py-20 lg:py-28">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.14]"
+          style="background-image: radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px), linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 24px 24px, 56px 56px, 56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/20 blur-3xl"></div>
+        <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
 
       <div class="cr-wrap relative z-10">

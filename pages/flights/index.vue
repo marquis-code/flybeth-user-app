@@ -3,40 +3,47 @@
     <FullScreenLoader :show="loading" moduleName="Flights" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="fp-hero" :class="{'fp-hero--dest': searchQuery.destination}">
-      <div class="fp-hero-bg">
-        <template v-if="searchQuery.destination">
-          <div class="fp-hero-image" :style="{ backgroundImage: 'url(https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop)' }"></div>
-          <div class="fp-hero-overlay"></div>
-        </template>
-        <template v-else>
-          <div class="fp-orb fp-orb--a"></div>
-          <div class="fp-orb fp-orb--b"></div>
-        </template>
+    <section class="fp-hero relative bg-[#0D1DAD] overflow-hidden" :class="{'fp-hero--dest': searchQuery.destination}">
+      <!-- Brand #0D1DAD background with radial gradient and dotted grid pattern -->
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.14]"
+          style="background-image: radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px), linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 24px 24px, 56px 56px, 56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/20 blur-3xl"></div>
+        <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
 
-      <div class="fp-wrap">
+      <div class="fp-wrap relative z-10 pt-4 pb-2">
 
         <!-- Dynamic headline -->
         <div class="fp-headline" :class="{'fp-headline--dest': searchQuery.destination}">
           <template v-if="searchQuery.destination">
-            <h1 class="fp-h1 fp-h1--dest">Flights to {{ lookupCity(searchQuery.destination).split(' (')[0] }}</h1>
+            <span class="fp-eyebrow text-white/70">✦ Featured Destination</span>
+            <h1 class="fp-h1 text-white">Flights to <span class="text-[#FF8A00]">{{ lookupCity(searchQuery.destination).split(' (')[0] }}</span></h1>
+            <p class="mt-2 text-sm text-white/75 max-w-xl">
+              Compare live airline fares, flight schedules, and book with flexible payment options.
+            </p>
           </template>
           <template v-else>
-            <span class="fp-eyebrow">✦ Flight Search</span>
-            <h1 class="fp-h1">
+            <span class="fp-eyebrow text-white/70">✦ Flight Search</span>
+            <h1 class="fp-h1 text-white">
               <template v-if="searchQuery.origin && !searchQuery.destination">
-                Flying from <em>{{ searchQuery.origin }}</em>
+                Flying from <span class="text-[#FF8A00]">{{ searchQuery.origin }}</span>
               </template>
               <template v-else>
-                Search<br><em>any flight.</em>
+                Search <span class="text-[#FF8A00]">any flight.</span>
               </template>
             </h1>
+            <p class="mt-2 text-sm text-white/75 max-w-xl">
+              Compare live fares from hundreds of airlines, then book in one secure checkout.
+            </p>
           </template>
         </div>
         <!-- ── HOME PAGE SEARCH WIDGET ── -->
         <div class="mt-6 w-full max-w-5xl mx-auto relative z-20">
-          <SearchWidget />
+          <SearchWidget theme="cheapoair" />
         </div>
       </div><!-- /fp-wrap -->
     </section>
@@ -1572,47 +1579,27 @@ onMounted(async () => {
 
 /* ── Hero ──────────────────────────────────────────────────────────── */
 .fp-hero {
-  background: #f8f9f7;
-  border-bottom: 1px solid #e8e8e2;
-  padding: 40px 0 56px;
+  background: #0D1DAD;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 44px 0 56px;
   position: relative;
   overflow: visible;
 }
 
 .fp-hero--dest {
-  padding: 48px 0 56px;
-  background: #111;
-  border-bottom: none;
+  background: #0D1DAD;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .fp-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
-.fp-hero-image {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  z-index: 1;
-}
-
-.fp-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
-  z-index: 2;
-}
-
-.fp-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.28; }
-.fp-orb--a { width: 420px; height: 420px; background: radial-gradient(circle, #b8e8cc, transparent); top: -180px; right: -60px; }
-.fp-orb--b { width: 300px; height: 300px; background: radial-gradient(circle, #d4e6ff, transparent); bottom: -100px; left: 8%; }
-
 /* Headline */
 .fp-headline { margin-bottom: 20px; position: relative; z-index: 10; }
 .fp-headline--dest { margin-bottom: 16px; }
-.fp-eyebrow { font-size: 14px; font-weight: 600; letter-spacing: 0.18em; color: #999; display: block; margin-bottom: 10px; }
-.fp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
-.fp-h1 em { font-style: normal; color: #0D1DAD; }
-.fp-h1--dest { color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.25); font-size: clamp(22px, 3.5vw, 34px); }
+.fp-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); display: block; margin-bottom: 8px; }
+.fp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 42px); font-weight: 800; line-height: 1.15; color: #ffffff; letter-spacing: -0.03em; }
+.fp-h1 em, .fp-h1 span { font-style: normal; color: #FF8A00; }
+.fp-h1--dest { color: #ffffff; font-size: clamp(24px, 3.8vw, 38px); }
 
 /* ── Destination Features ──────────────────────────────────────────── */
 .fp-dest-features {

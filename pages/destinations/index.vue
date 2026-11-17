@@ -1,11 +1,21 @@
 <template>
   <div class="min-h-screen bg-white">
-    <!-- Header Section with Purple Background -->
-    <div class="bg-[#d5ccfa] pt-28 pb-20 px-4 relative flex justify-center w-full">
+    <!-- Brand #0D1DAD Hero Section -->
+    <div class="relative bg-[#0D1DAD] overflow-hidden pt-28 pb-20 px-4 flex justify-center w-full">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.14]"
+          style="background-image: radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px), linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 24px 24px, 56px 56px, 56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/20 blur-3xl"></div>
+        <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
+      </div>
+
       <div class="max-w-5xl w-full mx-auto relative z-10 flex flex-col items-center">
-        <!-- Re-using SearchWidget here configured to search across everything -->
-        <SearchWidget ref="searchWidgetRef" class="w-full shadow-2xl rounded-2xl bg-white overflow-hidden border border-white/50" />
-        <p class="text-white text-sm font-medium mt-6  opacity-90">22,042 reviews on Flybeth</p>
+        <!-- Re-using SearchWidget here configured with theme="cheapoair" -->
+        <SearchWidget ref="searchWidgetRef" theme="cheapoair" class="w-full" />
+        <p class="text-white text-sm font-medium mt-6 opacity-90">22,042 reviews on Flybeth</p>
       </div>
     </div>
 

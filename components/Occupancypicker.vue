@@ -128,8 +128,8 @@ const props = defineProps({
   infantsOnLap:  { type: Number, default: 0 },
   infantsInSeat: { type: Number, default: 0 },
   cabinClass: { type: String, default: 'economy' },
-  // 'default' keeps the existing look; 'cheapoair' applies the homepage theme.
-  theme:     { type: String, default: 'default' },
+  // Default to 'cheapoair' to match the hero search widget theme.
+  theme:     { type: String, default: 'cheapoair' },
 })
 
 /** Cheapoair palette: brand blue for selection, action orange for the primary CTA. */

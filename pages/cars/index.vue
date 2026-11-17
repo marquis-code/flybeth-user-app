@@ -3,23 +3,28 @@
     <FullScreenLoader :show="loading" moduleName="Car rentals" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="cp-hero">
-      <div class="cp-hero-bg">
-        <div class="cp-orb cp-orb--a"></div>
-        <div class="cp-orb cp-orb--b"></div>
+    <section class="cp-hero relative bg-[#0D1DAD] overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.14]"
+          style="background-image: radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px), linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 24px 24px, 56px 56px, 56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/20 blur-3xl"></div>
+        <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
 
-      <div class="cp-wrap">
+      <div class="cp-wrap relative z-10">
 
         <!-- Dynamic headline -->
         <div class="cp-headline">
-          <span class="cp-eyebrow">✦ Car Rental Search</span>
-          <h1 class="cp-h1">
+          <span class="cp-eyebrow text-white/70">✦ Car Rental Search</span>
+          <h1 class="cp-h1 text-white">
             <template v-if="searchQuery.pickUpLocation">
-              Renting in <em>{{ searchQuery.pickUpLocation }}</em>
+              Renting in <span class="text-[#FF8A00]">{{ searchQuery.pickUpLocation }}</span>
             </template>
             <template v-else>
-              Rent<br><em>any car.</em>
+              Rent <span class="text-[#FF8A00]">any car.</span>
             </template>
           </h1>
         </div>
@@ -484,22 +489,19 @@ onMounted(() => {
 
 /* ── Hero ──────────────────────────────────────────────────────────── */
 .cp-hero {
-  background: #f8f9f7;
-  border-bottom: 1px solid #e8e8e2;
-  padding: 40px 0 56px;
+  background: #0D1DAD;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 44px 0 56px;
   position: relative;
   overflow: visible;
 }
 
 .cp-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.cp-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.28; }
-.cp-orb--a { width: 420px; height: 420px; background: radial-gradient(circle, #b8e8cc, transparent); top: -180px; right: -60px; }
-.cp-orb--b { width: 300px; height: 300px; background: radial-gradient(circle, #d4e6ff, transparent); bottom: -100px; left: 8%; }
 
-.cp-headline { margin-bottom: 28px; }
-.cp-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #999; display: block; margin-bottom: 10px; }
-.cp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 700; line-height: 1.12; color: #111; letter-spacing: -0.03em; }
-.cp-h1 em { font-style: normal; color: #1d7a4f; }
+.cp-headline { margin-bottom: 28px; position: relative; z-index: 10; }
+.cp-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); display: block; margin-bottom: 10px; }
+.cp-h1 { font-family: 'Satoshi', sans-serif; font-size: clamp(26px, 4vw, 44px); font-weight: 800; line-height: 1.12; color: #ffffff; letter-spacing: -0.03em; }
+.cp-h1 em, .cp-h1 span { font-style: normal; color: #FF8A00; }
 
 /* ── Search bar ────────────────────────────────────────────────────── */
 .cp-bar {

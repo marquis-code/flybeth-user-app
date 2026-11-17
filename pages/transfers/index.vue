@@ -3,21 +3,26 @@
     <FullScreenLoader :show="loading" moduleName="Transfers" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
-    <section class="tr-hero">
-      <div class="tr-hero-bg">
-        <div class="tr-orb tr-orb--a"></div>
-        <div class="tr-orb tr-orb--b"></div>
+    <section class="tr-hero relative bg-[#0D1DAD] overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(125%_120%_at_50%_-25%,#1A2ED4_0%,#0D1DAD_46%,#0A1485_100%)]"></div>
+        <div
+          class="absolute inset-0 opacity-[0.14]"
+          style="background-image: radial-gradient(rgba(255,255,255,0.45) 1.2px, transparent 1.2px), linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 24px 24px, 56px 56px, 56px 56px;"
+        ></div>
+        <div class="absolute -right-24 top-6 h-72 w-72 rounded-full bg-[#EB4405]/20 blur-3xl"></div>
+        <div class="absolute -left-20 bottom-0 h-60 w-60 rounded-full bg-[#3B82F6]/25 blur-3xl"></div>
       </div>
 
-      <div class="tr-wrap">
+      <div class="tr-wrap relative z-10">
         <div class="tr-headline">
-          <span class="tr-eyebrow">✦ Airport Transfers</span>
-          <h1 class="tr-h1">
+          <span class="tr-eyebrow text-white/70">✦ Airport Transfers</span>
+          <h1 class="tr-h1 text-white">
             <template v-if="searchQuery.origin">
-              From <em>{{ searchQuery.origin }}</em>
+              From <span class="text-[#FF8A00]">{{ searchQuery.origin }}</span>
             </template>
             <template v-else>
-              Seamless<br><em>pickups.</em>
+              Seamless <span class="text-[#FF8A00]">pickups.</span>
             </template>
           </h1>
         </div>
@@ -364,15 +369,12 @@ onMounted(() => {
 <style scoped>
 .tr-root { min-height: 100vh; background: #fff; font-family: 'Satoshi', sans-serif; color: #111; }
 .tr-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.tr-hero { background: #fdfdfb; border-bottom: 1px solid #f0f0ea; padding: 60px 0 80px; position: relative; }
+.tr-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 44px 0 56px; position: relative; }
 .tr-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.tr-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.15; }
-.tr-orb--a { width: 300px; height: 300px; background: #93c5fd; top: -50px; right: 10%; }
-.tr-orb--b { width: 200px; height: 200px; background: #c4b5fd; bottom: -20px; left: 5%; }
-.tr-headline { margin-bottom: 30px; }
-.tr-eyebrow { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #bbb; letter-spacing: 0.1em; }
-.tr-h1 { font-size: 40px; font-weight: 700; color: #111; letter-spacing: -0.02em; }
-.tr-h1 em { font-style: normal; color: #3b82f6; }
+.tr-headline { margin-bottom: 30px; position: relative; z-index: 10; }
+.tr-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); letter-spacing: 0.2em; }
+.tr-h1 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
+.tr-h1 em, .tr-h1 span { font-style: normal; color: #FF8A00; }
 .tr-bar { background: #fff; border: 1.5px solid #eaeaea; border-radius: 20px; display: flex; align-items: stretch; box-shadow: 0 4px 20px rgba(0,0,0,0.04); position: relative; z-index: 50; }
 .tr-fld { flex: 1; position: relative; cursor: pointer; }
 .tr-fld-inner { padding: 15px 20px; display: flex; align-items: center; gap: 12px; }
