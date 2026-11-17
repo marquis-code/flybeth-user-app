@@ -95,7 +95,7 @@
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
       <h3 class="text-lg font-bold text-gray-900 mb-2">No Additional Protection Services Available</h3>
-      <p class="text-sm text-gray-500">The provider (<span class="capitalize font-bold">{{ providerName }}</span>) has not confirmed any extra protection services for this specific flight. Standard airline terms and conditions apply.</p>
+      <p class="text-sm text-gray-500">No additional protection services are required for this flight. Standard airline terms and conditions apply.</p>
     </div>
 
     <!-- Actions -->

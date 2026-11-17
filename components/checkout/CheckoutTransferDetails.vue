@@ -17,7 +17,7 @@
         </div>
         <div>
           <h3 class=" text-black text-lg">{{ name }}</h3>
-          <p class="text-sm font-bold text-brand-gray/60">Provider: {{ provider }}</p>
+          <p class="text-sm font-bold text-brand-gray/60">Verified Transportation Service</p>
         </div>
       </div>
     </div>

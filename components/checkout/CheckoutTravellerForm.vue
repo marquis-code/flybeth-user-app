@@ -143,14 +143,14 @@
                  <SelectInput
                    v-model="traveler.title"
                    label="Title"
-                   :options="['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']"
-                   class="sm:col-span-2"
+                   :options="titleOptions"
+                   class="sm:col-span-3"
                  />
                  <AnimatedInput
                    v-model="traveler.firstName"
                    type="text"
                    label="First Name"
-                   class="sm:col-span-5"
+                   class="sm:col-span-4"
                    position="middle"
                  />
                  <AnimatedInput
@@ -333,6 +333,23 @@ const { showToast } = useCustomToast()
 
 const today = new Date()
 today.setHours(23, 59, 59, 999)
+
+const titleOptions = [
+  // Common / Universal
+  'Mr', 'Mrs', 'Ms', 'Miss', 'Master', 'Mx',
+  // Professional & Academic
+  'Dr', 'Prof', 'Professor', 'Engr', 'Barrister', 'Architect', 'Pharm', 'Hon', 'Honorable',
+  // Religious & Faith
+  'Rev', 'Reverend', 'Pastor', 'Father', 'Brother', 'Sister', 'Bishop', 'Archbishop',
+  'Elder', 'Deacon', 'Deaconess', 'Evangelist', 'Imam', 'Sheikh', 'Rabbi', 'Alhaji', 'Alhaja', 'Hajiya',
+  // Traditional, Chieftaincy & Dignitaries
+  'Chief', 'Sir', 'Dame', 'Lord', 'Lady', 'Baron', 'Baroness', 'Duke', 'Duchess', 'Count', 'Countess',
+  'Prince', 'Princess', 'His Excellency', 'Her Excellency', 'Ambassador', 'Senator', 'Governor', 'Mayor',
+  'Chancellor', 'Justice', 'Judge',
+  // Military & Aviation
+  'Capt', 'Captain', 'Commander', 'Cmdr', 'Major', 'Colonel', 'Col', 'General', 'Gen',
+  'Lieutenant', 'Lt', 'Sergeant', 'Officer', 'Pilot'
+]
 
 const props = defineProps({
   modelValue: { type: Object, default: () => ({ travelers: [], contact: {} }) }

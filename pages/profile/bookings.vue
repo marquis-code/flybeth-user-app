@@ -112,7 +112,7 @@
                   <Plane class="w-5 h-5 text-brand-blue mx-2" />
                   <div class="h-0.5 flex-1 bg-gray-200"></div>
                 </div>
-                <p class="text-[10px] font-bold text-gray-400 mt-1">{{ booking.flights?.[0]?.provider || 'Direct' }}</p>
+                <p class="text-[10px] font-bold text-gray-400 mt-1">{{ booking.flights?.[0]?.flight?.airline || 'Direct' }}</p>
               </div>
 
               <div class="flex-1 text-right">

@@ -53,7 +53,7 @@
   
         <div
           v-if="showDropdown"
-          class="absolute z-[10000000] mt-1 w-full bg-white rounded-2xl border border-gray-200 overflow-hidden"
+          class="absolute z-[10000000] mt-1 w-full min-w-[160px] bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-2xl"
         >
           <!-- Search Input -->
           <div class="p-2 border-b-[0.5px] border-gray-200 sticky top-0 bg-white">
@@ -79,7 +79,7 @@
           </div>
           
           <!-- Options List -->
-          <div class="max-h-48 overflow-y-auto">
+          <div class="max-h-60 overflow-y-auto">
             <div
               v-for="(option, index) in filteredOptions"
               :key="index"

@@ -61,7 +61,7 @@
               <h2 class="text-2xl text-black">Third-Party Service Providers</h2>
             </div>
             <p class="text-black leading-relaxed pl-0 md:pl-14">
-              To provide our services, we share your data with trusted partners including airlines (Duffel, Amadeus), hotel providers (Hotelbeds), and payment processors (Paystack, Stripe). These third parties are only allowed to process your data for specified purposes and in accordance with our instructions.
+              To provide our services, we share your data with trusted partners including verified airlines, accommodation providers, and secure payment processors. These third parties are only allowed to process your data for specified purposes and in accordance with our instructions.
             </p>
           </section>
 

@@ -124,7 +124,7 @@
         </div>
       </div>
       <div v-else class="text-sm text-gray-500 p-4 bg-gray-50 rounded-xl">
-        No extra baggage options confirmed available from the provider (<span class="capitalize font-bold">{{ providerName }}</span>) for this flight. Please check your ticket for included baggage allowance.
+        No extra baggage options are available for online purchase for this flight. Please check your ticket for included baggage allowance.
       </div>
     </div>
 

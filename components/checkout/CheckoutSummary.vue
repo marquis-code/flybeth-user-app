@@ -108,7 +108,7 @@
           </div>
           <div class="flex flex-col">
             <span class="text-base font-bold text-gray-900">{{ flightOffer.name }}</span>
-            <span class="text-sm text-gray-500">Provider: {{ flightOffer.provider }}</span>
+            <span class="text-sm text-gray-500">Private Transfer Service</span>
           </div>
         </div>
       </div>
