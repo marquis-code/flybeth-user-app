@@ -2,20 +2,20 @@
   <div class="relative w-full h-full" ref="pickerRef">
     <div
       @click="togglePicker"
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl"
+      class="w-full px-3.5 py-1.5 cursor-pointer min-h-[48px] flex flex-col justify-center group select-none transition-all rounded-lg"
       :class="showPicker
         ? (isCo ? 'bg-[#EAF2FB]/60 ring-2 ring-[#0450A0]/20' : 'bg-blue-50/30 ring-2 ring-gray-200')
         : 'hover:bg-white/60'"
     >
       <p 
-        class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
-        :class="showPicker ? 'text-black' : 'text-black group-hover:text-black'"
+        class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider"
+        :class="showPicker ? 'text-black' : 'text-gray-500 group-hover:text-black'"
       >
         {{ label }}
       </p>
-      <div class="flex items-center gap-2">
-        <UserGroupIcon class="h-4 w-4 shrink-0 transition-colors" :class="showPicker ? 'text-black' : 'text-black'" />
-        <span class="text-[13px] font-bold truncate" :class="summary ? 'text-black' : 'text-black'">
+      <div class="flex items-center gap-1.5">
+        <UserGroupIcon class="h-3.5 w-3.5 shrink-0 transition-colors" :class="showPicker ? 'text-black' : 'text-gray-500'" />
+        <span class="text-[13px] font-bold truncate text-black">
           {{ summary }}
         </span>
       </div>

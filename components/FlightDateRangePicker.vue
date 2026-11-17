@@ -4,21 +4,21 @@
     <!-- ── Trigger ── -->
     <div
       @click="toggleCalendar"
-      class="w-full cursor-pointer min-h-[68px] flex flex-row items-stretch group select-none transition-all rounded-xl"
+      class="w-full cursor-pointer min-h-[48px] flex flex-row items-stretch group select-none transition-all rounded-lg"
       :class="showCalendar
         ? (isCo ? 'bg-[#EAF2FB]/60 ring-2 ring-[#0450A0]/20' : 'bg-blue-50/30 ring-2 ring-gray-200')
         : 'hover:bg-white/60'"
     >
       <template v-if="mode === 'oneway'">
-        <div class="flex-1 px-4 pt-3 pb-2 flex flex-col justify-center text-left">
-          <p class="text-xs font-medium text-gray-500 mb-0.5 transition-colors" :class="showCalendar ? 'text-black' : 'text-black group-hover:text-black'">
+        <div class="flex-1 px-3.5 py-1.5 flex flex-col justify-center text-left">
+          <p class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
             {{ departureLabel }}
           </p>
           <div class="flex items-baseline gap-1.5 min-w-0">
             <span class="text-[13px] font-bold text-black leading-tight truncate">
               {{ startDate ? formatDisplayCompact(startDate) : 'Select date' }}
             </span>
-            <span class="text-xs text-black font-bold shrink-0" v-if="startDate">
+            <span class="text-xs text-gray-500 font-bold shrink-0" v-if="startDate">
               ({{ formatDayOfWeek(startDate) }})
             </span>
           </div>
@@ -26,31 +26,31 @@
       </template>
       <template v-else>
         <!-- Two halves for Check-in and Check-out -->
-        <div class="flex-1 px-4 pt-3 pb-2 flex flex-col justify-center text-left">
-          <p class="text-xs font-medium text-gray-500 mb-0.5 transition-colors" :class="showCalendar ? 'text-black' : 'text-black group-hover:text-black'">
+        <div class="flex-1 px-3.5 py-1.5 flex flex-col justify-center text-left">
+          <p class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
             {{ departureLabel }}
           </p>
           <div class="flex items-baseline gap-1.5 min-w-0">
             <span class="text-[13px] font-bold text-black leading-tight truncate">
               {{ startDate ? formatDisplayCompact(startDate) : 'Select date' }}
             </span>
-            <span class="text-xs text-black font-bold shrink-0" v-if="startDate">
+            <span class="text-xs text-gray-500 font-bold shrink-0" v-if="startDate">
               ({{ formatDayOfWeek(startDate) }})
             </span>
           </div>
         </div>
         
-        <div class="w-[1px] bg-[#D1D5DB] my-3 flex-shrink-0"></div>
+        <div class="w-[1px] bg-[#D1D5DB] my-2 flex-shrink-0"></div>
         
-        <div class="flex-1 px-4 pt-3 pb-2 flex flex-col justify-center text-left">
-          <p class="text-xs font-medium text-gray-500 mb-0.5 transition-colors" :class="showCalendar ? 'text-black' : 'text-black group-hover:text-black'">
+        <div class="flex-1 px-3.5 py-1.5 flex flex-col justify-center text-left">
+          <p class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider" :class="showCalendar ? 'text-black' : 'text-gray-500 group-hover:text-black'">
             {{ returnLabel }}
           </p>
           <div class="flex items-baseline gap-1.5 min-w-0">
             <span class="text-[13px] font-bold text-black leading-tight truncate">
               {{ endDate ? formatDisplayCompact(endDate) : 'Select date' }}
             </span>
-            <span class="text-xs text-black font-bold shrink-0" v-if="endDate">
+            <span class="text-xs text-gray-500 font-bold shrink-0" v-if="endDate">
               ({{ formatDayOfWeek(endDate) }})
             </span>
           </div>

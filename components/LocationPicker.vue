@@ -3,33 +3,33 @@
 
     <!-- ── Trigger row ── -->
     <div
-      class="w-full px-4 pt-3 pb-2 cursor-pointer min-h-[68px] flex flex-col justify-center group select-none transition-all rounded-xl relative overflow-hidden"
+      class="w-full px-3.5 py-1.5 cursor-pointer min-h-[48px] flex flex-col justify-center group select-none transition-all rounded-lg relative overflow-hidden"
       :class="showDropdown
         ? (isCo ? 'bg-[#EAF2FB]/60 ring-2 ring-[#0450A0]/20' : 'bg-blue-50/30 ring-2 ring-gray-200')
         : 'hover:bg-white/60'"
       @click="toggleDropdown"
     >
       <p
-        class="text-xs font-medium text-gray-500 mb-0.5 transition-colors"
-        :class="showDropdown ? 'text-black' : 'text-black group-hover:text-black'"
+        class="text-[11px] font-bold text-gray-500 mb-0 transition-colors uppercase tracking-wider"
+        :class="showDropdown ? 'text-black' : 'text-gray-500 group-hover:text-black'"
       >
         {{ label }}
       </p>
 
       <!-- Display when closed -->
-      <div v-show="!showDropdown" class="flex items-center gap-2 min-w-0 transition-opacity duration-75 w-full mt-0.5">
-        <MapPinIcon class="h-4 w-4 shrink-0 text-gray-500" />
+      <div v-show="!showDropdown" class="flex items-center gap-1.5 min-w-0 transition-opacity duration-75 w-full">
+        <MapPinIcon class="h-3.5 w-3.5 shrink-0 text-gray-500" />
         <template v-if="selectedLocationName">
-          <span class="text-[14px] sm:text-[15px] text-black leading-tight truncate font-bold flex-1">
+          <span class="text-[13px] sm:text-[14px] text-black leading-tight truncate font-bold flex-1">
             {{ selectedLocationName }}
           </span>
-          <span v-if="modelValue && modelValue !== selectedLocationName" class="text-[10px] font-bold px-2 py-1 rounded-md shrink-0"
+          <span v-if="modelValue && modelValue !== selectedLocationName" class="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
             :class="isCo ? 'text-[#0450A0] bg-[#EAF2FB]' : 'text-[#0D1DAD] bg-blue-50'">
             {{ modelValue }}
           </span>
         </template>
         <template v-else>
-          <span class="text-[14px] sm:text-[15px] text-gray-400 font-medium flex-1 truncate">
+          <span class="text-[13px] sm:text-[14px] text-gray-400 font-medium flex-1 truncate">
             {{ placeholder || 'Select' }}
           </span>
         </template>

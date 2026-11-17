@@ -1057,33 +1057,33 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-panel {
   position: relative;
   z-index: 1;
-  padding: 18px;
+  padding: 14px 18px 16px;
   background: #fff;
   border-radius: 0 0 20px 20px;
 }
-.sw-panel--sm { padding: 14px; }
+.sw-panel--sm { padding: 12px 14px; }
 
 .sw-section { display: block; }
-.sw-rows { display: flex; flex-direction: column; gap: 10px; }
+.sw-rows { display: flex; flex-direction: column; gap: 8px; }
 
 /* ── Trip type / mode pills ────────────────────────────────────────────── */
 .sw-radios {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px;
-  margin-bottom: 14px;
+  gap: 3px;
+  padding: 3px;
+  margin-bottom: 10px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 999px;
 }
-.sw-radios--wrap { flex-wrap: wrap; border-radius: 16px; }
+.sw-radios--wrap { flex-wrap: wrap; border-radius: 14px; }
 
 .sw-radio {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
+  gap: 6px;
+  padding: 5px 12px;
   border-radius: 999px;
   cursor: pointer;
   transition: background .15s ease, box-shadow .15s ease;
@@ -1091,7 +1091,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 .sw-radio:hover { background: #fff; }
 
 .sw-radio-dot {
-  width: 15px; height: 15px;
+  width: 13px; height: 13px;
   border-radius: 999px;
   border: 2px solid #c7cfdf;
   background: #fff;
@@ -1107,7 +1107,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   background: var(--navy);
 }
 
-.sw-radio-txt { font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.sw-radio-txt { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
 .sw-radio-txt--on { color: var(--navy); }
 
 /* ── Field bar ─────────────────────────────────────────────────────────── */
@@ -1115,17 +1115,17 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   display: flex;
   align-items: stretch;
   gap: 0;
-  padding: 4px;
+  padding: 2px;
   background: #fff;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 12px;
   transition: border-color .15s ease, box-shadow .15s ease;
 }
 .sw-bar:focus-within { border-color: #b9c6e6; box-shadow: 0 0 0 3px rgba(13, 29, 173, .08); }
-.sw-bar--compact { border-radius: 14px; }
+.sw-bar--compact { border-radius: 10px; }
 
-.sw-bar-div { width: 1px; background: var(--line); margin: 8px 0; flex: 0 0 1px; }
-.sw-bar-div--vert { width: 1px; height: auto; margin: 8px 0; }
+.sw-bar-div { width: 1px; background: var(--line); margin: 6px 0; flex: 0 0 1px; }
+.sw-bar-div--vert { width: 1px; height: auto; margin: 6px 0; }
 
 .sw-loc-group { display: flex; align-items: stretch; flex: 1 1 auto; min-width: 0; }
 
@@ -1133,37 +1133,38 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
+  gap: 6px;
+  padding: 0;
+  min-height: 48px;
   min-width: 0;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background .15s ease;
 }
 .sw-field:hover { background: var(--tint); }
 .sw-field--grow { flex: 1 1 0; min-width: 0; }
-.sw-field--date { flex: 0 0 auto; min-width: 190px; }
-.sw-field--pax, .sw-field--pax-class { flex: 1 1 0; min-width: 230px; }
-.sw-field--time { flex: 0 0 auto; min-width: 130px; }
-.sw-field--cat, .sw-field--class { flex: 0 0 auto; min-width: 150px; }
+.sw-field--date { flex: 0 0 auto; min-width: 180px; }
+.sw-field--pax, .sw-field--pax-class { flex: 1 1 0; min-width: 210px; }
+.sw-field--time { flex: 0 0 auto; min-width: 120px; padding: 6px 12px; }
+.sw-field--cat, .sw-field--class { flex: 0 0 auto; min-width: 140px; padding: 6px 12px; }
 
-.sw-field-inner { display: flex; flex-direction: column; gap: 2px; min-width: 0; width: 100%; }
+.sw-field-inner { display: flex; flex-direction: column; gap: 1px; min-width: 0; width: 100%; }
 
 .sw-fld-lbl {
   display: block;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: .09em;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--muted);
-  line-height: 1.3;
+  line-height: 1.2;
 }
 .sw-fld-val {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--ink);
-  line-height: 1.35;
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1173,7 +1174,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 /* The traveller summary is long ("1 Passenger, Economy"), so let it size to the
    content instead of truncating mid-word. */
 .sw-field--pax .sw-fld-val,
-.sw-field--pax-class .sw-fld-val { font-size: 14px; }
+.sw-field--pax-class .sw-fld-val { font-size: 13.5px; }
 
 /* swap button sits on the divider between From and To */
 .sw-swap-wrap {
@@ -1189,13 +1190,13 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px; height: 34px;
+  width: 28px; height: 28px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: #fff;
   color: var(--navy);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(10, 27, 61, .08);
+  box-shadow: 0 2px 5px rgba(10, 27, 61, .08);
   transition: transform .15s ease, border-color .15s ease, background .15s ease;
 }
 .sw-swap-btn:hover { background: var(--tint); border-color: #b9c6e6; transform: rotate(180deg); }
@@ -1317,21 +1318,21 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  min-height: 50px;
-  padding: 0 30px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 24px;
   border: 0;
-  border-radius: 14px;
-  background: var(--navy);
+  border-radius: 8px;
+  background: #0D1DAD;
   color: #fff;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   letter-spacing: .01em;
   cursor: pointer;
   transition: background .15s ease, transform .1s ease, box-shadow .15s ease;
-  box-shadow: 0 10px 22px -12px rgba(10, 27, 61, .65);
+  box-shadow: 0 8px 18px -8px rgba(13, 29, 173, .5);
 }
-.sw-search-btn:hover { background: var(--navy-soft); }
+.sw-search-btn:hover { background: #081485; }
 .sw-search-btn:active { transform: translateY(1px); }
 .sw-search-btn:disabled { opacity: .65; cursor: progress; }
 .sw-search-btn--full { width: 100%; }
