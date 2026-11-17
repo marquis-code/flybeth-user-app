@@ -55,10 +55,10 @@
   </div>
 
 
-  <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-white/30 overflow-x-hidden">
+  <div v-if="!showBrandedLoader" class="ck-root min-h-screen bg-white/30 overflow-x-clip">
     
     <!-- Premium Header -->
-    <header class="bg-white border-b border-gray-200 py-6">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 py-3.5 sm:py-4 shadow-xs transition-all">
       <div class="ck-wrap mx-auto relative z-10 flex flex-wrap xl:flex-nowrap items-center justify-between gap-4 xl:gap-8">
         <!-- Left: Flight Details -->
         <div class="flex items-center gap-3 lg:gap-4 flex-1 min-w-0">
@@ -100,7 +100,7 @@
         </div>
 
         <!-- Right: Price & Actions -->
-        <div class="flex items-center justify-end gap-4 lg:gap-6 flex-1 flex-shrink-0 min-w-max">
+        <div class="flex items-center justify-end gap-3 sm:gap-4 lg:gap-6 flex-1 flex-shrink-0 min-w-max">
           <div class="flex flex-col items-end flex-shrink-0">
              <span class="text-[15px] lg:text-[16px] font-black text-[#0D1DAD]">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
              <span class="text-[11px] lg:text-[12px] text-gray-400 font-bold uppercase tracking-wider">Total price</span>
@@ -110,8 +110,11 @@
             View Summary
           </button>
 
-          <div class="hidden md:flex flex-shrink-0 items-center justify-center">
-            <LanguageSelector />
+          <div class="flex flex-shrink-0 items-center justify-center">
+            <LanguageSelector 
+              :current-currency="priceDetailed?.currency || currentCurrency.code"
+              @change-currency="handleCurrencySelect"
+            />
           </div>
         </div>
       </div>
@@ -452,7 +455,7 @@ import { useSettings } from '~/composables/useSettings'
 
 const { token, isLoggedIn, openAuthModal } = useAuth()
 const { showToast } = useCustomToast()
-const { currentCurrency } = useSettings()
+const { currentCurrency, setCurrency } = useSettings()
 
 definePageMeta({
   layout: 'checkout'
@@ -1704,16 +1707,26 @@ const handlePayment = async (paymentInfo: any) => {
 }
 
 const handleCurrencySelect = async (newCurrency: string) => {
-  if (!priceDetailed.value || priceDetailed.value.currency === newCurrency) return
+  if (!newCurrency) return
+  
+  if (!priceDetailed.value) {
+    setCurrency(newCurrency)
+    return
+  }
+  
+  if (priceDetailed.value.currency === newCurrency) {
+    setCurrency(newCurrency)
+    return
+  }
   
   const currentAmount = priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
-  const currentCurrency = priceDetailed.value.currency || 'USD'
+  const currentCur = priceDetailed.value.currency || currentCurrency.value?.code || 'USD'
   
   isConversionLoading.value = true
   try {
     const { data } = await paymentsApi.convertCurrency(
       currentAmount,
-      currentCurrency,
+      currentCur,
       newCurrency
     )
     
@@ -1728,6 +1741,7 @@ const handleCurrencySelect = async (newCurrency: string) => {
       if (priceDetailed.value.tax) {
         priceDetailed.value.tax = priceDetailed.value.tax * conversionFactor
       }
+      setCurrency(newCurrency)
       
       showToast({ title: "Currency Updated", message: `Pricing switched to ${newCurrency} successfully.`, toastType: "success" })
     }
