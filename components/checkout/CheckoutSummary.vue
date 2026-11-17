@@ -182,7 +182,8 @@ const { formatPrice } = useSettings()
 const formatDate = (iso: string) => {
   if (!iso) return '—'
   const d = new Date(iso)
-  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  if (isNaN(d.getTime())) return iso
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 const formatPriceValue = (price: number) => {

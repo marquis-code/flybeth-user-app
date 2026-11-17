@@ -61,6 +61,24 @@
            </div>
         </div>
 
+        <!-- Confirmed Flight & Dates Summary -->
+        <div v-if="confirmedFlightSummary" class="bg-blue-50/70 border border-blue-100 rounded-2xl p-4 mb-6 text-left flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-white border border-gray-100 p-1 flex items-center justify-center flex-shrink-0">
+              <img v-if="confirmedFlightSummary.airlineLogo" :src="confirmedFlightSummary.airlineLogo" class="h-full w-full object-contain" />
+              <span v-else class="text-xs font-bold text-blue-600">FL</span>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-gray-900">{{ confirmedFlightSummary.route }}</p>
+              <p class="text-[11px] text-gray-500 font-medium">{{ confirmedFlightSummary.airline }}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">Travel Date</span>
+            <span class="text-xs font-bold text-gray-900">{{ confirmedFlightSummary.dates }}</span>
+          </div>
+        </div>
+
         <!-- Next Steps Info -->
         <div v-if="paymentStatus === 'success'" class="text-left bg-blue-50/80 border border-blue-100 rounded-2xl p-5 mb-8">
            <h3 class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
@@ -125,8 +143,61 @@ const provider = computed(() => (route.query.provider as string) || '')
 const isAuthorizing = ref(false)
 
 const showDrawer = ref(false)
+const confirmedFlight = ref<any>(null)
+
+const confirmedFlightSummary = computed(() => {
+  if (!confirmedFlight.value) return null
+  const f = confirmedFlight.value
+
+  let departureIso = f.departureTime || f.departureDate
+  let returnIso = f.returnTime || f.returnDate
+
+  if (f.slices && f.slices.length > 0) {
+    departureIso = departureIso || f.slices[0]?.segments?.[0]?.departing_at
+    if (f.slices.length > 1) {
+      returnIso = returnIso || f.slices[1]?.segments?.[0]?.departing_at
+    }
+  }
+
+  if (f.itineraries && f.itineraries.length > 0) {
+    departureIso = departureIso || f.itineraries[0]?.departureTime || f.itineraries[0]?.segments?.[0]?.departureTime
+    if (f.itineraries.length > 1) {
+      returnIso = returnIso || f.itineraries[1]?.departureTime || f.itineraries[1]?.segments?.[0]?.departureTime
+    }
+  }
+
+  const formatFull = (iso?: string) => {
+    if (!iso) return ''
+    const d = new Date(iso)
+    if (isNaN(d.getTime())) return String(iso)
+    return d.toLocaleDateString('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })
+  }
+
+  const depFmt = formatFull(departureIso)
+  const retFmt = formatFull(returnIso)
+
+  return {
+    route: `${f.origin || 'Origin'} ➔ ${f.destination || 'Destination'}`,
+    airline: f.airline || 'Flight',
+    airlineLogo: f.airlineLogo,
+    dates: retFmt ? `${depFmt} – ${retFmt}` : depFmt
+  }
+})
 
 onMounted(async () => {
+  if (import.meta.client) {
+    try {
+      const saved = sessionStorage.getItem('selectedFlight')
+      if (saved) confirmedFlight.value = JSON.parse(saved)
+    } catch (e) {
+      // ignore
+    }
+  }
   if (paymentStatus.value === 'success' && checkoutToken.value && provider.value) {
     isAuthorizing.value = true
     try {

@@ -87,10 +87,9 @@
                 </template>
               </span>
             </div>
-            <span class="text-[12px] lg:text-[13px] text-gray-500 mt-0.5 truncate">
-              <template v-if="bookingDetails.type === 'flight' && priceDetailed">
-                {{ new Date(priceDetailed.departureTime).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) }}
-              </template>
+            <span class="text-[12px] lg:text-[13px] text-gray-600 font-medium mt-0.5 flex items-center gap-1.5 truncate">
+              <Calendar class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+              <span>{{ tripDates.fullRange || 'Travel Dates' }}</span>
             </span>
           </div>
         </div>
@@ -123,6 +122,75 @@
     <!-- Replace the flex div and its two children's class attributes -->
       <!-- Main column: center aligned without sidebar -->
       <div class="w-full max-w-3xl mx-auto space-y-8 pb-32 pt-0">
+        <!-- Persistent Trip Context & Dates Banner (Shown across all steps) -->
+        <div v-if="tripDates.hasDates || priceDetailed" class="bg-white rounded-2xl sm:rounded-[22px] border border-gray-200/90 p-4 sm:p-5 shadow-sm transition-all duration-300">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            
+            <!-- Route & Airline Info -->
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div v-if="priceDetailed?.airlineLogo" class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 p-1.5 flex items-center justify-center flex-shrink-0">
+                <img :src="priceDetailed.airlineLogo" :alt="priceDetailed.airline" class="h-full w-full object-contain" />
+              </div>
+              <div v-else class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <Plane class="w-5 h-5 text-blue-600" />
+              </div>
+
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-base font-bold text-gray-900 tracking-tight">
+                    <template v-if="bookingDetails.type === 'flight' && priceDetailed">
+                      {{ priceDetailed.origin }} ➔ {{ priceDetailed.destination }}
+                    </template>
+                    <template v-else>
+                      {{ bookingDetails.name }}
+                    </template>
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100/80">
+                    {{ tripDates.isRoundTrip ? 'Round Trip' : 'One Way' }}
+                  </span>
+                </div>
+                <p class="text-xs text-gray-500 font-medium truncate mt-0.5">
+                  <span v-if="priceDetailed?.originName && priceDetailed?.destinationName">
+                    {{ priceDetailed.originName }} to {{ priceDetailed.destinationName }} • 
+                  </span>
+                  <span>{{ priceDetailed?.airline || bookingDetails.name }}</span>
+                  <span v-if="priceDetailed?.cabinClass" class="capitalize"> • {{ priceDetailed.cabinClass }}</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Date Badges (Consistently Visible at Every Step) -->
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+              <!-- Outbound / Departure Date -->
+              <div class="flex items-center gap-2.5 bg-blue-50/70 border border-blue-100 rounded-xl px-3.5 py-2 flex-1 sm:flex-initial">
+                <Calendar class="w-4 h-4 text-blue-600 flex-shrink-0" />
+                <div>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 block leading-tight">
+                    {{ bookingDetails.type === 'stay' ? 'Check-in' : 'Depart' }}
+                  </span>
+                  <span class="text-xs font-bold text-gray-900 leading-tight block whitespace-nowrap">
+                    {{ tripDates.departure }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Return / Check-out Date (if round-trip or stay) -->
+              <div v-if="tripDates.return" class="flex items-center gap-2.5 bg-indigo-50/70 border border-indigo-100 rounded-xl px-3.5 py-2 flex-1 sm:flex-initial">
+                <Calendar class="w-4 h-4 text-indigo-600 flex-shrink-0" />
+                <div>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600 block leading-tight">
+                    {{ bookingDetails.type === 'stay' ? 'Check-out' : 'Return' }}
+                  </span>
+                  <span class="text-xs font-bold text-gray-900 leading-tight block whitespace-nowrap">
+                    {{ tripDates.return }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         <!-- Step 0: Details (Flight Details + Contact Details + Passenger Details) -->
         <div v-if="currentStep === 0" class="space-y-6 animate-in">
           
@@ -214,8 +282,11 @@
 
         <!-- Step 1: Customise (Seats & Baggage) -->
         <div v-if="currentStep === 1" class="animate-in space-y-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[20px] font-bold text-[#111827]">Customise your booking</h2>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
+            <div>
+              <h2 class="text-[20px] font-bold text-[#111827]">Customise your booking</h2>
+              <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Select seats and baggage for your journey ({{ tripDates.fullRange }})</p>
+            </div>
           </div>
           <CheckoutTripCustomization
             :flightOffer="bookingDetails.type === 'flight' ? priceDetailed : null"
@@ -232,8 +303,11 @@
 
         <!-- Step 2: Protect (Cancellation & Baggage Protection) -->
         <div v-if="currentStep === 2" class="animate-in space-y-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-[20px] font-bold text-[#111827]">Protect your booking</h2>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
+            <div>
+              <h2 class="text-[20px] font-bold text-[#111827]">Protect your booking</h2>
+              <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Coverage for your trip from {{ tripDates.fullRange }}</p>
+            </div>
           </div>
           <CheckoutProtection 
             :flightOffer="priceDetailed"
@@ -345,7 +419,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { ChevronLeft, Lock, ShieldCheck, X as XIcon } from 'lucide-vue-next'
+import { ChevronLeft, Lock, ShieldCheck, X as XIcon, Calendar, Plane, Building } from 'lucide-vue-next'
 import { useRoute, useRouter, navigateTo, useRuntimeConfig } from '#app'
 import { staysApi } from '~/api_factory/modules/stays'
 import { paymentsApi } from '~/api_factory/modules/payments'
@@ -834,6 +908,110 @@ const displayPrices = computed(() => {
     serviceCharge: serviceCharge * rate,
     fees: (seatPrice.value + selectedAddOns.value.reduce((sum, a) => sum + a.price, 0)) * rate,
     total: finalTotal * rate
+  }
+})
+
+// Unified Trip Dates computed across all steps
+const tripDates = computed(() => {
+  if (bookingDetails.value.type === 'flight') {
+    const flight = priceDetailed.value || selectedFlight.value
+    if (!flight) return { hasDates: false, departure: '', return: '', fullRange: '', isRoundTrip: false, type: 'flight' }
+
+    let departureIso = flight.departureTime || flight.departureDate
+    let returnIso = flight.returnTime || flight.returnDate
+
+    if (flight.slices && flight.slices.length > 0) {
+      const firstSlice = flight.slices[0]
+      const lastSlice = flight.slices.length > 1 ? flight.slices[1] : null
+      departureIso = departureIso || firstSlice?.segments?.[0]?.departing_at
+      if (lastSlice) {
+        returnIso = returnIso || lastSlice?.segments?.[0]?.departing_at
+      }
+    }
+
+    if (flight.itineraries && flight.itineraries.length > 0) {
+      departureIso = departureIso || flight.itineraries[0]?.departureTime || flight.itineraries[0]?.segments?.[0]?.departureTime
+      if (flight.itineraries.length > 1) {
+        returnIso = returnIso || flight.itineraries[1]?.departureTime || flight.itineraries[1]?.segments?.[0]?.departureTime
+      }
+    }
+
+    const formatFull = (iso?: string) => {
+      if (!iso) return ''
+      const d = new Date(iso)
+      if (isNaN(d.getTime())) return String(iso)
+      return d.toLocaleDateString('en-GB', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      })
+    }
+
+    const formatTime = (iso?: string) => {
+      if (!iso) return ''
+      const d = new Date(iso)
+      if (isNaN(d.getTime())) return ''
+      return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+    }
+
+    const depFormatted = formatFull(departureIso)
+    const depTime = formatTime(departureIso)
+    const retFormatted = formatFull(returnIso)
+    const retTime = formatTime(returnIso)
+
+    const isRound = Boolean(returnIso || flight.isRoundTrip || flight.tripType === 'Round Trip' || flight.slices?.length > 1 || flight.itineraries?.length > 1)
+
+    return {
+      hasDates: Boolean(depFormatted),
+      departure: depFormatted ? `${depFormatted}${depTime ? ` • ${depTime}` : ''}` : '',
+      departureDateOnly: depFormatted,
+      departureTimeOnly: depTime,
+      return: retFormatted ? `${retFormatted}${retTime ? ` • ${retTime}` : ''}` : '',
+      returnDateOnly: retFormatted,
+      returnTimeOnly: retTime,
+      fullRange: retFormatted ? `${depFormatted} ➔ ${retFormatted}` : depFormatted,
+      isRoundTrip: isRound,
+      type: 'flight'
+    }
+  } else if (bookingDetails.value.type === 'stay') {
+    const checkIn = priceDetailed.value?.checkInDate || bookingDetails.value.checkIn
+    const checkOut = priceDetailed.value?.checkOutDate || bookingDetails.value.checkOut
+    const formatFull = (iso?: string) => {
+      if (!iso) return ''
+      const d = new Date(iso)
+      if (isNaN(d.getTime())) return String(iso)
+      return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+    }
+    const inFmt = formatFull(checkIn)
+    const outFmt = formatFull(checkOut)
+    return {
+      hasDates: Boolean(inFmt),
+      departure: inFmt,
+      departureDateOnly: inFmt,
+      departureTimeOnly: '',
+      return: outFmt,
+      returnDateOnly: outFmt,
+      returnTimeOnly: '',
+      fullRange: outFmt ? `${inFmt} – ${outFmt}` : inFmt,
+      isRoundTrip: Boolean(outFmt),
+      type: 'stay'
+    }
+  }
+
+  const d = bookingDetails.value.pickUpDate || bookingDetails.value.date || bookingDetails.value.departureDate
+  const r = bookingDetails.value.dropOffDate || bookingDetails.value.returnDate
+  return {
+    hasDates: Boolean(d),
+    departure: d || '',
+    departureDateOnly: d || '',
+    departureTimeOnly: '',
+    return: r || '',
+    returnDateOnly: r || '',
+    returnTimeOnly: '',
+    fullRange: r ? `${d} – ${r}` : (d || ''),
+    isRoundTrip: Boolean(r),
+    type: bookingDetails.value.type
   }
 })
 
