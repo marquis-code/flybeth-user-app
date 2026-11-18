@@ -112,7 +112,7 @@
 
           <div class="flex flex-shrink-0 items-center justify-center">
             <LanguageSelector 
-              :current-currency="priceDetailed?.currency || currentCurrency.code"
+              :current-currency="currentCurrency.code"
               @change-currency="handleCurrencySelect"
             />
           </div>
@@ -1800,54 +1800,11 @@ const handlePayment = async (paymentInfo: any) => {
   }
 }
 
-const handleCurrencySelect = async (newCurrency: string) => {
+const handleCurrencySelect = (newCurrency: string) => {
   if (!newCurrency) return
-  
-  if (!priceDetailed.value) {
-    setCurrency(newCurrency)
-    return
-  }
-  
-  if (priceDetailed.value.currency === newCurrency) {
-    setCurrency(newCurrency)
-    return
-  }
-  
-  const currentAmount = priceDetailed.value.priceWithCommission || priceDetailed.value.price || 0
-  const currentCur = priceDetailed.value.currency || currentCurrency.value?.code || 'USD'
-  
-  isConversionLoading.value = true
-  try {
-    const { data } = await paymentsApi.convertCurrency(
-      currentAmount,
-      currentCur,
-      newCurrency
-    )
-    
-    if (data && data.success) {
-      // Re-normalize pricing fields with new converted value
-      const convertedVal = data.data.convertedAmount || data.data.amount
-      const conversionFactor = convertedVal / currentAmount
-      
-      priceDetailed.value.currency = newCurrency
-      priceDetailed.value.price = (priceDetailed.value.price || 0) * conversionFactor
-      priceDetailed.value.priceWithCommission = convertedVal
-      if (priceDetailed.value.tax) {
-        priceDetailed.value.tax = priceDetailed.value.tax * conversionFactor
-      }
-      setCurrency(newCurrency)
-      
-      showToast({ title: "Currency Updated", message: `Pricing switched to ${newCurrency} successfully.`, toastType: "success" })
-    }
-  } catch (err: any) {
-    console.error('Currency conversion failed:', err)
-    showToast({ 
-      title: "Conversion Error", 
-      message: "We couldn't update the pricing to your selected currency at this time.", 
-      toastType: "error" 
-    })
-  } finally {
-    isConversionLoading.value = false
+  setCurrency(newCurrency)
+  if (priceDetailed.value) {
+    priceDetailed.value.currency = newCurrency
   }
 }
 
