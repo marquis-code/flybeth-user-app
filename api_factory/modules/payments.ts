@@ -30,7 +30,7 @@ export const paymentsApi = {
      * Send bank settlement credentials directly to customer email
      */
     sendBankDetailsEmail(data: { email: string; currency?: string; amount?: number; bookingRef?: string }) {
-        return GATEWAY_ENDPOINT_WITH_AUTH.post('/payments/bank-accounts/send-email', data);
+        return GATEWAY_ENDPOINT.post('/payments/bank-accounts/send-email', data);
     },
 
     /**
