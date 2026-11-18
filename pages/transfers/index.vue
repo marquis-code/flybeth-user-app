@@ -651,13 +651,18 @@ onUnmounted(() => {
 }
 .tr-search-btn--secondary:hover { background: #e2e8f0; color: #0f172a; }
 
-.tr-main { padding-top: 36px; padding-bottom: 80px; }
-.tr-body { display: grid; grid-template-columns: 220px 1fr; gap: 36px; }
-.tr-sbar { position: sticky; top: 20px; }
+.tr-main { padding-top: 24px; padding-bottom: 60px; }
+.tr-body { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 24px; 
+}
+.tr-sidebar { width: 100%; }
+.tr-sbar { position: static; }
 .tr-sb-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
-.tr-chips { display: flex; flex-direction: column; gap: 8px; }
+.tr-chips { display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px; }
 .tr-chip { 
-  padding: 10px 16px; 
+  padding: 10px 20px; 
   border: 1.5px solid #e2e8f0; 
   background: #fff; 
   border-radius: 9999px; 
@@ -667,6 +672,7 @@ onUnmounted(() => {
   cursor: pointer; 
   text-align: center; 
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 .tr-chip:hover {
   border-color: #cbd5e1;
@@ -677,6 +683,19 @@ onUnmounted(() => {
   background: #0D1DAD; 
   color: #fff; 
   box-shadow: 0 4px 12px rgba(13, 29, 173, 0.2); 
+}
+
+@media (min-width: 1024px) {
+  .tr-main { padding-top: 36px; padding-bottom: 80px; }
+  .tr-body { 
+    display: grid; 
+    grid-template-columns: 240px 1fr; 
+    gap: 36px; 
+    align-items: start;
+  }
+  .tr-sidebar { width: auto; }
+  .tr-sbar { position: sticky; top: 24px; }
+  .tr-chips { flex-direction: column; gap: 8px; }
 }
 .tr-skel { height: 120px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px; }
 .tr-empty { text-align: center; padding: 60px 20px; background: #f8fafc; border-radius: 24px; border: 1.5px dashed #e2e8f0; }
@@ -721,28 +740,6 @@ onUnmounted(() => {
   .tr-search-btn {
     width: 100%;
     height: 48px;
-  }
-  .tr-main { padding-top: 24px; padding-bottom: 48px; }
-  .tr-body {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .tr-sidebar {
-    width: 100%;
-  }
-  .tr-sbar {
-    position: static;
-  }
-  .tr-chips {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .tr-chip {
-    padding: 8px 18px;
-    border-radius: 9999px;
-    font-size: 13px;
   }
 }
 
