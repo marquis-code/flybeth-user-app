@@ -4,14 +4,14 @@
       <button 
         v-for="(item, idx) in dateOptions" 
         :key="idx"
-        @click="selectDate(item, idx)"
-        class="flex flex-col items-center justify-center min-w-max px-5 py-2.5 rounded-full border transition-colors whitespace-nowrap flex-shrink-0"
-        :class="selectedIndex === idx 
-          ? 'border-[#0D1DAD] bg-blue-50/30' 
+        @click="selectDate(item)"
+        class="flex flex-col items-center justify-center min-w-max px-5 py-2.5 rounded-full border transition-all whitespace-nowrap flex-shrink-0 cursor-pointer"
+        :class="(item.departureDate === props.departureDate || selectedIndex === idx)
+          ? 'border-[#0D1DAD] bg-blue-50/40 ring-2 ring-[#0D1DAD]/20 shadow-xs' 
           : 'border-gray-200 hover:border-gray-300 bg-white'"
       >
-        <span class="text-xs font-medium text-gray-600 mb-0.5">{{ item.label }}</span>
-        <span class="text-sm font-bold" :class="selectedIndex === idx ? 'text-[#0D1DAD]' : 'text-brand-green'">
+        <span class="text-xs font-semibold text-gray-700 mb-0.5">{{ item.label }}</span>
+        <span class="text-sm font-bold" :class="(item.departureDate === props.departureDate || selectedIndex === idx) ? 'text-[#0D1DAD]' : 'text-brand-green'">
           {{ formatPrice(item.price) }}
         </span>
       </button>
@@ -42,10 +42,13 @@ const emit = defineEmits(['select'])
 
 const { formatPrice } = useSettings()
 
-const selectedIndex = ref(3) // 4th item is active (middle)
+const selectedIndex = computed(() => {
+  if (!props.departureDate) return 3
+  const idx = dateOptions.value.findIndex(o => o.departureDate === props.departureDate)
+  return idx >= 0 ? idx : 3
+})
 
-const selectDate = (item: any, idx: number) => {
-  selectedIndex.value = idx
+const selectDate = (item: any) => {
   emit('select', { departureDate: item.departureDate, returnDate: item.returnDate })
 }
 

@@ -1498,7 +1498,17 @@ const handleSearch = () => {
 
 const handleDateSelect = (dates: { departureDate: string, returnDate?: string }) => {
   if (dates.departureDate) searchQuery.value.departureDate = dates.departureDate
-  if (dates.returnDate) searchQuery.value.returnDate = dates.returnDate
+  if (dates.returnDate !== undefined) searchQuery.value.returnDate = dates.returnDate
+  
+  if (import.meta.client) {
+    window.dispatchEvent(new CustomEvent('flybeth:update-flight-criteria', {
+      detail: {
+        departureDate: dates.departureDate,
+        returnDate: dates.returnDate
+      }
+    }))
+  }
+  
   handleSearch()
 }
 

@@ -746,54 +746,78 @@ const handleWidgetClickOutside = (e: MouseEvent) => {
   activeCruiseField.value = null
 }
 
-onMounted(() => {
-  const route = useRoute()
-  
-  if (route.query.tab) {
-    const matchedTab = tabs.find(t => t.name === String(route.query.tab))
+const syncFromRoute = (query: any) => {
+  if (!query) return
+
+  if (query.tab) {
+    const matchedTab = tabs.find(t => t.name === String(query.tab))
     if (matchedTab) currentTab.value = matchedTab.name
   }
 
   // Restore flight state
-  if (route.query.origin) flightSearchState.origin = String(route.query.origin)
-  if (route.query.destination) flightSearchState.destination = String(route.query.destination)
-  if (route.query.departureDate) flightSearchState.departureDate = String(route.query.departureDate)
-  if (route.query.returnDate) flightSearchState.returnDate = String(route.query.returnDate)
-  if (route.query.flexibleDates) flightSearchState.flexibleDates = String(route.query.flexibleDates) === 'true'
-  if (route.query.type) flightMode.value = String(route.query.type)
-  if (route.query.adults) flightTravelers.adults = Number(route.query.adults)
-  if (route.query.children) flightTravelers.children = Number(route.query.children)
-  if (route.query.infantsOnLap) flightTravelers.infantsOnLap = Number(route.query.infantsOnLap)
-  if (route.query.infantsInSeat) flightTravelers.infantsInSeat = Number(route.query.infantsInSeat)
-  if (route.query.cabinClass) flightTravelers.cabinClass = String(route.query.cabinClass)
+  if (query.origin) flightSearchState.origin = String(query.origin)
+  if (query.destination) flightSearchState.destination = String(query.destination)
+  if (query.departureDate) flightSearchState.departureDate = String(query.departureDate)
+  if (query.returnDate) flightSearchState.returnDate = String(query.returnDate)
+  if (query.flexibleDates !== undefined) flightSearchState.flexibleDates = String(query.flexibleDates) === 'true'
+  if (query.type) flightMode.value = String(query.type)
+  if (query.adults) flightTravelers.adults = Number(query.adults)
+  if (query.children) flightTravelers.children = Number(query.children)
+  if (query.infantsOnLap) flightTravelers.infantsOnLap = Number(query.infantsOnLap)
+  if (query.infantsInSeat) flightTravelers.infantsInSeat = Number(query.infantsInSeat)
+  if (query.cabinClass) flightTravelers.cabinClass = String(query.cabinClass)
 
   // Restore hotel state
-  if (route.query.location) searchState.location = String(route.query.location)
-  if (route.query.checkIn) searchState.checkIn = String(route.query.checkIn)
-  if (route.query.checkOut) searchState.checkOut = String(route.query.checkOut)
-  if (route.query.rooms) occupancy.rooms = Number(route.query.rooms)
-  if (route.query.adults && currentTab.value === 'Hotels') occupancy.adults = Number(route.query.adults)
+  if (query.location) searchState.location = String(query.location)
+  if (query.checkIn) searchState.checkIn = String(query.checkIn)
+  if (query.checkOut) searchState.checkOut = String(query.checkOut)
+  if (query.rooms) occupancy.rooms = Number(query.rooms)
+  if (query.adults && currentTab.value === 'Hotels') occupancy.adults = Number(query.adults)
 
   // Restore car state
-  if (route.query.origin && currentTab.value === 'Cars') carSearchState.origin = String(route.query.origin)
-  if (route.query.destination && currentTab.value === 'Cars') carSearchState.destination = String(route.query.destination)
-  if (route.query.pickUpDate && currentTab.value === 'Cars') carSearchState.pickUpDate = String(route.query.pickUpDate)
-  if (route.query.dropOffDate && currentTab.value === 'Cars') carSearchState.dropOffDate = String(route.query.dropOffDate)
-  if (route.query.carMode) carMode.value = String(route.query.carMode)
+  if (query.origin && currentTab.value === 'Cars') carSearchState.origin = String(query.origin)
+  if (query.destination && currentTab.value === 'Cars') carSearchState.destination = String(query.destination)
+  if (query.pickUpDate && currentTab.value === 'Cars') carSearchState.pickUpDate = String(query.pickUpDate)
+  if (query.dropOffDate && currentTab.value === 'Cars') carSearchState.dropOffDate = String(query.dropOffDate)
+  if (query.carMode) carMode.value = String(query.carMode)
 
   // Restore transfer state
-  if (route.query.origin && currentTab.value === 'Transfers') transferSearchState.origin = String(route.query.origin)
-  if (route.query.destination && currentTab.value === 'Transfers') transferSearchState.destination = String(route.query.destination)
-  if (route.query.date && currentTab.value === 'Transfers') transferSearchState.date = String(route.query.date)
-  if (route.query.time && currentTab.value === 'Transfers') transferSearchState.time = String(route.query.time)
-  if (route.query.returnDate && currentTab.value === 'Transfers') transferSearchState.returnDate = String(route.query.returnDate)
-  if (route.query.returnTime && currentTab.value === 'Transfers') transferSearchState.returnTime = String(route.query.returnTime)
-  if (route.query.adults && currentTab.value === 'Transfers') transferOccupancy.adults = Number(route.query.adults)
-  if (route.query.children && currentTab.value === 'Transfers') transferOccupancy.children = Number(route.query.children)
-  if (route.query.tripType && currentTab.value === 'Transfers') transferTripType.value = String(route.query.tripType)
+  if (query.origin && currentTab.value === 'Transfers') transferSearchState.origin = String(query.origin)
+  if (query.destination && currentTab.value === 'Transfers') transferSearchState.destination = String(query.destination)
+  if (query.date && currentTab.value === 'Transfers') transferSearchState.date = String(query.date)
+  if (query.time && currentTab.value === 'Transfers') transferSearchState.time = String(query.time)
+  if (query.returnDate && currentTab.value === 'Transfers') transferSearchState.returnDate = String(query.returnDate)
+  if (query.returnTime && currentTab.value === 'Transfers') transferSearchState.returnTime = String(query.returnTime)
+  if (query.adults && currentTab.value === 'Transfers') transferOccupancy.adults = Number(query.adults)
+  if (query.children && currentTab.value === 'Transfers') transferOccupancy.children = Number(query.children)
+  if (query.tripType && currentTab.value === 'Transfers') transferTripType.value = String(query.tripType)
 
   // Restore package state
-  if (route.query.packageType) packageType.value = String(route.query.packageType)
+  if (query.packageType) packageType.value = String(query.packageType)
+}
+
+const handleFlightCriteriaUpdate = (e: any) => {
+  const detail = e.detail || {}
+  if (detail.origin) flightSearchState.origin = detail.origin
+  if (detail.destination) flightSearchState.destination = detail.destination
+  if (detail.departureDate) flightSearchState.departureDate = detail.departureDate
+  if (detail.returnDate !== undefined) flightSearchState.returnDate = detail.returnDate
+  if (detail.type) flightMode.value = detail.type
+  if (detail.adults) flightTravelers.adults = detail.adults
+}
+
+const route = useRoute()
+
+watch(() => route.query, (newQ) => {
+  syncFromRoute(newQ)
+}, { deep: true })
+
+onMounted(() => {
+  syncFromRoute(route.query)
+
+  if (import.meta.client) {
+    window.addEventListener('flybeth:update-flight-criteria', handleFlightCriteriaUpdate)
+  }
 
   if (import.meta.client) {
     try {
@@ -919,6 +943,9 @@ onUnmounted(() => {
   window.removeEventListener('scroll', updateDropdownPositions, true)
   window.removeEventListener('resize', updateDropdownPositions)
   window.removeEventListener('click', handleWidgetClickOutside)
+  if (import.meta.client) {
+    window.removeEventListener('flybeth:update-flight-criteria', handleFlightCriteriaUpdate)
+  }
 })
 
 const handleSearch = async () => {
