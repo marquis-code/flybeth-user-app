@@ -14,7 +14,7 @@
         <div class="absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-indigo-500/25 blur-3xl"></div>
       </div>
 
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+      <div class="max-w-7xl mx-auto px-6 lg:px-10 relative z-10">
         
         <!-- Top Navigation Link -->
         <NuxtLink 
@@ -44,7 +44,7 @@
           </div>
 
           <!-- Elevated Search Card -->
-          <div class="w-full lg:w-[420px] bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-white/80 backdrop-blur-md">
+          <div class="w-full lg:w-[450px] bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-white/80 backdrop-blur-md">
             <div class="flex items-center justify-between mb-3">
               <label class="text-[11px] font-extrabold text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
                 <Search class="w-3.5 h-3.5 text-[#0D1DAD]" />
@@ -96,7 +96,7 @@
     </section>
 
     <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-12 relative z-20 pb-24">
+    <main class="max-w-7xl mx-auto px-6 lg:px-10 relative z-20 pt-10 sm:pt-16 pb-24">
       
       <!-- ── 1. LOADING STATE ── -->
       <div v-if="loading" class="bg-white rounded-3xl p-12 sm:p-16 shadow-xl border border-slate-200/90 text-center flex flex-col items-center justify-center">
