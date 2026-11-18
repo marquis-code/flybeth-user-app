@@ -384,8 +384,15 @@
                       <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.base.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
                     </div>
                     <div v-if="displayPrices.tax > 0" class="flex justify-between items-center pb-3 border-b border-gray-100">
-                      <span class="font-medium text-gray-500">Taxes & Fees</span>
+                      <span class="font-medium text-gray-500">Taxes & Mandatory Fees</span>
                       <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.tax.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+                    <div v-if="displayPrices.serviceCharge > 0" class="flex justify-between items-center pb-3 border-b border-gray-100">
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="font-medium text-gray-500">{{ agencyFeeLabel || 'Agency Booking & Service Fee' }}</span>
+                        <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Non-Refundable</span>
+                      </div>
+                      <span class="font-bold text-gray-900">{{ currencySymbol }}{{ displayPrices.serviceCharge.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
                     </div>
                     
                     <div v-if="seatPrice > 0" class="flex justify-between items-center pb-3 border-b border-gray-100 text-blue-600">
@@ -408,9 +415,15 @@
                     <div class="flex justify-between items-end mb-2">
                       <div class="flex flex-col">
                         <span class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Total Amount</span>
-                        <p class="text-xs text-gray-400">Includes taxes and charges</p>
+                        <p class="text-xs text-gray-400">Includes all taxes &amp; agency service fees</p>
                       </div>
                       <span class="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight">{{ currencySymbol }}{{ displayPrices.total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</span>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-gray-200/80">
+                      <p class="text-[11px] leading-relaxed text-amber-900 bg-amber-50/90 border border-amber-200/80 p-2.5 rounded-xl font-medium">
+                        <strong class="font-bold">Cancellation Policy:</strong> Airline base fares and government taxes are subject to airline fare rules. Agency booking &amp; ticketing fees are 100% non-refundable under all circumstances.
+                      </p>
                     </div>
                     
                     <div class="mt-6" v-show="!paymentRef || paymentRef.requiresExternalSubmit">
@@ -476,7 +489,7 @@ import { useSettings } from '~/composables/useSettings'
 
 const { token, isLoggedIn, openAuthModal } = useAuth()
 const { showToast } = useCustomToast()
-const { currentCurrency, setCurrency } = useSettings()
+const { currentCurrency, setCurrency, agencyFeeLabel, nonRefundableDisclaimer } = useSettings()
 
 definePageMeta({
   layout: 'checkout'
@@ -976,19 +989,30 @@ const displayPrices = computed(() => {
   const rate = currentCurrency.value.rate || 1
 
   if (priceDetailed.value) {
-    // `price` is the NET supplier rate; `priceWithCommission` is what the
-    // traveller actually pays. The backend charges the net rate plus the
-    // platform commission, so these two numbers are the display contract.
-    const net = Number(priceDetailed.value.price || 0)
+    const raw = priceDetailed.value.rawOffer || priceDetailed.value
     const gross = Number(
       priceDetailed.value.priceWithCommission ??
+        priceDetailed.value.total_amount ??
         priceDetailed.value.price ??
         0,
     )
-    base = net
-    total = gross
-    tax = Math.max(0, gross - net)
-    serviceCharge = 0
+    
+    // Check if authentic supplier base and tax amounts exist
+    const rawBase = Number(priceDetailed.value.baseAmount ?? raw.base_amount ?? priceDetailed.value.price ?? 0)
+    const rawTax = Number(priceDetailed.value.taxAmount ?? raw.tax_amount ?? priceDetailed.value.tax ?? 0)
+
+    if (rawBase > 0) {
+      base = rawBase
+      tax = rawTax
+      // Agency service fee is the explicit difference between customer gross and supplier net
+      serviceCharge = Math.max(0, Math.round((gross - (rawBase + rawTax)) * 100) / 100)
+      total = gross
+    } else {
+      base = gross
+      total = gross
+      tax = 0
+      serviceCharge = 0
+    }
   }
 
   if (bundledStay.value) {
@@ -1388,9 +1412,10 @@ const buildBookingPayload = (paymentInfo: any) => {
         ? Number(priceDetailed.value?.price || 0)
         : displayPrices.value.base,
       taxes: displayPrices.value.tax,
-      // Extras the traveller explicitly selected (seats, bags, insurance…).
+      agentServiceFee: displayPrices.value.serviceCharge,
       fees: displayPrices.value.fees,
       totalAmount: displayPrices.value.total,
+      feeLabel: agencyFeeLabel.value || 'Agency Booking & Service Fee',
     },
     hasInsurance: selectedAddOns.value.some((a) => a.id === 'insurance'),
     hasVipSupport: selectedAddOns.value.some((a) => a.id === 'vip-support'),

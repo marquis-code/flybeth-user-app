@@ -86,8 +86,11 @@
              <span>Taxes & Fees</span>
              <span>{{ currency }}{{ formatPrice(taxes) }}</span>
            </div>
-           <div class="ck-sb-fare ck-sb-fare--sub">
-             <span>Service Charge</span>
+           <div v-if="serviceCharge > 0" class="ck-sb-fare ck-sb-fare--sub">
+             <div class="flex items-center gap-1.5 flex-wrap">
+               <span>{{ feeLabel }}</span>
+               <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Non-Refundable</span>
+             </div>
              <span>{{ currency }}{{ formatPrice(serviceCharge) }}</span>
            </div>
            <div v-if="seatPrice > 0" class="ck-sb-fare ck-sb-fare--sub">
@@ -132,8 +135,10 @@
           Hold Reservation
         </button>
     </div>
-    <div v-else class="ck-sb-meta">
-       <p>Taxes and fees are calculated based on your final selection.</p>
+    <div class="ck-sb-meta mt-3 pt-3 border-t border-gray-100">
+       <p class="text-[11px] leading-relaxed text-amber-900 bg-amber-50/90 border border-amber-200/80 p-2.5 rounded-xl font-medium">
+         <strong class="font-bold">Cancellation &amp; Refund Policy:</strong> Airline base fares and government taxes remain subject to carrier fare rules. Agency booking &amp; service fees are 100% non-refundable under all circumstances.
+       </p>
     </div>
   </div>
 </template>
@@ -154,6 +159,7 @@ const props = defineProps({
   taxes: { type: Number, default: 0 },
   discount: { type: Number, default: 0 },
   serviceCharge: { type: Number, default: 0 },
+  feeLabel: { type: String, default: 'Agency Booking & Service Fee' },
   addOns: { type: Array as () => { id: string; name: string; price: number }[], default: () => [] },
   selectedSeats: { type: Array as () => any[], default: () => [] },
   seatPrice: { type: Number, default: 0 },

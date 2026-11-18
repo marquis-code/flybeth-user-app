@@ -377,22 +377,37 @@
 
               <div class="space-y-3">
                 <div class="flex justify-between items-center text-sm">
-                  <span class="text-slate-500 font-medium">Base Fare</span>
+                  <span class="text-slate-500 font-medium">Airline Base Fare</span>
                   <span class="font-bold text-slate-900">{{ formatPrice(booking.pricing?.baseFare) }}</span>
                 </div>
                 <div class="flex justify-between items-center text-sm">
                   <span class="text-slate-500 font-medium">Taxes & Mandatory Fees</span>
                   <span class="font-bold text-slate-900">{{ formatPrice(booking.pricing?.taxes) }}</span>
                 </div>
+                <div v-if="(booking.pricing?.agentServiceFee || booking.pricing?.platformCommission || (booking.pricing?.totalAmount - (booking.pricing?.baseFare || 0) - (booking.pricing?.taxes || 0))) > 0" class="flex justify-between items-center text-sm">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-slate-500 font-medium">{{ booking.pricing?.feeLabel || 'Agency Booking & Service Fee' }}</span>
+                    <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Non-Refundable</span>
+                  </div>
+                  <span class="font-bold text-slate-900">{{ formatPrice(booking.pricing?.agentServiceFee || booking.pricing?.platformCommission || Math.max(0, (booking.pricing?.totalAmount || 0) - (booking.pricing?.baseFare || 0) - (booking.pricing?.taxes || 0))) }}</span>
+                </div>
+                <div v-if="booking.pricing?.fees > 0" class="flex justify-between items-center text-sm">
+                  <span class="text-slate-500 font-medium">Selected Add-ons</span>
+                  <span class="font-bold text-slate-900">{{ formatPrice(booking.pricing?.fees) }}</span>
+                </div>
                 
                 <div class="pt-3.5 mt-3 border-t border-slate-200 flex justify-between items-baseline">
                   <div>
                     <span class="text-xs font-black uppercase tracking-wider text-slate-900">Total Paid</span>
-                    <p class="text-[10px] font-medium text-slate-400">All taxes included</p>
+                    <p class="text-[10px] font-medium text-slate-400">All taxes &amp; fees included</p>
                   </div>
                   <span class="text-2xl font-black text-[#0D1DAD] tracking-tight">
                     {{ formatPrice(booking.pricing?.totalAmount) }}
                   </span>
+                </div>
+
+                <div class="pt-2 text-[10.5px] text-amber-900 bg-amber-50/80 border border-amber-200/80 p-2.5 rounded-xl leading-relaxed">
+                  <strong>Refund &amp; Cancellation Notice:</strong> Airline fares &amp; taxes remain subject to carrier fare rules. Agency booking &amp; ticketing fees are strictly 100% non-refundable under all circumstances.
                 </div>
               </div>
             </div>
@@ -708,6 +723,9 @@ const printETicketReceipt = (bkg: any) => {
   const total = formatPrice(bkg.pricing?.totalAmount)
   const base = formatPrice(bkg.pricing?.baseFare)
   const taxes = formatPrice(bkg.pricing?.taxes)
+  const feeLabel = bkg.pricing?.feeLabel || 'Agency Booking & Service Fee'
+  const serviceFeeNum = bkg.pricing?.agentServiceFee || bkg.pricing?.platformCommission || Math.max(0, (bkg.pricing?.totalAmount || 0) - (bkg.pricing?.baseFare || 0) - (bkg.pricing?.taxes || 0))
+  const serviceFee = formatPrice(serviceFeeNum)
   const isConfirmed = bkg.status === 'confirmed'
 
   const flightSegmentsHtml = flightSlices.value.map((slice: any, i: number) => `
@@ -788,8 +806,9 @@ const printETicketReceipt = (bkg: any) => {
           </div>
           <div class="box">
             <div class="box-title">Payment & Fare Breakdown</div>
-            <div class="row"><span class="label">Base Fare:</span><span class="val">${base}</span></div>
+            <div class="row"><span class="label">Airline Base Fare:</span><span class="val">${base}</span></div>
             <div class="row"><span class="label">Taxes & Mandatory Fees:</span><span class="val">${taxes}</span></div>
+            ${serviceFeeNum > 0 ? `<div class="row"><span class="label">${feeLabel} <strong style="color:#d97706; font-size:10px;">[NON-REFUNDABLE]</strong>:</span><span class="val">${serviceFee}</span></div>` : ''}
             <div class="row total-row"><span class="label" style="color:#0D1DAD;">Total Paid:</span><span class="val">${total}</span></div>
           </div>
         </div>
@@ -797,6 +816,11 @@ const printETicketReceipt = (bkg: any) => {
         <div style="margin-bottom:24px;">
           <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:12px; letter-spacing:0.5px;">Flight Itinerary</div>
           ${flightSegmentsHtml}
+        </div>
+
+        <div style="margin:20px 0; padding:12px 16px; background:#fffbeb; border:1px solid #fef3c7; border-radius:8px; font-size:11px; color:#92400e; line-height:1.5;">
+          <strong>Legal Disclosure &amp; Cancellation Policy:</strong><br/>
+          Flybeth LLC acts solely as an independent ticketing and reservation agent. All airline base fares and mandatory taxes are subject to the fare rules, restrictions, and cancellation penalties of the issuing carrier. <strong>The ${feeLabel} covers platform reservation technology, 24/7 dedicated customer assistance, and automated ticketing fulfillment, and is strictly 100% non-refundable under all circumstances</strong>, including passenger voluntary cancellations, schedule changes, and airline cancellations.
         </div>
 
         <div class="footer">

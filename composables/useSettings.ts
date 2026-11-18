@@ -103,6 +103,8 @@ const ancillaryPricingTypes = ref<AncillaryPricingTypes>({
     insurance: 'fixed',
     vipSupport: 'fixed'
 })
+const agencyFeeLabel = ref('Agency Booking & Service Fee')
+const nonRefundableDisclaimer = ref('Flybeth Agency Booking & Service Fees are charged for reservation management, ticketing technology, and 24/7 passenger concierge services, and are strictly 100% non-refundable under all circumstances, including voluntary cancellations and flight schedule changes. Airline base fares and government taxes remain subject to airline carrier fare rules.')
 const isLoading = ref(false)
 
 // Module-scoped single-flight cache for the settings/currency bootstrap.
@@ -227,6 +229,13 @@ export function useSettings() {
                     vipSupport: configData.ancillaryPricingTypes.vipSupport || 'fixed'
                 }
             }
+            if (configData?.agencyFeeLabel) {
+                agencyFeeLabel.value = configData.agencyFeeLabel
+            }
+
+            if (configData?.nonRefundableDisclaimer) {
+                nonRefundableDisclaimer.value = configData.nonRefundableDisclaimer
+            }
         } catch (error) {
             console.error('[useSettings] Failed to load platform settings:', error)
         } finally {
@@ -295,6 +304,8 @@ export function useSettings() {
         currencies,
         ancillaryPrices,
         ancillaryPricingTypes,
+        agencyFeeLabel,
+        nonRefundableDisclaimer,
         isLoading,
         setCurrency,
         formatPrice,
