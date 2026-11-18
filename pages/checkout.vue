@@ -1383,17 +1383,13 @@ const buildBookingPayload = (paymentInfo: any) => {
       type: t.type || 'adult',
     })),
     pricing: {
-      // The backend applies the platform commission to this NET base fare, so
-      // the final charge equals the `priceWithCommission` shown to the user.
-      // When a hotel is bundled in, the stay is priced separately by the
-      // backend from `stays[]`, so only the flight's own net fare may go here —
-      // otherwise the stay would be charged twice.
       baseFare: bundledStay.value
         ? Number(priceDetailed.value?.price || 0)
         : displayPrices.value.base,
-      taxes: 0,
+      taxes: displayPrices.value.tax,
       // Extras the traveller explicitly selected (seats, bags, insurance…).
       fees: displayPrices.value.fees,
+      totalAmount: displayPrices.value.total,
     },
     hasInsurance: selectedAddOns.value.some((a) => a.id === 'insurance'),
     hasVipSupport: selectedAddOns.value.some((a) => a.id === 'vip-support'),

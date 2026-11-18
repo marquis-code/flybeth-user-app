@@ -96,6 +96,7 @@
               <div class="sw-bar-div" />
               <div class="sw-field sw-field--date" @click="isFocused = true">
                 <FlightDateRangePicker
+                  :key="`${leg.departureDate}_${leg.returnDate}`"
                   :theme="theme"
                   :mode="flightMode === 'multicity' ? 'oneway' : (flightMode as any)"
                   v-model:departure="leg.departureDate"
@@ -515,9 +516,22 @@ const props = defineProps({
   isSticky: { type: Boolean, default: false },
   defaultTab: { type: String, default: 'Flights' },
   // Default to 'cheapoair' so all pages share the exact same unified hero widget design
-  theme: { type: String, default: 'cheapoair' }
+  theme: { type: String, default: 'cheapoair' },
+  initialDeparture: { type: String, default: '' },
+  initialReturn: { type: String, default: '' },
 })
 const emit  = defineEmits(['focus-change', 'update:tab'])
+
+watch(() => [props.initialDeparture, props.initialReturn], ([newDep, newRet]) => {
+  if (newDep) {
+    flightSearchState.departureDate = newDep
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].departureDate = newDep
+  }
+  if (newRet !== undefined) {
+    flightSearchState.returnDate = newRet || ''
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].returnDate = newRet || ''
+  }
+}, { immediate: true })
 
 // ─── State ──────────────────────────────────────────────────
 const isFocused           = ref(false)
@@ -755,10 +769,22 @@ const syncFromRoute = (query: any) => {
   }
 
   // Restore flight state
-  if (query.origin) flightSearchState.origin = String(query.origin)
-  if (query.destination) flightSearchState.destination = String(query.destination)
-  if (query.departureDate) flightSearchState.departureDate = String(query.departureDate)
-  if (query.returnDate) flightSearchState.returnDate = String(query.returnDate)
+  if (query.origin) {
+    flightSearchState.origin = String(query.origin)
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].origin = String(query.origin)
+  }
+  if (query.destination) {
+    flightSearchState.destination = String(query.destination)
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].destination = String(query.destination)
+  }
+  if (query.departureDate) {
+    flightSearchState.departureDate = String(query.departureDate)
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].departureDate = String(query.departureDate)
+  }
+  if (query.returnDate) {
+    flightSearchState.returnDate = String(query.returnDate)
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].returnDate = String(query.returnDate)
+  }
   if (query.flexibleDates !== undefined) flightSearchState.flexibleDates = String(query.flexibleDates) === 'true'
   if (query.type) flightMode.value = String(query.type)
   if (query.adults) flightTravelers.adults = Number(query.adults)
@@ -798,10 +824,22 @@ const syncFromRoute = (query: any) => {
 
 const handleFlightCriteriaUpdate = (e: any) => {
   const detail = e.detail || {}
-  if (detail.origin) flightSearchState.origin = detail.origin
-  if (detail.destination) flightSearchState.destination = detail.destination
-  if (detail.departureDate) flightSearchState.departureDate = detail.departureDate
-  if (detail.returnDate !== undefined) flightSearchState.returnDate = detail.returnDate
+  if (detail.origin) {
+    flightSearchState.origin = detail.origin
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].origin = detail.origin
+  }
+  if (detail.destination) {
+    flightSearchState.destination = detail.destination
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].destination = detail.destination
+  }
+  if (detail.departureDate) {
+    flightSearchState.departureDate = detail.departureDate
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].departureDate = detail.departureDate
+  }
+  if (detail.returnDate !== undefined) {
+    flightSearchState.returnDate = detail.returnDate || ''
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].returnDate = detail.returnDate || ''
+  }
   if (detail.type) flightMode.value = detail.type
   if (detail.adults) flightTravelers.adults = detail.adults
 }

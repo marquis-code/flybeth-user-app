@@ -43,7 +43,11 @@
         </div>
         <!-- ── HOME PAGE SEARCH WIDGET ── -->
         <div class="mt-6 w-full relative z-20">
-          <SearchWidget theme="cheapoair" />
+          <SearchWidget 
+            theme="cheapoair" 
+            :initial-departure="searchQuery.departureDate"
+            :initial-return="searchQuery.returnDate"
+          />
         </div>
       </div><!-- /fp-wrap -->
     </section>
