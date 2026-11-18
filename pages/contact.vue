@@ -100,7 +100,8 @@
           <div class="p-8 rounded-3xl bg-white border border-gray-200">
             <h3 class="text-sm  text-black uppercase  mb-6 border-b border-gray-200 pb-4">Corporate Office</h3>
             <p class="text-black font-bold leading-relaxed">
-              1880 S Dairy Ashford Rd, Suite 207,<br>
+              1500 S Dairy Ashford Road<br>
+              Suite 207 # 703<br>
               Houston, TX 77077
             </p>
           </div>
