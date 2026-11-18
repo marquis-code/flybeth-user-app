@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flybeth - Redesigned Booking Flow Architecture</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #060B28;
+      color: #0F172A;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    @page {
+      size: A3 landscape;
+      margin: 10mm;
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-border {
+        border-color: #E2E8F0 !important;
+      }
+    }
+    .glow-blue {
+      box-shadow: 0 0 50px -10px rgba(26, 46, 212, 0.35);
+    }
+    .glow-orange {
+      box-shadow: 0 0 40px -10px rgba(255, 138, 0, 0.3);
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8 lg:p-12 min-h-screen">
+
+  <!-- Floating Action Bar for Exporting -->
+  <div class="no-print max-w-7xl mx-auto mb-8 flex flex-wrap items-center justify-between gap-4 bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0D1DAD] to-[#1A2ED4] flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-900/50">
+        F
+      </div>
+      <div>
+        <h2 class="text-white font-extrabold text-base leading-tight">Flybeth LLC — Booking Experience Flow</h2>
+        <p class="text-white/60 text-xs">Official Redesigned End-to-End Architecture (Updated Nov 2026)</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="window.print()" class="px-5 py-2.5 bg-white hover:bg-slate-100 text-[#0D1DAD] rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all active:scale-95">
+        <i data-lucide="printer" class="w-4 h-4"></i>
+        <span>Export as PDF / Print</span>
+      </button>
+      <a href="./flybeth-booking-flow.png" download="flybeth-booking-flow.png" class="px-5 py-2.5 bg-[#FF8A00] hover:bg-[#e67c00] text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all active:scale-95">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span>Download High-Res PNG</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Canvas Container -->
+  <div class="max-w-7xl mx-auto bg-white rounded-[32px] p-8 sm:p-12 lg:p-14 shadow-2xl border border-slate-100 relative overflow-hidden">
+    
+    <!-- Decorative background elements -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-blue-100/50 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-orange-100/40 blur-3xl pointer-events-none"></div>
+
+    <!-- Header Section -->
+    <header class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-[#0D1DAD] text-xs font-black uppercase tracking-widest mb-3">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Production Architecture & UX Blueprint
+        </div>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-950 tracking-tight leading-tight">
+          Redesigned Booking & Settlement Flow
+        </h1>
+        <p class="text-slate-500 text-sm sm:text-base font-medium mt-2 max-w-2xl leading-relaxed">
+          Integrated flow reflecting recent upgrades: mobile-first responsive cards, email-only secure banking settlement (Wells Fargo / Wema / Zelle), automatic traveler data capture, and friction-free payment completion.
+        </p>
+      </div>
+      <div class="flex flex-col md:items-end gap-2 text-right shrink-0">
+        <div class="text-2xl font-black text-[#0D1DAD] tracking-tight">FLYBETH LLC</div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-100 text-slate-600 font-mono text-xs font-bold">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+          SECURE DISPATCH V2.4
+        </div>
+        <span class="text-[11px] font-semibold text-slate-400">Effective: November 2026</span>
+      </div>
+    </header>
+
+    <!-- Key Principles Banner -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4 my-8">
+      <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-100 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-xl bg-[#0D1DAD] text-white flex items-center justify-center shrink-0">
+          <i data-lucide="shield" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h4 class="text-xs font-black text-slate-900 uppercase tracking-wide">Zero UI Credential Leaks</h4>
+          <p class="text-[11px] text-slate-600 mt-0.5">Account & routing credentials are encrypted; dispatched purely to verified email.</p>
+        </div>
+      </div>
+      <div class="p-4 rounded-2xl bg-orange-50/70 border border-orange-100 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-xl bg-[#FF8A00] text-white flex items-center justify-center shrink-0">
+          <i data-lucide="smartphone" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h4 class="text-xs font-black text-slate-900 uppercase tracking-wide">Mobile-First Spacious UX</h4>
+          <p class="text-[11px] text-slate-600 mt-0.5">All cards have generous internal padding (`p-6sm:p-8`); zero border squeezing.</p>
+        </div>
+      </div>
+      <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h4 class="text-xs font-black text-slate-900 uppercase tracking-wide">24h Hold & Reference Lock</h4>
+          <p class="text-[11px] text-slate-600 mt-0.5">Seats are reserved instantly with unique 6-character PNR on confirmation.</p>
+        </div>
+      </div>
+      <div class="p-4 rounded-2xl bg-purple-50/70 border border-purple-100 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0">
+          <i data-lucide="repeat" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h4 class="text-xs font-black text-slate-900 uppercase tracking-wide">Direct Payment Resume</h4>
+          <p class="text-[11px] text-slate-600 mt-0.5">Manage Booking routes directly to payment settlement without restarting search.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ STEP BY STEP PIPELINE (HORIZONTAL GRID) ═══ -->
+    <div class="space-y-10 my-8">
+      
+      <!-- Step 1 to 5 Pipeline Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+        
+        <!-- Step 1 -->
+        <div class="relative bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between hover:border-[#0D1DAD] transition-all">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-8 h-8 rounded-xl bg-[#0D1DAD] text-white text-xs font-black flex items-center justify-center shadow-md">01</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">DISCOVERY</span>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Search & Results</h3>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              Traveler searches Flights, Stays, Cars or Transfers with live pricing engine.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-200 space-y-1.5 text-[11px] text-slate-600">
+              <div class="flex items-center gap-1.5 font-bold text-[#0D1DAD]">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Mobile responsive cards</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Horizontal filter strip</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Spacious internal padding</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-2">
+            <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">Rate Limiter Active</span>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between hover:border-[#0D1DAD] transition-all">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-8 h-8 rounded-xl bg-[#0D1DAD] text-white text-xs font-black flex items-center justify-center shadow-md">02</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">TRAVELER</span>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Passenger & Seats</h3>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              Capture Lead Traveler full name, contact, interactive seat selection and baggage.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-200 space-y-1.5 text-[11px] text-slate-600">
+              <div class="flex items-center gap-1.5 font-bold text-[#0D1DAD]">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>First + Last name binding</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Interactive cabin seat map</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Instant price breakdown</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-2">
+            <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">Email Auto-Sync</span>
+          </div>
+        </div>
+
+        <!-- Step 3 (HIGHLIGHTED) -->
+        <div class="relative bg-blue-50/60 border-2 border-[#0D1DAD] rounded-2xl p-5 flex flex-col justify-between shadow-xl glow-blue">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-8 h-8 rounded-xl bg-[#0D1DAD] text-white text-xs font-black flex items-center justify-center shadow-md">03</span>
+            <span class="text-[10px] font-bold text-[#0D1DAD] uppercase tracking-widest font-mono">SECURE PAY</span>
+          </div>
+          <div>
+            <div class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 bg-[#FF8A00] text-white rounded mb-1">Recent Update</div>
+            <h3 class="text-base font-black text-slate-950">Payment Selection</h3>
+            <p class="text-xs text-slate-700 mt-1.5 leading-relaxed">
+              Traveler selects Stripe (USD), Paystack (NGN), or Invoice / Bank Settlement.
+            </p>
+            <div class="mt-4 pt-3 border-t border-blue-200 space-y-1.5 text-[11px] text-slate-800">
+              <div class="flex items-center gap-1.5 font-bold text-[#0D1DAD]">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>NO plaintext memo box</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Encrypted credentials shield</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>1-Click Email Dispatch</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-2">
+            <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-blue-600 text-white font-mono">Anti-Fraud Guard</span>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="relative bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between hover:border-[#0D1DAD] transition-all">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-8 h-8 rounded-xl bg-[#0D1DAD] text-white text-xs font-black flex items-center justify-center shadow-md">04</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">DISPATCH</span>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Email & Confirmation</h3>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              Booking confirmed on 24h hold with PNR reference. Automated email dispatched.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-200 space-y-1.5 text-[11px] text-slate-600">
+              <div class="flex items-center gap-1.5 font-bold text-[#0D1DAD]">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Wells Fargo USD wire info</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Wema Bank NGN/USD accounts</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Official Zelle QR code</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-2">
+            <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">Email Delivery 100%</span>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="relative bg-slate-50 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between hover:border-[#0D1DAD] transition-all">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-8 h-8 rounded-xl bg-[#0D1DAD] text-white text-xs font-black flex items-center justify-center shadow-md">05</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">FULFILLMENT</span>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900">Manage & Receipt</h3>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+              Customer views itinerary, downloads e-ticket & tax receipt, or completes payment.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-200 space-y-1.5 text-[11px] text-slate-600">
+              <div class="flex items-center gap-1.5 font-bold text-[#0D1DAD]">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Complete Payment Now link</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Download E-Ticket & Receipt</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Live status tracking</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-2">
+            <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">Instant PDF Receipt</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ═══ DETAILED SWIMLANES: ARCHITECTURAL BREAKDOWN ═══ -->
+    <div class="mt-12 pt-8 border-t border-slate-200">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="text-xl font-black text-slate-950">System Architecture & Data Swimlanes</h3>
+          <p class="text-xs text-slate-500 font-medium">Clear separation between UI interaction, security layer, banking integrations, and customer fulfillment.</p>
+        </div>
+        <span class="font-mono text-xs text-slate-400">FLYBETH SERVICE STACK</span>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- Swimlane 1: Traveler / Client View -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <div class="md:col-span-3">
+            <div class="flex items-center gap-2 text-xs font-black text-[#0D1DAD] uppercase tracking-wider">
+              <i data-lucide="user-check" class="w-4 h-4"></i>
+              <span>1. Client Experience</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Nuxt 3 Frontend (Mobile & Desktop)</p>
+          </div>
+          <div class="md:col-span-9 flex flex-wrap gap-2 text-xs font-semibold text-slate-700">
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-[#0D1DAD]"></i> Responsive Search Widgets
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="user" class="w-3.5 h-3.5 text-[#0D1DAD]"></i> Traveler Profile Binding
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="eye-off" class="w-3.5 h-3.5 text-emerald-600"></i> Masked Bank Credentials
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="mail-check" class="w-3.5 h-3.5 text-blue-600"></i> "Send to Email" Button
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-purple-600"></i> Direct Receipt Download
+            </span>
+          </div>
+        </div>
+
+        <!-- Swimlane 2: Security & Anti-Fraud Shield -->
+        <div class="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/40 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <div class="md:col-span-3">
+            <div class="flex items-center gap-2 text-xs font-black text-emerald-800 uppercase tracking-wider">
+              <i data-lucide="shield-alert" class="w-4 h-4"></i>
+              <span>2. Security & Anti-Fraud</span>
+            </div>
+            <p class="text-[11px] text-emerald-700 mt-1">Rate Limiter & Credential Protection</p>
+          </div>
+          <div class="md:col-span-9 flex flex-wrap gap-2 text-xs font-semibold text-emerald-950">
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-emerald-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i> Brute Force & Credential Guard
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-emerald-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="gauge" class="w-3.5 h-3.5 text-emerald-600"></i> Distributed Rate Limiting (10 req/min)
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-emerald-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-600"></i> API Response Sanitizer (No Leaked Memos)
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-emerald-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="key" class="w-3.5 h-3.5 text-emerald-600"></i> Cryptographic Booking Reference Hash
+            </span>
+          </div>
+        </div>
+
+        <!-- Swimlane 3: Financial & Corporate Settlement -->
+        <div class="p-5 rounded-2xl border border-blue-200 bg-blue-50/40 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <div class="md:col-span-3">
+            <div class="flex items-center gap-2 text-xs font-black text-[#0D1DAD] uppercase tracking-wider">
+              <i data-lucide="building-2" class="w-4 h-4"></i>
+              <span>3. Settlement Channels</span>
+            </div>
+            <p class="text-[11px] text-blue-700 mt-1">Multi-Currency Global Treasury</p>
+          </div>
+          <div class="md:col-span-9 flex flex-wrap gap-2 text-xs font-semibold text-blue-950">
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-blue-200 shadow-sm flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+              <strong>Wells Fargo (USA)</strong>: Acct 7288447936 | Routing 111900659 / 121000248 | SWIFT WFBIUS6S
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-blue-200 shadow-sm flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-purple-600"></span>
+              <strong>Wema Bank (Nigeria)</strong>: NGN 0124034266 | USD 0620862082
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-blue-200 shadow-sm flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+              <strong>Zelle Payments</strong>: Verified Official Flybeth LLC QR Code
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-blue-200 shadow-sm flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <strong>Cards</strong>: Stripe (Global USD) & Paystack (Local NGN)
+            </span>
+          </div>
+        </div>
+
+        <!-- Swimlane 4: Automated Communication & Fulfillment -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <div class="md:col-span-3">
+            <div class="flex items-center gap-2 text-xs font-black text-slate-900 uppercase tracking-wider">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>4. Dispatch & E-Ticket</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Transactional Notification Engine</p>
+          </div>
+          <div class="md:col-span-9 flex flex-wrap gap-2 text-xs font-semibold text-slate-700">
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="mail" class="w-3.5 h-3.5 text-blue-600"></i> Branded Settlement Email with Direct Accounts
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="file-check" class="w-3.5 h-3.5 text-emerald-600"></i> Instant PDF E-Ticket & Verified Tax Receipt
+            </span>
+            <span class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center gap-1.5">
+              <i data-lucide="bell" class="w-3.5 h-3.5 text-amber-600"></i> 24h Expiry Reminder & Automated Clearance
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer Notes -->
+    <footer class="mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-600">© 2026 FLYBETH LLC.</span>
+        <span>All corporate rights reserved. Registered Travel Intelligence Platform.</span>
+      </div>
+      <div class="flex items-center gap-4 font-mono text-[11px]">
+        <span>Status: <strong class="text-emerald-600">LIVE & AUDITED</strong></span>
+        <span>•</span>
+        <span>Security: <strong class="text-[#0D1DAD]">STRICT EMAIL DISPATCH</strong></span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
