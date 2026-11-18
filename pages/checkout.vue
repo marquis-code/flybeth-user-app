@@ -366,6 +366,7 @@
                 :currency="currentCurrency.code"
                 :processing="paymentProcessing"
                 :flight-offer="priceDetailed"
+                :traveller-email="travellerData?.email || ''"
                 @complete-payment="handlePayment"
                 @wallet-authorize="handleWalletAuthorize"
                 @change-currency="handleCurrencySelect"

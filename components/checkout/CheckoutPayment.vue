@@ -134,7 +134,7 @@
           </div>
           <div>
             <span class="font-bold block text-blue-950">Reservation Hold (24 Hours)</span>
-            Your flight seats will be held. Transfer <strong>{{ currencySymbol }}{{ formatAmount(totalAmount) }}</strong> to the settlement account below. Details will also be dispatched to your email.
+            Your seats will be reserved on hold for 24 hours. For security and fraud compliance, all official bank coordinates and payment instructions are sent directly to your verified email.
           </div>
         </div>
 
@@ -150,7 +150,7 @@
                 <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">{{ bank.currency || props.currency }} Account</span>
                 <h4 class="text-sm font-black text-gray-900 mt-1">{{ bank.bankName }}</h4>
               </div>
-              <span class="text-xs font-semibold text-gray-500">{{ bank.accountName }}</span>
+              <span class="text-xs font-semibold text-gray-500">{{ (bank.accountName || 'FLYBETH LLC').replace(/Flybeth Global LLC/gi, 'Flybeth LLC').replace(/Flybeth Global/gi, 'Flybeth LLC') }}</span>
             </div>
 
             <!-- Fraud Protection Shield & Blurred Coordinates -->
@@ -214,11 +214,6 @@
                 <Check class="w-3.5 h-3.5 shrink-0 text-emerald-600" />
                 Verified bank settlement credentials have been dispatched to {{ transferEmail }}. Please check your inbox.
               </p>
-            </div>
-
-            <div v-if="bank.instructions" class="text-xs text-slate-600 bg-amber-50/50 border border-amber-100 rounded-lg p-2.5 leading-relaxed">
-              <span class="font-bold text-amber-900 block text-[10px] uppercase tracking-wider mb-0.5">Payment Memo / Note:</span>
-              {{ bank.instructions }}
             </div>
           </div>
         </div>
@@ -328,7 +323,8 @@ const props = defineProps({
   currencySymbol: { type: String, default: '$' },
   currency: { type: String, default: 'USD' },
   processing: Boolean,
-  flightOffer: { type: Object, default: null }
+  flightOffer: { type: Object, default: null },
+  travellerEmail: { type: String, default: '' }
 })
 
 const emit = defineEmits(['complete-payment', 'change-currency', 'wallet-authorize'])
@@ -435,11 +431,17 @@ const fetchWalletBalance = async () => {
 
 onMounted(() => {
   if (isLoggedIn.value) fetchWalletBalance()
-  if (user.value?.email) transferEmail.value = user.value.email
+  transferEmail.value = props.travellerEmail || user.value?.email || ''
   fetchBankAccounts()
   const isDismissed = localStorage.getItem('flybeth_wallet_ad_dismissed')
   if (!isDismissed && isLoggedIn.value) {
     setTimeout(() => { showAdModal.value = true }, 1000)
+  }
+})
+
+watch(() => props.travellerEmail, (newEmail) => {
+  if (newEmail && !transferEmail.value) {
+    transferEmail.value = newEmail
   }
 })
 
