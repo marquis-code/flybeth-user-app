@@ -1,44 +1,177 @@
 <template>
-  <div class="es-wrap">
+  <div class="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-10 relative overflow-hidden text-center">
+    
+    <!-- Top Brand Accent Line -->
+    <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#0D1DAD]/20 via-[#0D1DAD] to-[#0D1DAD]/20"></div>
 
-    <!-- Left: Icon -->
-    <div class="es-icon-col">
-      <div class="es-icon-ring">
-        <Transition name="icon-swap" mode="out-in">
-          <div :key="variant" class="es-icon-inner">
-            <component :is="computedIcon" class="es-icon" />
-          </div>
-        </Transition>
-      </div>
-      <!-- animated dots -->
-      <span class="dot dot-1" />
-      <span class="dot dot-2" />
-      <span class="dot dot-3" />
-    </div>
+    <!-- Soft Ambient Aura -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-40 bg-gradient-to-b from-blue-50/70 to-transparent pointer-events-none rounded-full blur-2xl"></div>
 
-    <!-- Divider -->
-    <div class="es-divider" />
+    <div class="relative z-10">
 
-    <!-- Right: Content -->
-    <div class="es-content">
-      <Transition name="fade-up" mode="out-in">
-        <div :key="variant" class="es-text-block">
-          <p class="es-eyebrow">{{ variantLabel }}</p>
-          <h3 class="es-title">{{ title || 'No results found' }}</h3>
-          <p class="es-message">{{ message || 'Try adjusting your filters or search to uncover new deals.' }}</p>
+      <!-- ── 1. Animated Visual Icon Badge ── -->
+      <div class="relative w-20 h-20 mx-auto mb-5 flex items-center justify-center">
+        <!-- Soft pulse wave -->
+        <span class="absolute inset-0 rounded-3xl bg-blue-100/60 animate-ping opacity-75"></span>
+        <div class="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-50 to-blue-100/80 border-2 border-blue-200/60 shadow-inner flex items-center justify-center text-[#0D1DAD]">
+          <component :is="computedIcon" class="w-9 h-9 stroke-[1.8]" />
         </div>
-      </Transition>
+      </div>
 
-      <Transition name="fade-up" mode="out-in">
-        <ul :key="variant + '-pills'" class="es-pills">
-          <li v-for="tip in tips" :key="tip" class="es-pill">{{ tip }}</li>
-        </ul>
-      </Transition>
+      <!-- ── 2. Route / Location Capsule (If provided) ── -->
+      <div v-if="origin || destination" class="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-bold text-slate-700 mb-4 shadow-2xs">
+        <span class="text-slate-900 font-extrabold">{{ originLabel || origin || 'Departure' }}</span>
+        <span class="text-[#0D1DAD]">➔</span>
+        <span class="text-slate-900 font-extrabold">{{ destinationLabel || destination || 'Destination' }}</span>
+        <span v-if="dates" class="text-slate-400 font-normal">|</span>
+        <span v-if="dates" class="text-slate-500 font-medium">{{ dates }}</span>
+      </div>
 
-      <button v-if="actionLabel" @click="$emit('action')" class="es-btn">
-        {{ actionLabel }}
-        <ArrowRightIcon class="es-btn-icon" />
-      </button>
+      <!-- ── 3. Eyebrow & Headline ── -->
+      <div>
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#0D1DAD] text-[11px] font-extrabold uppercase tracking-wider mb-2.5">
+          <span>✦ {{ variantLabel }} Availability</span>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          {{ title || 'No live results found' }}
+        </h3>
+        <p class="text-slate-500 text-sm sm:text-base max-w-xl mx-auto mt-2 leading-relaxed font-medium">
+          {{ message || 'Airlines may not operate scheduled flights on this specific route and date combination, or seats are currently sold out.' }}
+        </p>
+      </div>
+
+      <!-- ── 4. Actionable Troubleshooting Cards ── -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-8 text-left max-w-2xl mx-auto">
+        
+        <!-- Card 1: Flexible Dates -->
+        <button
+          type="button"
+          @click="emitTipAction('dates')"
+          class="p-4 rounded-2xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200/80 hover:border-[#0D1DAD]/40 transition-all group cursor-pointer text-left flex flex-col justify-between"
+        >
+          <div>
+            <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/80 text-[#0D1DAD] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform shadow-2xs">
+              <CalendarDaysIcon class="w-4 h-4" />
+            </div>
+            <h4 class="text-xs font-extrabold text-slate-900 group-hover:text-[#0D1DAD] transition-colors">
+              Flexible Dates (±3 Days)
+            </h4>
+            <p class="text-[11px] text-slate-500 font-medium mt-1 leading-snug">
+              Airlines frequently operate alternating schedules throughout the week.
+            </p>
+          </div>
+          <span class="text-[11px] font-bold text-[#0D1DAD] mt-3 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+            Adjust dates →
+          </span>
+        </button>
+
+        <!-- Card 2: Nearby Hubs -->
+        <button
+          type="button"
+          @click="emitTipAction('airports')"
+          class="p-4 rounded-2xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200/80 hover:border-[#0D1DAD]/40 transition-all group cursor-pointer text-left flex flex-col justify-between"
+        >
+          <div>
+            <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/80 text-[#0D1DAD] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform shadow-2xs">
+              <MapPinIcon class="w-4 h-4" />
+            </div>
+            <h4 class="text-xs font-extrabold text-slate-900 group-hover:text-[#0D1DAD] transition-colors">
+              Nearby Major Hubs
+            </h4>
+            <p class="text-[11px] text-slate-500 font-medium mt-1 leading-snug">
+              Try searching alternative major international airports in the vicinity.
+            </p>
+          </div>
+          <span class="text-[11px] font-bold text-[#0D1DAD] mt-3 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+            Change route →
+          </span>
+        </button>
+
+        <!-- Card 3: Reset Filters -->
+        <button
+          type="button"
+          @click="emitTipAction('filters')"
+          class="p-4 rounded-2xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200/80 hover:border-[#0D1DAD]/40 transition-all group cursor-pointer text-left flex flex-col justify-between"
+        >
+          <div>
+            <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/80 text-[#0D1DAD] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform shadow-2xs">
+              <ArrowPathIcon class="w-4 h-4" />
+            </div>
+            <h4 class="text-xs font-extrabold text-slate-900 group-hover:text-[#0D1DAD] transition-colors">
+              Reset Filters
+            </h4>
+            <p class="text-[11px] text-slate-500 font-medium mt-1 leading-snug">
+              Remove cabin class, max price, stops, or airline carrier constraints.
+            </p>
+          </div>
+          <span class="text-[11px] font-bold text-[#0D1DAD] mt-3 inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+            Reset all →
+          </span>
+        </button>
+
+      </div>
+
+      <!-- ── 5. Smart Popular Alternative Routes (Flights) ── -->
+      <div v-if="variant === 'flights' && popularAlternativeRoutes.length" class="mt-8 pt-6 border-t border-slate-100">
+        <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">
+          Popular Alternative Connections
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <button
+            v-for="route in popularAlternativeRoutes"
+            :key="route.code"
+            type="button"
+            @click="$emit('route-select', route)"
+            class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-blue-50 hover:border-blue-200 border border-slate-200/60 text-xs font-bold text-slate-700 hover:text-[#0D1DAD] transition-all flex items-center gap-1.5 active:scale-95 shadow-2xs"
+          >
+            <span>{{ route.label }}</span>
+            <ArrowRightIcon class="w-3 h-3 text-slate-400 group-hover:text-[#0D1DAD]" />
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 6. Action Button Bar ── -->
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button
+          v-if="actionLabel"
+          type="button"
+          @click="$emit('action')"
+          class="w-full sm:w-auto h-12 px-7 bg-[#0D1DAD] hover:bg-[#002a66] active:scale-95 text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 shrink-0"
+        >
+          <span>{{ actionLabel }}</span>
+          <ArrowRightIcon class="w-4 h-4" />
+        </button>
+
+        <button
+          v-if="secondaryActionLabel"
+          type="button"
+          @click="$emit('secondary-action')"
+          class="w-full sm:w-auto h-12 px-6 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 rounded-2xl font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shrink-0"
+        >
+          <ArrowPathIcon class="w-3.5 h-3.5" />
+          <span>{{ secondaryActionLabel }}</span>
+        </button>
+      </div>
+
+      <!-- ── 7. 24/7 Concierge Support Callout ── -->
+      <div class="mt-8 p-4 rounded-2xl bg-gradient-to-r from-blue-50/60 via-slate-50 to-blue-50/40 border border-blue-100/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#0D1DAD] text-white flex items-center justify-center shrink-0 shadow-sm">
+            <PhoneIcon class="w-4 h-4" />
+          </div>
+          <div>
+            <h5 class="text-xs font-bold text-slate-900">Need live assistance with unlisted routes?</h5>
+            <p class="text-[11px] text-slate-500 font-medium">Flybeth Flight Specialists can verify offline inventory and multi-airline combinations.</p>
+          </div>
+        </div>
+        <a
+          href="tel:1-844-FLYBETH"
+          class="w-full sm:w-auto px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-[#0D1DAD] rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-2xs transition-colors text-center shrink-0"
+        >
+          Call 1-844-FLYBETH
+        </a>
+      </div>
+
     </div>
 
   </div>
@@ -47,252 +180,102 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
-  MagnifyingGlassIcon, PaperAirplaneIcon, BuildingOfficeIcon,
-  TruckIcon, GlobeAltIcon, SparklesIcon, ArrowRightIcon,
+  MagnifyingGlassIcon, 
+  PaperAirplaneIcon, 
+  BuildingOfficeIcon,
+  TruckIcon, 
+  GlobeAltIcon, 
+  SparklesIcon, 
+  ArrowRightIcon,
+  CalendarDaysIcon,
+  MapPinIcon,
+  ArrowPathIcon,
+  PhoneIcon
 } from '@heroicons/vue/24/outline'
 
-const props = defineProps({
-  title: String,
-  message: String,
-  actionLabel: String,
-  variant: {
-    type: String,
-    default: 'search',
-    validator: (v: string) => ['search','flights','stays','cars','cruises','packages'].includes(v),
-  },
+interface Props {
+  variant?: 'search' | 'flights' | 'stays' | 'cars' | 'cruises' | 'packages'
+  title?: string
+  message?: string
+  actionLabel?: string
+  secondaryActionLabel?: string
+  origin?: string
+  destination?: string
+  originLabel?: string
+  destinationLabel?: string
+  dates?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  variant: 'search',
+  title: '',
+  message: '',
+  actionLabel: '',
+  secondaryActionLabel: '',
+  origin: '',
+  destination: '',
+  originLabel: '',
+  destinationLabel: '',
+  dates: ''
 })
 
-defineEmits(['action'])
+const emit = defineEmits<{
+  (e: 'action'): void
+  (e: 'secondary-action'): void
+  (e: 'route-select', route: { origin: string; destination: string; label: string; code: string }): void
+  (e: 'tip-action', type: 'dates' | 'airports' | 'filters'): void
+}>()
 
 const iconMap: Record<string, any> = {
-  search: MagnifyingGlassIcon, flights: PaperAirplaneIcon,
-  stays: BuildingOfficeIcon,   cars: TruckIcon,
-  cruises: GlobeAltIcon,       packages: SparklesIcon,
+  search: MagnifyingGlassIcon,
+  flights: PaperAirplaneIcon,
+  stays: BuildingOfficeIcon,
+  cars: TruckIcon,
+  cruises: GlobeAltIcon,
+  packages: SparklesIcon,
 }
+
 const labelMap: Record<string, string> = {
-  search: 'Search', flights: 'Flights', stays: 'Stays',
-  cars: 'Car Rentals', cruises: 'Cruises', packages: 'Packages',
-}
-const tipsMap: Record<string, string[]> = {
-  search:   ['Broaden your dates', 'Try nearby airports', 'Clear active filters'],
-  flights:  ['Flexible dates', 'Nearby airports', 'Remove cabin filter'],
-  stays:    ['Expand radius', 'Adjust price range', 'Remove star rating'],
-  cars:     ['Different pickup', 'Expand car category', 'Nearby locations'],
-  cruises:  ['Change departure port', 'Different duration', 'Adjust sail dates'],
-  packages: ['Different region', 'Adjust budget', 'Change travel dates'],
+  search: 'Search',
+  flights: 'Flights',
+  stays: 'Stays',
+  cars: 'Car Rentals',
+  cruises: 'Cruises',
+  packages: 'Packages',
 }
 
-const computedIcon  = computed(() => iconMap[props.variant]  ?? MagnifyingGlassIcon)
-const variantLabel  = computed(() => labelMap[props.variant]  ?? 'Search')
-const tips          = computed(() => tipsMap[props.variant]   ?? tipsMap.search)
+const computedIcon = computed(() => iconMap[props.variant] ?? MagnifyingGlassIcon)
+const variantLabel = computed(() => labelMap[props.variant] ?? 'Search')
+
+const emitTipAction = (type: 'dates' | 'airports' | 'filters') => {
+  emit('tip-action', type)
+  if (type === 'filters') {
+    emit('secondary-action')
+  } else {
+    emit('action')
+  }
+}
+
+// Smart popular alternative routes
+const popularAlternativeRoutes = computed(() => {
+  if (props.variant !== 'flights') return []
+  
+  const currentOrigin = (props.origin || 'LOS').toUpperCase()
+  
+  if (currentOrigin === 'LOS') {
+    return [
+      { origin: 'LOS', destination: 'LHR', label: 'Lagos → London (LHR)', code: 'LOS-LHR' },
+      { origin: 'LOS', destination: 'DXB', label: 'Lagos → Dubai (DXB)', code: 'LOS-DXB' },
+      { origin: 'LOS', destination: 'JFK', label: 'Lagos → New York (JFK)', code: 'LOS-JFK' },
+      { origin: 'LOS', destination: 'YYZ', label: 'Lagos → Toronto (YYZ)', code: 'LOS-YYZ' },
+    ]
+  }
+
+  return [
+    { origin: 'LHR', destination: 'DXB', label: 'London → Dubai', code: 'LHR-DXB' },
+    { origin: 'JFK', destination: 'LHR', label: 'New York → London', code: 'JFK-LHR' },
+    { origin: 'DXB', destination: 'BOM', label: 'Dubai → Mumbai', code: 'DXB-BOM' },
+    { origin: 'LOS', destination: 'LHR', label: 'Lagos → London', code: 'LOS-LHR' },
+  ]
+})
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:ital,wght@1,400&display=swap');
-
-/* ── Wrapper ─────────────────────────────────────────── */
-.es-wrap {
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-  background: #ffffff;
-  border: 1.5px solid #e9eaec;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
-  padding: 1.75rem 2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-/* subtle blue edge accent */
-.es-wrap::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
-  background: #0D1DAD;
-  border-radius: 16px 0 0 16px;
-}
-
-/* ── Icon Column ────────────────────────────────────── */
-.es-icon-col {
-  position: relative;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.es-icon-ring {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #f0f5ff;
-  border: 1.5px solid #dbe8fe;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: breathe 3s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(13,29,173,0.12); }
-  50%       { box-shadow: 0 0 0 8px rgba(13,29,173,0); }
-}
-
-.es-icon-inner {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1.5px solid #dbe8fe;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(13,29,173,0.12);
-}
-.es-icon {
-  width: 20px; height: 20px;
-  color: #0D1DAD;
-  stroke-width: 1.75;
-}
-
-/* floating dots */
-.dot {
-  position: absolute;
-  border-radius: 50%;
-  background: #0D1DAD;
-  opacity: 0.18;
-  animation: float-dot 2.4s ease-in-out infinite;
-}
-.dot-1 { width: 5px; height: 5px; top: 2px;  right: 2px;  animation-delay: 0s;    }
-.dot-2 { width: 4px; height: 4px; bottom: 4px; left: 0px; animation-delay: 0.6s;  }
-.dot-3 { width: 3px; height: 3px; top: 12px; left: -4px;  animation-delay: 1.2s;  }
-
-@keyframes float-dot {
-  0%, 100% { transform: translateY(0);  opacity: 0.18; }
-  50%       { transform: translateY(-4px); opacity: 0.35; }
-}
-
-/* ── Divider ─────────────────────────────────────────── */
-.es-divider {
-  width: 1px;
-  align-self: stretch;
-  background: #e9eaec;
-  flex-shrink: 0;
-}
-
-/* ── Content ─────────────────────────────────────────── */
-.es-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-}
-
-.es-text-block { display: flex; flex-direction: column; gap: 0.2rem; }
-
-.es-eyebrow {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #0D1DAD;
-  margin: 0;
-}
-.es-title {
-  font-family: 'Lora', serif;
-  font-size: 1.0625rem;
-  font-weight: 400;
-  font-style: italic;
-  color: #0d0d12;
-  margin: 0;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-}
-.es-message {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #6b7280;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Pills */
-.es-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  list-style: none;
-  margin: 0; padding: 0;
-}
-.es-pill {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: #374151;
-  background: #f4f5f7;
-  border: 1px solid #e5e7eb;
-  border-radius: 999px;
-  padding: 0.25rem 0.65rem;
-  white-space: nowrap;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-  cursor: default;
-}
-.es-pill:hover {
-  background: #f0f5ff;
-  border-color: #dbe8fe;
-  color: #0D1DAD;
-}
-
-/* Button */
-.es-btn {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 1.25rem;
-  border-radius: 8px;
-  border: none;
-  background: #0D1DAD;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #ffffff;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(13,29,173,0.25);
-  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-  letter-spacing: 0.01em;
-}
-.es-btn:hover {
-  background: #081485;
-  box-shadow: 0 4px 14px rgba(13,29,173,0.35);
-  transform: translateY(-1px);
-}
-.es-btn:active { transform: scale(0.98); }
-.es-btn-icon { width: 13px; height: 13px; transition: transform 0.2s; }
-.es-btn:hover .es-btn-icon { transform: translateX(3px); }
-
-/* ── Transitions ─────────────────────────────────────── */
-.icon-swap-enter-active, .icon-swap-leave-active { transition: opacity 0.2s, transform 0.2s; }
-.icon-swap-enter-from { opacity: 0; transform: scale(0.8) rotate(-8deg); }
-.icon-swap-leave-to  { opacity: 0; transform: scale(1.1) rotate(8deg); }
-
-.fade-up-enter-active { transition: opacity 0.28s ease, transform 0.28s ease; }
-.fade-up-leave-active { transition: opacity 0.15s ease; }
-.fade-up-enter-from   { opacity: 0; transform: translateY(6px); }
-.fade-up-leave-to     { opacity: 0; }
-
-/* ── Responsive ─────────────────────────────────────── */
-@media (max-width: 480px) {
-  .es-wrap { flex-direction: column; align-items: flex-start; padding: 1.5rem; }
-  .es-divider { width: 100%; height: 1px; align-self: auto; }
-  .es-wrap::before { width: 100%; height: 3px; bottom: auto; right: 0; border-radius: 16px 16px 0 0; }
-}
-</style>

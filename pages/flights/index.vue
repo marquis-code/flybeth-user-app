@@ -347,9 +347,18 @@
             <EmptyState 
               variant="flights"
               title="No flights found for this route"
-              message="We couldn't find live airline fares for the selected dates and route. Try searching alternative departure dates or nearby major hub airports."
-              action-label="Try London → Dubai"
-              @action="searchQuery.origin='LHR'; searchQuery.destination='DXB'; handleSearch()"
+              :origin="searchQuery.origin"
+              :destination="searchQuery.destination"
+              :origin-label="lookupCity(searchQuery.origin).split(' (')[0]"
+              :destination-label="lookupCity(searchQuery.destination).split(' (')[0]"
+              :dates="searchQuery.departureDate ? `${searchQuery.departureDate}${searchQuery.returnDate ? ' – ' + searchQuery.returnDate : ''}` : ''"
+              message="We couldn't find live airline fares for the selected dates and route. Airlines may not operate scheduled services on these exact dates or seats are currently sold out."
+              action-label="Adjust Travel Dates"
+              secondary-action-label="Reset Filters"
+              @action="handleAdjustDates"
+              @secondary-action="clearFilters"
+              @route-select="handleRouteSelect"
+              @tip-action="handleTipAction"
             />
           </div>
 
@@ -1495,6 +1504,32 @@ const handleDateSelect = (dates: { departureDate: string, returnDate?: string })
 
 const swapLocations = () => {
   const t = searchQuery.value.origin; searchQuery.value.origin = searchQuery.value.destination; searchQuery.value.destination = t
+}
+
+const handleAdjustDates = () => {
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 120, behavior: 'smooth' })
+  }
+  activeField.value = 'date'
+}
+
+const handleRouteSelect = (route: { origin: string; destination: string }) => {
+  searchQuery.value.origin = route.origin
+  searchQuery.value.destination = route.destination
+  handleSearch()
+}
+
+const handleTipAction = (type: 'dates' | 'airports' | 'filters') => {
+  if (type === 'filters') {
+    clearFilters()
+  } else if (type === 'airports') {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 120, behavior: 'smooth' })
+    }
+    activeField.value = 'dest'
+  } else {
+    handleAdjustDates()
+  }
 }
 
 
