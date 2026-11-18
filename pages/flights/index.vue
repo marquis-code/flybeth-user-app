@@ -728,10 +728,9 @@ const { setCurrency, formatPrice } = useSettings()
 const { detectNearestAirports } = useAmadeusLocations()
 const { showToast } = useCustomToast()
 
-// Top-level router: `navigateTo()` loses the Nuxt instance when called after an
-// `await` inside a plain event handler, which made the "Select" button silently
-// do nothing instead of moving to checkout. `router.push()` has no such rule.
+// Top-level router and route
 const router = useRouter()
+const route = useRoute()
 
 // ── Refs ──────────────────────────────────────────────────────────────
 const activeField = ref<string | null>(null)
@@ -774,6 +773,37 @@ const checkingAvailability = ref(false)
 const showAllAirlines = ref(false)
 const showAllLayovers = ref(false)
 
+function loadFromQuery(r: any) {
+  if (!r?.query) return
+  if (r.query.origin) { searchQuery.value.origin = String(r.query.origin) }
+  if (r.query.destination) { searchQuery.value.destination = String(r.query.destination) }
+  if (r.query.departureDate) searchQuery.value.departureDate = String(r.query.departureDate)
+  if (r.query.returnDate) searchQuery.value.returnDate = String(r.query.returnDate)
+  if (r.query.type) searchQuery.value.type = String(r.query.type)
+  if (r.query.slices) {
+    try {
+      searchQuery.value.slices = JSON.parse(String(r.query.slices))
+    } catch (e) {
+      console.error('Failed to parse slices', e)
+    }
+  }
+  
+  // Support both old 'passengers' and new granular props
+  if (r.query.adults) searchQuery.value.adults = parseInt(String(r.query.adults)) || 1
+  else if (r.query.passengers) searchQuery.value.adults = parseInt(String(r.query.passengers)) || 1
+  
+  if (r.query.children) searchQuery.value.children = parseInt(String(r.query.children)) || 0
+  
+  if (r.query.infantsOnLap) searchQuery.value.infantsOnLap = parseInt(String(r.query.infantsOnLap)) || 0
+  if (r.query.infantsInSeat) searchQuery.value.infantsInSeat = parseInt(String(r.query.infantsInSeat)) || 0
+  if (r.query.infants && !r.query.infantsOnLap && !r.query.infantsInSeat) {
+    searchQuery.value.infantsOnLap = parseInt(String(r.query.infants)) || 0
+  }
+  
+  if (r.query.cabinClass) searchQuery.value.cabinClass = String(r.query.cabinClass)
+  else if (r.query.class) searchQuery.value.cabinClass = String(r.query.class)
+}
+
 const searchQuery = ref({
   origin: '',
   destination: '',
@@ -787,6 +817,9 @@ const searchQuery = ref({
   cabinClass: 'economy',
   slices: [] as any[]
 })
+
+// Initialize immediately so SSR and initial render have query data
+loadFromQuery(route)
 
 const cabinClasses = [
   { value: 'economy',         label: 'Economy' },
@@ -860,7 +893,7 @@ const pickDate = (iso: string) => {
   nextTick(() => { activeField.value = 'pax' })
 }
 
-const formatDate = (iso: string) => {
+function formatDate(iso: string) {
   const parts = iso.split('-').map(Number)
   if (parts.length < 3) return iso
   const y = parts[0]
@@ -902,7 +935,7 @@ const maxDuration = computed(() => {
 })
 watch(maxDuration, v => { maxDurationFilter.value = v }, { immediate: true })
 
-const getTimeOfDay = (isoString: string) => {
+function getTimeOfDay(isoString: string) {
   if (!isoString) return 'unknown'
   let date: Date;
   try {
@@ -1041,7 +1074,7 @@ const filterMetadata = computed(() => {
   return sortedMeta
 })
 
-const formatFlightDate = (isoString: string) => {
+function formatFlightDate(isoString: string) {
   if (!isoString) return ''
   try {
     const d = new Date(isoString)
@@ -1057,7 +1090,7 @@ const formatFlightDate = (isoString: string) => {
   }
 }
 
-const calcLayover = (seg1: any, seg2: any) => {
+function calcLayover(seg1: any, seg2: any) {
   if (!seg1?.arrivalTime || !seg2?.departureTime) return ''
   try {
     const t1 = new Date(seg1.arrivalTime).getTime()
@@ -1071,7 +1104,7 @@ const calcLayover = (seg1: any, seg2: any) => {
   }
 }
 
-const getScheduleKey = (flight: any) => {
+function getScheduleKey(flight: any) {
   if (!flight) return ''
   const segments = flight.itineraries?.length
     ? flight.itineraries.flatMap((it: any) => it.segments || [])
@@ -1208,7 +1241,7 @@ const selectVariant = async (variant: any) => {
   await selectFlight(variant)
 }
 
-const getFareVariantDetails = (variant: any) => {
+function getFareVariantDetails(variant: any) {
   const cabin = variant.cabinClass || 'economy'
   const isDuffel = variant.provider === 'duffel'
   const rawOffer = variant.rawOffer
@@ -1359,7 +1392,7 @@ const getFareVariantDetails = (variant: any) => {
   }
 }
 
-const formatTime = (isoString: string) => {
+function formatTime(isoString: string) {
   if (!isoString) return '—'
   try {
     const date = new Date(isoString)
@@ -1377,7 +1410,7 @@ const formatTime = (isoString: string) => {
   }
 }
 
-const formatDuration = (val: any) => {
+function formatDuration(val: any) {
   if (!val) return '—'
   if (typeof val === 'string' && val.startsWith('PT')) {
     const match = val.match(/PT(?:(\d+)H)?(?:(\d+)M)?/)
@@ -1642,45 +1675,12 @@ const selectFlight = async (flight: any) => {
   }
 }
 
-const loadFromQuery = (route: any) => {
-  if (route.query.origin) { searchQuery.value.origin = String(route.query.origin) }
-  if (route.query.destination) { searchQuery.value.destination = String(route.query.destination) }
-  if (route.query.departureDate) searchQuery.value.departureDate = String(route.query.departureDate)
-  if (route.query.returnDate) searchQuery.value.returnDate = String(route.query.returnDate)
-  if (route.query.type) searchQuery.value.type = String(route.query.type)
-  if (route.query.slices) {
-    try {
-      searchQuery.value.slices = JSON.parse(String(route.query.slices))
-    } catch (e) {
-      console.error('Failed to parse slices', e)
-    }
-  }
-  
-  // Support both old 'passengers' and new granular props
-  if (route.query.adults) searchQuery.value.adults = parseInt(String(route.query.adults)) || 1
-  else if (route.query.passengers) searchQuery.value.adults = parseInt(String(route.query.passengers)) || 1
-  
-  if (route.query.children) searchQuery.value.children = parseInt(String(route.query.children)) || 0
-  
-  if (route.query.infantsOnLap) searchQuery.value.infantsOnLap = parseInt(String(route.query.infantsOnLap)) || 0
-  if (route.query.infantsInSeat) searchQuery.value.infantsInSeat = parseInt(String(route.query.infantsInSeat)) || 0
-  if (route.query.infants && !route.query.infantsOnLap && !route.query.infantsInSeat) {
-    searchQuery.value.infantsOnLap = parseInt(String(route.query.infants)) || 0
-  }
-  
-  if (route.query.cabinClass) searchQuery.value.cabinClass = String(route.query.cabinClass)
-  else if (route.query.class) searchQuery.value.cabinClass = String(route.query.class)
-}
-
-const lookupCity = (code: string) => {
+function lookupCity(code: string) {
   const ap = allAirports.find(a => a.code === code)
   return ap ? `${ap.city} (${ap.code})` : code
 }
 
 onMounted(async () => {
-  const route = useRoute()
-  const router = useRouter()
-
   // IMPORTANT: register the window listener and its cleanup synchronously,
   // BEFORE any `await`. Vue can only associate lifecycle hooks with the active
   // component instance during synchronous setup, so registering

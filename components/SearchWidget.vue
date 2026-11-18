@@ -548,17 +548,6 @@ const props = defineProps({
 })
 const emit  = defineEmits(['focus-change', 'update:tab'])
 
-watch(() => [props.initialDeparture, props.initialReturn], ([newDep, newRet]) => {
-  if (newDep) {
-    flightSearchState.departureDate = newDep
-    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].departureDate = newDep
-  }
-  if (newRet !== undefined) {
-    flightSearchState.returnDate = newRet || ''
-    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].returnDate = newRet || ''
-  }
-}, { immediate: true })
-
 // ─── State ──────────────────────────────────────────────────
 const isFocused           = ref(false)
 const isSearching         = ref(false)
@@ -670,6 +659,18 @@ const packageOccupancy      = reactive({ rooms: 1, adults: 2, children: 0 })
 const packageSearchState    = reactive({ origin: '', destination: '', departureDate: '', returnDate: '', hotelCheckIn: '', hotelCheckOut: '' })
 const cruiseSearchState     = reactive({ destination: '', destinationLabel: '', departingMonth: '04/1/2026', departingLabel: 'April 2026', length: '', lengthLabel: '', line: '', lineLabel: '' })
 
+// ─── Synchronize initial date props if passed ─────────────────
+watch(() => [props.initialDeparture, props.initialReturn], ([newDep, newRet]) => {
+  if (newDep) {
+    flightSearchState.departureDate = newDep
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].departureDate = newDep
+  }
+  if (newRet !== undefined && newRet !== '') {
+    flightSearchState.returnDate = newRet
+    if (multiFlightLegs.value?.[0]) multiFlightLegs.value[0].returnDate = newRet
+  }
+}, { immediate: true })
+
 const addHotelLeg = () => { if (multiHotelLegs.value.length < 5) multiHotelLegs.value.push({ location: '', checkIn: '', checkOut: '' }) }
 
 
@@ -716,13 +717,23 @@ const cruiseLines = [
   { value: '64', label: 'Windstar Cruises' }, { value: '41', label: 'Regent Seven Seas' },
 ]
 
-// ─── Watchers & Search ──────────────────────────────────────
-watch(isFocused, (val) => emit('focus-change', val))
-watch(currentTab, (val) => emit('update:tab', val), { immediate: true })
-watch(isLoggedIn, (val) => { if (val) fetchRecentSearches() })
-
 // ─── Recent Searches (Restore) ──────────────────────────────
 const recentSearches = ref<any[]>([])
+
+const applyRecentSearch = (s: any) => {
+  if (s.origin) flightSearchState.origin = s.origin
+  if (s.destination) flightSearchState.destination = s.destination
+  if (s.departureDate) flightSearchState.departureDate = s.departureDate
+  if (s.returnDate) flightSearchState.returnDate = s.returnDate
+  if (s.flexibleDates !== undefined) flightSearchState.flexibleDates = s.flexibleDates
+  if (s.adults) flightTravelers.adults = s.adults
+  if (s.children) flightTravelers.children = s.children
+  if (s.cabinClass) flightTravelers.cabinClass = s.cabinClass
+  if (s.type) flightMode.value = s.type
+  
+  // If it's multicity, we might need more complex logic, but for now focus on basic restore
+  trackAction('recent_search_applied', { origin: s.origin, destination: s.destination })
+}
 
 const fetchRecentSearches = async () => {
   if (!isLoggedIn.value) return
@@ -740,20 +751,10 @@ const fetchRecentSearches = async () => {
   }
 }
 
-const applyRecentSearch = (s: any) => {
-  if (s.origin) flightSearchState.origin = s.origin
-  if (s.destination) flightSearchState.destination = s.destination
-  if (s.departureDate) flightSearchState.departureDate = s.departureDate
-  if (s.returnDate) flightSearchState.returnDate = s.returnDate
-  if (s.flexibleDates !== undefined) flightSearchState.flexibleDates = s.flexibleDates
-  if (s.adults) flightTravelers.adults = s.adults
-  if (s.children) flightTravelers.children = s.children
-  if (s.cabinClass) flightTravelers.cabinClass = s.cabinClass
-  if (s.type) flightMode.value = s.type
-  
-  // If it's multicity, we might need more complex logic, but for now focus on basic restore
-  trackAction('recent_search_applied', { origin: s.origin, destination: s.destination })
-}
+// ─── Watchers & Search ──────────────────────────────────────
+watch(isFocused, (val) => emit('focus-change', val))
+watch(currentTab, (val) => emit('update:tab', val), { immediate: true })
+watch(isLoggedIn, (val) => { if (val) fetchRecentSearches() })
 
 const removeSearch = async (s: any) => {
   if (isLoggedIn.value && s._id) {
