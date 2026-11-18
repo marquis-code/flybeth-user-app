@@ -773,6 +773,20 @@ const checkingAvailability = ref(false)
 const showAllAirlines = ref(false)
 const showAllLayovers = ref(false)
 
+const searchQuery = ref({
+  origin: '',
+  destination: '',
+  departureDate: '',
+  returnDate: '',
+  type: 'oneway',
+  adults: 1,
+  children: 0,
+  infantsOnLap: 0,
+  infantsInSeat: 0,
+  cabinClass: 'economy',
+  slices: [] as any[]
+})
+
 function loadFromQuery(r: any) {
   if (!r?.query) return
   if (r.query.origin) { searchQuery.value.origin = String(r.query.origin) }
@@ -804,21 +818,7 @@ function loadFromQuery(r: any) {
   else if (r.query.class) searchQuery.value.cabinClass = String(r.query.class)
 }
 
-const searchQuery = ref({
-  origin: '',
-  destination: '',
-  departureDate: '',
-  returnDate: '',
-  type: 'oneway',
-  adults: 1,
-  children: 0,
-  infantsOnLap: 0,
-  infantsInSeat: 0,
-  cabinClass: 'economy',
-  slices: [] as any[]
-})
-
-// Initialize immediately so SSR and initial render have query data
+// Initialize immediately so initial render has query data
 loadFromQuery(route)
 
 const cabinClasses = [
@@ -1523,22 +1523,25 @@ const handleSearch = () => {
   activeField.value = null
 
   // Keep the browser URL updated so page refreshes and copied links are 100% consistent across tabs and browsers
-  if (router) {
-    router.replace({
-      query: {
-        origin: searchQuery.value.origin,
-        destination: searchQuery.value.destination,
-        departureDate: searchQuery.value.departureDate,
-        returnDate: searchQuery.value.returnDate || undefined,
-        type: searchQuery.value.type,
-        adults: searchQuery.value.adults,
-        children: searchQuery.value.children || undefined,
-        infantsOnLap: searchQuery.value.infantsOnLap || undefined,
-        infantsInSeat: searchQuery.value.infantsInSeat || undefined,
-        cabinClass: searchQuery.value.cabinClass,
-        slices: searchQuery.value.slices && searchQuery.value.slices.length ? JSON.stringify(searchQuery.value.slices) : undefined
-      }
-    }).catch(() => {})
+  if (router && route) {
+    const curQ = route.query || {}
+    const newQ: any = {
+      origin: searchQuery.value.origin,
+      destination: searchQuery.value.destination,
+      departureDate: searchQuery.value.departureDate,
+      returnDate: searchQuery.value.returnDate || undefined,
+      type: searchQuery.value.type,
+      adults: searchQuery.value.adults,
+      children: searchQuery.value.children || undefined,
+      infantsOnLap: searchQuery.value.infantsOnLap || undefined,
+      infantsInSeat: searchQuery.value.infantsInSeat || undefined,
+      cabinClass: searchQuery.value.cabinClass,
+      slices: searchQuery.value.slices && searchQuery.value.slices.length ? JSON.stringify(searchQuery.value.slices) : undefined
+    }
+    const hasChanged = Object.keys(newQ).some(k => String(newQ[k] || '') !== String(curQ[k] || ''))
+    if (hasChanged) {
+      router.replace({ query: newQ }).catch(() => {})
+    }
   }
 
   searchFlights(searchQuery.value)?.catch?.((err: any) => console.warn('Flight search failed:', err))
@@ -1776,6 +1779,7 @@ onMounted(async () => {
 
   // React to SearchWidget updating the route query
   watch(() => route.query, (newQuery, oldQuery) => {
+    if (!newQuery || !oldQuery) return
     // Check if the query actually changed in a meaningful way
     const isDifferent = Object.keys(newQuery).some(k => newQuery[k] !== oldQuery[k])
     if (isDifferent) {

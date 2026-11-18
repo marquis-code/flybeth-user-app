@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 md:p-8 border border-slate-200/90 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 group cursor-pointer flex flex-col md:flex-row gap-5 sm:gap-6 md:gap-7">
+  <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 md:p-8 border border-slate-200/90 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 group cursor-pointer flex flex-col md:flex-row gap-6 sm:gap-7 md:gap-8">
     
     <!-- Car Image & Quick Badge -->
     <div class="w-full md:w-60 lg:w-72 h-52 sm:h-56 md:h-auto min-h-[190px] shrink-0 relative flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 overflow-hidden group-hover:bg-slate-100/50 transition-colors duration-300">
@@ -26,7 +26,7 @@
     </div>
 
     <!-- Details -->
-    <div class="flex-1 flex flex-col justify-between min-w-0 py-1 sm:py-1.5 px-0.5 sm:px-1">
+    <div class="flex-1 flex flex-col justify-between min-w-0 py-1 sm:py-2 px-2 sm:px-3">
       <div>
         <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 mb-3">
           <div class="min-w-0 flex-1">

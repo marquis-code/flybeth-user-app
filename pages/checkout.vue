@@ -373,6 +373,157 @@
               />
             </div>
 
+            <!-- Mandatory Booking Rules & Non-Refundable Agreement Section -->
+            <div 
+              id="booking-rules-section"
+              class="w-full rounded-3xl sm:rounded-[24px] border transition-all duration-300 overflow-hidden p-5 sm:p-7 md:p-8"
+              :class="[
+                bookingRulesAccepted
+                  ? 'bg-gradient-to-b from-blue-50/20 to-white border-blue-200 shadow-sm'
+                  : rulesValidationTriggered
+                    ? 'bg-amber-50/40 border-amber-500 ring-4 ring-amber-400/20 shadow-md'
+                    : 'bg-white border-gray-200 shadow-sm'
+              ]"
+            >
+              <!-- Card Header -->
+              <div class="flex items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                  <div 
+                    class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-colors"
+                    :class="bookingRulesAccepted ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-50 text-[#0D1DAD]'"
+                  >
+                    <Scale class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-base sm:text-lg font-black text-gray-900 tracking-tight">Booking Rules &amp; Non-Refundable Policy</h3>
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200">
+                        Strict Agreement
+                      </span>
+                    </div>
+                    <p class="text-xs text-gray-500 font-medium mt-0.5">Please review each mandatory travel condition below before confirming your booking.</p>
+                  </div>
+                </div>
+
+                <button 
+                  type="button" 
+                  @click="showDetailedRulesModal = true"
+                  class="text-xs font-bold text-[#0D1DAD] hover:text-blue-800 flex items-center gap-1 shrink-0 py-1.5 px-3 rounded-xl bg-blue-50/80 hover:bg-blue-100 transition-colors"
+                >
+                  <FileText class="w-3.5 h-3.5" />
+                  <span class="hidden sm:inline">View Full Terms</span>
+                </button>
+              </div>
+
+              <!-- Rules Grid / List -->
+              <div class="space-y-3 mb-6">
+                <!-- Rule 1: Non-Refundable Agency & Ticketing Fee -->
+                <div class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex items-start gap-3">
+                  <div class="w-7 h-7 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs">
+                    <Ban class="w-4 h-4 text-amber-700" />
+                  </div>
+                  <div class="space-y-0.5">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <h4 class="text-xs font-black uppercase text-amber-950 tracking-wider">100% Non-Refundable Agency &amp; Service Fee</h4>
+                      <span class="text-[9px] font-extrabold uppercase text-amber-800 bg-amber-100/90 border border-amber-300 px-1.5 py-0.2 rounded">Strict Policy</span>
+                    </div>
+                    <p class="text-xs text-amber-900 leading-relaxed font-medium">
+                      The <strong>{{ agencyFeeLabel || 'Agency Booking & Service Fee' }}</strong> covers reservation technology, global ticketing infrastructure, and 24/7 dedicated passenger assistance. It is <strong>strictly 100% non-refundable under all circumstances</strong>, including voluntary cancellations by the traveler, missed flights, or airline-initiated schedule changes.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Rule 2: Airline Fare Rules & Cancellation Penalties -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                  <div class="w-7 h-7 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <Plane class="w-4 h-4" />
+                  </div>
+                  <div class="space-y-0.5">
+                    <h4 class="text-xs font-black uppercase text-slate-800 tracking-wider">Airline Fare Conditions &amp; Carrier Penalties</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                      Airline base fares and government taxes are governed solely by the issuing airline's fare rules. If an airline authorizes a cancellation refund, only the refundable carrier portion will be returned to the customer, minus applicable airline cancellation penalties. Non-refundable tickets cannot be refunded.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Rule 3: Name Matching & Passports -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                  <div class="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <UserCheck class="w-4 h-4" />
+                  </div>
+                  <div class="space-y-0.5">
+                    <h4 class="text-xs font-black uppercase text-slate-800 tracking-wider">Name Accuracy &amp; Identity Verification</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                      All traveler first, middle, and last names must match original government passports character-for-character. Airlines strictly prohibit name changes or ticket re-assignment after ticketing. Inaccurate names will result in denied boarding with zero airline refund eligibility.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Rule 4: Passport Validity, Visas & Entry Health Requirements -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                  <div class="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <FileCheck2 class="w-4 h-4" />
+                  </div>
+                  <div class="space-y-0.5">
+                    <h4 class="text-xs font-black uppercase text-slate-800 tracking-wider">Passport Validity &amp; Visa Responsibility</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                      Passports must have at least 6 months of validity beyond the return date. Travelers bear sole legal responsibility for holding all valid destination visas, transit visas, electronic authorizations (e.g. ESTA, ETA), and required health/vaccination documents.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Mandatory Agreement Checkbox -->
+              <label 
+                class="flex items-start gap-3.5 p-4 sm:p-5 rounded-2xl border-2 transition-all duration-200 cursor-pointer select-none group"
+                :class="[
+                  bookingRulesAccepted 
+                    ? 'bg-emerald-50/70 border-emerald-500 shadow-sm' 
+                    : rulesValidationTriggered 
+                      ? 'bg-amber-50 border-amber-500 ring-2 ring-amber-300' 
+                      : 'bg-slate-50/70 hover:bg-slate-100/70 border-slate-300 hover:border-slate-400'
+                ]"
+              >
+                <div class="relative flex items-center justify-center shrink-0 mt-0.5">
+                  <input 
+                    type="checkbox" 
+                    v-model="bookingRulesAccepted" 
+                    @change="rulesValidationTriggered = false"
+                    class="sr-only" 
+                  />
+                  <div 
+                    class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200"
+                    :class="[
+                      bookingRulesAccepted 
+                        ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm scale-105' 
+                        : rulesValidationTriggered 
+                          ? 'border-amber-500 bg-white ring-2 ring-amber-300' 
+                          : 'border-slate-400 bg-white group-hover:border-slate-500'
+                    ]"
+                  >
+                    <svg v-if="bookingRulesAccepted" class="w-4 h-4 stroke-current stroke-[3] fill-none" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="space-y-1">
+                  <span class="text-xs sm:text-sm font-extrabold text-slate-900 group-hover:text-black leading-snug block">
+                    I have read, understood, and strictly accept all the Flybeth Booking Rules, the Carrier Fare Conditions, and the 100% Non-Refundable Agency Fee Policy.
+                  </span>
+                  <p class="text-[11px] text-slate-500 font-medium leading-relaxed">
+                    By ticking this mandatory checkbox, you enter into a legally binding contract with Flybeth LLC and confirm that all passenger information, passport data, and travel conditions have been verified.
+                  </p>
+                </div>
+              </label>
+
+              <!-- Warning Alert if user attempted to proceed without checking -->
+              <div v-if="rulesValidationTriggered && !bookingRulesAccepted" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-xs font-bold text-red-700 flex items-center gap-2">
+                <AlertCircle class="w-4 h-4 text-red-600 shrink-0" />
+                <span>You must tick the checkbox above to confirm you accept the booking rules &amp; non-refundable fee policy before proceeding.</span>
+              </div>
+            </div>
+
             <!-- Price Breakdown (Full Width Redesign) -->
             <div class="w-full bg-white rounded-3xl sm:rounded-[24px] border border-gray-100 shadow-sm overflow-hidden p-4 sm:p-6 md:p-8">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -426,11 +577,25 @@
                       </p>
                     </div>
                     
-                    <div class="mt-6" v-show="!paymentRef || paymentRef.requiresExternalSubmit">
-                      <button @click="handlePayNow" :disabled="paymentProcessing" class="w-full h-12 bg-[#0D1DAD] hover:bg-[#0A1485] text-white rounded-lg font-bold text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
+                    <!-- Agreement Warning Banner above Button if not checked -->
+                    <div 
+                      v-if="!bookingRulesAccepted" 
+                      class="mt-4 p-3 rounded-xl border flex items-center gap-2.5 text-xs font-bold transition-all"
+                      :class="rulesValidationTriggered ? 'bg-red-50 text-red-700 border-red-300 ring-2 ring-red-200' : 'bg-amber-50 text-amber-800 border-amber-200'"
+                    >
+                      <AlertCircle class="w-4 h-4 shrink-0" :class="rulesValidationTriggered ? 'text-red-600' : 'text-amber-600'" />
+                      <span>Please tick the mandatory rules checkbox above to enable checkout.</span>
+                    </div>
+
+                    <div class="mt-4" v-show="!paymentRef || paymentRef.requiresExternalSubmit">
+                      <button 
+                        @click="handlePayNow" 
+                        :disabled="paymentProcessing || !bookingRulesAccepted" 
+                        class="w-full h-12 bg-[#0D1DAD] hover:bg-[#0A1485] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20"
+                      >
                         <template v-if="!paymentProcessing">
                           <Lock class="w-5 h-5 opacity-80" />
-                          Complete Booking
+                          <span>{{ bookingRulesAccepted ? 'Complete Booking' : 'Accept Rules to Complete Booking' }}</span>
                         </template>
                         <span v-else class="animate-pulse flex items-center gap-2">
                           <span class="h-5 w-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
@@ -450,13 +615,120 @@
         </div>
     </div>
   </div>
+
+  <!-- Detailed Booking Rules & Legal Terms Modal -->
+  <div v-if="showDetailedRulesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-blue-100 text-[#0D1DAD] flex items-center justify-center">
+            <Scale class="w-5 h-5" />
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-slate-900">Flybeth LLC &bull; Official Booking Rules</h3>
+            <p class="text-xs text-slate-500 font-medium">Terms of carriage, fare conditions, and non-refundable policy</p>
+          </div>
+        </div>
+        <button @click="showDetailedRulesModal = false" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-full transition-colors">
+          <XIcon class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-5 sm:p-6 overflow-y-auto space-y-5 text-xs text-slate-700 leading-relaxed font-normal">
+        <section class="space-y-1.5 p-4 rounded-2xl bg-amber-50/80 border border-amber-200">
+          <h4 class="font-black text-sm text-amber-950 flex items-center gap-2">
+            <Ban class="w-4 h-4 text-amber-700" />
+            1. Agency Booking &amp; Ticketing Fee (100% Non-Refundable)
+          </h4>
+          <p class="text-amber-900 font-medium">
+            The <strong>{{ agencyFeeLabel || 'Flybeth Agency Booking & Service Fee' }}</strong> is charged for platform technology, global reservation system inventory access, automated e-ticketing issuance, and 24/7 passenger assistance. <strong>This fee is strictly 100% non-refundable under all circumstances</strong>, including but not limited to voluntary passenger cancellations, failure to board, medical emergencies, schedule changes initiated by the carrier, flight cancellations, or force majeure events.
+          </p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="font-black text-sm text-slate-900 flex items-center gap-2">
+            <Plane class="w-4 h-4 text-blue-600" />
+            2. Carrier Fare Rules &amp; Cancellation Penalties
+          </h4>
+          <p>
+            Airline base fares and mandatory government taxes are subject exclusively to the operating airline's fare rules and contract of carriage. If an airline approves an involuntary or voluntary cancellation refund, only the refundable carrier fare component will be remitted to the customer, minus any applicable airline cancellation penalties. Non-refundable tickets cannot be refunded.
+          </p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="font-black text-sm text-slate-900 flex items-center gap-2">
+            <UserCheck class="w-4 h-4 text-indigo-600" />
+            3. Passenger Identity &amp; Strict Non-Transferability
+          </h4>
+          <p>
+            All traveler names (first, middle, last) and dates of birth must match the traveler's valid passport or photo ID character-for-character. Airlines strictly prohibit name changes, name transfers, or ticket re-assignment to another person once a ticket is issued. Flybeth LLC cannot alter names on issued airline tickets.
+          </p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="font-black text-sm text-slate-900 flex items-center gap-2">
+            <FileCheck2 class="w-4 h-4 text-emerald-600" />
+            4. Passports, Visas &amp; Entry Documentation
+          </h4>
+          <p>
+            Passports must possess at least 6 months of validity beyond the scheduled return date. Travelers bear sole and exclusive legal responsibility for holding all valid visas, transit visas, electronic travel authorizations (e.g. US ESTA, Canada eTA, UK ETA), and required health/vaccine certificates. Flybeth LLC is not liable for entry refusals or deportation.
+          </p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="font-black text-sm text-slate-900 flex items-center gap-2">
+            <Building class="w-4 h-4 text-slate-600" />
+            5. Independent Agency Status &amp; Jurisdiction
+          </h4>
+          <p>
+            Flybeth LLC acts solely as an independent travel reservation agent between passengers and travel suppliers (airlines, transfer companies, hotels). All bookings are governed by the laws of the State of Texas, United States.
+          </p>
+        </section>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between gap-3">
+        <span class="text-[11px] font-bold text-slate-500">Flybeth LLC &bull; Corporate Compliance</span>
+        <button 
+          type="button" 
+          @click="bookingRulesAccepted = true; showDetailedRulesModal = false; rulesValidationTriggered = false;"
+          class="px-5 py-2.5 bg-[#0D1DAD] hover:bg-[#0A1485] text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+        >
+          Accept Rules &amp; Close
+        </button>
+      </div>
+    </div>
+  </div>
 </main>
 </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { ChevronLeft, Lock, ShieldCheck, X as XIcon, Calendar, Plane, Building, Compass, Car, CarTaxiFront, Ship } from 'lucide-vue-next'
+import { 
+  ChevronLeft, 
+  Lock, 
+  ShieldCheck, 
+  X as XIcon, 
+  Calendar, 
+  Plane, 
+  Building, 
+  Compass, 
+  Car, 
+  CarTaxiFront, 
+  Ship,
+  AlertCircle,
+  CheckCircle2,
+  Ban,
+  UserCheck,
+  FileText,
+  Scale,
+  FileCheck2,
+  Info,
+  ExternalLink
+} from 'lucide-vue-next'
 import { useRoute, useRouter, navigateTo, useRuntimeConfig } from '#app'
 import { staysApi } from '~/api_factory/modules/stays'
 import { paymentsApi } from '~/api_factory/modules/payments'
@@ -506,6 +778,9 @@ const bookingErrorTitle = ref('Booking expired')
 const bookingErrorMsg = ref('This booking has expired. Please start a new search to continue.')
 const loaderStatus = ref('Confirming best fare with airline...')
 const paymentProcessing = ref(false)
+const bookingRulesAccepted = ref(false)
+const rulesValidationTriggered = ref(false)
+const showDetailedRulesModal = ref(false)
 const selectedAddOns = ref<{ id: string; name: string; price: number }[]>([])
 const selectedSeats = ref<any[]>([])
 const seatPrice = ref(0)
@@ -1363,6 +1638,17 @@ const handleEmailBlur = async () => {
 const paymentRef = ref<any>(null)
 
 const handleHold = () => {
+  if (!bookingRulesAccepted.value) {
+    rulesValidationTriggered.value = true
+    showToast({
+      title: 'Mandatory Agreement Required',
+      message: 'You must review and accept the Booking Rules & Non-Refundable Policy before proceeding.',
+      toastType: 'error'
+    })
+    const el = document.getElementById('booking-rules-section')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    return
+  }
   if (paymentRef.value) {
     paymentRef.value.handleHold()
   } else {
@@ -1371,6 +1657,17 @@ const handleHold = () => {
 }
 
 const handlePayNow = () => {
+  if (!bookingRulesAccepted.value) {
+    rulesValidationTriggered.value = true
+    showToast({
+      title: 'Mandatory Agreement Required',
+      message: 'You must review and accept the Booking Rules & Non-Refundable Policy before proceeding.',
+      toastType: 'error'
+    })
+    const el = document.getElementById('booking-rules-section')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    return
+  }
   if (paymentRef.value) {
     paymentRef.value.handlePay()
   }
@@ -1421,6 +1718,8 @@ const buildBookingPayload = (paymentInfo: any) => {
     hasVipSupport: selectedAddOns.value.some((a) => a.id === 'vip-support'),
     extraBaggageCount: selectedAddOns.value.filter((a) => a.id.startsWith('bag-')).length,
     premiumSeatCount: selectedSeats.value.length,
+    rulesAccepted: true,
+    rulesAcceptedAt: new Date().toISOString(),
   }
 
   if (details.type === 'flight') {
@@ -1606,6 +1905,18 @@ const syncSupplierBooking = async () => {
 }
 
 const handleWalletAuthorize = async (paymentInfo: any) => {
+  if (!bookingRulesAccepted.value) {
+    rulesValidationTriggered.value = true
+    showToast({
+      title: 'Mandatory Agreement Required',
+      message: 'You must review and accept the Booking Rules & Non-Refundable Policy before proceeding.',
+      toastType: 'error'
+    })
+    const el = document.getElementById('booking-rules-section')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    return
+  }
+
   if (paymentInfo.channel === 'applepay' || paymentInfo.channel === 'googlepay') {
     // 1. We create the booking silently
     paymentProcessing.value = true
@@ -1691,6 +2002,18 @@ const handleWalletAuthorize = async (paymentInfo: any) => {
 }
 
 const handlePayment = async (paymentInfo: any) => {
+  if (!bookingRulesAccepted.value) {
+    rulesValidationTriggered.value = true
+    showToast({
+      title: 'Mandatory Agreement Required',
+      message: 'You must review and accept the Booking Rules & Non-Refundable Policy before proceeding.',
+      toastType: 'error'
+    })
+    const el = document.getElementById('booking-rules-section')
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    return
+  }
+
   paymentProcessing.value = true
   showBrandedLoader.value = true
   loaderStatus.value = paymentInfo.paymentModel === 'on_hold' ? 'Securing reservation...' : 'Finalizing booking...'
