@@ -3,25 +3,25 @@ import { GATEWAY_ENDPOINT, GATEWAY_ENDPOINT_WITH_AUTH } from "../axios.config";
 export const flightsApi = {
     // Live Integration Endpoints (Unified Amadeus + Duffel)
     searchLive(data: any) {
-        return GATEWAY_ENDPOINT.post("/flights/search/live", data);
+        return GATEWAY_ENDPOINT.post("/flights/search/live", data, { timeout: 90000 });
     },
     getOfferDetails(id: string, provider: string) {
-        return GATEWAY_ENDPOINT.get(`/flights/offers/${id}`, { params: { provider } });
+        return GATEWAY_ENDPOINT.get(`/flights/offers/${id}`, { params: { provider }, timeout: 45000 });
     },
     book(data: any) {
-        return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/book", data);
+        return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/book", data, { timeout: 60000 });
     },
     priceOffer(data: any) {
-        return GATEWAY_ENDPOINT.post("/flights/search/pricing", data);
+        return GATEWAY_ENDPOINT.post("/flights/search/pricing", data, { timeout: 45000 });
     },
     getSeatmaps(data: any) {
-        return GATEWAY_ENDPOINT.post("/flights/seatmaps", data);
+        return GATEWAY_ENDPOINT.post("/flights/seatmaps", data, { timeout: 45000 });
     },
     cancel(data: any) {
         return GATEWAY_ENDPOINT_WITH_AUTH.post("/flights/cancel", data);
     },
     getLiveDeals(origin: string, tripType: string = 'round-trip') {
-        return GATEWAY_ENDPOINT.get("/flights/deals/live", { params: { origin, tripType } });
+        return GATEWAY_ENDPOINT.get("/flights/deals/live", { params: { origin, tripType }, timeout: 45000 });
     },
     /** Cheapest real offer per route for the landing-page deal rails (cached server-side). */
     getFeaturedDeals(params: { origin?: string; tripType?: string; limit?: number } = {}) {
@@ -94,10 +94,10 @@ export const flightsApi = {
         return GATEWAY_ENDPOINT.post("/flights/search", data);
     },
     getPopular(params: { limit?: number } = {}) {
-        return GATEWAY_ENDPOINT.get("/flights/popular", { params });
+        return GATEWAY_ENDPOINT.get("/flights/popular", { params, timeout: 30000 });
     },
     getDeals(params: { limit?: number } = {}) {
-        return GATEWAY_ENDPOINT.get("/flights/deals", { params });
+        return GATEWAY_ENDPOINT.get("/flights/deals", { params, timeout: 30000 });
     },
     getById(id: string) {
         return GATEWAY_ENDPOINT.get(`/flights/${id}`);

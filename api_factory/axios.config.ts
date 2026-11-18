@@ -13,7 +13,7 @@ const $IMAGE_UPLOAD_ENDPOINT = import.meta.env.VITE_IMAGE_UPLOAD_BASE_URL as str
 export const GATEWAY_ENDPOINT = axios.create({
   baseURL: $GATEWAY_ENDPOINT,
   withCredentials: true,
-  timeout: 15000,
+  timeout: 60000,
 });
 
 export const GATEWAY_ENDPOINT_V2 = axios.create({

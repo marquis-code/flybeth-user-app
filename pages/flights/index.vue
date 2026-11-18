@@ -1496,7 +1496,7 @@ const handleSearch = () => {
     }).catch(() => {})
   }
 
-  searchFlights(searchQuery.value)
+  searchFlights(searchQuery.value)?.catch?.((err: any) => console.warn('Flight search failed:', err))
   predictTripPurpose({ origin: searchQuery.value.origin, destination: searchQuery.value.destination, departureDate: searchQuery.value.departureDate })
 }
 

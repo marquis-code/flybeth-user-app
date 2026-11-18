@@ -14,6 +14,8 @@ export const useFetchPopularFlights = () => {
             return results;
         } catch (error) {
             console.error('Error fetching popular flights:', error);
+            popularFlights.value = [];
+            return [];
         } finally {
             loading.value = false;
         }

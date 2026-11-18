@@ -36,10 +36,12 @@ export const useSearchFlights = () => {
                 searchMeta.value = data?.meta || data?.data?.meta;
                 return results;
             }
+            flights.value = [];
             return [];
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error searching flights:', error);
-            throw error;
+            flights.value = [];
+            return [];
         } finally {
             loading.value = false;
         }
