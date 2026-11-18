@@ -80,7 +80,7 @@
               Pay with Zelle®
               <span class="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-[#7414CA] px-2 py-0.5 rounded-full">Instant No-Fee</span>
             </span>
-            <span class="text-[11px] text-gray-500 font-medium">Scan QR in Wells Fargo, Chase, BofA, or US mobile banking app</span>
+            <span class="text-[11px] text-gray-500 font-medium">Scan QR in Wells Fargo, Bank of America, or US mobile banking app</span>
           </div>
         </div>
         <div class="flex items-center gap-2">
