@@ -389,22 +389,27 @@
 
       <!-- ════ CRUISES ════ -->
       <div v-if="currentTab === 'Cruises'" class="sw-section">
-        <div class="sw-cruise-grid sw-cruise-grid--2">
+        <div class="sw-bar">
           <!-- Destination -->
-          <div class="sw-cruise-field-wrap" ref="destRef">
-            <button @click="toggleCruiseField('destination')" class="sw-cruise-btn" :class="activeCruiseField === 'destination' ? 'sw-cruise-btn--on' : ''">
-              <MapPin class="sw-ico-sm sw-ico-muted" />
-              <div class="sw-cruise-txt">
+          <div 
+            class="sw-field sw-field--grow cursor-pointer" 
+            ref="destRef" 
+            @click="toggleCruiseField('destination')"
+          >
+            <div class="sw-cruise-field">
+              <MapPin class="sw-ico-sm sw-ico-muted shrink-0" />
+              <div class="sw-field-inner">
                 <span class="sw-fld-lbl">Destination</span>
                 <span class="sw-fld-val sw-fld-val--trunc">{{ cruiseSearchState.destinationLabel || 'Any destination' }}</span>
               </div>
-              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'destination' ? 'sw-chev--up' : ''" />
-            </button>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev shrink-0" :class="activeCruiseField === 'destination' ? 'sw-chev--up' : ''" />
+            </div>
+
             <Teleport to="body">
               <Transition name="sw-drop">
                 <div v-if="activeCruiseField === 'destination'" class="sw-drop" :style="cruiseDropdownStyle('destination')">
                   <div v-for="opt in cruiseDestinations" :key="opt.value + opt.label"
-                    @click="!opt.disabled && selectCruise('destination', opt)"
+                    @click.stop="!opt.disabled && selectCruise('destination', opt)"
                     class="sw-drop-item"
                     :class="opt.disabled ? 'sw-drop-item--div' : cruiseSearchState.destination === opt.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'"
                   >
@@ -416,20 +421,27 @@
             </Teleport>
           </div>
 
+          <div class="sw-bar-div" />
+
           <!-- Departing -->
-          <div class="sw-cruise-field-wrap" ref="departRef">
-            <button @click="toggleCruiseField('departing')" class="sw-cruise-btn" :class="activeCruiseField === 'departing' ? 'sw-cruise-btn--on' : ''">
-              <CalendarDays class="sw-ico-sm sw-ico-muted" />
-              <div class="sw-cruise-txt">
+          <div 
+            class="sw-field sw-field--grow cursor-pointer" 
+            ref="departRef" 
+            @click="toggleCruiseField('departing')"
+          >
+            <div class="sw-cruise-field">
+              <CalendarDays class="sw-ico-sm sw-ico-muted shrink-0" />
+              <div class="sw-field-inner">
                 <span class="sw-fld-lbl">Departing</span>
-                <span class="sw-fld-val">{{ cruiseSearchState.departingLabel || 'Any month' }}</span>
+                <span class="sw-fld-val sw-fld-val--trunc">{{ cruiseSearchState.departingLabel || 'Any month' }}</span>
               </div>
-              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'departing' ? 'sw-chev--up' : ''" />
-            </button>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev shrink-0" :class="activeCruiseField === 'departing' ? 'sw-chev--up' : ''" />
+            </div>
+
             <Teleport to="body">
               <Transition name="sw-drop">
                 <div v-if="activeCruiseField === 'departing'" class="sw-drop" :style="cruiseDropdownStyle('departing')">
-                  <div v-for="m in cruiseMonths" :key="m.value" @click="selectCruise('departing', m)" class="sw-drop-item" :class="cruiseSearchState.departingMonth === m.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
+                  <div v-for="m in cruiseMonths" :key="m.value" @click.stop="selectCruise('departing', m)" class="sw-drop-item" :class="cruiseSearchState.departingMonth === m.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
                     <span>{{ m.label }}</span>
                     <Check v-if="cruiseSearchState.departingMonth === m.value" class="sw-ico-xs" />
                   </div>
@@ -437,23 +449,28 @@
               </Transition>
             </Teleport>
           </div>
-        </div>
 
-        <div class="sw-cruise-grid sw-cruise-grid--3">
+          <div class="sw-bar-div" />
+
           <!-- Length -->
-          <div class="sw-cruise-field-wrap" ref="lengthRef">
-            <button @click="toggleCruiseField('length')" class="sw-cruise-btn" :class="activeCruiseField === 'length' ? 'sw-cruise-btn--on' : ''">
-              <Timer class="sw-ico-sm sw-ico-muted" />
-              <div class="sw-cruise-txt">
+          <div 
+            class="sw-field sw-field--grow cursor-pointer" 
+            ref="lengthRef" 
+            @click="toggleCruiseField('length')"
+          >
+            <div class="sw-cruise-field">
+              <Timer class="sw-ico-sm sw-ico-muted shrink-0" />
+              <div class="sw-field-inner">
                 <span class="sw-fld-lbl">Duration</span>
-                <span class="sw-fld-val">{{ cruiseSearchState.lengthLabel || 'Any length' }}</span>
+                <span class="sw-fld-val sw-fld-val--trunc">{{ cruiseSearchState.lengthLabel || 'Any length' }}</span>
               </div>
-              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'length' ? 'sw-chev--up' : ''" />
-            </button>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev shrink-0" :class="activeCruiseField === 'length' ? 'sw-chev--up' : ''" />
+            </div>
+
             <Teleport to="body">
               <Transition name="sw-drop">
                 <div v-if="activeCruiseField === 'length'" class="sw-drop" :style="cruiseDropdownStyle('length')">
-                  <div v-for="len in cruiseLengths" :key="len.value" @click="selectCruise('length', len)" class="sw-drop-item" :class="cruiseSearchState.length === len.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
+                  <div v-for="len in cruiseLengths" :key="len.value" @click.stop="selectCruise('length', len)" class="sw-drop-item" :class="cruiseSearchState.length === len.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
                     <span>{{ len.label }}</span>
                     <Check v-if="cruiseSearchState.length === len.value" class="sw-ico-xs" />
                   </div>
@@ -462,20 +479,27 @@
             </Teleport>
           </div>
 
+          <div class="sw-bar-div" />
+
           <!-- Line -->
-          <div class="sw-cruise-field-wrap" ref="lineRef">
-            <button @click="toggleCruiseField('line')" class="sw-cruise-btn" :class="activeCruiseField === 'line' ? 'sw-cruise-btn--on' : ''">
-              <Anchor class="sw-ico-sm sw-ico-muted" />
-              <div class="sw-cruise-txt">
-                <span class="sw-fld-lbl">Cruise line</span>
+          <div 
+            class="sw-field sw-field--grow cursor-pointer" 
+            ref="lineRef" 
+            @click="toggleCruiseField('line')"
+          >
+            <div class="sw-cruise-field">
+              <Anchor class="sw-ico-sm sw-ico-muted shrink-0" />
+              <div class="sw-field-inner">
+                <span class="sw-fld-lbl">Cruise Line</span>
                 <span class="sw-fld-val sw-fld-val--trunc">{{ cruiseSearchState.lineLabel || 'Any line' }}</span>
               </div>
-              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev" :class="activeCruiseField === 'line' ? 'sw-chev--up' : ''" />
-            </button>
+              <ChevronDown class="sw-ico-sm sw-ico-muted sw-chev shrink-0" :class="activeCruiseField === 'line' ? 'sw-chev--up' : ''" />
+            </div>
+
             <Teleport to="body">
               <Transition name="sw-drop">
                 <div v-if="activeCruiseField === 'line'" class="sw-drop" :style="cruiseDropdownStyle('line')">
-                  <div v-for="line in cruiseLines" :key="line.value" @click="selectCruise('line', line)" class="sw-drop-item" :class="cruiseSearchState.line === line.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
+                  <div v-for="line in cruiseLines" :key="line.value" @click.stop="selectCruise('line', line)" class="sw-drop-item" :class="cruiseSearchState.line === line.value ? 'sw-drop-item--on' : 'sw-drop-item--idle'">
                     <span>{{ line.label }}</span>
                     <Check v-if="cruiseSearchState.line === line.value" class="sw-ico-xs" />
                   </div>
@@ -483,8 +507,10 @@
               </Transition>
             </Teleport>
           </div>
+        </div>
 
-          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn sw-search-btn--full">
+        <div class="sw-footer sw-footer--end">
+          <button @click="handleSearch" :disabled="isSearching" class="sw-search-btn">
             <Loader2 v-if="isSearching" class="sw-ico-sm animate-spin" />
             <Search v-else class="sw-ico-sm" /> 
             {{ isSearching ? 'Searching...' : 'Search cruises' }}
@@ -607,7 +633,7 @@ const tabs = [
   { name: 'Hotels',     label: 'Hotels',      icon: Bed },
   { name: 'Transfers',  label: 'Transfers',   icon: Truck },
   { name: 'Activities', label: 'Activities',  icon: Ticket },
-  { name: 'Cars',       label: 'Car rentals', icon: Car },
+  { name: 'Cars',       label: 'Car Rentals', icon: Car },
   { name: 'Packages',   label: 'Packages',    icon: Package },
   { name: 'Cruises',    label: 'Cruises',     icon: Anchor },
 ]
@@ -1386,9 +1412,9 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   align-items: center;
   gap: 6px;
   margin-top: 4px;
-  padding: 9px 14px;
+  padding: 8px 18px;
   border: 1px dashed #c3cee6;
-  border-radius: 10px;
+  border-radius: 9999px !important;
   background: #fff;
   color: var(--navy);
   font-size: 13px;
@@ -1458,10 +1484,10 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 0 24px;
+  min-height: 48px;
+  padding: 0 32px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 9999px !important;
   background: #0D1DAD;
   color: #fff;
   font-size: 14px;
@@ -1497,6 +1523,15 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 }
 
 /* ── Cruise pickers + dropdowns ────────────────────────────────────────── */
+.sw-cruise-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  min-width: 0;
+}
+
 .sw-cruise-grid { display: grid; gap: 10px; }
 .sw-cruise-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .sw-cruise-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -1672,7 +1707,7 @@ const swapFlightLocations = (leg: { origin: string; destination: string }) => {
 
 .sw-root--co .sw-search-btn {
   background: #0D1DAD;
-  border-radius: 6px;
+  border-radius: 9999px !important;
   font-weight: 800;
   box-shadow: 0 10px 22px -12px rgba(13, 29, 173, .75);
 }

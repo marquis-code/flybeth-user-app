@@ -1,6 +1,6 @@
 <template>
   <div class="cp-root" @mousedown="handleGlobalMousedown">
-    <FullScreenLoader :show="loading" moduleName="Car rentals" />
+    <FullScreenLoader :show="loading" moduleName="Car Rentals" />
 
     <!-- ═══════════════ HERO / SEARCH ═══════════════ -->
     <section class="cp-hero relative z-30 bg-[#0D1DAD]">
