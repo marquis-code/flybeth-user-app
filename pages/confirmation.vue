@@ -79,7 +79,7 @@
           </div>
         </div>
 
-        <!-- Next Steps Info -->
+        <!-- Next Steps Info (Success) -->
         <div v-if="paymentStatus === 'success'" class="text-left bg-blue-50/80 border border-blue-100 rounded-2xl p-5 mb-8">
            <h3 class="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -99,6 +99,72 @@
                <span>Click "Manage Booking" below to view your full itinerary.</span>
              </li>
            </ul>
+        </div>
+
+        <!-- Bank Transfer Details (When on hold or manual payment) -->
+        <div v-else class="text-left bg-blue-50/80 border border-blue-100 rounded-2xl p-5 mb-8 space-y-4">
+           <div class="flex items-start gap-3">
+             <div class="w-8 h-8 rounded-xl bg-blue-100 text-[#0D1DAD] flex items-center justify-center shrink-0">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+             </div>
+             <div>
+               <h3 class="text-sm font-bold text-blue-950">Payment Instructions & Next Steps</h3>
+               <p class="text-xs text-blue-700/80 mt-0.5">Your seats are secured on hold. Please transfer the total amount using the details below to finalize ticket issuance.</p>
+             </div>
+           </div>
+
+           <!-- Bank Account details -->
+           <div v-if="loadingBankAccounts" class="p-4 bg-white rounded-xl border border-gray-100 text-center text-xs text-gray-400">
+             Loading settlement account details...
+           </div>
+           <div v-else-if="bankAccounts.length > 0" class="space-y-3">
+             <div v-for="(bank, idx) in bankAccounts" :key="idx" class="p-4 bg-white rounded-xl border border-blue-100/60 shadow-sm space-y-3">
+               <div class="flex items-center justify-between">
+                 <span class="text-xs font-bold text-gray-900">{{ bank.bankName }}</span>
+                 <span class="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">{{ bank.currency }}</span>
+               </div>
+               
+               <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
+                 <div>
+                   <span class="text-[10px] font-bold uppercase text-gray-400 block">Account Number</span>
+                   <span class="font-mono text-base font-black text-gray-900 tracking-wide">{{ bank.accountNumber }}</span>
+                 </div>
+                 <button 
+                   type="button" 
+                   @click="copyAccount(bank.accountNumber)"
+                   class="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-blue-500 hover:text-blue-600 text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+                 >
+                   <svg v-if="!copiedAccount" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                   <svg v-else class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                   <span>{{ copiedAccount ? 'Copied' : 'Copy' }}</span>
+                 </button>
+               </div>
+
+               <div class="text-xs text-gray-600">
+                 <span class="font-semibold text-gray-900">Account Name:</span> {{ bank.accountName }}
+               </div>
+
+               <div v-if="bank.routingNumber || bank.swiftCode" class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                 <div v-if="bank.routingNumber" class="bg-slate-50 p-2 rounded-lg">
+                   <span class="text-gray-400 font-bold block text-[10px] uppercase">Routing / Sort</span>
+                   <span class="font-mono font-bold text-gray-800">{{ bank.routingNumber }}</span>
+                 </div>
+                 <div v-if="bank.swiftCode" class="bg-slate-50 p-2 rounded-lg">
+                   <span class="text-gray-400 font-bold block text-[10px] uppercase">SWIFT / BIC</span>
+                   <span class="font-mono font-bold text-gray-800">{{ bank.swiftCode }}</span>
+                 </div>
+               </div>
+
+               <div v-if="bank.instructions" class="text-xs text-blue-800/90 bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
+                 <span class="font-bold block text-[10px] uppercase tracking-wider text-blue-900 mb-0.5">Payment Memo:</span>
+                 {{ bank.instructions }}
+               </div>
+             </div>
+           </div>
+
+           <div class="text-xs text-blue-700/80 font-medium pt-2 border-t border-blue-100 flex items-center gap-2">
+             <span>Please include your reference <strong>{{ bookingRef }}</strong> in your transfer description.</span>
+           </div>
         </div>
 
         <!-- Call to Action -->
@@ -141,6 +207,32 @@ const paymentStatus = ref((route.query.status as string) || 'booked')
 const checkoutToken = computed(() => (route.query.checkout_token as string) || (route.query.token as string) || (route.query.reference as string) || '')
 const provider = computed(() => (route.query.provider as string) || '')
 const isAuthorizing = ref(false)
+
+const bankAccounts = ref<any[]>([])
+const loadingBankAccounts = ref(false)
+const copiedAccount = ref(false)
+
+const fetchBankAccounts = async () => {
+  loadingBankAccounts.value = true
+  try {
+    const { data } = await paymentsApi.getBankAccounts()
+    const list = data?.data || data || []
+    bankAccounts.value = Array.isArray(list) ? list : []
+  } catch (e) {
+    console.warn('Failed to load bank accounts on confirmation:', e)
+  } finally {
+    loadingBankAccounts.value = false
+  }
+}
+
+const copyAccount = (accNum: string) => {
+  if (!accNum) return
+  navigator.clipboard?.writeText(accNum)
+  copiedAccount.value = true
+  const { $toast } = useNuxtApp() as any
+  $toast?.success?.('Account number copied!')
+  setTimeout(() => { copiedAccount.value = false }, 2000)
+}
 
 const showDrawer = ref(false)
 const confirmedFlight = ref<any>(null)
@@ -220,6 +312,10 @@ onMounted(async () => {
     orderId: orderId.value,
     status: paymentStatus.value
   })
+
+  if (paymentStatus.value !== 'success') {
+    fetchBankAccounts()
+  }
 })
 
 const statusTheme = computed(() => {

@@ -91,14 +91,67 @@
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
         </div>
       </div>
-      <div v-show="activeMethod === 'manual'" class="p-4 border-t border-gray-200 bg-blue-50/50">
-        <div class="flex items-start gap-3 p-2">
-          <div class="mt-0.5 text-blue-600">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <div v-show="activeMethod === 'manual'" class="p-5 border-t border-gray-200 bg-slate-50/70 space-y-4">
+        <!-- Notice banner -->
+        <div class="flex items-start gap-3 p-3.5 bg-blue-50/80 border border-blue-100 rounded-xl text-blue-900 text-xs leading-relaxed">
+          <div class="mt-0.5 text-[#0D1DAD] shrink-0">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
           </div>
-          <div class="text-sm text-blue-800">
-            Your booking will be held temporarily. Secure payment instructions (Zelle / Bank Transfer) will be sent to your email.
+          <div>
+            <span class="font-bold block text-blue-950">Reservation Hold (24 Hours)</span>
+            Your flight seats will be held. Transfer <strong>{{ currencySymbol }}{{ formatAmount(totalAmount) }}</strong> to the settlement account below. Details will also be dispatched to your email.
           </div>
+        </div>
+
+        <!-- Bank details card -->
+        <div v-if="loadingBankAccounts" class="p-4 bg-white rounded-xl border border-gray-200 animate-pulse text-xs text-gray-400 text-center">
+          Loading destination account details...
+        </div>
+        <div v-else-if="bankAccounts.length > 0" class="space-y-3">
+          <div v-for="(bank, bIdx) in bankAccounts" :key="bIdx" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+              <div>
+                <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">{{ bank.currency || props.currency }} Account</span>
+                <h4 class="text-sm font-black text-gray-900 mt-1">{{ bank.bankName }}</h4>
+              </div>
+              <span class="text-xs font-semibold text-gray-500">{{ bank.accountName }}</span>
+            </div>
+
+            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div>
+                <span class="text-[10px] font-bold uppercase text-gray-400 block">Account Number</span>
+                <span class="font-mono text-base font-black text-gray-900 tracking-wide">{{ bank.accountNumber }}</span>
+              </div>
+              <button 
+                type="button" 
+                @click.stop="copyAccount(bank.accountNumber)"
+                class="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-blue-500 hover:text-blue-600 text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+              >
+                <svg v-if="!copiedAccount" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <svg v-else class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>{{ copiedAccount ? 'Copied' : 'Copy' }}</span>
+              </button>
+            </div>
+
+            <div v-if="bank.routingNumber || bank.swiftCode" class="grid grid-cols-2 gap-2 text-[11px]">
+              <div v-if="bank.routingNumber" class="bg-slate-50 p-2 rounded-lg">
+                <span class="text-gray-400 font-bold block text-[10px] uppercase">Routing / Sort</span>
+                <span class="font-mono font-bold text-gray-800">{{ bank.routingNumber }}</span>
+              </div>
+              <div v-if="bank.swiftCode" class="bg-slate-50 p-2 rounded-lg">
+                <span class="text-gray-400 font-bold block text-[10px] uppercase">SWIFT / BIC</span>
+                <span class="font-mono font-bold text-gray-800">{{ bank.swiftCode }}</span>
+              </div>
+            </div>
+
+            <div v-if="bank.instructions" class="text-xs text-slate-600 bg-amber-50/50 border border-amber-100 rounded-lg p-2.5 leading-relaxed">
+              <span class="font-bold text-amber-900 block text-[10px] uppercase tracking-wider mb-0.5">Payment Memo / Note:</span>
+              {{ bank.instructions }}
+            </div>
+          </div>
+        </div>
+        <div v-else class="p-3.5 bg-white rounded-xl border border-gray-200 text-xs text-gray-600">
+          Transfer instructions will be provided in your confirmation email immediately upon booking.
         </div>
       </div>
     </div>
@@ -188,6 +241,7 @@ import { useAuth } from '~/composables/modules/auth/useAuth'
 import { useSettings } from '~/composables/useSettings'
 import { useNuxtApp } from '#app'
 import { flightsApi } from '@/api_factory/modules/flights'
+import { paymentsApi } from '@/api_factory/modules/payments'
 
 import affirm from '@/assets/img/affirm.svg'
 import klarna from '@/assets/img/klarna.png'
@@ -215,6 +269,32 @@ const isWalletLoading = ref(false)
 const showAdModal = ref(false)
 const showFundModal = ref(false)
 const selectedBnpl = ref('')
+
+const bankAccounts = ref<any[]>([])
+const loadingBankAccounts = ref(false)
+const copiedAccount = ref(false)
+
+const fetchBankAccounts = async () => {
+  loadingBankAccounts.value = true
+  try {
+    const { data } = await paymentsApi.getBankAccounts(props.currency)
+    const list = data?.data || data || []
+    bankAccounts.value = Array.isArray(list) ? list : []
+  } catch (e) {
+    console.warn('Failed to fetch bank accounts', e)
+  } finally {
+    loadingBankAccounts.value = false
+  }
+}
+
+const copyAccount = (num: string) => {
+  if (!num) return
+  navigator.clipboard?.writeText(num)
+  copiedAccount.value = true
+  const { $toast } = useNuxtApp() as any
+  $toast?.success?.('Account number copied!')
+  setTimeout(() => { copiedAccount.value = false }, 2000)
+}
 
 const bnplProviders = ref([
   { id: 'affirm', name: 'Affirm', logo: affirm },
@@ -254,6 +334,7 @@ const fetchWalletBalance = async () => {
 
 onMounted(() => {
   if (isLoggedIn.value) fetchWalletBalance()
+  fetchBankAccounts()
   const isDismissed = localStorage.getItem('flybeth_wallet_ad_dismissed')
   if (!isDismissed && isLoggedIn.value) {
     setTimeout(() => { showAdModal.value = true }, 1000)
@@ -261,6 +342,7 @@ onMounted(() => {
 })
 
 watch(() => props.currency, (newCurrency) => {
+  fetchBankAccounts()
   if (newCurrency === 'NGN') {
     activeMethod.value = 'paystack'
   } else {
@@ -275,6 +357,9 @@ const handleAdClose = () => {
 
 const toggleMethod = (method: string) => {
   activeMethod.value = method
+  if (method === 'manual') {
+    fetchBankAccounts()
+  }
 }
 
 
