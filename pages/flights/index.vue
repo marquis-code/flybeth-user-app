@@ -410,7 +410,7 @@
 
       </div>
 
-      <!-- Destination Info Blocks (Moved from top) -->
+      <!-- Destination Info Blocks (Moved from top) - Commented out per request
       <div v-if="searchQuery.destination" class="fp-dest-features mt-8">
         <div class="fp-df-grid">
           <div class="fp-df-item">
@@ -442,6 +442,7 @@
           </div>
         </div>
       </div>
+      -->
 
     </div>
 
