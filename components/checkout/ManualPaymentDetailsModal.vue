@@ -39,10 +39,18 @@
           >
             <div class="bank-info">
               <span class="bank-name">{{ account.bankName }}</span>
-              <span class="account-label">Account Number</span>
+              <span class="account-label">{{ account.bankName === 'Zelle' ? 'Zelle Tag / Handle' : 'Account Number' }}</span>
               <span class="account-number">{{ account.accountNumber }}</span>
               <span class="beneficiary-label">Beneficiary</span>
               <span class="beneficiary-name">{{ account.accountName }}</span>
+              <div v-if="account.bankName === 'Wells Fargo' || account.bankName === 'WellsFargo'" class="mt-2 pt-2 border-t border-gray-100 text-[11px] space-y-0.5">
+                <div><span class="text-gray-400 font-semibold">ACH Routing:</span> <span class="font-mono font-bold text-gray-800">111900659</span></div>
+                <div><span class="text-gray-400 font-semibold">Domestic Wire:</span> <span class="font-mono font-bold text-gray-800">121000248</span></div>
+                <div><span class="text-gray-400 font-semibold">SWIFT / BIC:</span> <span class="font-mono font-bold text-gray-800">WFBIUS6S</span></div>
+              </div>
+              <div v-else-if="account.bankName === 'Zelle'" class="mt-2 pt-2 border-t border-purple-100">
+                <span class="text-[10px] font-bold text-purple-700 uppercase">Scan Zelle QR Code in Mobile Banking App</span>
+              </div>
             </div>
             <div v-if="selectedAccount?.accountNumber === account.accountNumber" class="check-icon">
                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">

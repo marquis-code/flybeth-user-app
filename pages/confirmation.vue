@@ -245,22 +245,53 @@
           </div>
 
           <!-- Currency Selector Tabs (avoids massive vertical page scroll) -->
-          <div v-if="bankAccounts.length > 1" class="flex p-1 bg-slate-100 rounded-2xl gap-1">
+          <div v-if="bankAccounts.length > 1" class="flex flex-wrap p-1 bg-slate-100 rounded-2xl gap-1">
             <button 
               v-for="(acc, i) in bankAccounts" 
               :key="i"
               type="button"
               @click="selectedBankIdx = i"
-              class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center"
+              class="flex-1 min-w-[120px] py-2 px-3 rounded-xl text-xs font-bold transition-all text-center"
               :class="selectedBankIdx === i ? 'bg-white shadow-sm text-[#0D1DAD] font-extrabold' : 'text-slate-500 hover:text-slate-800'"
             >
-              {{ acc.currency }} Transfer ({{ acc.bankName }})
+              {{ acc.bankName === 'Zelle' ? 'Zelle® (Scan & Pay)' : `${acc.bankName} (${acc.currency})` }}
             </button>
           </div>
 
           <!-- Active Bank Account Details Box -->
           <div v-if="loadingBankAccounts" class="p-8 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl">
             Loading settlement credentials...
+          </div>
+
+          <!-- Zelle QR Card Display -->
+          <div v-else-if="activeBank && (activeBank.bankName === 'Zelle' || activeBank.qrCodeUrl)" class="bg-gradient-to-b from-purple-50/70 to-white rounded-2xl p-4 sm:p-5 border border-purple-200 space-y-4 text-center">
+            <div class="flex items-center justify-between pb-3 border-b border-purple-100">
+              <div class="text-left">
+                <span class="text-[10px] font-bold uppercase text-purple-400 block">Payment Method</span>
+                <span class="text-base font-black text-[#7414CA]">Zelle® Instant Payment</span>
+              </div>
+              <span class="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-100 px-2.5 py-1 rounded-md">
+                Instant Settlement
+              </span>
+            </div>
+
+            <!-- Zelle QR Card Display -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-purple-100 shadow-md max-w-sm mx-auto space-y-3">
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-[#7414CA] rounded-full text-xs font-extrabold">
+                <span>Scan in your banking app to pay</span>
+              </div>
+              <div class="flex justify-center p-2 bg-slate-50/60 rounded-xl border border-purple-50">
+                <img :src="activeBank.qrCodeUrl || '/zelle-qr.png'" alt="Zelle QR Code" class="w-56 h-auto object-contain rounded-lg" />
+              </div>
+              <div class="space-y-0.5">
+                <h4 class="text-base font-black text-gray-900 tracking-tight">{{ activeBank.accountName || 'FLYBETH LLC' }}</h4>
+                <p class="text-xs font-mono font-bold text-purple-700">at {{ activeBank.accountNumber || 'flybeth' }}</p>
+              </div>
+            </div>
+
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 text-left leading-relaxed">
+              <strong class="font-bold">Zelle Memo Note:</strong> Please include your reservation code <strong class="font-mono font-bold text-amber-950">{{ bookingRef }}</strong> in your Zelle transfer memo for immediate automated clearance.
+            </div>
           </div>
 
           <div v-else-if="activeBank" class="bg-slate-50/90 rounded-2xl p-4 sm:p-5 border border-slate-200/90 space-y-3.5">
@@ -296,7 +327,32 @@
               <span class="font-bold text-slate-900">{{ activeBank.accountName }}</span>
             </div>
 
-            <div v-if="activeBank.routingNumber || activeBank.swiftCode" class="grid grid-cols-2 gap-2 text-xs pt-1">
+            <!-- Wells Fargo Multi-Routing or Standard Routing -->
+            <div v-if="activeBank.bankName === 'Wells Fargo' || activeBank.bankName === 'WellsFargo'" class="space-y-2 pt-1 text-xs">
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div>
+                  <span class="text-slate-400 font-bold block text-[10px] uppercase">Direct Deposit & Electronic Payments (ACH)</span>
+                  <span class="font-mono font-bold text-slate-900">{{ activeBank.routingNumber || '111900659' }}</span>
+                </div>
+                <button type="button" @click="copyAccount(activeBank.routingNumber || '111900659')" class="text-xs text-[#0D1DAD] hover:underline font-bold">Copy</button>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div>
+                  <span class="text-slate-400 font-bold block text-[10px] uppercase">Domestic Wire Transfer</span>
+                  <span class="font-mono font-bold text-slate-900">{{ activeBank.domesticWireRouting || '121000248' }}</span>
+                </div>
+                <button type="button" @click="copyAccount(activeBank.domesticWireRouting || '121000248')" class="text-xs text-[#0D1DAD] hover:underline font-bold">Copy</button>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                <div>
+                  <span class="text-slate-400 font-bold block text-[10px] uppercase">International Wire Transfer (SWIFT / BIC)</span>
+                  <span class="font-mono font-bold text-slate-900">{{ activeBank.swiftCode || 'WFBIUS6S' }}</span>
+                </div>
+                <button type="button" @click="copyAccount(activeBank.swiftCode || 'WFBIUS6S')" class="text-xs text-[#0D1DAD] hover:underline font-bold">Copy</button>
+              </div>
+            </div>
+
+            <div v-else-if="activeBank.routingNumber || activeBank.swiftCode" class="grid grid-cols-2 gap-2 text-xs pt-1">
               <div v-if="activeBank.routingNumber" class="bg-white p-2.5 rounded-xl border border-slate-100">
                 <span class="text-slate-400 font-bold block text-[10px] uppercase">Routing / Sort</span>
                 <span class="font-mono font-bold text-slate-900">{{ activeBank.routingNumber }}</span>

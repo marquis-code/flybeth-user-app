@@ -70,6 +70,48 @@
       </div>
     </div>
 
+    <!-- Zelle Instant Payment -->
+    <div v-if="props.currency !== 'NGN'" class="border border-purple-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-[#7414CA] border-transparent': activeMethod === 'zelle'}">
+      <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('zelle')">
+        <div class="flex items-center gap-4">
+          <input type="radio" :checked="activeMethod === 'zelle'" class="w-5 h-5 text-[#7414CA] focus:ring-purple-500 border-gray-300" />
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-gray-900 flex items-center gap-2">
+              Pay with Zelle®
+              <span class="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-[#7414CA] px-2 py-0.5 rounded-full">Instant No-Fee</span>
+            </span>
+            <span class="text-[11px] text-gray-500 font-medium">Scan QR in Wells Fargo, Chase, BofA, or US mobile banking app</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-base font-black text-[#7414CA] italic tracking-tight">Zelle</span>
+        </div>
+      </div>
+      <div v-show="activeMethod === 'zelle'" class="p-5 border-t border-purple-100 bg-gradient-to-b from-purple-50/40 to-white space-y-4">
+        <!-- Zelle scan card -->
+        <div class="bg-white rounded-2xl p-5 border border-purple-100 shadow-sm flex flex-col items-center text-center space-y-3.5 max-w-sm mx-auto">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-[#7414CA] rounded-full text-xs font-extrabold">
+            <QrCode class="w-3.5 h-3.5" />
+            <span>Scan with your mobile banking app to pay</span>
+          </div>
+
+          <div class="p-3 bg-white rounded-2xl border border-purple-200 shadow-md">
+            <img src="/zelle-qr.png" alt="Zelle QR Code" class="w-56 h-auto object-contain rounded-xl" />
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="text-base font-black text-gray-900">FLYBETH LLC</h4>
+            <p class="text-xs text-purple-700 font-mono font-bold">at flybeth</p>
+            <p class="text-xs text-gray-600 font-medium">Total: <strong class="text-gray-900 font-extrabold">{{ currencySymbol }}{{ formatAmount(totalAmount) }}</strong></p>
+          </div>
+
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 text-left w-full leading-relaxed">
+            <strong>Important:</strong> After sending with Zelle, tap <strong>Complete Booking</strong> below. Your seat will be secured instantly and ticket issued upon automatic transaction confirmation.
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Invoice / Bank Transfer -->
     <div class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'manual'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('manual')">
@@ -261,7 +303,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { AlertCircle, Wallet, ShieldCheck, Lock, Mail, Check } from 'lucide-vue-next'
+import { AlertCircle, Wallet, ShieldCheck, Lock, Mail, Check, QrCode } from 'lucide-vue-next'
 import DigitalWallets from './DigitalWallets.vue'
 import WalletAdModal from './WalletAdModal.vue'
 import FundWalletModal from './FundWalletModal.vue'
@@ -455,6 +497,8 @@ const handlePay = () => {
     emit('complete-payment', { provider: 'stripe', channel: 'card' })
   } else if (activeMethod.value === 'paystack') {
     emit('complete-payment', { provider: 'paystack', channel: 'card' })
+  } else if (activeMethod.value === 'zelle') {
+    emit('complete-payment', { provider: 'manual', channel: 'zelle', paymentModel: 'on_hold' })
   } else if (activeMethod.value === 'manual') {
     emit('complete-payment', { provider: 'manual', channel: 'transfer', paymentModel: 'on_hold' })
   } else {
