@@ -276,23 +276,58 @@
 
     <div class="ck-tf-foot px-2 sm:px-4">
        <div class="flex flex-col gap-3 mb-4">
-          <label class="ck-tf-terms">
-             <input type="checkbox" v-model="saveForFuture" class="ck-tf-chk custom-checkbox" />
-             <span class="font-bold text-black">Save traveler and contact information for future bookings</span>
+          <!-- Save for future checkbox card -->
+          <label 
+             class="flex items-start sm:items-center gap-3.5 p-3.5 sm:p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none group"
+             :class="saveForFuture ? 'bg-blue-50/40 border-[#0D1DAD]/40 shadow-sm' : 'bg-slate-50/50 hover:bg-slate-100/60 border-slate-200 hover:border-slate-300'"
+          >
+             <div class="relative flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                <input type="checkbox" v-model="saveForFuture" class="sr-only" />
+                <div 
+                   class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200"
+                   :class="saveForFuture ? 'bg-[#0D1DAD] border-[#0D1DAD] text-white shadow-sm shadow-[#0D1DAD]/30 scale-100' : 'border-slate-300 bg-white group-hover:border-slate-400'"
+                >
+                   <svg v-if="saveForFuture" class="w-4 h-4 stroke-current stroke-[3] fill-none" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                   </svg>
+                </div>
+             </div>
+             <span class="text-sm font-bold text-slate-900 group-hover:text-black leading-snug">
+                Save traveler and contact information for future bookings
+             </span>
           </label>
-          <div v-if="!isLoggedIn" class="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl mb-2 flex items-center gap-3">
-             <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
+
+          <!-- Guest Mode Active notice -->
+          <div v-if="!isLoggedIn" class="p-4 bg-blue-50/60 border border-blue-100/80 rounded-2xl flex items-center gap-3.5">
+             <div class="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center text-[#0D1DAD] flex-shrink-0">
+               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
              </div>
              <div>
-                <p class="text-[11px] font-black text-blue-900  ">Guest Mode Active</p>
-                <p class="text-sm text-blue-700/70 font-medium">You're booking without an account. We'll send your ticket to the email below.</p>
+                <p class="text-xs font-black text-blue-950 uppercase tracking-wide">Guest Mode Active</p>
+                <p class="text-xs sm:text-sm text-blue-800/80 font-medium mt-0.5">You're booking without an account. We'll send your ticket to the email below.</p>
              </div>
           </div>
-          <label class="ck-tf-terms">
-             <input type="checkbox" v-model="termsAccepted" class="ck-tf-chk custom-checkbox" />
-             <span v-if="isFlightBooking">I verify that all names stated above are identical to those in the original travel documents.</span>
-             <span v-else>I confirm that the contact details and names provided above are accurate.</span>
+
+          <!-- Terms acceptance verification checkbox card -->
+          <label 
+             class="flex items-start sm:items-center gap-3.5 p-3.5 sm:p-4 rounded-2xl border transition-all duration-200 cursor-pointer select-none group"
+             :class="termsAccepted ? 'bg-blue-50/40 border-[#0D1DAD]/40 shadow-sm' : 'bg-slate-50/50 hover:bg-slate-100/60 border-slate-200 hover:border-slate-300'"
+          >
+             <div class="relative flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                <input type="checkbox" v-model="termsAccepted" class="sr-only" />
+                <div 
+                   class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200"
+                   :class="termsAccepted ? 'bg-[#0D1DAD] border-[#0D1DAD] text-white shadow-sm shadow-[#0D1DAD]/30 scale-100' : 'border-slate-300 bg-white group-hover:border-slate-400'"
+                >
+                   <svg v-if="termsAccepted" class="w-4 h-4 stroke-current stroke-[3] fill-none" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                   </svg>
+                </div>
+             </div>
+             <span class="text-sm font-semibold text-slate-800 group-hover:text-black leading-snug">
+                <span v-if="isFlightBooking">I verify that all names stated above are identical to those in the original travel documents.</span>
+                <span v-else>I confirm that the contact details and names provided above are accurate.</span>
+             </span>
           </label>
        </div>
        <button 

@@ -103,7 +103,7 @@
       </div>
     </div>
 
-    <!-- Digital Wallets -->
+    <!-- Digital Wallets (Commented out as requested)
     <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'wallet'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('wallet')">
         <div class="flex items-center gap-4">
@@ -115,8 +115,9 @@
         <DigitalWallets :amount="totalAmount" :currency="currency" @authorize="$emit('wallet-authorize', $event)" />
       </div>
     </div>
+    -->
 
-    <!-- BNPL Payment -->
+    <!-- BNPL Payment (Commented out as requested - not activated yet)
     <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all mt-4" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'bnpl'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('bnpl')">
         <div class="flex items-center gap-4">
@@ -138,6 +139,7 @@
         </div>
       </div>
     </div>
+    -->
 
     <!-- Flybeth Wallet (Commented out as requested)
     <div v-if="isLoggedIn" class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'wallet'}">

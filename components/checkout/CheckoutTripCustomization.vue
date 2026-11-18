@@ -109,17 +109,29 @@
       </div>
 
       <div v-if="baggageServices.length > 0" class="space-y-3">
-        <div v-for="bag in baggageServices" :key="bag.id" class="border border-gray-200 rounded-xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div 
+          v-for="bag in baggageServices" 
+          :key="bag.id" 
+          @click="toggleAddon(bag)"
+          class="border rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-4 cursor-pointer transition-all duration-200 select-none"
+          :class="isAddonSelected(bag.id) ? 'border-[#0D1DAD] bg-blue-50/40 shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'"
+        >
           <div>
             <h4 class="font-bold text-gray-900">{{ bag.name }}</h4>
             <p class="text-sm text-gray-500 mt-0.5">+{{ formatPriceValue(bag.price) }}</p>
           </div>
           <button 
-            @click="toggleAddon(bag)"
-            class="px-6 py-2.5 rounded-full border text-sm font-bold transition-colors shrink-0"
-            :class="isAddonSelected(bag.id) ? 'bg-[#0D1DAD] border-[#0D1DAD] text-white' : 'border-[#0D1DAD] text-[#0D1DAD] hover:bg-[#F0F4FF]'"
+            type="button"
+            role="switch"
+            :aria-checked="isAddonSelected(bag.id)"
+            class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+            :class="isAddonSelected(bag.id) ? 'bg-[#0D1DAD]' : 'bg-gray-200'"
           >
-            {{ isAddonSelected(bag.id) ? 'Remove baggage' : 'Select baggage' }}
+            <span 
+              aria-hidden="true" 
+              class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out"
+              :class="isAddonSelected(bag.id) ? 'translate-x-5' : 'translate-x-0'"
+            />
           </button>
         </div>
       </div>
@@ -143,18 +155,27 @@
         </div>
       </div>
 
-      <div class="border border-gray-200 rounded-xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all"
-           :class="isAddonSelected('vip-support') ? 'bg-amber-50/30 border-amber-300 ring-1 ring-amber-300' : ''">
+      <div 
+        @click="toggleVipSupport()"
+        class="border rounded-2xl p-4 sm:p-5 flex items-center justify-between gap-4 cursor-pointer transition-all duration-200 select-none"
+        :class="isAddonSelected('vip-support') ? 'bg-blue-50/40 border-[#0D1DAD] ring-1 ring-[#0D1DAD] shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'"
+      >
         <div>
           <h4 class="font-bold text-gray-900">Priority Assistance</h4>
           <p class="text-sm text-gray-500 mt-0.5">+{{ formatPriceValue(ancillaryPrices.vipSupport) }} <span class="text-xs text-gray-400 font-normal">/ booking</span></p>
         </div>
         <button 
-          @click="toggleVipSupport()"
-          class="px-6 py-2.5 rounded-full border text-sm font-bold transition-all shrink-0 shadow-sm"
-          :class="isAddonSelected('vip-support') ? 'bg-amber-500 border-amber-500 text-white' : 'border-amber-500 text-amber-600 hover:bg-amber-50'"
+          type="button"
+          role="switch"
+          :aria-checked="isAddonSelected('vip-support')"
+          class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+          :class="isAddonSelected('vip-support') ? 'bg-[#0D1DAD]' : 'bg-gray-200'"
         >
-          {{ isAddonSelected('vip-support') ? 'Added to booking' : 'Add VIP Support' }}
+          <span 
+            aria-hidden="true" 
+            class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out"
+            :class="isAddonSelected('vip-support') ? 'translate-x-5' : 'translate-x-0'"
+          />
         </button>
       </div>
     </div>
