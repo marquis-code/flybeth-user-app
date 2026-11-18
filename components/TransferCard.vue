@@ -1,25 +1,25 @@
 <template>
   <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-200 group">
-    <div class="flex flex-col md:flex-row gap-6">
+    <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
       <!-- Vehicle Image/Icon -->
-      <div class="md:w-48 h-32 bg-white rounded-2xl flex items-center justify-center p-4 overflow-hidden relative">
+      <div class="w-full md:w-48 h-32 bg-gray-50/60 rounded-2xl flex items-center justify-center p-4 overflow-hidden relative shrink-0">
         <img v-if="vehicleImage" :src="vehicleImage" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" />
         <Car v-else class="h-12 w-12 text-gray-400 stroke-[1.5]" />
-        <div class="absolute top-2 left-2 bg-brand-green text-white text-[8px]  px-2 py-0.5 rounded-full uppercase ">
+        <div class="absolute top-2 left-2 bg-brand-green text-white text-[8px] px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">
           {{ transfer.category?.name || transfer.category || transfer.transferType || 'Standard' }}
         </div>
       </div>
 
       <!-- Details -->
       <div class="flex-grow space-y-4">
-        <div class="flex justify-between items-start">
+        <div class="flex justify-between items-start gap-4">
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-gray-900">{{ vehicleName }}</h3>
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 leading-snug">{{ vehicleName }}</h3>
             <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wide mt-0.5">{{ providerLabel }}</p>
           </div>
-          <div class="text-right">
+          <div class="text-right shrink-0">
             <p class="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">{{ displayPrice }}</p>
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total for 2 pax</p>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total for {{ transfer.passengers || transfer.pax || 2 }} pax</p>
           </div>
         </div>
 
@@ -42,14 +42,14 @@
           </div>
         </div>
 
-        <div class="flex justify-between items-center pt-2">
+        <div class="flex flex-wrap justify-between items-center gap-3 pt-2">
           <div class="flex items-center gap-1.5 text-emerald-700">
             <CheckCircleIcon class="h-3.5 w-3.5 text-emerald-600" />
             <span class="text-xs font-bold uppercase tracking-wider">Meet & Greet Included</span>
           </div>
           <button 
             @click="$emit('select', transfer)" 
-            class="h-9 sm:h-10 px-5 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+            class="h-9 sm:h-10 px-6 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-full font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
           >
             <span>Book Now</span>
           </button>

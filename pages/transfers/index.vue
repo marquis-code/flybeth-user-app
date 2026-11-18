@@ -31,7 +31,7 @@
         <div class="tr-bar">
 
           <!-- ORIGIN -->
-          <div class="tr-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+          <div class="tr-fld-wrap">
             <LocationPicker 
               v-model="searchQuery.origin" 
               label="Pick-up" 
@@ -43,7 +43,7 @@
           <div class="tr-bar-sep"></div>
 
           <!-- DESTINATION -->
-          <div class="tr-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+          <div class="tr-fld-wrap">
             <LocationPicker 
               v-model="searchQuery.destination" 
               label="Drop-off" 
@@ -55,7 +55,7 @@
           <div class="tr-bar-sep"></div>
 
           <!-- DATE -->
-          <div class="tr-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+          <div class="tr-fld-wrap">
             <FlightDateRangePicker 
               :departure="searchQuery.date" 
               mode="oneway" 
@@ -63,13 +63,15 @@
             />
           </div>
 
-          <button class="tr-search-btn" :class="{ 'tr-search-btn--busy': loading }" @click="handleSearch">
-            <span v-if="!loading">Search</span>
-            <span v-else class="tr-spin"></span>
-          </button>
-          <button class="tr-search-btn tr-search-btn--secondary" @click="showEditSearch = true">
-            Edit
-          </button>
+          <div class="tr-bar-actions">
+            <button class="tr-search-btn" :class="{ 'tr-search-btn--busy': loading }" @click="handleSearch">
+              <span v-if="!loading">Search</span>
+              <span v-else class="tr-spin"></span>
+            </button>
+            <button class="tr-search-btn tr-search-btn--secondary" @click="showEditSearch = true">
+              Edit
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -121,9 +123,21 @@
              <p>Try searching different locations or dates.</p>
           </div>
 
-          <div v-else class="tr-list">
+          <div v-else-if="!displayedTransfers.length" class="tr-empty">
+             <div class="tr-empty-ico"><Car class="w-12 h-12 text-gray-300 mx-auto" /></div>
+             <h3 class="text-base font-bold text-gray-900 mt-2">No transfers match selected filters</h3>
+             <p class="text-sm text-gray-500 mt-1">Try selecting different filter options or reset filters.</p>
+             <button 
+               @click="selectedTypes = []" 
+               class="mt-4 px-6 py-2.5 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all"
+             >
+               Clear Filters
+             </button>
+          </div>
+
+          <div v-else class="tr-list space-y-4">
              <TransferCard 
-               v-for="transfer in (step === 1 ? outboundTransfers : returnTransfers)" 
+               v-for="transfer in displayedTransfers" 
                :key="transfer.offerId || transfer.id" 
                :transfer="transfer"
                @select="selectTransfer" 
@@ -324,6 +338,31 @@ const toggleType = (t: string) => {
   const i = selectedTypes.value.indexOf(t)
   if (i >= 0) selectedTypes.value.splice(i, 1); else selectedTypes.value.push(t)
 }
+
+const isTransferMatch = (t: any, type: string) => {
+  const normType = type.toUpperCase().trim()
+  const tCat = String(t.category?.name || t.category || '').toUpperCase()
+  const tType = String(t.transferType || '').toUpperCase()
+  const vName = String(t.vehicle_name || t.vehicle?.name || t.vehicleDescription || '').toUpperCase()
+  const fullText = `${tCat} ${tType} ${vName}`
+
+  if (normType === 'PRIVATE') {
+    return fullText.includes('PRIVATE') || fullText.includes('SEDAN') || fullText.includes('SUV') || fullText.includes('MINIVAN') || fullText.includes('STANDARD')
+  }
+  if (normType === 'SHARED') {
+    return fullText.includes('SHARED') || fullText.includes('SHUTTLE') || fullText.includes('BUS') || fullText.includes('COACH')
+  }
+  if (normType === 'LUXURY') {
+    return fullText.includes('LUXURY') || fullText.includes('VIP') || fullText.includes('PREMIUM') || fullText.includes('FIRST') || fullText.includes('BUSINESS') || fullText.includes('MERCEDES') || fullText.includes('BMW') || fullText.includes('AUDI') || fullText.includes('TESLA')
+  }
+  return true
+}
+
+const displayedTransfers = computed(() => {
+  const list = step.value === 1 ? outboundTransfers.value : returnTransfers.value
+  if (!selectedTypes.value.length) return list
+  return list.filter(t => selectedTypes.value.some(type => isTransferMatch(t, type)))
+})
 
 /**
  * Maps the sidebar chips onto the backend `transferType` enum.
@@ -559,46 +598,147 @@ onUnmounted(() => {
 <style scoped>
 .tr-root { min-height: 100vh; background: #fff; font-family: 'Satoshi', sans-serif; color: #111; }
 .tr-wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.tr-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 44px 0 56px; position: relative; z-index: 30; }
+.tr-hero { background: #0D1DAD; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 40px 0 52px; position: relative; z-index: 30; }
 .tr-hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.tr-headline { margin-bottom: 30px; position: relative; z-index: 10; }
+.tr-headline { margin-bottom: 24px; position: relative; z-index: 10; }
 .tr-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); letter-spacing: 0.2em; }
-.tr-h1 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
+.tr-h1 { font-size: clamp(24px, 4vw, 38px); font-weight: 800; color: #ffffff; letter-spacing: -0.02em; }
 .tr-h1 em, .tr-h1 span { font-style: normal; color: #FF8A00; }
-.tr-bar { background: #fff; border: 1.5px solid #eaeaea; border-radius: 20px; display: flex; align-items: stretch; box-shadow: 0 4px 20px rgba(0,0,0,0.04); position: relative; z-index: 50; }
-.tr-fld { flex: 1; position: relative; cursor: pointer; }
-.tr-fld-inner { padding: 15px 20px; display: flex; align-items: center; gap: 12px; }
-.tr-fld-inner:hover { background: #f9f9f9; border-radius: 18px; }
-.tr-fld-ico { color: #ccc; }
-.tr-fld-lbl { font-size: 9px; font-weight: 700; color: #bbb; text-transform: uppercase; display: block; }
-.tr-fld-val { font-size: 13px; font-weight: 500; color: #444; }
-.tr-fld-val--set { color: #111; }
-.tr-bar-sep { width: 1px; background: #f0f0ea; margin: 12px 0; }
-.tr-search-btn { background: #0D1DAD; color: #fff; border: none; padding: 0 20px; border-radius: 14px; margin: 6px; font-weight: 700; cursor: pointer; transition: background 0.16s ease; }
+
+.tr-bar { 
+  background: #fff; 
+  border: 1.5px solid #eaeaea; 
+  border-radius: 9999px; 
+  display: flex; 
+  align-items: center; 
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+  position: relative; 
+  z-index: 50; 
+  padding: 6px 8px;
+}
+.tr-fld-wrap { 
+  flex: 1; 
+  min-width: 0; 
+}
+.tr-bar-sep { width: 1px; height: 36px; background: #f0f0ea; margin: 0 4px; flex-shrink: 0; }
+.tr-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+.tr-search-btn { 
+  background: #0D1DAD; 
+  color: #fff; 
+  border: none; 
+  padding: 0 24px; 
+  height: 46px; 
+  border-radius: 9999px; 
+  font-weight: 700; 
+  font-size: 13px;
+  cursor: pointer; 
+  transition: all 0.2s ease; 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
 .tr-search-btn:hover { background: #002a66; }
-.tr-search-btn--secondary { background: #f0f0ea; color: #111; }
-.tr-search-btn--secondary:hover { background: #e2e8f0; color: #111; }
-.tr-drop { position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 280px; z-index: 100; padding: 8px; }
-.tr-drop-search { padding: 8px; border-bottom: 1px solid #f5f5f5; margin-bottom: 8px; }
-.tr-drop-input { width: 100%; border: none; outline: none; font-size: 13px; }
-.tr-loc-result { width: 100%; text-align: left; padding: 10px; border: none; background: none; font-size: 13px; cursor: pointer; border-radius: 8px; }
-.tr-loc-result:hover { background: #f0f7ff; }
-.tr-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 10px; }
-.tr-cal-dow { font-size: 10px; color: #bbb; text-align: center; }
-.tr-cal-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; border-radius: 4px; }
-.tr-cal-cell--sel { background: #3b82f6; color: #fff; }
-.tr-main { padding-top: 40px; padding-bottom: 80px; }
-.tr-body { display: grid; grid-template-columns: 200px 1fr; gap: 40px; }
+.tr-search-btn--secondary { 
+  background: #f1f5f9; 
+  color: #1e293b; 
+}
+.tr-search-btn--secondary:hover { background: #e2e8f0; color: #0f172a; }
+
+.tr-main { padding-top: 36px; padding-bottom: 80px; }
+.tr-body { display: grid; grid-template-columns: 220px 1fr; gap: 36px; }
 .tr-sbar { position: sticky; top: 20px; }
-.tr-sb-label { font-size: 10px; font-weight: 700; color: #bbb; text-transform: uppercase; margin-bottom: 15px; }
+.tr-sb-label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
 .tr-chips { display: flex; flex-direction: column; gap: 8px; }
-.tr-chip { padding: 8px 12px; border: 1px solid #eee; background: #fff; border-radius: 10px; font-size: 12px; cursor: pointer; text-align: left; }
-.tr-chip--on { border-color: #3b82f6; background: #f0f7ff; color: #3b82f6; font-weight: 600; }
-.tr-skel { height: 120px; background: #f9f9f9; border-radius: 15px; margin-bottom: 20px; }
-.tr-empty { text-align: center; padding: 100px 0; }
-.tr-empty-ico { font-size: 40px; margin-bottom: 20px; }
+.tr-chip { 
+  padding: 10px 16px; 
+  border: 1.5px solid #e2e8f0; 
+  background: #fff; 
+  border-radius: 9999px; 
+  font-size: 13px; 
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer; 
+  text-align: center; 
+  transition: all 0.2s ease;
+}
+.tr-chip:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+.tr-chip--on { 
+  border-color: #0D1DAD; 
+  background: #0D1DAD; 
+  color: #fff; 
+  box-shadow: 0 4px 12px rgba(13, 29, 173, 0.2); 
+}
+.tr-skel { height: 120px; background: #f9f9f9; border-radius: 20px; margin-bottom: 20px; }
+.tr-empty { text-align: center; padding: 60px 20px; background: #f8fafc; border-radius: 24px; border: 1.5px dashed #e2e8f0; }
+.tr-empty-ico { margin-bottom: 12px; }
 .tr-spin { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive styles */
+@media (max-width: 860px) {
+  .tr-wrap { padding: 0 16px; }
+  .tr-hero { padding: 24px 0 32px; }
+  .tr-headline { margin-bottom: 18px; }
+  .tr-bar {
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 24px;
+    padding: 14px;
+    gap: 8px;
+  }
+  .tr-bar-sep {
+    display: none;
+  }
+  .tr-fld-wrap {
+    width: 100%;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 6px;
+  }
+  .tr-bar-actions {
+    margin-left: 0;
+    margin-top: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  .tr-search-btn {
+    width: 100%;
+    height: 48px;
+  }
+  .tr-main { padding-top: 24px; padding-bottom: 48px; }
+  .tr-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .tr-sidebar {
+    width: 100%;
+  }
+  .tr-sbar {
+    position: static;
+  }
+  .tr-chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tr-chip {
+    padding: 8px 18px;
+    border-radius: 9999px;
+    font-size: 13px;
+  }
+}
 
 /* Modal Styles */
 .tr-modal-fade-enter-active, .tr-modal-fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }

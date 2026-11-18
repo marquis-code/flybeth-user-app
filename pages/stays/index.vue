@@ -454,7 +454,7 @@
  
                 <!-- Amenity chips -->
                 <div v-if="stay.amenities?.length || stay.facilities?.length" class="sp-card-amenities">
-                  <span v-for="am in (stay.amenities || stay.facilities || []).slice(0,3)" :key="am" class="sp-card-amen">{{ am }}</span>
+                  <span v-for="(am, ai) in (stay.amenities || stay.facilities || []).slice(0,3)" :key="ai" class="sp-card-amen">{{ formatAmenity(am) }}</span>
                 </div>
  
                 <!-- Price row -->
@@ -643,6 +643,52 @@ const maxPrice = computed(() => {
 })
 watch(maxPrice, v => { maxPriceFilter.value = v }, { immediate: true })
  
+const formatAmenity = (am: any): string => {
+  if (!am) return ''
+  if (typeof am === 'string') {
+    if (am.trim().startsWith('{') && am.trim().endsWith('}')) {
+      try {
+        const parsed = JSON.parse(am)
+        return formatAmenity(parsed)
+      } catch (e) {}
+    }
+    const upper = am.toUpperCase().trim()
+    if (upper === 'WIFI') return 'Free WiFi'
+    if (upper === 'POOL') return 'Swimming Pool'
+    if (upper === 'GYM' || upper === 'FITNESS') return 'Fitness Centre'
+    if (upper === 'SPA') return 'Spa'
+    if (upper === 'PARKING') return 'Free Parking'
+    if (upper === 'BREAKFAST') return 'Breakfast Incl.'
+    if (upper === 'RESTAURANT') return 'Restaurant'
+    if (upper === 'AC' || upper === 'AIR_CONDITIONING') return 'Air Conditioning'
+    if (upper === 'PRIVATE_BEACH') return 'Private Beach'
+    return am
+      .replace(/_/g, ' ')
+      .split(' ')
+      .filter(Boolean)
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ')
+  }
+  const raw = am.description || am.name || am.label || am.type || ''
+  if (typeof raw !== 'string') return ''
+  const upper = raw.toUpperCase().trim()
+  if (upper === 'WIFI') return 'Free WiFi'
+  if (upper === 'POOL') return 'Swimming Pool'
+  if (upper === 'GYM' || upper === 'FITNESS') return 'Fitness Centre'
+  if (upper === 'SPA') return 'Spa'
+  if (upper === 'PARKING') return 'Free Parking'
+  if (upper === 'BREAKFAST') return 'Breakfast Incl.'
+  if (upper === 'RESTAURANT') return 'Restaurant'
+  if (upper === 'AC' || upper === 'AIR_CONDITIONING') return 'Air Conditioning'
+  if (upper === 'PRIVATE_BEACH') return 'Private Beach'
+  return raw
+    .replace(/_/g, ' ')
+    .split(' ')
+    .filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
+}
+
 const filteredStays = computed(() => {
   let list = [...displayedStays.value]
   // Type
@@ -652,6 +698,29 @@ const filteredStays = computed(() => {
   // Stars
   if (activeStars.value.length) {
     list = list.filter((s: any) => activeStars.value.includes(Math.round(s.starRating || s.rating || 0)))
+  }
+  // Amenities
+  if (activeAmenities.value.length) {
+    list = list.filter((s: any) => {
+      const stayAmens = (s.amenities || s.facilities || []).map((a: any) => {
+        if (!a) return ''
+        if (typeof a === 'string') return a.toLowerCase()
+        return `${a.type || ''} ${a.description || ''} ${a.name || ''} ${a.label || ''}`.toLowerCase()
+      })
+      return activeAmenities.value.every((reqKey: string) => {
+        const k = reqKey.toLowerCase()
+        return stayAmens.some((aStr: string) => {
+          if (aStr.includes(k)) return true
+          if (k === 'wifi' && (aStr.includes('internet') || aStr.includes('wi-fi') || aStr.includes('wireless'))) return true
+          if (k === 'pool' && (aStr.includes('swimming') || aStr.includes('plunge'))) return true
+          if (k === 'gym' && (aStr.includes('fitness') || aStr.includes('workout') || aStr.includes('exercise'))) return true
+          if (k === 'parking' && (aStr.includes('garage') || aStr.includes('valet'))) return true
+          if (k === 'breakfast' && (aStr.includes('morning') || aStr.includes('buffet') || aStr.includes('dining'))) return true
+          if (k === 'ac' && (aStr.includes('air') || aStr.includes('conditioning') || aStr.includes('climate'))) return true
+          return false
+        })
+      })
+    })
   }
   // Price
   list = list.filter((s: any) => customerPrice(s) <= maxPriceFilter.value)
@@ -1024,7 +1093,7 @@ onMounted(async () => {
   flex-shrink: 0;
   background: #0D1DAD;
   border: none;
-  border-radius: 12px;
+  border-radius: 9999px;
   color: #fff;
   font-family: 'Satoshi', sans-serif;
   font-size: 13px;
@@ -1373,7 +1442,7 @@ onMounted(async () => {
 .sp-card-price-wrap { display: flex; align-items: baseline; gap: 3px; }
 .sp-card-price { font-size: 20px; font-weight: 700; color: #111; letter-spacing: -0.03em; }
 .sp-card-per { font-size: 10px; color: #bbb; font-weight: 500; }
-.sp-card-cta { font-size: 11px; font-weight: 700; color: #0D1DAD; background: #EEF2F6; border: none; border-radius: 7px; padding: 7px 12px; cursor: pointer; transition: all 0.14s; white-space: nowrap; }
+.sp-card-cta { font-size: 11px; font-weight: 700; color: #0D1DAD; background: #EEF2F6; border: none; border-radius: 9999px; padding: 7px 16px; cursor: pointer; transition: all 0.14s; white-space: nowrap; }
 .sp-card-cta:hover { background: #0D1DAD; color: #fff; }
  
 /* Pending cart pill */
@@ -1447,7 +1516,7 @@ onMounted(async () => {
   .sp-bar-sep { height: 1px; width: 100%; margin: 0; }
   .sp-fld--date { flex: 1 0 45%; }
   .sp-fld--guests { flex: 1 0 50%; }
-  .sp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
+  .sp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 9999px; min-height: 46px; }
   .sp-cards { grid-template-columns: 1fr; }
 }
  
