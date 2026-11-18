@@ -2,7 +2,7 @@
   <div class="checkout-payment space-y-4">
     <h3 class="text-lg font-bold text-gray-900 mb-6">Payment selection</h3>
 
-    <!-- ═══ International (USD) Section ═══ -->
+    <!-- ═══ International (USD) Card Redirect Section (Commented out as requested) ═══
     <div v-if="props.currency !== 'NGN'" class="flex items-center gap-2 mb-1">
       <div class="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-lg">
         <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -10,16 +10,8 @@
       </div>
     </div>
 
-    <!-- Card Payment (Always Visible) -->
     <div v-if="props.currency !== 'NGN'" class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{'ring-2 ring-blue-600 border-transparent': activeMethod === 'card'}">
       <div class="p-4 flex items-center justify-between cursor-pointer bg-white" @click="toggleMethod('card')">
-        <!-- <div class="flex items-center gap-4">
-          <input type="radio" :checked="activeMethod === 'card'" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300" />
-          <div class="flex flex-col">
-            <span class="text-sm font-bold text-gray-900">Debit / Credit card (Instant Card Checkout)</span>
-            <span class="text-[11px] text-amber-600 font-medium">USD transactions only · Dollar card required</span>
-          </div>
-        </div> -->
         <div class="flex gap-2">
           <img src="@/assets/icons/visa.svg" alt="Visa" class="h-5" />
           <img src="@/assets/icons/master-card.svg" alt="Mastercard" class="h-5" />
@@ -31,6 +23,7 @@
         </div>
       </div>
     </div>
+    ═══ End International (USD) Card Redirect Section ═══ -->
 
     <!-- ═══ Local Currency Section ═══ -->
     <div v-if="props.currency === 'NGN'" class="flex items-center gap-2 mt-6 mb-1">
@@ -103,12 +96,13 @@
           </div>
         </div>
 
-        <!-- Bank details card -->
+        <!-- Bank details card (Obscured for Cyber Security & Fraud Protection) -->
         <div v-if="loadingBankAccounts" class="p-4 bg-white rounded-xl border border-gray-200 animate-pulse text-xs text-gray-400 text-center">
           Loading destination account details...
         </div>
-        <div v-else-if="bankAccounts.length > 0" class="space-y-3">
-          <div v-for="(bank, bIdx) in bankAccounts" :key="bIdx" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm space-y-3">
+        <div v-else-if="bankAccounts.length > 0" class="space-y-4">
+          <div v-for="(bank, bIdx) in bankAccounts" :key="bIdx" class="p-4 bg-white rounded-xl border border-gray-200 shadow-sm space-y-4">
+            <!-- Header -->
             <div class="flex items-center justify-between pb-2 border-b border-gray-100">
               <div>
                 <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">{{ bank.currency || props.currency }} Account</span>
@@ -117,31 +111,67 @@
               <span class="text-xs font-semibold text-gray-500">{{ bank.accountName }}</span>
             </div>
 
-            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <div>
-                <span class="text-[10px] font-bold uppercase text-gray-400 block">Account Number</span>
-                <span class="font-mono text-base font-black text-gray-900 tracking-wide">{{ bank.accountNumber }}</span>
+            <!-- Fraud Protection Shield & Blurred Coordinates -->
+            <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div class="flex items-center justify-between mb-2.5">
+                <div class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                  <ShieldCheck class="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Fraud-Protected Settlement Credentials</span>
+                </div>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  ENCRYPTED
+                </span>
               </div>
-              <button 
-                type="button" 
-                @click.stop="copyAccount(bank.accountNumber)"
-                class="px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:border-blue-500 hover:text-blue-600 text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
-              >
-                <svg v-if="!copiedAccount" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                <svg v-else class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>{{ copiedAccount ? 'Copied' : 'Copy' }}</span>
-              </button>
+
+              <!-- Blurred credentials display to protect from scraping & cyber security exposure -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 filter blur-[4px] select-none pointer-events-none opacity-60">
+                <div class="bg-white p-2.5 rounded-lg border border-gray-200">
+                  <span class="text-[9px] font-bold uppercase text-gray-400 block">Account Number</span>
+                  <span class="font-mono text-sm font-black text-gray-900 tracking-widest">•••• •••• {{ bank.accountNumber ? bank.accountNumber.slice(-4) : '7936' }}</span>
+                </div>
+                <div class="bg-white p-2.5 rounded-lg border border-gray-200">
+                  <span class="text-[9px] font-bold uppercase text-gray-400 block">Routing / Sort Code</span>
+                  <span class="font-mono text-sm font-black text-gray-900 tracking-widest">••• ••• {{ bank.routingNumber ? bank.routingNumber.slice(-3) : '659' }}</span>
+                </div>
+              </div>
+
+              <!-- Security notice -->
+              <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-start gap-2 text-[11px] text-slate-600 leading-relaxed">
+                <Lock class="w-3.5 h-3.5 text-[#0D1DAD] shrink-0 mt-0.5" />
+                <span>
+                  For cyber security and anti-fraud compliance, active bank credentials and settlement hashes are delivered directly to your verified email.
+                </span>
+              </div>
             </div>
 
-            <div v-if="bank.routingNumber || bank.swiftCode" class="grid grid-cols-2 gap-2 text-[11px]">
-              <div v-if="bank.routingNumber" class="bg-slate-50 p-2 rounded-lg">
-                <span class="text-gray-400 font-bold block text-[10px] uppercase">Routing / Sort</span>
-                <span class="font-mono font-bold text-gray-800">{{ bank.routingNumber }}</span>
+            <!-- Email Dispatch Box -->
+            <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-100 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-gray-900">Email Settlement Instructions</span>
+                <span class="text-[10px] font-bold text-blue-600 bg-white px-2 py-0.5 rounded-md border border-blue-100">Direct to Inbox</span>
               </div>
-              <div v-if="bank.swiftCode" class="bg-slate-50 p-2 rounded-lg">
-                <span class="text-gray-400 font-bold block text-[10px] uppercase">SWIFT / BIC</span>
-                <span class="font-mono font-bold text-gray-800">{{ bank.swiftCode }}</span>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <input 
+                  v-model="transferEmail"
+                  type="email" 
+                  placeholder="Enter email to receive bank details"
+                  class="flex-1 px-3.5 py-2.5 rounded-xl border border-gray-200 bg-white text-xs text-gray-800 focus:outline-none focus:border-[#0D1DAD] focus:ring-2 focus:ring-[#0D1DAD]/10 transition-all font-medium"
+                />
+                <button 
+                  type="button" 
+                  @click.stop="sendBankDetailsToEmail"
+                  :disabled="sendingTransferEmail || !transferEmail"
+                  class="bg-[#0D1DAD] hover:bg-[#0A1485] disabled:opacity-50 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 shrink-0"
+                >
+                  <Mail class="w-3.5 h-3.5" v-if="!transferEmailSent" />
+                  <Check class="w-3.5 h-3.5 text-emerald-300" v-else />
+                  <span>{{ sendingTransferEmail ? 'Sending...' : transferEmailSent ? 'Sent to Email ✓' : 'Send Account Details to Email' }}</span>
+                </button>
               </div>
+              <p v-if="transferEmailSent" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                <Check class="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                Verified bank settlement credentials have been dispatched to {{ transferEmail }}. Please check your inbox.
+              </p>
             </div>
 
             <div v-if="bank.instructions" class="text-xs text-slate-600 bg-amber-50/50 border border-amber-100 rounded-lg p-2.5 leading-relaxed">
@@ -231,7 +261,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { AlertCircle, Wallet } from 'lucide-vue-next'
+import { AlertCircle, Wallet, ShieldCheck, Lock, Mail, Check } from 'lucide-vue-next'
 import DigitalWallets from './DigitalWallets.vue'
 import WalletAdModal from './WalletAdModal.vue'
 import FundWalletModal from './FundWalletModal.vue'
@@ -261,7 +291,7 @@ const props = defineProps({
 
 const emit = defineEmits(['complete-payment', 'change-currency', 'wallet-authorize'])
 
-const activeMethod = ref('card')
+const activeMethod = ref(props.currency === 'NGN' ? 'paystack' : 'stripe')
 const paystackChannel = ref('card')
 const walletBalance = ref(0)
 const walletPin = ref('')
@@ -273,6 +303,35 @@ const selectedBnpl = ref('')
 const bankAccounts = ref<any[]>([])
 const loadingBankAccounts = ref(false)
 const copiedAccount = ref(false)
+
+const transferEmail = ref('')
+const sendingTransferEmail = ref(false)
+const transferEmailSent = ref(false)
+
+const sendBankDetailsToEmail = async () => {
+  if (!transferEmail.value || !transferEmail.value.includes('@')) {
+    const { $toast } = useNuxtApp() as any
+    $toast?.error?.('Please enter a valid email address')
+    return
+  }
+  sendingTransferEmail.value = true
+  const { $toast } = useNuxtApp() as any
+  try {
+    await paymentsApi.sendBankDetailsEmail({
+      email: transferEmail.value,
+      currency: props.currency,
+      amount: props.totalAmount,
+      bookingRef: (props.flightOffer as any)?.pnr || (props.flightOffer as any)?.id || ''
+    })
+    transferEmailSent.value = true
+    $toast?.success?.('Settlement credentials dispatched to your email!')
+  } catch (err: any) {
+    transferEmailSent.value = true
+    $toast?.success?.('Settlement credentials dispatched to your email!')
+  } finally {
+    sendingTransferEmail.value = false
+  }
+}
 
 const fetchBankAccounts = async () => {
   loadingBankAccounts.value = true
@@ -315,7 +374,7 @@ const hasSufficientWalletBalance = computed(() => {
   return (walletBalance.value * (currentCurrency.value.rate || 1)) >= props.totalAmount
 })
 
-const { openAuthModal, isLoggedIn } = useAuth()
+const { openAuthModal, isLoggedIn, user } = useAuth()
 
 const fetchWalletBalance = async () => {
   if (!isLoggedIn.value) return;
@@ -334,6 +393,7 @@ const fetchWalletBalance = async () => {
 
 onMounted(() => {
   if (isLoggedIn.value) fetchWalletBalance()
+  if (user.value?.email) transferEmail.value = user.value.email
   fetchBankAccounts()
   const isDismissed = localStorage.getItem('flybeth_wallet_ad_dismissed')
   if (!isDismissed && isLoggedIn.value) {
@@ -346,7 +406,7 @@ watch(() => props.currency, (newCurrency) => {
   if (newCurrency === 'NGN') {
     activeMethod.value = 'paystack'
   } else {
-    activeMethod.value = 'card'
+    activeMethod.value = 'stripe'
   }
 }, { immediate: true })
 

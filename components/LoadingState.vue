@@ -7,14 +7,14 @@
     </div>
 
     <!-- Text Content -->
-    <div class="space-y-3">
+    <!-- <div class="space-y-3">
       <h3 class="text-sm  text-black uppercase  animate-pulse">
         Optimizing Flight Routes
       </h3>
       <p class="text-sm font-bold text-black uppercase  leading-relaxed">
         Our travel intelligence is curating the best fares globally...
       </p>
-    </div>
+    </div> -->
 
     <!-- Progress indicator -->
     <div class="mt-10 w-48 h-1 bg-black rounded-full overflow-hidden">
