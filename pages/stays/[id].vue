@@ -382,9 +382,9 @@
                   <div>
                     <h3 class="sd-room-name">{{ room.name }}</h3>
                     <div class="sd-room-amenities">
-                      <span v-for="(am, ai) in (room.amenities || []).slice(0, 4)" :key="ai" class="sd-room-amen">
+                      <span v-for="(am, ai) in getFormattedAmenities(room, 4)" :key="ai" class="sd-room-amen">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                        {{ typeof am === 'string' ? am : am.description }}
+                        {{ am }}
                       </span>
                     </div>
                   </div>
@@ -608,11 +608,9 @@ const searchQuery = reactive({
 // ── Computed ──────────────────────────────────────────────────────────
 const stayPhotos = computed(() => stayDetails.value?.photos || [])
 
-const stayAmenities = computed(() =>
-  (stayDetails.value?.amenities || []).map((a: any) => ({
-    label: typeof a === 'string' ? a : (a.description || a.type || a.name),
-  }))
-)
+const stayAmenities = computed(() => {
+  return getFormattedAmenities(stayDetails.value, 60).map(label => ({ label }))
+})
 
 const diffDays = computed(() => {
   const a = new Date(searchQuery.checkIn), b = new Date(searchQuery.checkOut)

@@ -28,7 +28,7 @@
         </div>
 
         <!-- ── SEARCH BAR ── -->
-        <div class="tr-bar">
+        <div class="tr-bar flex flex-col md:flex-row items-stretch md:items-center w-full">
 
           <!-- ORIGIN -->
           <div class="tr-fld-wrap">
@@ -78,15 +78,15 @@
 
     <!-- ═══════════════ CONTENT ═══════════════ -->
     <div class="tr-wrap tr-main">
-      <div class="tr-body">
+      <div class="tr-body flex flex-col lg:grid lg:grid-cols-[220px_1fr] gap-6 lg:gap-9">
         
         <!-- Sidebar filters -->
-        <aside class="tr-sidebar">
+        <aside class="tr-sidebar w-full lg:w-auto">
           <div class="tr-sbar">
             <p class="tr-sb-label">Transfer Type</p>
-            <div class="tr-chips">
+            <div class="tr-chips flex flex-row lg:flex-col overflow-x-auto gap-2 pb-2 lg:pb-0">
               <button v-for="type in ['Private', 'Shared', 'Luxury']" :key="type" 
-                class="tr-chip" 
+                class="tr-chip whitespace-nowrap shrink-0" 
                 :class="{ 'tr-chip--on': selectedTypes.includes(type) }"
                 @click="toggleType(type)"
               >{{ type }}</button>

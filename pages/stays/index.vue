@@ -453,8 +453,8 @@
                 </p>
  
                 <!-- Amenity chips -->
-                <div v-if="stay.amenities?.length || stay.facilities?.length" class="sp-card-amenities">
-                  <span v-for="(am, ai) in (stay.amenities || stay.facilities || []).slice(0,3)" :key="ai" class="sp-card-amen">{{ formatAmenity(am) }}</span>
+                <div v-if="getFormattedAmenities(stay).length" class="sp-card-amenities">
+                  <span v-for="(am, ai) in getFormattedAmenities(stay, 3)" :key="ai" class="sp-card-amen">{{ am }}</span>
                 </div>
  
                 <!-- Price row -->

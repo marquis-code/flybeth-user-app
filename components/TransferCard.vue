@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-200 group">
+  <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-200 group">
     <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
       <!-- Vehicle Image/Icon -->
       <div class="w-full md:w-48 h-32 bg-gray-50/60 rounded-2xl flex items-center justify-center p-4 overflow-hidden relative shrink-0">
@@ -42,14 +42,14 @@
           </div>
         </div>
 
-        <div class="flex flex-wrap justify-between items-center gap-3 pt-2">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-2">
           <div class="flex items-center gap-1.5 text-emerald-700">
             <CheckCircleIcon class="h-3.5 w-3.5 text-emerald-600" />
             <span class="text-xs font-bold uppercase tracking-wider">Meet & Greet Included</span>
           </div>
           <button 
             @click="$emit('select', transfer)" 
-            class="h-9 sm:h-10 px-6 bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-full font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+            class="h-10 px-6 w-full sm:w-auto bg-[#0D1DAD] hover:bg-[#002a66] text-white rounded-full font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0"
           >
             <span>Book Now</span>
           </button>
