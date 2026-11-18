@@ -1,6 +1,6 @@
 <template>
-  <div class="relative" ref="phoneRef">
-    <label v-if="label" class="text-sm text-brand-gray font-medium  mb-2 px-1 opacity-70  block">
+  <div class="relative font-sans" ref="phoneRef">
+    <label v-if="label" class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 px-0.5 block">
       {{ label }}
     </label>
 
@@ -9,11 +9,11 @@
       <button 
         type="button" 
         @click="showDropdown = !showDropdown"
-        class="flex items-center gap-2 px-4 bg-white border border-gray-200 border-r-0 rounded-l-2xl hover:bg-white transition-all text-sm font-bold text-black min-w-[100px] justify-center"
+        class="flex items-center gap-2 px-3.5 sm:px-4 bg-slate-50/80 border border-slate-200 border-r-0 rounded-l-2xl hover:bg-slate-100 transition-all text-sm font-bold text-slate-900 min-w-[95px] sm:min-w-[105px] justify-center"
       >
-        <span class="text-lg">{{ selectedCountry.flag }}</span>
-        <span class="text-xs  text-black">{{ selectedCountry.dialCode }}</span>
-        <svg class="h-3 w-3 text-brand-gray/40 transition-transform" :class="{ 'rotate-180': showDropdown }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <span class="text-base sm:text-lg">{{ selectedCountry.flag }}</span>
+        <span class="text-xs sm:text-sm font-mono font-bold text-slate-800">{{ selectedCountry.dialCode }}</span>
+        <svg class="h-3 w-3 text-slate-400 transition-transform" :class="{ 'rotate-180': showDropdown }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
@@ -22,12 +22,12 @@
       <div class="flex-grow relative">
         <input
           type="tel"
-          :placeholder="placeholder || '812 345 6789'"
+          :placeholder="placeholder || ''"
           :value="formatPhone(phoneNumber, selectedCountry.code)"
           @input="onPhoneInput"
-          class="w-full px-5 py-4 bg-white border border-gray-200 border-l-0 rounded-r-2xl focus:outline-none focus:ring-[0.5px] focus:ring-[#033958] focus:border-[#033958] transition-all duration-500 font-bold text-black placeholder-brand-gray/30"
+          class="w-full px-4.5 py-3.5 sm:py-3.5 bg-white border border-slate-200 border-l-0 rounded-r-2xl focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-[#0D1DAD] transition-all text-sm sm:text-base font-semibold text-slate-900 placeholder-slate-400"
         />
-        <div v-if="phoneNumber && phoneNumber.length >= 7" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#0D1DAD] pointer-events-none transition-all duration-300">
+        <div v-if="phoneNumber && phoneNumber.length >= 7" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600 pointer-events-none transition-all">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>

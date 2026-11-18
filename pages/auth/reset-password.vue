@@ -1,26 +1,29 @@
 <template>
-  <div class="space-y-8">
+  <div class="space-y-7 sm:space-y-8 font-sans">
     <div>
-      <h2 class="text-sm  text-brand-green uppercase  mb-4">Account Recovery</h2>
-      <h3 class="text-4xl  text-black  er">Reset Password</h3>
-      <p class="mt-3 text-sm text-brand-gray/60 font-bold">
-        Enter your new password below.
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#0D1DAD] text-[11px] font-black uppercase tracking-widest mb-3.5 shadow-sm">
+        <Sparkles class="w-3 h-3 text-[#0D1DAD]" />
+        <span>Account Recovery</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
+        Reset Password
+      </h1>
+      <p class="mt-2 text-sm text-slate-500 font-medium">
+        Enter your new secure password below.
       </p>
     </div>
 
-    <form class="space-y-6" @submit.prevent="handleResetPassword">
-      <div class="space-y-5">
+    <form class="space-y-5" @submit.prevent="handleResetPassword">
+      <div class="space-y-4">
         <UiBaseInput
           label="New Password"
           type="password"
-          placeholder="••••••••"
           v-model="resetData.newPassword"
           required
         />
         <UiBaseInput
           label="Confirm New Password"
           type="password"
-          placeholder="••••••••"
           v-model="confirmPassword"
           required
         />
@@ -29,9 +32,9 @@
       <button
         type="submit"
         :disabled="loading"
-        class="w-full py-4 bg-brand-blue text-white rounded-2xl text-sm  uppercase  shadow-[0_10px_30px_-5px_rgba(13,29,173,0.3)] hover:shadow-brand-blue/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-blue/20 disabled:opacity-50"
+        class="w-full h-12 sm:h-13 bg-[#0D1DAD] hover:bg-[#002a66] active:scale-[0.99] text-white rounded-2xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
       >
-        <span v-if="loading">Resetting...</span>
+        <RefreshCw v-if="loading" class="w-4 h-4 animate-spin" />
         <span v-else>Reset Password</span>
       </button>
     </form>
@@ -43,6 +46,7 @@ import { reactive, ref } from 'vue';
 import { useAuth } from '@/composables/modules/auth/useAuth';
 import { useRoute, useRouter } from 'vue-router';
 import { useCustomToast } from '@/composables/core/useCustomToast';
+import { Sparkles, RefreshCw } from 'lucide-vue-next';
 
 definePageMeta({
   layout: 'auth'

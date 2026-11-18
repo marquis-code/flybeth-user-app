@@ -1,37 +1,52 @@
 <template>
-  <div class="flex flex-col w-full font-body">
+  <div class="flex flex-col w-full font-sans">
     <label 
       v-if="label" 
       :for="id" 
-      class="text-[11px] uppercase  text-brand-gray  mb-2 px-1 opacity-70 "
+      class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 px-0.5"
     >
       {{ label }}
     </label>
     <div class="relative group">
       <div 
         v-if="icon" 
-        class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-black group-focus-within:text-black transition-colors duration-300"
+        class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#0D1DAD] transition-colors"
       >
-        <component :is="icon" class="h-5 w-5" aria-hidden="true" />
+        <component :is="icon" class="h-4 w-4" aria-hidden="true" />
       </div>
       <input
         :id="id"
-        :type="type"
+        :type="computedType"
         :value="modelValue"
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         :class="[
-          'block w-full bg-white border border-gray-200 rounded-[1.5rem] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all duration-500 font-bold text-black placeholder:text-black focus:outline-none focus:ring-4 focus:ring-brand-blue/5 focus:border-brand-blue focus:shadow-xl',
-          icon ? 'pl-14' : 'px-6',
-          'py-4 text-sm '
+          'block w-full bg-white border border-slate-200 rounded-2xl shadow-sm transition-all text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-[#0D1DAD] text-sm sm:text-base font-semibold',
+          icon ? 'pl-11' : 'px-4.5',
+          isPassword ? 'pr-12' : 'pr-4.5',
+          'py-3.5 sm:py-3.5'
         ]"
         v-bind="$attrs"
       />
+      <!-- Password visibility toggle button -->
+      <button
+        v-if="isPassword"
+        type="button"
+        @click="showPassword = !showPassword"
+        class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+        tabindex="-1"
+      >
+        <EyeOff v-if="showPassword" class="h-4 w-4" />
+        <Eye v-else class="h-4 w-4" />
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps({
+import { ref, computed } from 'vue'
+import { Eye, EyeOff } from 'lucide-vue-next'
+
+const props = defineProps({
   label: String,
   id: String,
   modelValue: [String, Number],
@@ -43,4 +58,13 @@ defineProps({
 })
 
 defineEmits(['update:modelValue'])
+
+const showPassword = ref(false)
+const isPassword = computed(() => props.type === 'password')
+const computedType = computed(() => {
+  if (isPassword.value) {
+    return showPassword.value ? 'text' : 'password'
+  }
+  return props.type
+})
 </script>
