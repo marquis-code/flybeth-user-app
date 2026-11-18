@@ -162,7 +162,7 @@
       >
         <div>
           <h4 class="font-bold text-gray-900">Priority Assistance</h4>
-          <p class="text-sm text-gray-500 mt-0.5">+{{ formatPriceValue(ancillaryPrices.vipSupport) }} <span class="text-xs text-gray-400 font-normal">/ booking</span></p>
+          <p class="text-sm text-gray-500 mt-0.5">{{ vipSupportLabel }} <span class="text-xs text-gray-400 font-normal">/ booking</span></p>
         </div>
         <button 
           type="button"
@@ -284,7 +284,7 @@ const props = defineProps({
 
 const emit = defineEmits(['continue', 'back', 'update:selectedAddOns', 'update:selectedSeats', 'update:seatPrice'])
 
-const { formatPrice, ancillaryPrices } = useSettings()
+const { formatPrice, ancillaryPrices, ancillaryPricingTypes } = useSettings()
 const tracking = useTracking()
 
 const seatPreference = ref(props.selectedSeats.length > 0 ? 'handpick' : 'random')
@@ -512,6 +512,25 @@ const toggleAddon = (addon: any) => {
   emit('update:selectedAddOns', current)
 }
 
+const calculatedVipPrice = computed(() => {
+  const isPercent = ancillaryPricingTypes.value?.vipSupport === 'percentage'
+  const raw = ancillaryPrices.value?.vipSupport ?? 15
+  if (isPercent) {
+    const base = Number(props.totalPrice || 0)
+    return Math.round((base * (raw / 100)) * 100) / 100
+  }
+  return raw
+})
+
+const vipSupportLabel = computed(() => {
+  const isPercent = ancillaryPricingTypes.value?.vipSupport === 'percentage'
+  const raw = ancillaryPrices.value?.vipSupport ?? 15
+  if (isPercent) {
+    return `+${raw}% (${formatPrice(calculatedVipPrice.value)})`
+  }
+  return `+${formatPriceValue(raw)}`
+})
+
 const toggleVipSupport = () => {
   const current = [...props.selectedAddOns]
   const idx = current.findIndex((a: any) => a.id === 'vip-support')
@@ -523,7 +542,7 @@ const toggleVipSupport = () => {
     current.push({ 
       id: 'vip-support', 
       name: 'VIP Priority Support', 
-      price: ancillaryPrices.value.vipSupport || 15,
+      price: calculatedVipPrice.value,
       type: 'internal',
       service_id: null
     })

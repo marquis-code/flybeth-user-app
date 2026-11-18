@@ -16,6 +16,13 @@ interface AncillaryPrices {
     vipSupport: number
 }
 
+export interface AncillaryPricingTypes {
+    bags: 'percentage' | 'fixed'
+    seats: 'percentage' | 'fixed'
+    insurance: 'percentage' | 'fixed'
+    vipSupport: 'percentage' | 'fixed'
+}
+
 export const defaultCurrencies: Currency[] = [
     { code: 'USD', name: 'US Dollar', symbol: '$', rate: 1, flag: 'https://flagcdn.com/us.svg' },
     { code: 'NGN', name: 'Nigerian Naira', symbol: '₦', rate: 1550, flag: 'https://flagcdn.com/ng.svg' },
@@ -90,6 +97,12 @@ const getInitialCurrency = (): Currency => {
 const currencies = ref<Currency[]>([...defaultCurrencies])
 const currentCurrency = ref<Currency>(getInitialCurrency())
 const ancillaryPrices = ref<AncillaryPrices>({ bags: 25, seats: 15, insurance: 12, vipSupport: 15 })
+const ancillaryPricingTypes = ref<AncillaryPricingTypes>({
+    bags: 'fixed',
+    seats: 'fixed',
+    insurance: 'fixed',
+    vipSupport: 'fixed'
+})
 const isLoading = ref(false)
 
 // Module-scoped single-flight cache for the settings/currency bootstrap.
@@ -196,13 +209,22 @@ export function useSettings() {
                 currentCurrency.value = updatedActive
             }
 
-            // Ancillary prices
+            // Ancillary prices & pricing types
             if (configData?.ancillaryPrices) {
                 ancillaryPrices.value = {
                     bags: configData.ancillaryPrices.bags ?? 25,
                     seats: configData.ancillaryPrices.seats ?? 15,
                     insurance: configData.ancillaryPrices.insurance ?? 12,
                     vipSupport: configData.ancillaryPrices.vipSupport ?? 15
+                }
+            }
+
+            if (configData?.ancillaryPricingTypes) {
+                ancillaryPricingTypes.value = {
+                    bags: configData.ancillaryPricingTypes.bags || 'fixed',
+                    seats: configData.ancillaryPricingTypes.seats || 'fixed',
+                    insurance: configData.ancillaryPricingTypes.insurance || 'fixed',
+                    vipSupport: configData.ancillaryPricingTypes.vipSupport || 'fixed'
                 }
             }
         } catch (error) {
@@ -272,6 +294,7 @@ export function useSettings() {
         currentCurrency,
         currencies,
         ancillaryPrices,
+        ancillaryPricingTypes,
         isLoading,
         setCurrency,
         formatPrice,
