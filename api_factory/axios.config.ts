@@ -282,6 +282,18 @@ instanceArray.forEach((instance) => {
         return Promise.reject(err);
       }
 
+      // ── 429: Rate Limit Exceeded ──────────────────────────────────
+      if (status === 429) {
+        const retryAfter = err.response.headers?.['retry-after'] || err.response.data?.retryAfter || 60;
+        const msg = err.response.data?.message || `Too many requests. For security reasons, please wait ${retryAfter}s before retrying.`;
+        showToast({
+          title: "Rate Limit Exceeded",
+          message: msg,
+          toastType: "error"
+        });
+        return Promise.reject(err);
+      }
+
       // ── All other errors ───────────────────────────────────────────
       if (!originalRequest.hideToast) {
         const errorMessage = err.response.data?.message || err.response.data?.errors?.[0]?.message || "Something went wrong";
