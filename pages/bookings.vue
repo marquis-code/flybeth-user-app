@@ -800,7 +800,7 @@ const printETicketReceipt = (bkg: any) => {
         </div>
 
         <div class="footer">
-          <p style="margin:0 0 4px;">Flybeth Global Travel Network &bull; Verified Electronic Ticket &bull; 24/7 Priority Support: 1-844-FLYBETH</p>
+          <p style="margin:0 0 4px;">Flybeth LLC Travel Network &bull; Verified Electronic Ticket &bull; 24/7 Priority Support: 1-844-FLYBETH</p>
           <p style="margin:0;">Thank you for choosing Flybeth. Please present this document along with your valid passport at check-in.</p>
         </div>
 

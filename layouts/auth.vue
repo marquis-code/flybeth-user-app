@@ -8,7 +8,7 @@
       <div class="absolute inset-0">
         <img 
           src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=85" 
-          alt="Flybeth Global Aviation & Flight Booking" 
+          alt="Flybeth LLC Aviation & Flight Booking" 
           class="w-full h-full object-cover scale-105 transition-transform duration-[10000ms] ease-out hover:scale-100"
         />
         
@@ -135,7 +135,7 @@
             <span>256-Bit SSL Encrypted & Protected</span>
           </div>
           <p class="font-medium text-center sm:text-right">
-            © {{ new Date().getFullYear() }} Flybeth Global LLC
+            © {{ new Date().getFullYear() }} Flybeth LLC
           </p>
         </div>
 
