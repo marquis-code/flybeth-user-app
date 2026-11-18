@@ -122,9 +122,8 @@
 
    <main class="ck-main">
   <div class="ck-wrap mx-auto">
-    <!-- Replace the flex div and its two children's class attributes -->
-      <!-- Main column: balanced comfortable width aligned with navbar -->
-      <div class="w-full max-w-5xl mx-auto space-y-8 pb-32 pt-0">
+      <!-- Main column: aligned with header back button and full ck-wrap width -->
+      <div class="w-full space-y-8 pb-32 pt-0">
         <!-- Persistent Trip Context & Dates Banner (Shown across all steps) -->
         <div v-if="tripDates.hasDates || priceDetailed" class="bg-white rounded-2xl sm:rounded-[22px] border border-gray-200/90 p-4 sm:p-5 shadow-sm transition-all duration-300">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
