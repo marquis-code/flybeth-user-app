@@ -455,6 +455,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTracking } from '@/composables/core/useTracking'
 import { paymentsApi } from '@/api_factory/modules/payments'
+import { bookingsApi } from '@/api_factory/modules/bookings'
 import BookingDetailsDrawer from '@/components/checkout/BookingDetailsDrawer.vue'
 import { 
   Check, 
@@ -609,6 +610,24 @@ onMounted(async () => {
       const savedEmail = sessionStorage.getItem('customerEmail') || sessionStorage.getItem('checkoutEmail')
       if (savedEmail) customerEmail.value = savedEmail
     } catch {
+      // ignore
+    }
+  }
+
+  // Fallback: If not in sessionStorage, load directly from PNR
+  if (bookingRef.value && !confirmedFlight.value) {
+    try {
+      const { data } = await bookingsApi.getByPnr(bookingRef.value)
+      const bkg = data.data || data
+      if (bkg) {
+        if (bkg.flights?.[0]) {
+          confirmedFlight.value = bkg.flights[0]
+        }
+        if (bkg.contactDetails?.email && !customerEmail.value) {
+          customerEmail.value = bkg.contactDetails.email
+        }
+      }
+    } catch (e) {
       // ignore
     }
   }

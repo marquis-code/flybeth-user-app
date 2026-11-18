@@ -1,4 +1,4 @@
-import { GATEWAY_ENDPOINT_WITH_AUTH } from "../axios.config";
+import { GATEWAY_ENDPOINT, GATEWAY_ENDPOINT_WITH_AUTH } from "../axios.config";
 
 export const bookingsApi = {
     create(data: any) {
@@ -8,10 +8,13 @@ export const bookingsApi = {
         return GATEWAY_ENDPOINT_WITH_AUTH.get("/bookings", { params });
     },
     getByPnr(pnr: string) {
-        return GATEWAY_ENDPOINT_WITH_AUTH.get(`/bookings/reference/${pnr}`);
+        return GATEWAY_ENDPOINT.get(`/bookings/reference/${pnr}`);
     },
     downloadReceipt(pnr: string) {
-        return GATEWAY_ENDPOINT_WITH_AUTH.get(`/bookings/reference/${pnr}/receipt`, { responseType: 'blob' });
+        return GATEWAY_ENDPOINT.get(`/bookings/reference/${pnr}/receipt`, { responseType: 'blob' });
+    },
+    getReceiptHtmlUrl(pnr: string) {
+        return `/api/v1/bookings/reference/${pnr}/receipt/html`;
     },
     getById(id: string) {
         return GATEWAY_ENDPOINT_WITH_AUTH.get(`/bookings/${id}`);

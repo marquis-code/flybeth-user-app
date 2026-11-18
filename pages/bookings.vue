@@ -331,7 +331,7 @@
                   <div class="min-w-0">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Full Name</p>
                     <p class="text-sm font-bold text-slate-900 mt-0.5 truncate">
-                      {{ booking.contactDetails?.firstName }} {{ booking.contactDetails?.lastName }}
+                      {{ leadTravelerName }}
                     </p>
                   </div>
                 </div>
@@ -643,11 +643,179 @@ const copyPnr = () => {
   setTimeout(() => { copied.value = false }, 2500)
 }
 
+const leadTravelerName = computed(() => {
+  if (!booking.value) return '—'
+  const cd = booking.value.contactDetails
+  // 1. Direct full name on contactDetails
+  if (cd?.name && typeof cd.name === 'string' && cd.name.trim()) {
+    return cd.name.trim()
+  }
+  // 2. Separate firstName & lastName on contactDetails
+  if (cd?.firstName || cd?.lastName) {
+    const combined = `${cd.firstName || ''} ${cd.lastName || ''}`.trim()
+    if (combined) return combined
+  }
+  // 3. User account details (if populated or embedded)
+  const u = booking.value.user
+  if (u && (u.firstName || u.lastName)) {
+    const un = `${u.firstName || ''} ${u.lastName || ''}`.trim()
+    if (un) return un
+  }
+  // 4. Passenger list from flights or booking level
+  const passengers = booking.value.flights?.[0]?.passengers || booking.value.passengers
+  if (Array.isArray(passengers) && passengers.length > 0) {
+    const p = passengers[0]
+    if (p) {
+      if (p.firstName || p.lastName) {
+        const title = p.title ? `${p.title} ` : ''
+        return `${title}${p.firstName || ''} ${p.lastName || ''}`.trim()
+      }
+      if (p.name && typeof p.name === 'string' && p.name.trim()) return p.name.trim()
+    }
+  }
+  // 5. Booking-level customer or lead passenger fields
+  if (booking.value.customerName) return booking.value.customerName
+  if (booking.value.leadPassenger?.name) return booking.value.leadPassenger.name
+  // 6. Name extracted from email address as fallback
+  if (cd?.email) {
+    const emailPrefix = cd.email.split('@')[0]
+    const formatted = emailPrefix.replace(/[._-]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+    if (formatted) return formatted
+  }
+  return 'Lead Traveler'
+})
+
 const resetSearch = () => {
   pnrInput.value = ''
   notFound.value = false
   booking.value = null
   navigateTo({ query: {} }, { replace: true })
+}
+
+const printETicketReceipt = (bkg: any) => {
+  if (typeof window === 'undefined' || !bkg) return
+  const win = window.open('', '_blank', 'width=850,height=950')
+  if (!win) {
+    showToast({ title: 'Pop-up Blocked', message: 'Please allow pop-ups to open your receipt print window', toastType: 'warning' })
+    return
+  }
+
+  const pnr = bkg.pnr || 'N/A'
+  const name = leadTravelerName.value
+  const email = bkg.contactDetails?.email || '—'
+  const phone = bkg.contactDetails?.phone || '—'
+  const date = formatDate(bkg.bookedAt || bkg.createdAt)
+  const total = formatPrice(bkg.pricing?.totalAmount)
+  const base = formatPrice(bkg.pricing?.baseFare)
+  const taxes = formatPrice(bkg.pricing?.taxes)
+  const isConfirmed = bkg.status === 'confirmed'
+
+  const flightSegmentsHtml = flightSlices.value.map((slice: any, i: number) => `
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#64748b; margin-bottom:10px;">
+        <span style="color:#0D1DAD; text-transform:uppercase;">Segment ${i + 1}</span>
+        <span>${getSliceAirline(slice) || 'Airline Carrier'} &bull; ${getSliceClass(slice)}</span>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div>
+          <div style="font-size:24px; font-weight:900; font-family:monospace; color:#0f172a;">${getSliceOrigin(slice)}</div>
+          <div style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">Departure</div>
+        </div>
+        <div style="font-size:12px; font-weight:700; color:#0D1DAD; text-transform:uppercase;">✈ Direct Flight</div>
+        <div style="text-align:right;">
+          <div style="font-size:24px; font-weight:900; font-family:monospace; color:#0f172a;">${getSliceDestination(slice)}</div>
+          <div style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">Arrival</div>
+        </div>
+      </div>
+    </div>
+  `).join('')
+
+  const printDoc = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Flybeth E-Ticket & Official Tax Receipt - ${pnr}</title>
+        <style>
+          @page { size: A4; margin: 15mm; }
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; margin: 0; padding: 24px; background: #fff; }
+          .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0D1DAD; padding-bottom: 16px; margin-bottom: 24px; }
+          .logo { height: 38px; }
+          .pnr-box { background: #f1f5f9; padding: 8px 16px; border-radius: 8px; font-family: monospace; font-size: 18px; font-weight: 900; color: #0D1DAD; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+          .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; }
+          .box-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 12px; letter-spacing: 0.5px; }
+          .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+          .row .label { color: #64748b; font-weight: 500; }
+          .row .val { color: #0f172a; font-weight: 700; }
+          .total-row { border-top: 2px solid #cbd5e1; padding-top: 10px; margin-top: 10px; font-size: 16px; font-weight: 900; color: #0D1DAD; }
+          .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+          .badge-confirmed { background: #dcfce7; color: #15803d; }
+          .badge-pending { background: #fef3c7; color: #b45309; }
+          .footer { margin-top: 32px; border-top: 1px dashed #cbd5e1; padding-top: 16px; text-align: center; font-size: 11px; color: #94a3b8; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <img class="logo" src="https://res.cloudinary.com/dlnjbkoju/image/upload/v1794986834/logo_qeatej.png" alt="Flybeth" />
+            <p style="margin:4px 0 0; font-size:11px; color:#64748b;">Global Flight Reservations & Travel Management</p>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:4px;">Booking Reference</div>
+            <div class="pnr-box">${pnr}</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <div>
+            <h2 style="margin:0; font-size:18px; font-weight:900; color:#0f172a;">Official E-Ticket & Tax Receipt</h2>
+            <p style="margin:2px 0 0; font-size:12px; color:#64748b;">Issued on ${date}</p>
+          </div>
+          <div>
+            <span class="badge ${isConfirmed ? 'badge-confirmed' : 'badge-pending'}">
+              ${isConfirmed ? 'Confirmed & Ticketed' : 'Payment Pending'}
+            </span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="box">
+            <div class="box-title">Lead Passenger & Contact</div>
+            <div class="row"><span class="label">Passenger Name:</span><span class="val">${name}</span></div>
+            <div class="row"><span class="label">Email:</span><span class="val">${email}</span></div>
+            <div class="row"><span class="label">Phone:</span><span class="val">${phone}</span></div>
+          </div>
+          <div class="box">
+            <div class="box-title">Payment & Fare Breakdown</div>
+            <div class="row"><span class="label">Base Fare:</span><span class="val">${base}</span></div>
+            <div class="row"><span class="label">Taxes & Mandatory Fees:</span><span class="val">${taxes}</span></div>
+            <div class="row total-row"><span class="label" style="color:#0D1DAD;">Total Paid:</span><span class="val">${total}</span></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#64748b; margin-bottom:12px; letter-spacing:0.5px;">Flight Itinerary</div>
+          ${flightSegmentsHtml}
+        </div>
+
+        <div class="footer">
+          <p style="margin:0 0 4px;">Flybeth Global Travel Network &bull; Verified Electronic Ticket &bull; 24/7 Priority Support: 1-844-FLYBETH</p>
+          <p style="margin:0;">Thank you for choosing Flybeth. Please present this document along with your valid passport at check-in.</p>
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        <\/script>
+      </body>
+    </html>
+  `
+
+  win.document.open()
+  win.document.write(printDoc)
+  win.document.close()
 }
 
 const downloadReceipt = async () => {
@@ -656,20 +824,28 @@ const downloadReceipt = async () => {
   
   try {
     const response = await bookingsApi.downloadReceipt(booking.value.pnr);
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `Receipt_${booking.value.pnr}.pdf`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast({ title: 'Success', message: 'Receipt downloaded successfully', toastType: 'success' });
+    // If backend returns a valid PDF blob
+    if (response?.data && (response.data.size > 100 || response.data.type?.includes('pdf'))) {
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Receipt_${booking.value.pnr}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      showToast({ title: 'Success', message: 'Receipt downloaded successfully', toastType: 'success' });
+      return;
+    }
   } catch (error: any) {
-    showToast({ title: 'Error', message: 'Failed to download receipt', toastType: 'error' });
+    console.warn('Backend PDF endpoint error, switching to browser print receipt generator:', error);
   } finally {
     downloadingReceipt.value = false;
   }
+
+  // Graceful high-fidelity printable receipt fallback
+  printETicketReceipt(booking.value);
 }
 
 const searchByPnr = async () => {
@@ -690,12 +866,27 @@ const searchByPnr = async () => {
 
 const handlePayment = () => {
   if (!booking.value) return
+  
+  if (import.meta.client) {
+    try {
+      if (booking.value.flights?.[0]) {
+        sessionStorage.setItem('selectedFlight', JSON.stringify(booking.value.flights[0]))
+      }
+      if (booking.value.contactDetails?.email) {
+        sessionStorage.setItem('customerEmail', booking.value.contactDetails.email)
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Navigate directly to the payment & confirmation settlement flow for this existing reservation
   navigateTo({
-    path: '/checkout',
+    path: '/confirmation',
     query: {
-      type: booking.value.type || 'flight',
-      id: booking.value._id,
-      provider: booking.value.provider || 'duffel',
+      pnr: booking.value.pnr,
+      orderId: booking.value._id || booking.value.id,
+      status: 'pending_payment',
     }
   })
 }
