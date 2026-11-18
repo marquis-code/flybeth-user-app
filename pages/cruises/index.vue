@@ -508,8 +508,9 @@ watch(() => searchQuery.departingMonth, (val) => {
   background: #0D1DAD;
   color: #fff;
   border: none;
-  border-radius: 12px;
-  padding: 0 24px;
+  border-radius: 9999px;
+  padding: 0 28px;
+  height: 48px;
   font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 700;
@@ -562,14 +563,34 @@ watch(() => searchQuery.departingMonth, (val) => {
 .cr-ov-enter-from, .cr-ov-leave-to { opacity: 0; }
 
 @media (max-width: 768px) {
-  .cr-hero { padding: 28px 0 40px; }
-  .cr-bar { flex-direction: column; border-radius: 16px; }
-  .cr-bar-sep { height: 1px; width: 100%; margin: 0; }
-  .cr-search-btn { margin: 8px; padding: 14px 20px; }
+  .cr-hero { padding: 24px 0 36px; }
+  .cr-bar { 
+    flex-direction: column; 
+    border-radius: 24px; 
+    padding: 14px;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .cr-bar-sep { display: none; }
+  .cr-fld { 
+    border: 1.5px solid #e2e8f0; 
+    border-radius: 16px; 
+    background: #fff; 
+    width: 100%; 
+  }
+  .cr-fld:focus-within {
+    border-color: #0D1DAD;
+  }
+  .cr-search-btn { 
+    margin: 4px 0 0; 
+    width: 100%;
+    min-height: 50px; 
+    border-radius: 9999px;
+  }
   .cr-drop { width: 100%; min-width: auto; }
 }
 
 @media (max-width: 640px) {
-  .cr-wrap { padding: 0 20px; }
+  .cr-wrap { padding: 0 16px; }
 }
 </style>

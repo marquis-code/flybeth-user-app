@@ -1507,16 +1507,25 @@ onMounted(async () => {
  
 @media (max-width: 860px) {
   .sp-bar {
-    flex-wrap: wrap;
-    border-radius: 14px;
-    padding: 6px;
-    gap: 0;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 24px;
+    padding: 14px;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
   }
-  .sp-fld--loc { flex: 1 0 100%; }
-  .sp-bar-sep { height: 1px; width: 100%; margin: 0; }
-  .sp-fld--date { flex: 1 0 45%; }
-  .sp-fld--guests { flex: 1 0 50%; }
-  .sp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 9999px; min-height: 46px; }
+  .sp-fld {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    background: #fff;
+    width: 100%;
+  }
+  .sp-fld:focus-within {
+    border-color: #0D1DAD;
+  }
+  .sp-fld--loc, .sp-fld--date, .sp-fld--guests { flex: 1 0 100%; }
+  .sp-bar-sep { display: none; }
+  .sp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 9999px; min-height: 50px; }
   .sp-cards { grid-template-columns: 1fr; }
 }
  

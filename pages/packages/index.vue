@@ -113,6 +113,13 @@
 
       <!-- Category pills -->
       <div class="pk-cats mt-6">
+        <button
+          class="pk-cat"
+          :class="{ 'pk-cat--on': !activeCategory }"
+          @click="activeCategory = ''"
+        >
+          <span>All Packages</span>
+        </button>
         <button v-for="c in categories" :key="c.value"
           class="pk-cat"
           :class="{ 'pk-cat--on': activeCategory === c.value }"
@@ -690,16 +697,16 @@ onMounted(() => {
   flex-shrink: 0;
   background: #0D1DAD;
   border: none;
-  border-radius: 12px;
+  border-radius: 9999px;
   color: #fff;
   font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  padding: 0 24px;
+  padding: 0 28px;
   margin: 6px;
   min-width: 100px;
-  transition: background 0.2s;
+  transition: all 0.2s;
   align-self: stretch;
 }
 .pk-search-btn:hover { background: #002a66; }
@@ -804,20 +811,47 @@ onMounted(() => {
 
 /* Category pills */
 .pk-cats {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  margin-bottom: 32px;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding: 4px 2px 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.pk-cats::-webkit-scrollbar {
+  display: none;
 }
 .pk-cat {
-  display: flex; align-items: center; gap: 6px;
-  padding: 7px 14px;
-  background: #fff; border: 1.5px solid #e8e8e0;
-  border-radius: 99px;
-  font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 500;
-  color: #555; cursor: pointer;
-  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9999px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
-.pk-cat:hover { border-color: #1d7a4f; color: #1d7a4f; }
-.pk-cat--on { background: #edf5f1; border-color: #1d7a4f; color: #1d7a4f; font-weight: 600; }
+.pk-cat:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+.pk-cat--on {
+  background: #0D1DAD;
+  border-color: #0D1DAD;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(13, 29, 173, 0.2);
+}
 
 /* Featured section */
 .pk-featured-section { margin-bottom: 40px; }
@@ -911,7 +945,7 @@ onMounted(() => {
 .pk-sort-dot { width: 5px; height: 5px; border-radius: 50%; background: #d8d8d0; flex-shrink: 0; }
 .pk-sort-dot--on { background: #1d7a4f; }
 
-.pk-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 12px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 700; color: #fff; cursor: pointer; position: relative; }
+.pk-filter-mob { display: none; align-items: center; gap: 6px; padding: 7px 14px; background: #0D1DAD; border: none; border-radius: 9999px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 700; color: #fff; cursor: pointer; position: relative; }
 .pk-badge { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: #FF8A00; border-radius: 50%; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
 /* Loading */
@@ -926,14 +960,14 @@ onMounted(() => {
 .pk-sk--sm { height: 11px; width: 55%; }
 .pk-sk-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
 .pk-sk--price { height: 20px; width: 80px; }
-.pk-sk--btn { height: 32px; width: 80px; border-radius: 8px; }
+.pk-sk--btn { height: 32px; width: 80px; border-radius: 9999px; }
 
 /* Empty */
 .pk-empty { display: flex; flex-direction: column; align-items: center; padding: 72px 24px; gap: 10px; text-align: center; background: #fff; border: 1px solid #eaeae3; border-radius: 14px; }
 .pk-empty-ico { width: 56px; height: 56px; border-radius: 14px; background: #f5fbf7; display: flex; align-items: center; justify-content: center; color: #1d7a4f; margin-bottom: 4px; }
 .pk-empty-h { font-size: 20px; font-weight: 700; color: #111; }
 .pk-empty-p { font-size: 13px; color: #aaa; max-width: 300px; line-height: 1.6; }
-.pk-empty-btn { margin-top: 6px; padding: 10px 22px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.18s; }
+.pk-empty-btn { margin-top: 6px; padding: 10px 22px; background: #0D1DAD; border: none; border-radius: 9999px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.18s; }
 .pk-empty-btn:hover { background: #002a66; }
 
 /* Package grid */
@@ -975,7 +1009,7 @@ onMounted(() => {
 .pk-card-from { font-size: 10px; color: #aaa; }
 .pk-card-amt { font-size: 18px; font-weight: 700; color: #111; letter-spacing: -0.03em; }
 .pk-card-per { font-size: 10px; color: #aaa; }
-.pk-card-btn { padding: 7px 14px; background: #0D1DAD; border: none; border-radius: 8px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
+.pk-card-btn { padding: 7px 16px; background: #0D1DAD; border: none; border-radius: 9999px; font-family: 'Satoshi', sans-serif; font-size: 11px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.15s; }
 .pk-card-btn:hover { background: #002a66; }
 
 /* Overlay */
@@ -983,7 +1017,7 @@ onMounted(() => {
 
 /* Pagination */
 .pk-pagination { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 40px; padding: 20px 0; }
-.pk-page-btn { padding: 8px 16px; background: #0D1DAD; border: none; border-radius: 9px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.18s; }
+.pk-page-btn { padding: 8px 18px; background: #0D1DAD; border: none; border-radius: 9999px; font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; transition: background 0.18s; }
 .pk-page-btn:hover:not(:disabled) { background: #002a66; }
 .pk-page-btn:disabled { background: #e0e0d8; color: #aaa; cursor: not-allowed; }
 .pk-page-info { font-family: 'Satoshi', sans-serif; font-size: 12px; font-weight: 700; color: #111; letter-spacing: 0.02em; }
@@ -1016,11 +1050,11 @@ onMounted(() => {
 }
 
 @media (max-width: 860px) {
-  .pk-bar { flex-wrap: wrap; border-radius: 16px; padding: 12px; gap: 8px; }
-  .pk-fld-wrap { flex: 1 0 100%; border: 1px solid #e0e0d8; }
+  .pk-bar { flex-wrap: wrap; border-radius: 20px; padding: 12px; gap: 8px; }
+  .pk-fld-wrap { flex: 1 0 100%; border: 1.5px solid #e0e0d8; border-radius: 16px; }
   .pk-fld--dur { flex: 1 0 calc(50% - 4px); }
   .pk-fld--bud { flex: 1 0 calc(50% - 4px); }
-  .pk-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 12px; min-height: 48px; }
+  .pk-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 9999px; min-height: 50px; }
 }
 
 @media (max-width: 640px) {

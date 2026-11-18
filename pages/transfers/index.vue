@@ -701,8 +701,14 @@ onUnmounted(() => {
   }
   .tr-fld-wrap {
     width: 100%;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 6px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 2px 4px;
+    background: #fff;
+    transition: border-color 0.15s;
+  }
+  .tr-fld-wrap:focus-within {
+    border-color: #0D1DAD;
   }
   .tr-bar-actions {
     margin-left: 0;

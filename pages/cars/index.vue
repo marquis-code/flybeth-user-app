@@ -33,7 +33,7 @@
         <div class="cp-bar">
 
           <!-- LOCATION field -->
-          <div class="cp-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+          <div class="cp-fld-wrap">
             <LocationPicker 
               v-model="searchQuery.pickUpLocation" 
               label="Pick-up Location" 
@@ -41,8 +41,10 @@
             />
           </div>
 
+          <div class="cp-bar-sep"></div>
+
           <!-- DATES field -->
-          <div class="cp-fld-wrap" style="flex: 1; border-right: 1px solid #e2e8f0;">
+          <div class="cp-fld-wrap">
             <FlightDateRangePicker 
               :departure="searchQuery.pickUpDate" 
               :return="searchQuery.dropOffDate"
@@ -55,7 +57,7 @@
           <!-- SEARCH BTN -->
           <button class="cp-search-btn" :class="{ 'cp-search-btn--busy': loading }" @click="handleSearch">
             <span class="cp-search-inner">
-              <svg v-if="!loading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              <svg v-if="!loading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
               <span v-if="loading" class="cp-spin"></span>
               <span>{{ loading ? 'Searching' : 'Search' }}</span>
             </span>
@@ -506,14 +508,20 @@ onMounted(() => {
 /* ── Search bar ────────────────────────────────────────────────────── */
 .cp-bar {
   background: #fff;
-  border: 1.5px solid #e0e0d8;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  border: 1.5px solid #eaeaea;
+  border-radius: 9999px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
   display: flex;
-  align-items: stretch;
+  align-items: center;
   position: relative;
   z-index: 50;
   overflow: visible;
+  padding: 6px 8px;
+}
+
+.cp-fld-wrap {
+  flex: 1;
+  min-width: 0;
 }
 
 .cp-fld {
@@ -552,27 +560,29 @@ onMounted(() => {
 .cp-fld-val { font-size: 13px; font-weight: 500; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cp-fld-val--set { color: #111; }
 
-.cp-bar-sep { width: 1px; background: #ebebe5; flex-shrink: 0; margin: 10px 0; }
+.cp-bar-sep { width: 1px; height: 36px; background: #f0f0ea; flex-shrink: 0; margin: 0 4px; }
 
 .cp-search-btn {
   flex-shrink: 0;
   background: #0D1DAD;
   border: none;
-  border-radius: 12px;
+  border-radius: 9999px;
   color: #fff;
   font-family: 'Satoshi', sans-serif;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  padding: 0 24px;
-  margin: 6px;
-  min-width: 100px;
-  transition: background 0.2s;
-  align-self: stretch;
+  padding: 0 28px;
+  height: 48px;
+  min-width: 120px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .cp-search-btn:hover { background: #002a66; }
 .cp-search-btn--busy { opacity: 0.75; cursor: wait; }
-.cp-search-inner { display: flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; }
+.cp-search-inner { display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; width: 100%; }
 .cp-spin { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -749,20 +759,50 @@ onMounted(() => {
 }
 
 @media (max-width: 860px) {
-  .cp-bar { flex-wrap: wrap; border-radius: 14px; padding: 6px; }
-  .cp-fld--loc { flex: 1 0 100%; }
-  .cp-fld--date { flex: 1 0 calc(50% - 4px); }
-  .cp-bar-sep:first-of-type { height: 1px; width: 100%; margin: 0; }
-  .cp-bar-sep { height: 1px; width: 100%; margin: 0; }
-  .cp-search-btn { flex: 1 0 100%; margin: 4px 0 0; border-radius: 10px; min-height: 46px; }
+  .cp-wrap { padding: 0 18px; }
+  .cp-hero { padding: 24px 0 36px; }
+  .cp-headline { margin-bottom: 20px; }
+  .cp-bar {
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 24px;
+    padding: 14px;
+    gap: 10px;
+  }
+  .cp-bar-sep { display: none; }
+  .cp-fld-wrap {
+    width: 100%;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 2px 4px;
+    background: #fff;
+    transition: border-color 0.15s;
+  }
+  .cp-fld-wrap:focus-within {
+    border-color: #0D1DAD;
+  }
+  .cp-search-btn {
+    width: 100%;
+    margin: 4px 0 0;
+    border-radius: 9999px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cp-search-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .cp-main { padding-top: 20px; padding-bottom: 48px; }
+  .cp-cards { gap: 20px; }
 }
 
 @media (max-width: 640px) {
   .cp-wrap { padding: 0 16px; }
-  .cp-main { padding-top: 18px; padding-bottom: 48px; }
-  .cp-cards { gap: 16px; }
-  .cp-hero { padding: 28px 0 44px; }
-  .cp-fld--date { flex: 1 0 100%; }
+  .cp-cards { gap: 18px; }
   .cp-drop--loc { max-width: calc(100vw - 32px); left: 0; }
   .cp-drop--cal { width: calc(100vw - 32px); left: 0; }
 }
